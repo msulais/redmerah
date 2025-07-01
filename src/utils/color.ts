@@ -37,11 +37,79 @@ export function colorContrastRatio(rgb1: RGBColor, rgb2: RGBColor): number {
 	return ratio
 }
 
+export function rgbToColor(rgb: RGBColor): number {
+	const r = Math.round(rgb.r * 0xff)
+	const g = Math.round(rgb.g * 0xff)
+	const b = Math.round(rgb.b * 0xff)
+	return ((r << 16) | (g << 8) | b)
+}
+
+export function colorToRgb(value: number): RGBColor {
+	value = Math.round(value)
+	return {
+		r: ((value >> 16) & 0xFF) / 0xff,
+		g: ((value >> 8) & 0xFF) / 0xff,
+		b: (value & 0xFF) / 0xff
+	}
+}
+
+export function hexToColor(hex: HEXColor): number {
+	console.warn('use', rgbToColor, 'instead')
+	return rgbToColor(hexToRgb(hex))
+}
+
+export function colorToHex(value: number): HEXColor {
+	console.warn('use', rgbToHex, 'instead')
+	return rgbToHex(colorToRgb(value))
+}
+
+export function hslToColor(hsl: HSLColor): number {
+	console.warn('use', rgbToColor, 'instead')
+	return rgbToColor(hslToRgb(hsl))
+}
+
+export function colorToHsl(value: number): HSLColor {
+	console.warn('use', rgbToHsl, 'instead')
+	return rgbToHsl(colorToRgb(value))
+}
+
+export function hsvToColor(hsv: HSVColor): number {
+	console.warn('use', rgbToColor, 'instead')
+	return rgbToColor(hsvToRgb(hsv))
+}
+
+export function colorToHsv(value: number): HSVColor {
+	console.warn('use', rgbToHsv, 'instead')
+	return rgbToHsv(colorToRgb(value))
+}
+
+export function cmykToColor(cmyk: CMYKColor): number {
+	console.warn('use', rgbToColor, 'instead')
+	return rgbToColor(cmykToRgb(cmyk))
+}
+
+export function colorToCmyk(value: number): CMYKColor {
+	console.warn('use', rgbToCmyk, 'instead')
+	return rgbToCmyk(colorToRgb(value))
+}
+
+export function hwbToColor(hwb: HWBColor): number {
+	console.warn('use', rgbToColor, 'instead')
+	return rgbToColor(hwbToRgb(hwb))
+}
+
+export function colorToHwb(value: number): HWBColor {
+	console.warn('use', rgbToHwb, 'instead')
+	return rgbToHwb(colorToRgb(value))
+}
+
 export function hexToHwb(hex: HEXColor): HWBColor {
+	console.warn('use', rgbToHwb, 'instead')
 	return rgbToHwb(hexToRgb(hex))
 }
 
 export function hwbToHex(hwb: HWBColor): HEXColor {
+	console.warn('use', rgbToHex, 'instead')
 	return rgbToHex(hwbToRgb(hwb))
 }
 
@@ -57,12 +125,14 @@ export function hwbToRgb(hwb: HWBColor): RGBColor {
 	let n = w + f * (v - w)
 	let [r, g, b] = [0, 0, 0]
 
-	if (i == 0) [r, g, b] = [v, n, w]
-	else if (i == 1) [r, g, b] = [n, v, w]
-	else if (i == 2) [r, g, b] = [w, v, n]
-	else if (i == 3) [r, g, b] = [w, n, v]
-	else if (i == 4) [r, g, b] = [n, w, v]
-	else if (i == 5) [r, g, b] = [v, w, n]
+	switch (i) {
+	case 0: [r, g, b] = [v, n, w]; break
+	case 1: [r, g, b] = [n, v, w]; break
+	case 2: [r, g, b] = [w, v, n]; break
+	case 3: [r, g, b] = [w, n, v]; break
+	case 4: [r, g, b] = [n, w, v]; break
+	case 5: [r, g, b] = [v, w, n]; break
+	}
 
 	return {r, g, b}
 }
@@ -74,15 +144,15 @@ export function rgbToHwb(rgb: RGBColor): HWBColor {
 	const w = Math.min(red, green, blue)
 	const v = Math.max(red, green, blue)
 	const b = 1 - v
-	if (v == w) return {h: 0, w, b}
+	if (v === w) return {h: 0, w, b}
 
-	const f = red == w
+	const f = red === w
 		? green - blue
-		: ((green == w)? blue - red : red - green)
-	const i = Math.floor(red == w
+		: ((green === w)? blue - red : red - green)
+	const i = Math.floor(red === w
 		? 3
-		: ((green == w)? 5 : 1))
-	const h = (i - f / (v - w)) / 6
+		: ((green === w)? 5 : 1))
+	let h = (i - safeNumber(f / (v - w))) / 6
 	return {h, w, b}
 }
 
@@ -95,32 +165,38 @@ export function hsvToHwb(hsv: HSVColor): HWBColor {
 
 export function hwbToHsv(hwb: HWBColor): HSVColor {
 	const h = hwb.h
-	const s = 1 - (hwb.w / (1 - hwb.b))
+	const s = 1 - safeNumber(hwb.w / (1 - hwb.b), 1)
 	const v = 1 - hwb.b
 	return {h, s, v}
 }
 
 export function hslToHwb(hsl: HSLColor): HWBColor {
+	console.warn('use', hsvToHwb, 'instead')
 	return {...hsvToHwb(hslToHsv(hsl)), h: hsl.h}
 }
 
 export function hwbToHsl(hwb: HWBColor): HSLColor {
+	console.warn('use', hsvToHsl, 'instead')
 	return {...hsvToHsl(hwbToHsv(hwb)), h: hwb.h}
 }
 
 export function hslToCmyk(hsl: HSLColor): CMYKColor {
+	console.warn('use', rgbToCmyk, 'instead')
 	return rgbToCmyk(hslToRgb(hsl))
 }
 
 export function cmykToHsl(cmyk: CMYKColor): HSLColor {
+	console.warn('use', rgbToHsl, 'instead')
 	return rgbToHsl(cmykToRgb(cmyk))
 }
 
 export function hexToCmyk(hex: HEXColor): CMYKColor {
+	console.warn('use', rgbToCmyk, 'instead')
 	return rgbToCmyk(hexToRgb(hex))
 }
 
 export function cmykToHex(cmyk: CMYKColor): HEXColor {
+	console.warn('use', rgbToHex, 'instead')
 	return rgbToHex(cmykToRgb(cmyk))
 }
 
@@ -130,6 +206,7 @@ export function cmykToRgb(cmyk: CMYKColor): RGBColor {
 	const b = (1 - cmyk.y) * (1 - cmyk.k)
 	return {r, g, b}
 }
+
 
 export function rgbToCmyk(rgb: RGBColor): CMYKColor {
 	const r = rgb.r
@@ -153,6 +230,7 @@ export function rgbToCmyk(rgb: RGBColor): CMYKColor {
 }
 
 export function hexToHsl(hex: HEXColor): HSLColor {
+	console.warn('use', rgbToHsl, 'instead')
 	return rgbToHsl(hexToRgb(hex))
 }
 
@@ -168,7 +246,7 @@ export function rgbToHsl(rgb: RGBColor): HSLColor {
 
 	l = (max + min) / 2
 
-	if (delta == 0) {
+	if (delta === 0) {
 		h = 0
 		s = 0
 		return {h, s, l}
@@ -181,9 +259,9 @@ export function rgbToHsl(rgb: RGBColor): HSLColor {
 	const deltaG = (((max - g) / 6) + (delta / 2)) / delta
 	const deltaB = (((max - b) / 6) + (delta / 2)) / delta
 
-	if (r == max) h = deltaB - deltaG
-	else if (g == max) h = (1 / 3) + deltaR - deltaB
-	else if (b == max) h = (2 / 3) + deltaG - deltaR
+	if (r === max) h = deltaB - deltaG
+	else if (g === max) h = (1 / 3) + deltaR - deltaB
+	else if (b === max) h = (2 / 3) + deltaG - deltaR
 
 	if (h < 0) h += 1
 	if (h > 1) h -= 1
@@ -205,50 +283,47 @@ export function hexToRgb(hex: HEXColor): RGBColor {
 }
 
 export function hslToRgb(hsl: HSLColor): RGBColor {
-	let r, g, b
-
-	function rgbValue(v1: number, v2: number, vH: number): number {
-		while (vH < 0) vH += 1
-		while (vH > 1) vH -= 1
-
-		if (6 * vH < 1) return v1 + (v2 - v1) * 6 * vH
-		if (2 * vH < 1) return v2
-		if (3 * vH < 2) return v1 + (v2 - v1) * (2 / 3 - vH) * 6
-		return v1
+	function hueToRgb(m1: number, m2: number, h: number): number {
+		if (h < 0) h = h + 1
+		if (h > 1) h = h - 1
+		if (h * 6 < 1) return m1 + (m2 - m1) * 6 * h
+		if (h * 2 < 1) return m2
+		if (h * 3 < 2) return m1 + (m2 - m1) * (2 / 3 - h) * 6
+		return m1
 	}
 
-	if (hsl.s == 0) r = g = b = hsl.l
-	else {
-		const v2 = hsl.l < 0.5
-			? hsl.l * (1 + hsl.s)
-			: hsl.l + hsl.s - hsl.s * hsl.l
-		const v1 = 2 * hsl.l - v2
-
-		r = rgbValue(v1, v2, hsl.h + 1 / 3)
-		g = rgbValue(v1, v2, hsl.h)
-		b = rgbValue(v1, v2, hsl.h - 1 / 3)
-	}
+	const m2 = hsl.l <= 0.5
+		? hsl.l * (1 + hsl.s)
+		: hsl.l + hsl.s - hsl.s * hsl.l
+	const m1 = 2 * hsl.l - m2
+	const r = hueToRgb(m1, m2, hsl.h + 1 / 3)
+	const g = hueToRgb(m1, m2, hsl.h)
+	const b = hueToRgb(m1, m2, hsl.h - 1 / 3)
 
 	return {r, g, b}
 }
 
 export function hslToHex(hsl: HSLColor): HEXColor {
+	console.warn('use', rgbToHex, 'instead')
 	return rgbToHex(hslToRgb(hsl))
 }
 
 export function rgbToHex(rgb: RGBColor): HEXColor {
+	const pad = (v: number) => Math.round(v * 0xff).toString(16).padStart(2, '0')
 	return ('#'
-		+ Math.round(rgb.r * 0xff).toString(16).padStart(2, '0')
-		+ Math.round(rgb.g * 0xff).toString(16).padStart(2, '0')
-		+ Math.round(rgb.b * 0xff).toString(16).padStart(2, '0')
+		+ pad(rgb.r)
+		+ pad(rgb.g)
+		+ pad(rgb.b)
 	) as HEXColor
 }
 
 export function hsvToHex(hsv: HSVColor): HEXColor {
+	console.warn('use', rgbToHex, 'instead')
 	return rgbToHex(hsvToRgb(hsv))
 }
 
 export function hexToHsv(hex: HEXColor): HSVColor {
+	console.warn('use', rgbToHsv, 'instead')
 	return rgbToHsv(hexToRgb(hex))
 }
 
@@ -267,7 +342,7 @@ export function rgbToHsv(rgb: RGBColor): HSVColor {
 
 	v = max
 
-	if (delta == 0) {
+	if (delta === 0) {
 		s = 0
 		h = 0
 		return {h, s, v}
@@ -279,9 +354,9 @@ export function rgbToHsv(rgb: RGBColor): HSVColor {
 	const deltaG = (((max - g) / 6) + (delta / 2)) / delta
 	const deltaB = (((max - b) / 6) + (delta / 2)) / delta
 
-	if (r == max) h = deltaB - deltaG
-	else if (g == max) h = (1 / 3) + deltaR - deltaB
-	else if (b == max) h = (2 / 3) + deltaG - deltaR
+	if (r === max) h = deltaB - deltaG
+	else if (g === max) h = (1 / 3) + deltaR - deltaB
+	else if (b === max) h = (2 / 3) + deltaG - deltaR
 
 	if (h < 0) h += 1
 	if (h > 1) h -= 1
@@ -292,24 +367,24 @@ export function rgbToHsv(rgb: RGBColor): HSVColor {
 export function hsvToRgb(hsv: HSVColor): RGBColor {
 	let r, g, b
 
-	if (hsv.s == 0) {
+	if (hsv.s === 0) {
 		r = g = b = hsv.v
 		return {r, g, b}
 	}
 
 	let h = hsv.h * 6
-	if (h == 6) h = 0
+	if (h === 6) h = 0
 
 	const i = Math.floor(h)
 	const j = hsv.v * (1 - hsv.s)
 	const k = hsv.v * (1 - hsv.s * (h - i))
 	const l = hsv.v * (1 - hsv.s * (1 - (h - i)))
 
-	if (i == 0) [r, g, b] = [hsv.v, l, j]
-	else if (i == 1) [r, g, b] = [k, hsv.v, j]
-	else if (i == 2) [r, g, b] = [j, hsv.v, l]
-	else if (i == 3) [r, g, b] = [j, k, hsv.v]
-	else if (i == 4) [r, g, b] = [l, j, hsv.v]
+	if (i === 0) [r, g, b] = [hsv.v, l, j]
+	else if (i === 1) [r, g, b] = [k, hsv.v, j]
+	else if (i === 2) [r, g, b] = [j, hsv.v, l]
+	else if (i === 3) [r, g, b] = [j, k, hsv.v]
+	else if (i === 4) [r, g, b] = [l, j, hsv.v]
 	else [r, g, b] = [hsv.v, j, k]
 
 	return {r, g, b}
@@ -318,7 +393,7 @@ export function hsvToRgb(hsv: HSVColor): RGBColor {
 export function hslToHsv(hsl: HSLColor): HSVColor {
 	const h = hsl.h
 	const v = hsl.l + (hsl.s * Math.min(hsl.l, 1 - hsl.l))
-	const s = v == 0
+	const s = v === 0
 		? 0
 		: (2 * (1 - (hsl.l / v)))
 	return {h, s, v}
@@ -327,7 +402,7 @@ export function hslToHsv(hsl: HSLColor): HSVColor {
 export function hsvToHsl(hsv: HSVColor): HSLColor {
 	const h = hsv.h
 	const l = hsv.v * (1 - (hsv.s / 2))
-	const s = l == 0 || l == 1
+	const s = l === 0 || l === 1
 		? 0
 		: ((hsv.v - l) / Math.min(l, 1-l))
 	return { h, s, l }
