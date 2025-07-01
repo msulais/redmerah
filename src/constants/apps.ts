@@ -161,7 +161,7 @@ export const APP_COLOR_PICKER: AppItem = {
 	name: 'Color Picker',
 	description: 'Quickly and easily pick the perfect color with our online color picker tool.',
 	link: RoutesLinks.colorPicker,
-	color: '#FF0401',
+	color: '#FF0066',
 	buildNumber: 4,
 	buildVersion: '0.0.5',
 }
