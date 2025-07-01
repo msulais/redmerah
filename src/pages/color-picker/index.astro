@@ -1,15 +1,16 @@
 ---
 import { APP_COLOR_PICKER as app } from '@/constants/apps'
 
+import UIAppBar from './_views/_UIAppBar.astro'
+import UIBody from './_views/_UIBody.astro'
+import App from '@/native-components/App/index.astro'
 import Html from '@/layouts/Html/index.astro'
-import Splash from '@/layouts/Splash/index.astro'
-import App from './_App'
 
 export const prerender = true
 ---
 
 <Html
-	title={app.name + ' | Redmerah'}
+	title={app.name + ' • Redmerah'}
 	accentColor={app.color}
 	description={app.description}>
 	<Fragment slot="favicon">
@@ -20,6 +21,9 @@ export const prerender = true
 		<link rel="manifest" href={`/favicon${app.link}/site.webmanifest`}>
 	</Fragment>
 	<script is:inline src='/scripts/root-settings.min.js'/>
-	<Splash src={app.logoUrl} alt={`${app.name} splash icon`} />
-	<App client:only="solid-js"/>
+	<App>
+		<UIAppBar slot="appbar"/>
+		<UIBody />
+	</App>
+	<script src="./_scripts/_index.ts"/>
 </Html>

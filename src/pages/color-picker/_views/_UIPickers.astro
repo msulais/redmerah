@@ -1,0 +1,432 @@
+---
+import Button from '@/native-components/Button/index.astro'
+import Icon from '@/native-components/Icon/index.astro'
+import { colorContrastRatio, hexToRgb, hslToRgb, hsvToHex, hsvToRgb, hwbToRgb } from "@/utils/color"
+import { DEFAULT_COLOR, DEFAULT_COLOR_IN_HSL, DEFAULT_COLOR_IN_VALUE, DEFAULT_COLOR_IN_HWB, DEFAULT_COLOR_IN_HSV, DEFAULT_COLOR_IN_CMYK, DEFAULT_COLOR_IN_RGB, DEFAULT_PICKER_MODE } from "../_scripts/_shared/_constant"
+import { ColorPickerMode } from "../_scripts/_shared/_enums"
+import { CSSClasses } from "../_styles/_css"
+import { ElementIds } from "../_scripts/_shared/_ids"
+import { IconCodes } from '@/enums/icons'
+import { ButtonVariant } from '@/native-components/Button'
+---
+
+<div
+	data-picker-mode={ColorPickerMode.image}
+	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.image}>
+	<Button
+		id={ElementIds.bdPick_imageButton}
+		ButtonVariant={ButtonVariant.filled}
+		style="margin-top:8px">
+		<Icon IconCode={IconCodes.image}/>
+		Pick image
+	</Button>
+	<div
+		id={ElementIds.bdPick_imageWrapper}
+		class={CSSClasses.pickerImageRect}
+		data-no-image
+		tabindex="0"
+		style={{
+			'--color': '#fff',
+			'--border-color': '#fff',
+			'--position-x': '0%',
+			'--position-y': '0%',
+		}}>
+		<canvas
+			id={ElementIds.bdPick_imageCanvas}
+			style="width:100%;height:100%"
+		/>
+	</div>
+	<div style="min-height:16px"/>
+</div>
+
+<div
+	data-picker-mode={ColorPickerMode.rectangle}
+	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.rectangle}>
+	<div id={ElementIds.bdPick_rectangleRect} tabindex="0" class={CSSClasses.pickerRect} style={{
+		'--color': DEFAULT_COLOR,
+		'--hue': DEFAULT_COLOR_IN_HSV.h * 360,
+		'--position-x': (DEFAULT_COLOR_IN_HSV.s * 100) + '%',
+		'--position-y': 100 - (DEFAULT_COLOR_IN_HSV.v * 100) + '%',
+		'--border-color': colorContrastRatio(DEFAULT_COLOR_IN_RGB, {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
+		background: [
+			'linear-gradient(to top,#000,transparent)',
+			'linear-gradient(to right,#fff,transparent)',
+			'hsl(var(--hue),100%,50%)'
+		].join(',')
+	}}/>
+	<input
+		class={CSSClasses.pickerSlider}
+		id={ElementIds.bdPick_rectangleHue}
+		style={{
+			'--color': `hsl(${Math.round(DEFAULT_COLOR_IN_HSL.h * 360)},100%,50%)`,
+			'--border-color': colorContrastRatio(hslToRgb({h: DEFAULT_COLOR_IN_HSL.h, s: 1, l: .5}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
+			'--gradient': 'linear-gradient(90deg in hsl longer hue,#FF0000 0%,#FF0000 100%)',
+			marginTop: '12px'
+		}}
+		type="range"
+		min="0"
+		max={360}
+		value={Math.round(DEFAULT_COLOR_IN_HSV.h * 360) + ''}
+	/>
+</div>
+
+<div
+	data-picker-mode={ColorPickerMode.rectangleHsl}
+	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.rectangleHsl}>
+	<div id={ElementIds.bdPick_rectangleHslRect} tabindex="0" class={CSSClasses.pickerRect} style={{
+		'--color': DEFAULT_COLOR,
+		'--hue': DEFAULT_COLOR_IN_HSL.h * 360,
+		'--position-x': (DEFAULT_COLOR_IN_HSL.s * 100) + '%',
+		'--position-y': (DEFAULT_COLOR_IN_HSL.l * 100) + '%',
+		'--border-color': colorContrastRatio(DEFAULT_COLOR_IN_RGB, {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
+		background: [
+			'linear-gradient(to bottom,#ffffff,#ffffff00 50%,#00000000 50%,#000000)',
+			'linear-gradient(to right,#808080,hsl(var(--hue),100%,50%))'
+		].join(',')
+	}}/>
+	<input
+		class={CSSClasses.pickerSlider}
+		id={ElementIds.bdPick_rectangleHslHue}
+		style={{
+			'--color': `hsl(${Math.round(DEFAULT_COLOR_IN_HSL.h * 360)},100%,50%)`,
+			'--border-color': colorContrastRatio(hslToRgb({h: DEFAULT_COLOR_IN_HSL.h, s: 1, l: .5}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
+			'--gradient': 'linear-gradient(90deg in hsl longer hue,#FF0000 0%,#FF0000 100%)',
+			marginTop: '12px'
+		}}
+		type="range"
+		min="0"
+		max={360}
+		value={Math.round(DEFAULT_COLOR_IN_HSL.h * 360) + ''}
+	/>
+</div>
+
+<div
+	data-picker-mode={ColorPickerMode.spectrum}
+	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.spectrum}>
+	<div id={ElementIds.bdPick_spectrumRect} tabindex="0" class={CSSClasses.pickerRect} style={{
+		'--color': hsvToHex({...DEFAULT_COLOR_IN_HSV, v: 1}),
+		'--position-x': (DEFAULT_COLOR_IN_HSV.h * 100) + '%',
+		'--position-y': 100 - (DEFAULT_COLOR_IN_HSV.s * 100) + '%',
+		'--border-color': colorContrastRatio(hsvToRgb({...DEFAULT_COLOR_IN_HSV, v: 1}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
+		background: [
+			'linear-gradient(0deg in hsl longer hue,#fff 0%,transparent 100%)',
+			'linear-gradient(90deg in hsl longer hue,#FF0000 0%,#FF0000 100%)'
+		].join(',')
+	}}/>
+	<input
+		id={ElementIds.bdPick_spectrumHue}
+		class={CSSClasses.pickerSlider}
+		style={{
+			'--max-value-color': hsvToHex({...DEFAULT_COLOR_IN_HSV, v: 1}),
+			'--color': DEFAULT_COLOR,
+			'--border-color': colorContrastRatio(DEFAULT_COLOR_IN_RGB, {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
+			'--gradient': 'linear-gradient(to right,var(--max-value-color) 0%,#000 100%)',
+			marginTop: '12px'
+		}}
+		type="range"
+		min="0"
+		max="100"
+		value={Math.round((1 - DEFAULT_COLOR_IN_HSV.v) * 100) + ''}
+	/>
+</div>
+
+<div
+	data-picker-mode={ColorPickerMode.sliderRgb}
+	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.sliderRgb}>
+	<label for={ElementIds.bdPick_rgbRed} style="margin-top:16px">Red: {Math.round(DEFAULT_COLOR_IN_RGB.r * 0xff)} ({Math.round(DEFAULT_COLOR_IN_RGB.r * 100)}%)</label>
+	<input
+		id={ElementIds.bdPick_rgbRed}
+		class={CSSClasses.pickerSlider}
+		style={{
+			'--color': `rgb(${Math.round(DEFAULT_COLOR_IN_RGB.r * 0xff)},0,0)`,
+			'--border-color': colorContrastRatio({...DEFAULT_COLOR_IN_RGB, g: 0, b: 0}, {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
+			'--gradient': 'linear-gradient(to right,#000 0%,#FF0000 100%)',
+			marginTop: '4px'
+		}}
+		type="range"
+		min="0"
+		max="255"
+		value={Math.round(DEFAULT_COLOR_IN_RGB.r * 0xff) + ''}
+	/>
+
+	<label for={ElementIds.bdPick_rgbGreen} style="margin-top:12px">Green: {Math.round(DEFAULT_COLOR_IN_RGB.g * 0xff)} ({Math.round(DEFAULT_COLOR_IN_RGB.g * 100)}%)</label>
+	<input
+		id={ElementIds.bdPick_rgbGreen}
+		class={CSSClasses.pickerSlider}
+		style={{
+			'--color': `rgb(0,${Math.round(DEFAULT_COLOR_IN_RGB.g * 0xff)},0)`,
+			'--border-color': colorContrastRatio({...DEFAULT_COLOR_IN_RGB, r: 0, b: 0}, {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
+			'--gradient': 'linear-gradient(to right,#000 0%,#00FF00 100%)',
+			marginTop: '4px'
+		}}
+		type="range"
+		min="0"
+		max="255"
+		value={Math.round(DEFAULT_COLOR_IN_RGB.g * 0xff) + ''}
+	/>
+
+	<label for={ElementIds.bdPick_rgbBlue} style="margin-top:12px">Blue: {Math.round(DEFAULT_COLOR_IN_RGB.b * 0xff)} ({Math.round(DEFAULT_COLOR_IN_RGB.b * 100)}%)</label>
+	<input
+		class={CSSClasses.pickerSlider}
+		id={ElementIds.bdPick_rgbBlue}
+		style={{
+			'--color': `rgb(0,0,${Math.round(DEFAULT_COLOR_IN_RGB.b * 0xff)})`,
+			'--border-color': colorContrastRatio({...DEFAULT_COLOR_IN_RGB, g: 0, r: 0}, {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
+			'--gradient': 'linear-gradient(to right,#000 0%,#0000FF 100%)',
+			marginTop: '4px'
+		}}
+		type="range"
+		min="0"
+		max="255"
+		value={Math.round(DEFAULT_COLOR_IN_RGB.b * 0xff) + ''}
+	/>
+</div>
+
+<div
+	data-picker-mode={ColorPickerMode.sliderHsl}
+	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.sliderHsl}>
+	<label for={ElementIds.bdPick_hslHue} style="margin-top:16px">Hue: {Math.round(DEFAULT_COLOR_IN_HSL.h * 360)}° ({Math.round(DEFAULT_COLOR_IN_HSL.h * 100)}%)</label>
+	<input
+		id={ElementIds.bdPick_hslHue}
+		class={CSSClasses.pickerSlider}
+		style={{
+			'--color': `hsl(${Math.round(DEFAULT_COLOR_IN_HSL.h * 360)},100%,50%)`,
+			'--border-color': colorContrastRatio(hslToRgb({...DEFAULT_COLOR_IN_HSL, s: 1, l: 0.5}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
+			'--gradient': 'linear-gradient(90deg in hsl longer hue,#FF0000 0%,#FF0000 100%)',
+			marginTop: '4px'
+		}}
+		type="range"
+		min="0"
+		max={360}
+		value={Math.round(DEFAULT_COLOR_IN_HSL.h * 360) + ''}
+	/>
+
+	<label for={ElementIds.bdPick_hslSaturation} style="margin-top:12px">Saturation: {Math.round(DEFAULT_COLOR_IN_HSL.s * 100)}%</label>
+	<input
+		id={ElementIds.bdPick_hslSaturation}
+		class={CSSClasses.pickerSlider}
+		style={{
+			'--hue': Math.round(DEFAULT_COLOR_IN_HSL.h * 360) + '',
+			'--color': `hsl(${Math.round(DEFAULT_COLOR_IN_HSL.h * 360)},${Math.round(DEFAULT_COLOR_IN_HSL.s * 100)}%,50%)`,
+			'--border-color': colorContrastRatio(hslToRgb({...DEFAULT_COLOR_IN_HSL, l: 0.5}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
+			'--gradient': 'linear-gradient(to right,hsl(var(--hue),0%,50%) 0%,hsl(var(--hue),100%,50%) 100%)',
+			marginTop: '4px'
+		}}
+		type="range"
+		min="0"
+		max="100"
+		value={Math.round(DEFAULT_COLOR_IN_HSL.s * 100) + ''}
+	/>
+
+	<label for={ElementIds.bdPick_hslLightness} style="margin-top:12px">Lightness: {Math.round(DEFAULT_COLOR_IN_HSL.l * 100)}%</label>
+	<input
+		class={CSSClasses.pickerSlider}
+		id={ElementIds.bdPick_hslLightness}
+		style={{
+			'--color': `hsl(0,0%,${Math.round(DEFAULT_COLOR_IN_HSL.l * 100)}%)`,
+			'--border-color': colorContrastRatio(hslToRgb({...DEFAULT_COLOR_IN_HSL, h: 0, s: 0}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
+			'--gradient': 'linear-gradient(to right,#000 0%,#fff 100%)',
+			marginTop: '4px'
+		}}
+		type="range"
+		min="0"
+		max="100"
+		value={Math.round(DEFAULT_COLOR_IN_HSL.l * 100) + ''}
+	/>
+</div>
+
+<div
+	data-picker-mode={ColorPickerMode.sliderCmyk}
+	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.sliderCmyk}>
+	<label for={ElementIds.bdPick_cmykCyan} style="margin-top:16px">Cyan: {Math.round(DEFAULT_COLOR_IN_CMYK.c * 100)}%</label>
+	<input
+		id={ElementIds.bdPick_cmykCyan}
+		class={CSSClasses.pickerSlider}
+		style={{
+			'--color': `hsl(180,100%,${DEFAULT_COLOR_IN_CMYK.c * 50}%)`,
+			'--border-color': colorContrastRatio(hslToRgb({h: 180 / 360, s: 1, l: DEFAULT_COLOR_IN_CMYK.c * 0.5}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
+			'--gradient': 'linear-gradient(90deg,#000 0%,#00FFFF 100%)',
+			marginTop: '4px'
+		}}
+		type="range"
+		min="0"
+		max="100"
+		value={Math.round(DEFAULT_COLOR_IN_CMYK.c * 100) + ''}
+	/>
+
+	<label for={ElementIds.bdPick_cmykMagenta} style="margin-top:12px">Magenta: {Math.round(DEFAULT_COLOR_IN_CMYK.m * 100)}%</label>
+	<input
+		id={ElementIds.bdPick_cmykMagenta}
+		class={CSSClasses.pickerSlider}
+		style={{
+			'--color': `hsl(300,100%,${DEFAULT_COLOR_IN_CMYK.m * 50}%)`,
+			'--border-color': colorContrastRatio(hslToRgb({h: 300 / 360, s: 1, l: DEFAULT_COLOR_IN_CMYK.m * 0.5}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
+			'--gradient': 'linear-gradient(90deg,#000 0%,#FF00FF 100%)',
+			marginTop: '4px'
+		}}
+		type="range"
+		min="0"
+		max="100"
+		value={Math.round(DEFAULT_COLOR_IN_CMYK.m * 100) + ''}
+	/>
+
+	<label for={ElementIds.bdPick_cmykYellow} style="margin-top:12px">Yellow: {Math.round(DEFAULT_COLOR_IN_CMYK.y * 100)}%</label>
+	<input
+		id={ElementIds.bdPick_cmykYellow}
+		class={CSSClasses.pickerSlider}
+		style={{
+			'--color': `hsl(60,100%,${DEFAULT_COLOR_IN_CMYK.y * 50}%)`,
+			'--border-color': colorContrastRatio(hslToRgb({h: 60 / 360, s: 1, l: DEFAULT_COLOR_IN_CMYK.y * 0.5}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
+			'--gradient': 'linear-gradient(90deg,#000 0%,#FFFF00 100%)',
+			marginTop: '4px'
+		}}
+		type="range"
+		min="0"
+		max="100"
+		value={Math.round(DEFAULT_COLOR_IN_CMYK.y * 100) + ''}
+	/>
+
+	<label for={ElementIds.bdPick_cmykKey} style="margin-top:12px">Key/Black: {Math.round(DEFAULT_COLOR_IN_CMYK.k * 100)}%</label>
+	<input
+		id={ElementIds.bdPick_cmykKey}
+		class={CSSClasses.pickerSlider}
+		style={{
+			'--color': `hsl(0,0%,${(1-DEFAULT_COLOR_IN_CMYK.k) * 100}%)`,
+			'--border-color': colorContrastRatio(hslToRgb({h: 0, s: 0, l: (1-DEFAULT_COLOR_IN_CMYK.k)}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
+			'--gradient': 'linear-gradient(to right,#fff 0%,#000 100%)',
+			marginTop: '4px'
+		}}
+		type="range"
+		min="0"
+		max="100"
+		value={Math.round(DEFAULT_COLOR_IN_CMYK.k * 100) + ''}
+	/>
+</div>
+
+<div
+	data-picker-mode={ColorPickerMode.sliderHex}
+	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.sliderHex}>
+	<label for={ElementIds.bdPick_hex} style="margin-top:16px">Hex: {DEFAULT_COLOR} ({DEFAULT_COLOR_IN_VALUE})</label>
+	<input
+		id={ElementIds.bdPick_hex}
+		class={CSSClasses.pickerSlider}
+		style={{
+			'--color': DEFAULT_COLOR,
+			'--border-color': colorContrastRatio(hexToRgb(DEFAULT_COLOR), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
+			'--gradient': 'linear-gradient(90deg,#000 0%,#fff 100%)',
+			marginTop: '4px'
+		}}
+		type="range"
+		min="0"
+		max={0xffffff}
+		value={DEFAULT_COLOR_IN_VALUE + ''}
+	/>
+</div>
+
+<div
+	data-picker-mode={ColorPickerMode.sliderHsv}
+	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.sliderHsv}>
+	<label for={ElementIds.bdPick_hsvHue} style="margin-top:16px">Hue: {Math.round(DEFAULT_COLOR_IN_HSV.h * 360)}° ({Math.round(DEFAULT_COLOR_IN_HSV.h * 100)}%)</label>
+	<input
+		id={ElementIds.bdPick_hsvHue}
+		class={CSSClasses.pickerSlider}
+		style={{
+			'--color': hsvToHex({...DEFAULT_COLOR_IN_HSV, s: 1, v: 1}),
+			'--border-color': colorContrastRatio(hsvToRgb({...DEFAULT_COLOR_IN_HSV, s: 1, v: 1}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
+			'--gradient': 'linear-gradient(90deg in hsl longer hue,#FF0000 0%,#FF0000 100%)',
+			marginTop: '4px'
+		}}
+		type="range"
+		min="0"
+		max={360}
+		value={Math.round(DEFAULT_COLOR_IN_HSV.h * 360) + ''}
+	/>
+
+	<label for={ElementIds.bdPick_hsvSaturation} style="margin-top:12px">Saturation: {Math.round(DEFAULT_COLOR_IN_HSV.s * 100)}%</label>
+	<input
+		id={ElementIds.bdPick_hsvSaturation}
+		class={CSSClasses.pickerSlider}
+		style={{
+			'--hue': Math.round(DEFAULT_COLOR_IN_HSV.h * 360),
+			'--color': hsvToHex({...DEFAULT_COLOR_IN_HSV, v: 1}),
+			'--border-color': colorContrastRatio(hsvToRgb({...DEFAULT_COLOR_IN_HSV, v: 1}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
+			'--gradient': 'linear-gradient(to right,hsl(var(--hue),0%,50%) 0%,hsl(var(--hue),100%,50%) 100%)',
+			marginTop: '4px'
+		}}
+		type="range"
+		min="0"
+		max="100"
+		value={Math.round(DEFAULT_COLOR_IN_HSV.s * 100) + ''}
+	/>
+
+	<label for={ElementIds.bdPick_hsvValue} style="margin-top:12px">Value: {Math.round(DEFAULT_COLOR_IN_HSV.v * 100)}%</label>
+	<input
+		id={ElementIds.bdPick_hsvValue}
+		class={CSSClasses.pickerSlider}
+		style={{
+			'--max-value-color': hsvToHex({...DEFAULT_COLOR_IN_HSV, v: 1}),
+			'--color': DEFAULT_COLOR,
+			'--border-color': colorContrastRatio(hexToRgb(DEFAULT_COLOR), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
+			'--gradient': 'linear-gradient(to right,#000 0%,var(--max-value-color) 100%)',
+			marginTop: '4px'
+		}}
+		type="range"
+		min="0"
+		max="100"
+		value={Math.round(DEFAULT_COLOR_IN_HSV.v * 100) + ''}
+	/>
+</div>
+
+<div
+	data-picker-mode={ColorPickerMode.sliderHwb}
+	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.sliderHwb}>
+	<label for={ElementIds.bdPick_hwbHue} style="margin-top:16px">Hue: {Math.round(DEFAULT_COLOR_IN_HWB.h * 360)}° ({Math.round(DEFAULT_COLOR_IN_HWB.h * 100)}%)</label>
+	<input
+		id={ElementIds.bdPick_hwbHue}
+		class={CSSClasses.pickerSlider}
+		style={{
+			'--color': `hwb(${Math.round(DEFAULT_COLOR_IN_HWB.h * 360)} 0% 0%)`,
+			'--border-color': colorContrastRatio(hwbToRgb({...DEFAULT_COLOR_IN_HWB, w: 0, b: 0}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
+			'--gradient': 'linear-gradient(90deg in hsl longer hue,#FF0000 0%,#FF0000 100%)',
+			marginTop: '4px'
+		}}
+		type="range"
+		min="0"
+		max={360}
+		value={Math.round(DEFAULT_COLOR_IN_HWB.h * 360) + ''}
+	/>
+
+	<label for={ElementIds.bdPick_hwbWhiteness} style="margin-top:12px">Whiteness: {Math.round(DEFAULT_COLOR_IN_HWB.w * 100)}%</label>
+	<input
+		id={ElementIds.bdPick_hwbWhiteness}
+		class={CSSClasses.pickerSlider}
+		style={{
+			'--hue': Math.round(DEFAULT_COLOR_IN_HWB.h * 360),
+			'--color': `hwb(${Math.round(DEFAULT_COLOR_IN_HWB.h * 360)} ${Math.round(DEFAULT_COLOR_IN_HWB.w * 100)}% 0%)`,
+			'--border-color': colorContrastRatio(hwbToRgb({...DEFAULT_COLOR_IN_HWB, b: 0}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
+			'--gradient': 'linear-gradient(to right,hwb(var(--hue) 0% 0%) 0%,#fff 100%)',
+			marginTop: '4px'
+		}}
+		type="range"
+		min="0"
+		max="100"
+		value={Math.round(DEFAULT_COLOR_IN_HWB.w * 100) + ''}
+	/>
+
+	<label for={ElementIds.bdPick_hwbBlackness} style="margin-top:12px">Blackness: {Math.round(DEFAULT_COLOR_IN_HWB.b * 100)}%</label>
+	<input
+		id={ElementIds.bdPick_hwbBlackness}
+		class={CSSClasses.pickerSlider}
+		style={{
+			'--hue': Math.round(DEFAULT_COLOR_IN_HWB.h * 360),
+			'--color': `hwb(${Math.round(DEFAULT_COLOR_IN_HWB.h * 360)} 0% ${Math.round(DEFAULT_COLOR_IN_HWB.b * 100)}%)`,
+			'--border-color': colorContrastRatio(hwbToRgb({...DEFAULT_COLOR_IN_HWB, w: 0}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
+			'--gradient': 'linear-gradient(to right,hwb(var(--hue) 0% 0%) 0%,#000 100%)',
+			marginTop: '4px'
+		}}
+		type="range"
+		min="0"
+		max="100"
+		value={Math.round(DEFAULT_COLOR_IN_HWB.b * 100) + ''}
+	/>
+</div>

@@ -2,9 +2,7 @@ export enum ColorPickerMode {
 	image = 'image',
 	rectangle = 'rectangle',
 	rectangleHsl = 'rectangle-hsl',
-	palette = 'palette',
 	spectrum = 'spectrum',
-	wheel = 'wheel',
 	sliderRgb = 'slider-rgb',
 	sliderHsl = 'slider-hsl',
 	sliderCmyk = 'slider-cmyk',
@@ -13,10 +11,11 @@ export enum ColorPickerMode {
 	sliderHwb = 'slider-hwb'
 }
 
-export enum Commands {
-	/** @param mode `ColorPickerMode` */
-	updateMode,
-
-	/** @param input `HSLColor` */
-	updateInput,
+export enum ColorSpace {
+	hex = 'hex',
+	rgb = 'rgb',
+	hsl = 'hsl',
+	hsv = 'hsv',
+	cmyk = 'cmyk',
+	hwb = 'hwb'
 }

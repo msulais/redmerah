@@ -1,0 +1,263 @@
+.body {
+	display: flex;
+	width: 100%;
+	height: 100%;
+	gap: 16px;
+	padding: 0 16px 16px 16px;
+	justify-content: center;
+	overflow: auto;
+}
+
+.pickerImageRect {
+	--color: #fff;
+	--border-color: #fff;
+	--position-x: 0%;
+	--position-y: 0%;
+	margin-top: 8px;
+	outline: 1px solid rgba(var(--g-color-on-surface),var(--g-opacity-border));
+	border-radius: 4px;
+	box-shadow: var(--g-elevation2);
+	position: relative;
+
+	&:focus-visible::after {
+		outline: auto;
+	}
+
+	&:not([data-no-image]) {
+		cursor: crosshair;
+	}
+
+	&[data-no-image] {
+		visibility: hidden;
+	}
+
+	&::after {
+		pointer-events: none;
+		content: '';
+		display: block;
+		left: var(--position-x);
+		top: var(--position-y);
+		translate: -50% -50%;
+		background-color: var(--color);
+		width: 20px;
+		height: 20px;
+		box-shadow: var(--g-elevation2);
+		border-radius: 50%;
+		border: 2px solid var(--border-color);
+		position: absolute;
+
+		:root[data-animation=on] & {
+			transition-property: border-color, background-color;
+			transition-duration: .25s;
+		}
+
+		@media (prefers-reduced-motion: no-preference) {
+			:root[data-animation=auto] & {
+				transition-property: border-color, background-color;
+				transition-duration: .25s;
+			}
+		}
+	}
+
+	> canvas {
+		border-radius: 4px;
+	}
+}
+
+.bodyInputs {
+	width: 280px;
+	display: flex !important; // override 'contents' in <Tooltip>
+	flex-direction: column;
+	gap: 8px;
+	position: sticky;
+	top: 0;
+
+	> [data-css-preview] {
+		width: calc(100% - 44px - 8px);
+		border-radius: 4px;
+		height: 32px;
+		margin-top: 21px;
+
+		:root[data-animation=on] & {
+			transition-property: background-color;
+			transition-duration: .25s;
+		}
+
+		@media (prefers-reduced-motion: no-preference) {
+			:root[data-animation=auto] & {
+				transition-property: background-color;
+				transition-duration: .25s;
+			}
+		}
+	}
+
+	> [data-css-group] {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+
+		> label {
+			width: 44px;
+			display: block;
+			margin-bottom: 2px;
+		}
+
+		> :global(.c-textfield) {
+			flex: 1;
+			padding-right: 2px;
+		}
+
+		& input {
+			padding-right: 0;
+		}
+	}
+}
+
+.bodyPicker {
+	width: 512px;
+
+	& label {
+		display: block;
+		margin-bottom: 2px;
+	}
+
+	& select {
+		width: 100%
+	}
+}
+
+.pickerRect {
+	--color: #fff;
+	--border-color: #fff;
+	--position-x: 0%;
+	--position-y: 0%;
+	width: 100%;
+	height: 280px;
+	margin-top: 8px;
+	border-radius: 4px;
+	box-shadow: var(--g-elevation2);
+	position: relative;
+	cursor: crosshair;
+	outline: none;
+
+	&:focus-visible {
+		&::after {
+			outline: auto;
+		}
+	}
+
+	&::after {
+		pointer-events: none;
+		content: '';
+		display: block;
+		left: var(--position-x);
+		top: var(--position-y);
+		translate: -50% -50%;
+		background-color: var(--color);
+		width: 20px;
+		height: 20px;
+		box-shadow: var(--g-elevation2);
+		border-radius: 50%;
+		border: 2px solid var(--border-color);
+		position: absolute;
+
+		:root[data-animation=on] & {
+			transition-property: border-color, background-color;
+			transition-duration: .25s;
+		}
+
+		@media (prefers-reduced-motion: no-preference) {
+			:root[data-animation=auto] & {
+				transition-property: border-color, background-color;
+				transition-duration: .25s;
+			}
+		}
+	}
+}
+
+.pickerSlider {
+	--gradient: #fff;
+	--color: #fff;
+	--border-color: #fff;
+	-webkit-appearance: none;
+	appearance: none;
+	width: 100%;
+	background-color: transparent;
+	border-radius: 999px;
+
+	&::-webkit-slider-runnable-track {
+		-webkit-appearance: none;
+		appearance: none;
+		cursor: pointer;
+		height: 12px;
+		box-shadow: var(--g-elevation1);
+		border-radius: 9999px;
+		background: var(--gradient);
+	}
+
+	&::-moz-range-track {
+		appearance: none;
+		height: 12px;
+		cursor: pointer;
+		box-shadow: var(--g-elevation1);
+		border-radius: 9999px;
+		background: var(--gradient);
+	}
+
+	&::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		position: relative;
+		cursor: pointer;
+		top: -4px;
+		width: 20px;
+		box-shadow: var(--g-elevation2);
+		height: 20px;
+		border-radius: 50%;
+		border: 2px solid var(--border-color);
+		background: var(--color);
+
+		:root[data-animation=on] & {
+			transition-property: border-color, background-color;
+			transition-duration: .25s;
+		}
+
+		@media (prefers-reduced-motion: no-preference) {
+			:root[data-animation=auto] & {
+				transition-property: border-color, background-color;
+				transition-duration: .25s;
+			}
+		}
+
+		&:active {
+			cursor: pointer;
+		}
+	}
+
+	&::-moz-range-thumb {
+		position: relative;
+		cursor: pointer;
+		top: -4px;
+		box-shadow: var(--g-elevation2);
+		width: 20px;
+		height: 20px;
+		border-radius: 50%;
+		border: 2px solid var(--border-color);
+		background: var(--color);
+
+		:root[data-animation=on] & {
+			transition-property: border-color, background-color;
+			transition-duration: .25s;
+		}
+
+		@media (prefers-reduced-motion: no-preference) {
+			:root[data-animation=auto] & {
+				transition-property: border-color, background-color;
+				transition-duration: .25s;
+			}
+		}
+
+		&:active {
+			cursor: pointer;
+		}
+	}
+}
