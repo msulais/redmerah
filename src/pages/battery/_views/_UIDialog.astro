@@ -3,10 +3,11 @@ import Dialog from '@/native-components/Dialog/index.astro'
 import Button from '@/native-components/Button/index.astro'
 import LinkButton from '@/native-components/Button/LinkButton.astro'
 import { ButtonVariant } from '@/native-components/Button/'
-import { ElementIds, Links } from '../_scripts/_enums'
+import { Links } from '../_scripts/_shared/_enums'
+import { ElementIds } from '../_scripts/_shared/_ids'
 ---
 
-<Dialog id={ElementIds.dialogBrowserNotSupported} style="width:500px">
+<Dialog id={ElementIds.dlg_browseNotSupported} style="width:500px">
 	<Fragment slot="header">Browser not supported</Fragment>
 	<p>Battery API not fully supported in your browser. Some features may not function correctly.</p>
 	<form method="dialog" slot="footer" style="display:contents">
