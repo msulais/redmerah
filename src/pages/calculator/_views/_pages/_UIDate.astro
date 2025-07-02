@@ -13,45 +13,45 @@ import { ElementIds } from '../../_scripts/_shared/_ids'
 import { DateOperation } from '../../_scripts/_shared/_enums'
 ---
 
-<div id={ElementIds.bodyDate} role="tabpanel" class={CSSClasses.bodyPageDate} hidden>
-	<label for={ElementIds.bodyDateOperation}>Operation</label>
-	<ComboBox id={ElementIds.bodyDateOperation} style="width:256px;margin-top:4px;margin-bottom:16px">
+<div id={ElementIds.bd_date} role="tabpanel" class={CSSClasses.bdPage_date} hidden>
+	<label for={ElementIds.bdDate_operation}>Operation</label>
+	<ComboBox id={ElementIds.bdDate_operation} style="width:256px;margin-top:4px;margin-bottom:16px">
 		<ComboBoxOption value={DateOperation.add}>Add</ComboBoxOption>
 		<ComboBoxOption value={DateOperation.subtract}>Subtract</ComboBoxOption>
 		<ComboBoxOption value={DateOperation.difference} selected>Difference</ComboBoxOption>
 	</ComboBox>
-	<label for={ElementIds.bodyDateInputFromButton}>From</label>
+	<label for={ElementIds.bdDateInp_fromBtn}>From</label>
 	<Button
 		style="margin:4px 0 16px 0;width:256px"
-		id={ElementIds.bodyDateInputFromButton}
+		id={ElementIds.bdDateInp_fromBtn}
 		ButtonVariant={ButtonVariant.tonal}
-		popovertarget={ElementIds.bodyDateInputFromDatePicker}>
+		popovertarget={ElementIds.bdDateInp_fromDatePicker}>
 		<span style="display:block">{new Date().toLocaleDateString('en', {day:'numeric', month: 'long', year: 'numeric'})}</span>
 		<div style="flex:1"/>
 		<Icon IconCode={IconCodes.calendar}/>
 	</Button>
 	<DatePicker
-		id={ElementIds.bodyDateInputFromDatePicker}
-		PopoverAnchorBy={ElementIds.bodyDateInputFromButton}
+		id={ElementIds.bdDateInp_fromDatePicker}
+		PopoverAnchorBy={ElementIds.bdDateInp_fromBtn}
 		PopoverPosition={FlyoutPosition.centerBottomToRight}
 		PopoverGap={8}
 		PopoverPadding={13}
 	/>
 
-	<div style="display: contents" id={ElementIds.bodyDateOperationDifference}>
-		<label for={ElementIds.bodyDateInputToButton}>To</label>
+	<div style="display: contents" id={ElementIds.bdDateOp_diff}>
+		<label for={ElementIds.bdDateInp_toBtn}>To</label>
 		<Button
 			style="margin:4px 0 16px 0;width:256px"
-			id={ElementIds.bodyDateInputToButton}
+			id={ElementIds.bdDateInp_toBtn}
 			ButtonVariant={ButtonVariant.tonal}
-			popovertarget={ElementIds.bodyDateInputToDatePicker}>
+			popovertarget={ElementIds.bdDateInp_toDatePicker}>
 			<span style="display:block">{new Date().toLocaleDateString('en', {day:'numeric', month: 'long', year: 'numeric'})}</span>
 			<div style="flex:1"/>
 			<Icon IconCode={IconCodes.calendar}/>
 		</Button>
 		<DatePicker
-			id={ElementIds.bodyDateInputToDatePicker}
-			PopoverAnchorBy={ElementIds.bodyDateInputToButton}
+			id={ElementIds.bdDateInp_toDatePicker}
+			PopoverAnchorBy={ElementIds.bdDateInp_toBtn}
 			PopoverPosition={FlyoutPosition.centerBottomToRight}
 			PopoverGap={8}
 			PopoverPadding={13}
@@ -64,29 +64,29 @@ import { DateOperation } from '../../_scripts/_shared/_enums'
 		'width:256px',
 		'gap: 8px',
 		'margin-bottom:16px'
-	].join(';')} id={ElementIds.bodyDateOperationAddSubtract}>
+	].join(';')} id={ElementIds.bdDateOp_addSub}>
 		<div>
-			<label for={ElementIds.bodyDateInputYears}>Years</label>
+			<label for={ElementIds.bdDateInp_years}>Years</label>
 			<TextField
 				style="margin-top:4px"
-				TextFieldInputAttr={{id: ElementIds.bodyDateInputYears, type: 'number', min: '0', value: '0'}}
+				TextFieldInputAttr={{id: ElementIds.bdDateInp_years, type: 'number', min: '0', value: '0'}}
 			/>
 		</div>
 		<div>
-			<label for={ElementIds.bodyDateInputMonths}>Months</label>
+			<label for={ElementIds.bdDateInp_months}>Months</label>
 			<TextField
 				style="margin-top:4px"
-				TextFieldInputAttr={{id: ElementIds.bodyDateInputMonths, type: 'number', min: '0', value: '0'}}
+				TextFieldInputAttr={{id: ElementIds.bdDateInp_months, type: 'number', min: '0', value: '0'}}
 			/>
 		</div>
 		<div>
-			<label for={ElementIds.bodyDateInputDays}>Days</label>
+			<label for={ElementIds.bdDateInp_days}>Days</label>
 			<TextField
 				style="margin-top:4px"
-				TextFieldInputAttr={{id: ElementIds.bodyDateInputDays, type: 'number', min: '0', value: '0'}}
+				TextFieldInputAttr={{id: ElementIds.bdDateInp_days, type: 'number', min: '0', value: '0'}}
 			/>
 		</div>
 	</div>
-	<label for={ElementIds.bodyDateOutput}>Result</label>
-	<output id={ElementIds.bodyDateOutput}>Same date</output>
+	<label for={ElementIds.bdDate_output}>Result</label>
+	<output id={ElementIds.bdDate_output}>Same date</output>
 </div>

@@ -20,7 +20,7 @@ export type MemoryStoreType = Readonly<{
 export const MemoryStore = new ObservableStore<MemoryStoreType>({
 	value: 0
 })
-const _memoryRecallRefs = $$$<HTMLElement>(`.${CSSClasses.bodyPageMemoryPreview}`)
+const _memoryRecallRefs = $$$<HTMLElement>(`.${CSSClasses.bdPage_memoPreview}`)
 
 export function recallMemory(): void {
 	const memory = MemoryStore.value.value
@@ -57,7 +57,7 @@ export function recallMemory(): void {
 	}
 }
 
-export function updateMemeory(type: 'add' | 'min'): void {
+export function updateMemory(type: 'add' | 'min'): void {
 	let output: number | null = null
 	switch (NavigationStore.value.page) {
 	case Pages.basic:

@@ -7,7 +7,7 @@ import { ConverterStore } from "../_features/_converter"
 import { ScientificStore } from "../_features/_scientific"
 import { formatOutput } from "./_string-utils"
 import { numberToBinary } from "@/utils/number"
-import { clearMemory, recallMemory, updateMemeory } from "./_memory"
+import { clearMemory, recallMemory, updateMemory } from "./_memory"
 
 export function insertKeyBackspace(): void {
 	switch (NavigationStore.value.page) {
@@ -204,13 +204,13 @@ function _initEvents(): void {
 
 			// Ctrl + Shift + '+'
 			else if (key === KeyboardValue.plus) {
-				updateMemeory('add')
+				updateMemory('add')
 				return prevent()
 			}
 
 			// Ctrl + Shift + '-'
 			else if (key === KeyboardValue.underscore) {
-				updateMemeory('min')
+				updateMemory('min')
 				return prevent()
 			}
 		}

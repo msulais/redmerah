@@ -112,124 +112,135 @@ export function convertUnit(
 	inputUnit: ConverterUnit,
 	outputUnit: ConverterUnit,
 ): number {
+	const isEqual = (unit: ConverterUnit, from = inputUnit) => from.equals(unit)
 	if (type == ConverterType.angle) {
 		let degree: number = 0
-		if (inputUnit.equals(AngleUnits.degree)) degree = input
-		else if (inputUnit.equals(AngleUnits.radian)) degree = input * 180 / Math.PI
-		else if (inputUnit.equals(AngleUnits.gradian)) degree = input * 9 / 10
+		if (isEqual(AngleUnits.degree)) degree = input
+		else if (isEqual(AngleUnits.radian)) degree = input * 180 / Math.PI
+		else if (isEqual(AngleUnits.gradian)) degree = input * 9 / 10
 
-		if (outputUnit.equals(AngleUnits.degree)) return degree
-		if (outputUnit.equals(AngleUnits.radian)) return degree * Math.PI / 180
-		if (outputUnit.equals(AngleUnits.gradian)) return degree * 10 / 9
+		if (isEqual(AngleUnits.degree)) return degree
+		if (isEqual(AngleUnits.radian)) return degree * Math.PI / 180
+		if (isEqual(AngleUnits.gradian)) return degree * 10 / 9
 
 		return input
 	}
 	if (type == ConverterType.temperature) {
 		let celsius: number = 0
-		if (inputUnit.equals(TemperatureUnits.celcius)) celsius = input
-		else if (inputUnit.equals(TemperatureUnits.kelvin)) celsius = input - 273.15
-		else if (inputUnit.equals(TemperatureUnits.reamur)) celsius = input * 5 / 4
-		else if (inputUnit.equals(TemperatureUnits.fahrenheit)) celsius = (input - 32) * 5 / 9
-		else if (inputUnit.equals(TemperatureUnits.romer)) celsius = (input - 7.5) * 40 / 21
-		else if (inputUnit.equals(TemperatureUnits.rankine)) celsius = (input - 491.67) * 5 / 9
-		else if (inputUnit.equals(TemperatureUnits.delisle)) celsius = 100 - input * 2 / 3
+		if (isEqual(TemperatureUnits.celcius)) celsius = input
+		else if (isEqual(TemperatureUnits.kelvin)) celsius = input - 273.15
+		else if (isEqual(TemperatureUnits.reamur)) celsius = input * 5 / 4
+		else if (isEqual(TemperatureUnits.fahrenheit)) celsius = (input - 32) * 5 / 9
+		else if (isEqual(TemperatureUnits.romer)) celsius = (input - 7.5) * 40 / 21
+		else if (isEqual(TemperatureUnits.rankine)) celsius = (input - 491.67) * 5 / 9
+		else if (isEqual(TemperatureUnits.delisle)) celsius = 100 - input * 2 / 3
 
-		if (outputUnit.equals(TemperatureUnits.celcius)) return celsius
-		if (outputUnit.equals(TemperatureUnits.kelvin)) return celsius + 273.15
-		if (outputUnit.equals(TemperatureUnits.reamur)) return celsius * 4 / 5
-		if (outputUnit.equals(TemperatureUnits.fahrenheit)) return celsius * 9 / 5 + 32
-		if (outputUnit.equals(TemperatureUnits.romer)) return celsius * 21 / 40 + 7.5
-		if (outputUnit.equals(TemperatureUnits.rankine)) return (celsius + 273.15) * 9 / 5
-		if (outputUnit.equals(TemperatureUnits.delisle)) return (100 - celsius) * 3 / 2
+		if (isEqual(TemperatureUnits.celcius, outputUnit)) return celsius
+		if (isEqual(TemperatureUnits.kelvin, outputUnit)) return celsius + 273.15
+		if (isEqual(TemperatureUnits.reamur, outputUnit)) return celsius * 4 / 5
+		if (isEqual(TemperatureUnits.fahrenheit, outputUnit)) return celsius * 9 / 5 + 32
+		if (isEqual(TemperatureUnits.romer, outputUnit)) return celsius * 21 / 40 + 7.5
+		if (isEqual(TemperatureUnits.rankine, outputUnit)) return (celsius + 273.15) * 9 / 5
+		if (isEqual(TemperatureUnits.delisle, outputUnit)) return (100 - celsius) * 3 / 2
 
 		return input
 	}
 
-	console.log(input + '\n', outputUnit, '\n', inputUnit, '\n', input * outputUnit.value / inputUnit.value)
 	return input * outputUnit.value / inputUnit.value
 }
 
 export function calculate(input: string): string {
 	const pages = NavigationStore.value
+	const fnRegex = new RegExp(String.raw`(${FUNCTION_REGEX})\(([+-]?${NUMBER_REGEX})\)`)
+	const bracketRegex = new RegExp(String.raw`(?<!${FUNCTION_REGEX})\(([+-]?${NUMBER_REGEX})\)`)
+	const sqrtRegex = /√([-+]?\d+(?:\.\d+)?)/g
+	const percentRegex = /(\d+(?:\.\d+)?)%/g
+	const factorialRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)!/g
+	const expRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)\^([+-]?\d+(?:\.\d+)?)/
+	const expReverseRegex = /((?:\d+\.)?\d+[+-]?)\^((?:\d+\.)?\d+(?:[-+](?!\d))?)/
+	const lshRshRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)(lsh|rsh|<<|>>)([+-]?\d+(?:\.\d+)?)/
+	const andRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)(?:&|and)([+-]?\d+(?:\.\d+)?)/
+	const orRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)(?:\||or)([+-]?\d+(?:\.\d+)?)/
+	const xorRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)xor([+-]?\d+(?:\.\d+)?)/
+	const addSubRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)([+-])([+-]?\d+(?:\.\d+)?)/
+	const divMulModRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)([*×\/÷]|mod)([+-]?\d+(?:\.\d+)?)/
+	const fnOperation = (input: string) => input.replace(fnRegex, (_, fnName, value) => {
+		let parsedValue: number = Number.parseFloat(value)
+		const angleToRadian = (value: number) => {
+			if (pages.page !== Pages.scientific) return value
+
+			const angle = ScientificStore.value.angle
+			let unit: ConverterUnit = AngleUnits.radian
+			if (angle === ScientificAngleType.DEG) unit = AngleUnits.degree
+			else if (angle === ScientificAngleType.GRAD) unit = AngleUnits.gradian
+
+			return convertUnit(value, ConverterType.angle, unit, AngleUnits.radian)
+		}
+		const radianToAngle = (value: number) => {
+			if (pages.page !== Pages.scientific) return value
+
+			const angle = ScientificStore.value.angle
+			let unit: ConverterUnit = AngleUnits.radian
+			if (angle == ScientificAngleType.DEG) unit = AngleUnits.degree
+			else if (angle == ScientificAngleType.GRAD) unit = AngleUnits.gradian
+
+			return convertUnit(value, ConverterType.angle, AngleUnits.radian, unit)
+		}
+
+		switch (fnName) {
+		case 'not': parsedValue = ~parsedValue; break
+		case 'abs': parsedValue = Math.abs(parsedValue); break
+		case 'log': parsedValue = Math.log10(parsedValue); break
+		case 'ln': parsedValue = Math.log(parsedValue); break
+		case 'ceil': parsedValue = Math.ceil(parsedValue); break
+		case 'floor': parsedValue = Math.floor(parsedValue); break
+		case 'round': parsedValue = Math.round(parsedValue); break
+		case 'sqrt': parsedValue = Math.sqrt(parsedValue); break
+		case 'sin': parsedValue = Math.sin(angleToRadian(parsedValue)); break
+		case 'cos': parsedValue = Math.cos(angleToRadian(parsedValue)); break
+		case 'tan': parsedValue = Math.tan(angleToRadian(parsedValue)); break
+		case 'csc': parsedValue = Math_csc(angleToRadian(parsedValue)); break
+		case 'sec': parsedValue = Math_sec(angleToRadian(parsedValue)); break
+		case 'cot': parsedValue = Math_cot(angleToRadian(parsedValue)); break
+		case 'sinh': parsedValue = Math.sinh(angleToRadian(parsedValue)); break
+		case 'cosh': parsedValue = Math.cosh(angleToRadian(parsedValue)); break
+		case 'tanh': parsedValue = Math.tanh(angleToRadian(parsedValue)); break
+		case 'csch': parsedValue = Math_csch(angleToRadian(parsedValue)); break
+		case 'sech': parsedValue = Math_sech(angleToRadian(parsedValue)); break
+		case 'coth': parsedValue = Math_coth(angleToRadian(parsedValue)); break
+		case 'asin': parsedValue = radianToAngle(Math.asin(parsedValue)); break
+		case 'acos': parsedValue = radianToAngle(Math.acos(parsedValue)); break
+		case 'atan': parsedValue = radianToAngle(Math.atan(parsedValue)); break
+		case 'acsc': parsedValue = radianToAngle(Math_acsc(parsedValue)); break
+		case 'asec': parsedValue = radianToAngle(Math_asec(parsedValue)); break
+		case 'acot': parsedValue = radianToAngle(Math_acot(parsedValue)); break
+		case 'asinh': parsedValue = radianToAngle(Math.asinh(parsedValue)); break
+		case 'acosh': parsedValue = radianToAngle(Math.acosh(parsedValue)); break
+		case 'atanh': parsedValue = radianToAngle(Math.atanh(parsedValue)); break
+		case 'acsch': parsedValue = radianToAngle(Math_acsch(parsedValue)); break
+		case 'asech': parsedValue = radianToAngle(Math_asech(parsedValue)); break
+		case 'acoth': parsedValue = radianToAngle(Math_acoth(parsedValue)); break
+		}
+		return numberToRealDigits(parsedValue)
+	})
 	input = repairInput(input)
 	try {
 		while (true) {
 			let hasOperation = false
 
 			// function operation
-			const functionRegex = new RegExp(String.raw`(${FUNCTION_REGEX})\(([+-]?${NUMBER_REGEX})\)`)
-			while (functionRegex.test(input)) {
+			while (fnRegex.test(input)) {
 				hasOperation = true
-				input = input.replace(functionRegex, (_, fnName, value) => {
-					let parsedValue: number = Number.parseFloat(value)
-					const angleToRadian = (value: number) => {
-						if (pages.page !== Pages.scientific) return value
-
-						const angle = ScientificStore.value.angle
-						let unit: ConverterUnit = AngleUnits.radian
-						if (angle === ScientificAngleType.DEG) unit = AngleUnits.degree
-						else if (angle === ScientificAngleType.GRAD) unit = AngleUnits.gradian
-
-						return convertUnit(value, ConverterType.angle, unit, AngleUnits.radian)
-					}
-					const radianToAngle = (value: number) => {
-						if (pages.page !== Pages.scientific) return value
-
-						const angle = ScientificStore.value.angle
-						let unit: ConverterUnit = AngleUnits.radian
-						if (angle == ScientificAngleType.DEG) unit = AngleUnits.degree
-						else if (angle == ScientificAngleType.GRAD) unit = AngleUnits.gradian
-
-						return convertUnit(value, ConverterType.angle, AngleUnits.radian, unit)
-					}
-
-					switch (fnName) {
-					case 'not': parsedValue = ~parsedValue; break
-					case 'abs': parsedValue = Math.abs(parsedValue); break
-					case 'log': parsedValue = Math.log10(parsedValue); break
-					case 'ln': parsedValue = Math.log(parsedValue); break
-					case 'ceil': parsedValue = Math.ceil(parsedValue); break
-					case 'floor': parsedValue = Math.floor(parsedValue); break
-					case 'round': parsedValue = Math.round(parsedValue); break
-					case 'sqrt': parsedValue = Math.sqrt(parsedValue); break
-					case 'sin': parsedValue = Math.sin(angleToRadian(parsedValue)); break
-					case 'cos': parsedValue = Math.cos(angleToRadian(parsedValue)); break
-					case 'tan': parsedValue = Math.tan(angleToRadian(parsedValue)); break
-					case 'csc': parsedValue = Math_csc(angleToRadian(parsedValue)); break
-					case 'sec': parsedValue = Math_sec(angleToRadian(parsedValue)); break
-					case 'cot': parsedValue = Math_cot(angleToRadian(parsedValue)); break
-					case 'sinh': parsedValue = Math.sinh(angleToRadian(parsedValue)); break
-					case 'cosh': parsedValue = Math.cosh(angleToRadian(parsedValue)); break
-					case 'tanh': parsedValue = Math.tanh(angleToRadian(parsedValue)); break
-					case 'csch': parsedValue = Math_csch(angleToRadian(parsedValue)); break
-					case 'sech': parsedValue = Math_sech(angleToRadian(parsedValue)); break
-					case 'coth': parsedValue = Math_coth(angleToRadian(parsedValue)); break
-					case 'asin': parsedValue = radianToAngle(Math.asin(parsedValue)); break
-					case 'acos': parsedValue = radianToAngle(Math.acos(parsedValue)); break
-					case 'atan': parsedValue = radianToAngle(Math.atan(parsedValue)); break
-					case 'acsc': parsedValue = radianToAngle(Math_acsc(parsedValue)); break
-					case 'asec': parsedValue = radianToAngle(Math_asec(parsedValue)); break
-					case 'acot': parsedValue = radianToAngle(Math_acot(parsedValue)); break
-					case 'asinh': parsedValue = radianToAngle(Math.asinh(parsedValue)); break
-					case 'acosh': parsedValue = radianToAngle(Math.acosh(parsedValue)); break
-					case 'atanh': parsedValue = radianToAngle(Math.atanh(parsedValue)); break
-					case 'acsch': parsedValue = radianToAngle(Math_acsch(parsedValue)); break
-					case 'asech': parsedValue = radianToAngle(Math_asech(parsedValue)); break
-					case 'acoth': parsedValue = radianToAngle(Math_acoth(parsedValue)); break
-					}
-					return numberToRealDigits(parsedValue)
-				})
+				input = fnOperation(input)
 			}
 
 			// remove brackets
-			const bracketsRegex = new RegExp(String.raw`(?<!${FUNCTION_REGEX})\(([+-]?${NUMBER_REGEX})\)`)
-			while (bracketsRegex.test(input)) {
+			while (bracketRegex.test(input)) {
 				hasOperation = true
-				input = input.replace(bracketsRegex, (_, num1) => num1)
+				input = input.replace(bracketRegex, (_, num1) => num1)
 			}
 
 			// square root operation
-			const sqrtRegex = /√([-+]?\d+(?:\.\d+)?)/g
 			while (sqrtRegex.test(input)){
 				hasOperation = true
 				input = input.replace(sqrtRegex, (_, num1) => {
@@ -240,17 +251,15 @@ export function calculate(input: string): string {
 			}
 
 			// percentage operation
-			const percentageRegex = /(\d+(?:\.\d+)?)%/g
-			while (percentageRegex.test(input)){
+			while (percentRegex.test(input)){
 				hasOperation = true
 				input = input.replace(
-					percentageRegex,
+					percentRegex,
 					(_, num1) => numberToRealDigits(Number.parseFloat(num1) / 100)
 				)
 			}
 
 			// factorial operation
-			const factorialRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)!/g
 			while (factorialRegex.test(input)){
 				hasOperation = true
 				input = input.replace(factorialRegex, (_, num1) => {
@@ -267,8 +276,6 @@ export function calculate(input: string): string {
 			}
 
 			// exponential operation
-			const expRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)\^([+-]?\d+(?:\.\d+)?)/
-			const expReverseRegex = /((?:\d+\.)?\d+[+-]?)\^((?:\d+\.)?\d+(?:[-+](?!\d))?)/
 			const match = input.match(expRegex)
 			if (match) {
 				hasOperation = true
@@ -287,7 +294,6 @@ export function calculate(input: string): string {
 			}
 
 			// division & multiplication & modulus operation
-			const divMulModRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)([*×\/÷]|mod)([+-]?\d+(?:\.\d+)?)/
 			while (divMulModRegex.test(input)) {
 				hasOperation = true
 				input = input.replace(divMulModRegex, (_, num1, operator, num2) => {
@@ -300,7 +306,6 @@ export function calculate(input: string): string {
 
 
 			// addition & substraction operation
-			const addSubRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)([+-])([+-]?\d+(?:\.\d+)?)/
 			while (addSubRegex.test(input)) {
 				hasOperation = true
 				input = input.replace(addSubRegex, (_, num1, operator, num2) => {
@@ -311,7 +316,6 @@ export function calculate(input: string): string {
 			}
 
 			// shifting operation
-			const lshRshRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)(lsh|rsh|<<|>>)([+-]?\d+(?:\.\d+)?)/
 			while (lshRshRegex.test(input)) {
 				hasOperation = true
 				input = input.replace(lshRshRegex, (_, num1, operator, num2) => {
@@ -325,7 +329,6 @@ export function calculate(input: string): string {
 			}
 
 			// and operation
-			const andRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)(?:&|and)([+-]?\d+(?:\.\d+)?)/
 			while (andRegex.test(input)) {
 				hasOperation = true
 				input = input.replace(andRegex, (_, num1, num2) =>  {
@@ -335,7 +338,6 @@ export function calculate(input: string): string {
 			}
 
 			// xor operation
-			const xorRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)xor([+-]?\d+(?:\.\d+)?)/
 			while (xorRegex.test(input)) {
 				hasOperation = true
 				input = input.replace(xorRegex, (_, num1, num2) => {
@@ -345,7 +347,6 @@ export function calculate(input: string): string {
 			}
 
 			// or operation
-			const orRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)(?:\||or)([+-]?\d+(?:\.\d+)?)/
 			while (orRegex.test(input)) {
 				hasOperation = true
 				input = input.replace(orRegex, (_, num1, num2) => {

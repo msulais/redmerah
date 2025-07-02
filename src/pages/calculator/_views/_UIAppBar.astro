@@ -25,7 +25,7 @@ import { DecimalNumberFormat, GroupingNumberFormat } from '../_scripts/_shared/_
 <AppBar id={ElementIds.appbar}>
 	<Fragment slot="leading">
 		<IconButton
-			id={ElementIds.appbarSideBarButton}
+			id={ElementIds.ap_sideBarBtn}
 			IconButtonCode={IconCodes.lineHorizontal3}
 		/>
 		<img
@@ -38,16 +38,16 @@ import { DecimalNumberFormat, GroupingNumberFormat } from '../_scripts/_shared/_
 	<Fragment slot="headline">{APP.name}</Fragment>
 	<Tooltip slot="trailing">
 		<IconButton
-			id={ElementIds.appbarInfoButton}
+			id={ElementIds.apInf_btn}
 			data-tooltip="Info"
 			IconButtonCode={IconCodes.info}
 			aria-label="Info"
 			aria-haspopup="menu"
-			aria-controls={ElementIds.appbarInfoMenu}
-			popovertarget={ElementIds.appbarInfoMenu}
+			aria-controls={ElementIds.apInf_menu}
+			popovertarget={ElementIds.apInf_menu}
 			aria-expanded="false"
 		/>
-		<Menu id={ElementIds.appbarInfoMenu} PopoverAnchorBy={ElementIds.appbarInfoButton}>
+		<Menu id={ElementIds.apInf_menu} PopoverAnchorBy={ElementIds.apInf_btn}>
 			<LinkMenuItem href="/">
 				<img src={logoRedmerah.src} width="16"/>
 				Redmerah
@@ -75,7 +75,7 @@ import { DecimalNumberFormat, GroupingNumberFormat } from '../_scripts/_shared/_
 				<MenuIndent />
 			</LinkMenuItem>
 			<Divider />
-			<MenuItem id={ElementIds.appbarInfoMenuShareButton}>
+			<MenuItem id={ElementIds.apInf_shareBtn}>
 				<Icon IconCode={IconCodes.shareAndroid}/>
 				Share
 				<MenuIndent />
@@ -94,27 +94,27 @@ import { DecimalNumberFormat, GroupingNumberFormat } from '../_scripts/_shared/_
 		</Menu>
 
 		<IconButton
-			id={ElementIds.appbarSettingsButton}
+			id={ElementIds.apSett_btn}
 			data-tooltip="Settings"
 			IconButtonCode={IconCodes.settings}
 			aria-label="Settings"
 			aria-haspopup="menu"
-			aria-controls={ElementIds.appbarSettingsMenu}
-			popovertarget={ElementIds.appbarSettingsMenu}
+			aria-controls={ElementIds.apSett_menu}
+			popovertarget={ElementIds.apSett_menu}
 			aria-expanded="false"
 		/>
-		<Menu id={ElementIds.appbarSettingsMenu} PopoverAnchorBy={ElementIds.appbarSettingsButton}>
+		<Menu id={ElementIds.apSett_menu} PopoverAnchorBy={ElementIds.apSett_btn}>
 			<SubMenuItem
-				popovertarget={ElementIds.appbarSettingsAnimationMenu}>
+				popovertarget={ElementIds.apSett_animationMenu}>
 				<Icon IconCode={IconCodes.playCircleHint}/>
 				Animation
 				<div style="flex:1"/>
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
-			<SubMenu slot="submenus" style="width:150px" id={ElementIds.appbarSettingsAnimationMenu}>
+			<SubMenu slot="submenus" style="width:150px" id={ElementIds.apSett_animationMenu}>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioNames.settingsAnimation,
+						name: RadioNames.sett_animation,
 						checked: true,
 						value: PlatformAnimationMode.auto
 					}}>
@@ -123,7 +123,7 @@ import { DecimalNumberFormat, GroupingNumberFormat } from '../_scripts/_shared/_
 				</RadioMenuItem>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioNames.settingsAnimation,
+						name: RadioNames.sett_animation,
 						value: PlatformAnimationMode.on
 					}}>
 					<Icon IconCode={IconCodes.videoClip}/>
@@ -131,7 +131,7 @@ import { DecimalNumberFormat, GroupingNumberFormat } from '../_scripts/_shared/_
 				</RadioMenuItem>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioNames.settingsAnimation,
+						name: RadioNames.sett_animation,
 						value: PlatformAnimationMode.off
 					}}>
 					<Icon IconCode={IconCodes.videoClipOff}/>
@@ -140,16 +140,16 @@ import { DecimalNumberFormat, GroupingNumberFormat } from '../_scripts/_shared/_
 			</SubMenu>
 
 			<SubMenuItem
-				popovertarget={ElementIds.appbarSettingsThemeMenu}>
+				popovertarget={ElementIds.apSett_themeMenu}>
 				<Icon IconCode={IconCodes.weatherSunny}/>
 				Theme
 				<div style="flex:1"/>
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
-			<SubMenu slot="submenus" style="width:150px" id={ElementIds.appbarSettingsThemeMenu}>
+			<SubMenu slot="submenus" style="width:150px" id={ElementIds.apSett_themeMenu}>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioNames.settingsTheme,
+						name: RadioNames.sett_theme,
 						checked: true,
 						value: PlatformThemeMode.auto
 					}}>
@@ -158,7 +158,7 @@ import { DecimalNumberFormat, GroupingNumberFormat } from '../_scripts/_shared/_
 				</RadioMenuItem>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioNames.settingsTheme,
+						name: RadioNames.sett_theme,
 						value: PlatformThemeMode.light
 					}}>
 					<Icon IconCode={IconCodes.weatherSunny}/>
@@ -166,7 +166,7 @@ import { DecimalNumberFormat, GroupingNumberFormat } from '../_scripts/_shared/_
 				</RadioMenuItem>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioNames.settingsTheme,
+						name: RadioNames.sett_theme,
 						value: PlatformThemeMode.dark
 					}}>
 					<Icon IconCode={IconCodes.weatherMoon}/>
@@ -175,56 +175,56 @@ import { DecimalNumberFormat, GroupingNumberFormat } from '../_scripts/_shared/_
 			</SubMenu>
 
 			<SubMenuItem
-				popovertarget={ElementIds.appbarSettingsGroupMenu}>
+				popovertarget={ElementIds.apSett_groupMenu}>
 				<Icon IconCode={IconCodes.numberRow}/>
 				Grouping
 				<div style="flex:1"/>
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
-			<SubMenu style="width:150px" slot="submenus" id={ElementIds.appbarSettingsGroupMenu}>
+			<SubMenu style="width:150px" slot="submenus" id={ElementIds.apSett_groupMenu}>
 				<RadioMenuItem
-					RadioMenuItemName={RadioNames.settingsGrouping}
+					RadioMenuItemName={RadioNames.sett_grouping}
 					RadioMenuItemValue={GroupingNumberFormat.comma}
 					RadioMenuItemChecked>
 					Comma
 				</RadioMenuItem>
 				<RadioMenuItem
-					RadioMenuItemName={RadioNames.settingsGrouping}
+					RadioMenuItemName={RadioNames.sett_grouping}
 					RadioMenuItemValue={GroupingNumberFormat.point}>
 					Point
 				</RadioMenuItem>
 				<RadioMenuItem
-					RadioMenuItemName={RadioNames.settingsGrouping}
+					RadioMenuItemName={RadioNames.sett_grouping}
 					RadioMenuItemValue={GroupingNumberFormat.space}>
 					Space
 				</RadioMenuItem>
 				<RadioMenuItem
-					RadioMenuItemName={RadioNames.settingsGrouping}
+					RadioMenuItemName={RadioNames.sett_grouping}
 					RadioMenuItemValue={GroupingNumberFormat.none}>
 					None
 				</RadioMenuItem>
 				<RadioMenuItem
-					RadioMenuItemName={RadioNames.settingsGrouping}
+					RadioMenuItemName={RadioNames.sett_grouping}
 					RadioMenuItemValue={GroupingNumberFormat.underscore}>
 					Underscore
 				</RadioMenuItem>
 			</SubMenu>
 
 			<SubMenuItem
-				popovertarget={ElementIds.appbarSettingsDecimalMenu}>
+				popovertarget={ElementIds.apSett_decMenu}>
 				<Icon IconCode={IconCodes.decimalArrowLeft}/>
 				Decimal
 				<div style="flex:1"/>
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
-			<SubMenu slot="submenus" style="width:150px" id={ElementIds.appbarSettingsDecimalMenu}>
+			<SubMenu slot="submenus" style="width:150px" id={ElementIds.apSett_decMenu}>
 				<RadioMenuItem
-					RadioMenuItemName={RadioNames.settingsDecimal}
+					RadioMenuItemName={RadioNames.sett_decimal}
 					RadioMenuItemValue={DecimalNumberFormat.comma}>
 					Comma
 				</RadioMenuItem>
 				<RadioMenuItem
-					RadioMenuItemName={RadioNames.settingsDecimal}
+					RadioMenuItemName={RadioNames.sett_decimal}
 					RadioMenuItemValue={DecimalNumberFormat.point}
 					RadioMenuItemChecked>
 					Point

@@ -20,46 +20,21 @@ export const NavigationStore = new ObservableStore<NavigationStoreType>({
 	page: Pages.basic
 })
 
-const _sideBarRef = $(ElementIds.navigationSideBar)
-const _drawerRef = $(ElementIds.navigationDrawer)
+const _sideBarRef = $(ElementIds.nav_sideBar)
+const _drawerRef = $(ElementIds.nav_drawer)
 
-function _initDrawerEvents(): void {
-	_drawerRef?.addEventListener('click', (ev) => {
-		const targetRef = (ev.target as HTMLElement).closest<HTMLButtonElement>(`.${DrawerClasses.button}[data-page]`)
-		if (!targetRef) return
-
-		const page = targetRef.dataset.page
-		if (!isValidEnumValue(page, Pages)) return
-
-		_drawerRef.hidePopover()
-		NavigationStore.update(v => ({...v, page: page as Pages}))
-	})
-}
-
-function _initSideBarEvents(): void {
-	_sideBarRef?.addEventListener('click', (ev) => {
-		const targetRef = (ev.target as HTMLElement).closest<HTMLButtonElement>(`.${SideBarClasses.button}[data-page]`)
-		if (!targetRef) return
-
-		const page = targetRef.dataset.page
-		if (!isValidEnumValue(page, Pages)) return
-
-		NavigationStore.update(v => ({...v, page: page as Pages}))
-	})
-}
-
-function _subscribePageChanges(v: NavigationStoreType, o: NavigationStoreType): void {
+function _subsPageChanges(v: NavigationStoreType, o: NavigationStoreType): void {
 	const page = v.page
 	if (page === o.page) return
 
 	saveStorageItem('page', page)
 }
 
-function _subscribePageRefView(v: NavigationStoreType, o: NavigationStoreType): void {
+function _subsPageView(v: NavigationStoreType, o: NavigationStoreType): void {
 	const page = v.page
 	if (page === o.page) return
 
-	const selectedPanelRef = $$<HTMLDivElement>(`:is(.${CSSClasses.bodyPage},.${CSSClasses.bodyPageDate})[role=tabpanel]:not([hidden])`)
+	const selectedPanelRef = $$<HTMLDivElement>(`:is(.${CSSClasses.bd_page},.${CSSClasses.bdPage_date})[role=tabpanel]:not([hidden])`)
 	const selectedTabRefs = $$$<HTMLButtonElement>(`:is(.${SideBarClasses.button},.${DrawerClasses.button})[aria-selected=true]`)
 	const targetTabRefs = $$$<HTMLButtonElement>(`:is(.${SideBarClasses.button},.${DrawerClasses.button})[data-page="${page}"]`)
 
@@ -128,12 +103,34 @@ function _subscribePageRefView(v: NavigationStoreType, o: NavigationStoreType): 
 }
 
 function _initSubscriber(): void {
-	NavigationStore.subscribe(_subscribePageChanges)
-	NavigationStore.subscribe(_subscribePageRefView)
+	NavigationStore.subscribe(_subsPageChanges)
+	NavigationStore.subscribe(_subsPageView)
+}
+
+function _initEvents(): void {
+	_sideBarRef?.addEventListener('click', (ev) => {
+		const targetRef = (ev.target as HTMLElement).closest<HTMLButtonElement>(`.${SideBarClasses.button}[data-page]`)
+		if (!targetRef) return
+
+		const page = targetRef.dataset.page
+		if (!isValidEnumValue(page, Pages)) return
+
+		NavigationStore.update(v => ({...v, page: page as Pages}))
+	})
+
+	_drawerRef?.addEventListener('click', (ev) => {
+		const targetRef = (ev.target as HTMLElement).closest<HTMLButtonElement>(`.${DrawerClasses.button}[data-page]`)
+		if (!targetRef) return
+
+		const page = targetRef.dataset.page
+		if (!isValidEnumValue(page, Pages)) return
+
+		_drawerRef.hidePopover()
+		NavigationStore.update(v => ({...v, page: page as Pages}))
+	})
 }
 
 export default () => {
-	_initDrawerEvents()
-	_initSideBarEvents()
+	_initEvents()
 	_initSubscriber()
 }

@@ -27,13 +27,13 @@ export const ConverterStore = new ObservableStore<ConverterStoreType>({
 	inputUnit: DEFAULT_CONVERTER_INPUT_UNIT,
 	outputUnit: DEFAULT_CONVERTER_OUTPUT_UNIT
 })
-const _inputRef      = $(ElementIds.bodyConverterInput) as HTMLInputElement
-const _outputRef     = $(ElementIds.bodyConverterOutput) as HTMLInputElement
-const _converterRef  = $(ElementIds.bodyConverterType) as ComboBoxElement
-const _inputUnitRef  = $(ElementIds.bodyConverterInputUnit) as ComboBoxElement
-const _outputUnitRef = $(ElementIds.bodyConverterOutputUnit) as ComboBoxElement
-let _timeCalculateId: number | NodeJS.Timeout | null = null
-let _timeSaveInputId: number | NodeJS.Timeout | null = null
+const _inputRef      = $(ElementIds.bdConv_input) as HTMLInputElement
+const _outputRef     = $(ElementIds.bdConv_output) as HTMLInputElement
+const _converterRef  = $(ElementIds.bdConv_type) as ComboBoxElement
+const _inputUnitRef  = $(ElementIds.bdConv_inputUnit) as ComboBoxElement
+const _outputUnitRef = $(ElementIds.bdConv_outputUnit) as ComboBoxElement
+let _timeCalculateId: NodeJS.Timeout | number | null = null
+let _timeSaveInputId: NodeJS.Timeout | number | null = null
 
 function _changeUnit(type: 'input' | 'output', unitId: string): void {
 	let units = LengthUnits.all
@@ -73,12 +73,12 @@ function _calculate(value: ConverterStoreType): void {
 	}, 50)
 }
 
-function _subscribeConverterChanges(value: ConverterStoreType, old: ConverterStoreType): void {
+function _subsConverterChanges(value: ConverterStoreType, old: ConverterStoreType): void {
 	const type = value.converter
 	if (type === old.converter) return;
 
 	let units = LengthUnits.all
-	saveStorageItem('calc/converter/type', type)
+	saveStorageItem('calc:converter/type', type)
 	switch (type) {
 	case ConverterType.length     : units = LengthUnits     .all; break
 	case ConverterType.area       : units = AreaUnits       .all; break
@@ -131,18 +131,18 @@ function _subscribeConverterChanges(value: ConverterStoreType, old: ConverterSto
 	}))
 }
 
-function _subscribeUnitChanges(value: ConverterStoreType, old: ConverterStoreType): void {
+function _subsUnitChanges(value: ConverterStoreType, old: ConverterStoreType): void {
 	if (
 		value.inputUnit.equals(old.inputUnit)
 		&& value.outputUnit.equals(old.outputUnit)
 	) return;
 
 	_calculate(value)
-	saveStorageItem('calc/converter/input-unit', value.inputUnit.id)
-	saveStorageItem('calc/converter/output-unit', value.outputUnit.id)
+	saveStorageItem('calc:converter/input-unit', value.inputUnit.id)
+	saveStorageItem('calc:converter/output-unit', value.outputUnit.id)
 }
 
-function _subscribeInputChanges(value: ConverterStoreType, old: ConverterStoreType) {
+function _subsInputChanges(value: ConverterStoreType, old: ConverterStoreType) {
 	const input = value.input
 	if (input === old.input) return
 
@@ -153,11 +153,11 @@ function _subscribeInputChanges(value: ConverterStoreType, old: ConverterStoreTy
 
 	_timeSaveInputId = setTimeout(() => {
 		_timeSaveInputId = null
-		saveStorageItem('calc/converter/input', input)
+		saveStorageItem('calc:converter/input', input)
 	}, 250)
 }
 
-function _subscribeInputRefView(value: ConverterStoreType) {
+function _subsInputView(value: ConverterStoreType) {
 	const input = value.input
 	if (input === _inputRef.value) return
 
@@ -165,7 +165,7 @@ function _subscribeInputRefView(value: ConverterStoreType) {
 	scrollInputToEnd(_inputRef)
 }
 
-function _subscribeOutputRefView(value: ConverterStoreType, old: ConverterStoreType) {
+function _subsOutputView(value: ConverterStoreType, old: ConverterStoreType) {
 	const output = value.output
 	if (output === null) return _outputRef.value = ''
 
@@ -178,21 +178,21 @@ function _subscribeOutputRefView(value: ConverterStoreType, old: ConverterStoreT
 	_outputRef.value = formattedOutput
 }
 
-function _subscribeConverterRefView(value: ConverterStoreType): void {
+function _subsConverterView(value: ConverterStoreType): void {
 	const converter = value.converter
 	if (converter === _converterRef.value) return
 
 	_converterRef.value = converter
 }
 
-function _subscribeInputUnitRefView(value: ConverterStoreType): void {
+function _subsInputUnitView(value: ConverterStoreType): void {
 	const id = value.inputUnit.id
 	if (id === _inputUnitRef.value) return
 
 	_inputUnitRef.value = id
 }
 
-function _subscribeOutputUnitRefView(value: ConverterStoreType): void {
+function _subsOutputUnitView(value: ConverterStoreType): void {
 	const id = value.outputUnit.id
 	if (id === _outputUnitRef.value) return
 
@@ -200,14 +200,14 @@ function _subscribeOutputUnitRefView(value: ConverterStoreType): void {
 }
 
 function _initSubscriber(): void {
-	ConverterStore.subscribe(_subscribeConverterChanges)
-	ConverterStore.subscribe(_subscribeUnitChanges)
-	ConverterStore.subscribe(_subscribeInputChanges)
-	ConverterStore.subscribe(_subscribeInputRefView)
-	ConverterStore.subscribe(_subscribeOutputRefView)
-	ConverterStore.subscribe(_subscribeConverterRefView)
-	ConverterStore.subscribe(_subscribeInputUnitRefView)
-	ConverterStore.subscribe(_subscribeOutputUnitRefView)
+	ConverterStore.subscribe(_subsConverterChanges)
+	ConverterStore.subscribe(_subsUnitChanges)
+	ConverterStore.subscribe(_subsInputChanges)
+	ConverterStore.subscribe(_subsInputView)
+	ConverterStore.subscribe(_subsOutputView)
+	ConverterStore.subscribe(_subsConverterView)
+	ConverterStore.subscribe(_subsInputUnitView)
+	ConverterStore.subscribe(_subsOutputUnitView)
 }
 
 function _initEvents(): void {

@@ -7,18 +7,18 @@ import { formatOutput } from "../_core/_string-utils"
 import { saveStorageItem } from "../_core/_database"
 
 export type BasicStoreType = Readonly<{
-	input    : string
-	output   : null | number
+	input: string
+	output: null | number
 }>
 
 export const BasicStore = new ObservableStore<BasicStoreType>({
 	input: '',
 	output: null,
 })
-const _inputRef = $(ElementIds.bodyBasicInput) as HTMLInputElement
-const _outputRef = $(ElementIds.bodyBasicOutput) as HTMLInputElement
-let _timeCalculateId: null | number | NodeJS.Timeout = null
-let _timeSaveInputId: null | number | NodeJS.Timeout = null
+const _inputRef = $(ElementIds.bdBas_input) as HTMLInputElement
+const _outputRef = $(ElementIds.bdBas_output) as HTMLInputElement
+let _timeCalculateId: NodeJS.Timeout | number | null = null
+let _timeSaveInputId: NodeJS.Timeout | number | null = null
 
 function _calculate(): void {
 	if (_timeCalculateId !== null) {
@@ -36,7 +36,7 @@ function _calculate(): void {
 	}, 50)
 }
 
-function _subscribeInputChanges(value: BasicStoreType, old: BasicStoreType) {
+function _subsInputChanges(value: BasicStoreType, old: BasicStoreType) {
 	const input = value.input
 	if (input === old.input) return
 
@@ -47,11 +47,11 @@ function _subscribeInputChanges(value: BasicStoreType, old: BasicStoreType) {
 
 	_timeSaveInputId = setTimeout(() => {
 		_timeSaveInputId = null
-		saveStorageItem('calc/basic/input', input)
+		saveStorageItem('calc:basic/input', input)
 	}, 250)
 }
 
-function _subscribeInputRefView(value: BasicStoreType) {
+function _subsInputView(value: BasicStoreType) {
 	const input = value.input
 	if (input === _inputRef.value) return
 
@@ -59,7 +59,7 @@ function _subscribeInputRefView(value: BasicStoreType) {
 	scrollInputToEnd(_inputRef)
 }
 
-function _subscribeOutputRefView(value: BasicStoreType, old: BasicStoreType) {
+function _subsOutputView(value: BasicStoreType, old: BasicStoreType) {
 	const output = value.output
 	if (output === null) return _outputRef.value = ''
 
@@ -73,9 +73,9 @@ function _subscribeOutputRefView(value: BasicStoreType, old: BasicStoreType) {
 }
 
 function _initSubscriber(): void {
-	BasicStore.subscribe(_subscribeInputChanges)
-	BasicStore.subscribe(_subscribeInputRefView)
-	BasicStore.subscribe(_subscribeOutputRefView)
+	BasicStore.subscribe(_subsInputChanges)
+	BasicStore.subscribe(_subsInputView)
+	BasicStore.subscribe(_subsOutputView)
 }
 
 export default () => {

@@ -2,22 +2,32 @@ import CSS from './_index.module.scss'
 
 export class CSSClasses {
 	static readonly body = CSS.body
-	static readonly bodyInputField = CSS.bodyInputField
-	static readonly bodyOutputField = CSS.bodyOutputField
-	static readonly bodyPage = CSS.bodyPage
-	static readonly bodyPageMemoryPreview = CSS.bodyPageMemoryPreview
-	static readonly bodyPageButtons = CSS.bodyPageButtons
-	static readonly bodyPageDate = CSS.bodyPageDate
-	static readonly bodyPageScientificMenuGrid = CSS.bodyPageScientificMenuGrid
-	static readonly bodyPageScientificTrigonometry = CSS.bodyPageScientificTrigonometry
-	static readonly bodyPageProgrammerButtonValue = 'bppb-value'
-	static readonly bodyPageProgrammerButtonHex = 'bppb-hex'
-	static readonly bodyPageProgrammerButtonDec = 'bppb-dec'
-	static readonly bodyPageProgrammerButtonOct = 'bppb-oct'
-	static readonly bodyPageProgrammerButtonBin = 'bppb-bin'
-	static readonly bodyPageProgrammerOutputGroup = CSS.bodyPageProgrammerOutputGroup
-	static readonly bodyPageInput = CSS.bodyPageInput
-	static readonly bodyPageOptions = CSS.bodyPageOptions
-	static readonly bodyPageOptionsGroup = CSS.bodyPageOptionsGroup
-	static readonly navigationSideBar = CSS.navigationSideBar
+
+	// bd = body
+	static readonly bd_inField = CSS.bodyInputField
+	static readonly bd_outField = CSS.bodyOutputField
+	static readonly bd_page = CSS.bodyPage
+
+	// bdPage = body page
+	static readonly bdPage_memoPreview = CSS.bodyPageMemoryPreview
+	static readonly bdPage_buttons = CSS.bodyPageButtons
+	static readonly bdPage_date = CSS.bodyPageDate
+	static readonly bdPage_input = CSS.bodyPageInput
+	static readonly bdPage_options = CSS.bodyPageOptions
+	static readonly bdPage_optionGroup = CSS.bodyPageOptionsGroup
+
+	// bdPageSci = body page scientific
+	static readonly bdPageSci_menuGrid = CSS.bodyPageScientificMenuGrid
+	static readonly bdPageSci_trigonometry = CSS.bodyPageScientificTrigonometry
+
+	// bdPageProg = body page programmer
+	static readonly bdPageProg_btnValue = 'bppb-value'
+	static readonly bdPageProg_btnHex = 'bppb-hex'
+	static readonly bdPageProg_btnDec = 'bppb-dec'
+	static readonly bdPageProg_btnOct = 'bppb-oct'
+	static readonly bdPageProg_btnBin = 'bppb-bin'
+	static readonly bdPageProg_outputGroup = CSS.bodyPageProgrammerOutputGroup
+
+	// nav = navigation
+	static readonly nav_sideBar = CSS.navigationSideBar
 }

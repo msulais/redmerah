@@ -1,6 +1,6 @@
 import { Commands } from "../_shared/_commands"
 import { insertKeyBackspace, insertKeyChar, insertKeyClear, insertKeyEqual, insertKeyPlusMinus, insertKeySwap } from "./_key-input"
-import { clearMemory, recallMemory, updateMemeory } from "./_memory"
+import { clearMemory, recallMemory, updateMemory } from "./_memory"
 import { SettingsStore } from "./_settings"
 
 function _initCommandsEvents(): void {
@@ -14,40 +14,40 @@ function _initCommandsEvents(): void {
 		const dataset = target.dataset
 		const type = dataset.command as Commands
 		switch (type) {
-		case Commands.memoryAdd:
-			updateMemeory('add')
+		case Commands.memo_add:
+			updateMemory('add')
 			break
-		case Commands.memorySubtract:
-			updateMemeory('min')
+		case Commands.memo_sub:
+			updateMemory('min')
 			break
-		case Commands.memoryRecall:
+		case Commands.memo_recall:
 			recallMemory()
 			break
-		case Commands.memoryClear:
+		case Commands.memo_clear:
 			clearMemory()
 			break
-		case Commands.keyChar: {
+		case Commands.key_char: {
 			const char = dataset.char
 			if (!char) break
 
 			insertKeyChar(char)
 		}; break
-		case Commands.keyDecimal:
+		case Commands.key_dec:
 			insertKeyChar(SettingsStore.value.decimalFormat)
 			break
-		case Commands.keyPlusMinus:
+		case Commands.key_plusMin:
 			insertKeyPlusMinus()
 			break
-		case Commands.keyClear:
+		case Commands.key_clear:
 			insertKeyClear()
 			break
-		case Commands.keyBackspace:
+		case Commands.key_backspace:
 			insertKeyBackspace()
 			break
-		case Commands.keyEqual:
+		case Commands.key_equal:
 			insertKeyEqual()
 			break
-		case Commands.keyUnitSwap:
+		case Commands.key_unitSwap:
 			insertKeySwap()
 			break
 		}

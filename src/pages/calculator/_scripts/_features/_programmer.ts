@@ -27,24 +27,24 @@ export const ProgrammerStore = new ObservableStore<ProgrammerStoreType>({
 	output: null
 })
 
-const _inputRef = $(ElementIds.bodyProgrammerInput) as HTMLInputElement
-const _outputRef = $(ElementIds.bodyProgrammerOutput) as HTMLDivElement
-const _outputGroupDecRef = $(ElementIds.bodyProgrammerOutputDec) as HTMLDivElement
-const _outputGroupOctRef = $(ElementIds.bodyProgrammerOutputOct) as HTMLDivElement
-const _outputGroupHexRef = $(ElementIds.bodyProgrammerOutputHex) as HTMLDivElement
-const _outputGroupBinRef = $(ElementIds.bodyProgrammerOutputBin) as HTMLDivElement
-const _outputDecRef = $$(`#${ElementIds.bodyProgrammerOutputDec} input`) as HTMLInputElement
-const _outputOctRef = $$(`#${ElementIds.bodyProgrammerOutputOct} input`) as HTMLInputElement
-const _outputHexRef = $$(`#${ElementIds.bodyProgrammerOutputHex} input`) as HTMLInputElement
-const _outputBinRef = $$(`#${ElementIds.bodyProgrammerOutputBin} input`) as HTMLInputElement
-const _hexButtonRef = $$<HTMLButtonElement>(`#${(ElementIds.bodyProgrammerOutputHex)}>button`)
-const _decButtonRef = $$<HTMLButtonElement>(`#${(ElementIds.bodyProgrammerOutputDec)}>button`)
-const _octButtonRef = $$<HTMLButtonElement>(`#${(ElementIds.bodyProgrammerOutputOct)}>button`)
-const _binButtonRef = $$<HTMLButtonElement>(`#${(ElementIds.bodyProgrammerOutputBin)}>button`)
-const _hexButtonRefs = $$$<HTMLButtonElement>(`.${CSSClasses.bodyPageProgrammerButtonHex}`)
-const _decButtonRefs = $$$<HTMLButtonElement>(`.${CSSClasses.bodyPageProgrammerButtonDec}`)
-const _octButtonRefs = $$$<HTMLButtonElement>(`.${CSSClasses.bodyPageProgrammerButtonOct}`)
-const _binButtonRefs = $$$<HTMLButtonElement>(`.${CSSClasses.bodyPageProgrammerButtonBin}`)
+const _inputRef = $(ElementIds.bdProg_input) as HTMLInputElement
+const _outputRef = $(ElementIds.bdProg_output) as HTMLDivElement
+const _outputGroupDecRef = $(ElementIds.bdProg_outDec) as HTMLDivElement
+const _outputGroupOctRef = $(ElementIds.bdProg_outOct) as HTMLDivElement
+const _outputGroupHexRef = $(ElementIds.bdProg_outHex) as HTMLDivElement
+const _outputGroupBinRef = $(ElementIds.bdProg_outBin) as HTMLDivElement
+const _outputDecRef = $$(`#${ElementIds.bdProg_outDec} input`) as HTMLInputElement
+const _outputOctRef = $$(`#${ElementIds.bdProg_outOct} input`) as HTMLInputElement
+const _outputHexRef = $$(`#${ElementIds.bdProg_outHex} input`) as HTMLInputElement
+const _outputBinRef = $$(`#${ElementIds.bdProg_outBin} input`) as HTMLInputElement
+const _hexButtonRef = $$<HTMLButtonElement>(`#${(ElementIds.bdProg_outHex)}>button`)
+const _decButtonRef = $$<HTMLButtonElement>(`#${(ElementIds.bdProg_outDec)}>button`)
+const _octButtonRef = $$<HTMLButtonElement>(`#${(ElementIds.bdProg_outOct)}>button`)
+const _binButtonRef = $$<HTMLButtonElement>(`#${(ElementIds.bdProg_outBin)}>button`)
+const _hexButtonRefs = $$$<HTMLButtonElement>(`.${CSSClasses.bdPageProg_btnHex}`)
+const _decButtonRefs = $$$<HTMLButtonElement>(`.${CSSClasses.bdPageProg_btnDec}`)
+const _octButtonRefs = $$$<HTMLButtonElement>(`.${CSSClasses.bdPageProg_btnOct}`)
+const _binButtonRefs = $$$<HTMLButtonElement>(`.${CSSClasses.bdPageProg_btnBin}`)
 let _timeCalculateId: null | number | NodeJS.Timeout = null
 let _timeSaveInputId: null | number | NodeJS.Timeout = null
 
@@ -89,12 +89,12 @@ function _calculate(): void {
 	}, 50)
 }
 
-function _subscribeNumberTypeChanges(v: ProgrammerStoreType, o: ProgrammerStoreType): void {
+function _subsNumberTypeChanges(v: ProgrammerStoreType, o: ProgrammerStoreType): void {
 	const numberType = v.numberType
 	if (numberType === o.numberType) return
 
 	const output = v.output
-	saveStorageItem('calc/programmer/number-type', numberType)
+	saveStorageItem('calc:programmer/number-type', numberType)
 	if (output === null) {
 		return ProgrammerStore.update(v => ({...v, input: ''}))
 	}
@@ -117,7 +117,7 @@ function _subscribeNumberTypeChanges(v: ProgrammerStoreType, o: ProgrammerStoreT
 	ProgrammerStore.update(v => ({...v, input: text}))
 }
 
-function _subscribeInputChanges(v: ProgrammerStoreType, o: ProgrammerStoreType): void {
+function _subsInputChanges(v: ProgrammerStoreType, o: ProgrammerStoreType): void {
 	const input = v.input
 	if (input === o.input) return
 
@@ -128,18 +128,18 @@ function _subscribeInputChanges(v: ProgrammerStoreType, o: ProgrammerStoreType):
 
 	_timeSaveInputId = setTimeout(() => {
 		_timeSaveInputId = null
-		saveStorageItem('calc/programmer/input', input)
+		saveStorageItem('calc:programmer/input', input)
 	}, 250)
 }
 
-function _subscribeInputRefView(v: ProgrammerStoreType, o: ProgrammerStoreType): void {
+function _subsInputView(v: ProgrammerStoreType, o: ProgrammerStoreType): void {
 	if (v.input === o.input) return
 
 	_inputRef.value = v.input
 	scrollInputToEnd(_inputRef)
 }
 
-function _subscribeOutputRefView(v: ProgrammerStoreType, o: ProgrammerStoreType): void {
+function _subsOutputView(v: ProgrammerStoreType, o: ProgrammerStoreType): void {
 	const output = v.output
 	const oldOutput = o.output
 	if (output === null) {
@@ -164,33 +164,33 @@ function _subscribeOutputRefView(v: ProgrammerStoreType, o: ProgrammerStoreType)
 	_outputBinRef.value = bin
 }
 
-function _subscribeButtonRefsView(v: ProgrammerStoreType, o: ProgrammerStoreType): void {
+function _subsButtonsView(v: ProgrammerStoreType, o: ProgrammerStoreType): void {
 	const numberType = v.numberType
 	if (numberType === o.numberType) return
 
-	let cls = CSSClasses.bodyPageProgrammerButtonDec
+	let cls = CSSClasses.bdPageProg_btnDec
 	let elements = _decButtonRefs
 
 	switch (numberType) {
 	case NumberType.decimal:
-		cls = CSSClasses.bodyPageProgrammerButtonDec
+		cls = CSSClasses.bdPageProg_btnDec
 		elements = _decButtonRefs
 		break
 	case NumberType.hexadecimal:
-		cls = CSSClasses.bodyPageProgrammerButtonHex
+		cls = CSSClasses.bdPageProg_btnHex
 		elements = _hexButtonRefs
 		break
 	case NumberType.octal:
-		cls = CSSClasses.bodyPageProgrammerButtonOct
+		cls = CSSClasses.bdPageProg_btnOct
 		elements = _octButtonRefs
 		break
 	case NumberType.binary:
-		cls = CSSClasses.bodyPageProgrammerButtonBin
+		cls = CSSClasses.bdPageProg_btnBin
 		elements = _binButtonRefs
 		break
 	}
 
-	const buttonRefs = $$$<HTMLButtonElement>(`.${CSSClasses.bodyPageProgrammerButtonValue}:not(.${cls})`)
+	const buttonRefs = $$$<HTMLButtonElement>(`.${CSSClasses.bdPageProg_btnValue}:not(.${cls})`)
 	for (const ref of buttonRefs) {
 		ref.disabled = true
 	}
@@ -200,7 +200,7 @@ function _subscribeButtonRefsView(v: ProgrammerStoreType, o: ProgrammerStoreType
 	}
 }
 
-function _subscribeNumberTypeRefView(v: ProgrammerStoreType, o: ProgrammerStoreType): void {
+function _subsNumberTypeView(v: ProgrammerStoreType, o: ProgrammerStoreType): void {
 	if (v.numberType === o.numberType) return
 
 	for (const ref of [_outputGroupDecRef, _outputGroupHexRef, _outputGroupOctRef, _outputGroupBinRef]) {
@@ -232,15 +232,15 @@ function _subscribeNumberTypeRefView(v: ProgrammerStoreType, o: ProgrammerStoreT
 }
 
 function _initSubscriber(): void {
-	ProgrammerStore.subscribe(_subscribeNumberTypeChanges)
-	ProgrammerStore.subscribe(_subscribeInputChanges)
-	ProgrammerStore.subscribe(_subscribeInputRefView)
-	ProgrammerStore.subscribe(_subscribeOutputRefView)
-	ProgrammerStore.subscribe(_subscribeButtonRefsView)
-	ProgrammerStore.subscribe(_subscribeNumberTypeRefView)
+	ProgrammerStore.subscribe(_subsNumberTypeChanges)
+	ProgrammerStore.subscribe(_subsInputChanges)
+	ProgrammerStore.subscribe(_subsInputView)
+	ProgrammerStore.subscribe(_subsOutputView)
+	ProgrammerStore.subscribe(_subsButtonsView)
+	ProgrammerStore.subscribe(_subsNumberTypeView)
 }
 
-function _numberTypeEvents(): void {
+function _initEvents(): void {
 	_outputRef.addEventListener('click', () => {
 		const buttonRef = document.activeElement as HTMLButtonElement
 		if (!isTargetValidElement(_outputRef, buttonRef, el => el.tagName === 'BUTTON')) return
@@ -262,5 +262,5 @@ function _numberTypeEvents(): void {
 
 export default () => {
 	_initSubscriber()
-	_numberTypeEvents()
+	_initEvents()
 }

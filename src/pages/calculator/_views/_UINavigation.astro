@@ -23,35 +23,35 @@ const items: {
 		icon: IconCodes.calculator,
 		name: 'Basic',
 		page: Pages.basic,
-		controls: ElementIds.bodyBasic,
+		controls: ElementIds.bd_basic,
 		selected: true
 	},
 	{
 		icon: IconCodes.beaker,
 		name: 'Scientific',
 		page: Pages.scientific,
-		controls: ElementIds.bodyScientific,
+		controls: ElementIds.bd_scientific,
 		selected: false,
 	},
 	{
 		icon: IconCodes.arrowSort,
 		name: 'Converter',
 		page: Pages.converter,
-		controls: ElementIds.bodyConverter,
+		controls: ElementIds.bd_converter,
 		selected: false,
 	},
 	{
 		icon: IconCodes.code,
 		name: 'Programmer',
 		page: Pages.programmer,
-		controls: ElementIds.bodyProgrammer,
+		controls: ElementIds.bd_programmer,
 		selected: false,
 	},
 	{
 		icon: IconCodes.calendar,
 		name: 'Date',
 		page: Pages.date,
-		controls: ElementIds.bodyDate,
+		controls: ElementIds.bd_date,
 		selected: false,
 	},
 ]
@@ -59,8 +59,8 @@ const items: {
 
 <SideBar
 	role="tablist"
-	class={CSSClasses.navigationSideBar}
-	id={ElementIds.navigationSideBar}
+	class={CSSClasses.nav_sideBar}
+	id={ElementIds.nav_sideBar}
 	aria-label="Navigation">
 	<Tooltip>
 		{items.map(v => <SideBarButton
@@ -81,12 +81,12 @@ const items: {
 	</Tooltip>
 </SideBar>
 <Drawer
-	id={ElementIds.navigationDrawer}
+	id={ElementIds.nav_drawer}
 	aria-label="Navigation">
 	<Button
 		slot="header"
 		style="width:min-content"
-		popovertarget={ElementIds.navigationDrawer}
+		popovertarget={ElementIds.nav_drawer}
 		popovertargetaction="hide">
 		<Icon IconCode={IconCodes.lineHorizontal3}/>
 	</Button>
