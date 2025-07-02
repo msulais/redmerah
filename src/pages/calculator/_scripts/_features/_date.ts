@@ -29,19 +29,19 @@ export const DateStore = new ObservableStore<DateStoreType>({
 	operation: DateOperation.difference,
 	output: 'Same date'
 })
-const _operationRef = $(ElementIds.bodyDateOperation) as ComboBoxElement
-const _datePickerFromRef = $(ElementIds.bodyDateInputFromDatePicker) as DatePickerElement
-const _datePickerToRef = $(ElementIds.bodyDateInputToDatePicker) as DatePickerElement
-const _buttonFromRef = $(ElementIds.bodyDateInputFromButton) as HTMLButtonElement
-const _buttonToRef = $(ElementIds.bodyDateInputToButton) as HTMLButtonElement
-const _spanFromRef = $$(`#${ElementIds.bodyDateInputFromButton}>span`) as HTMLSpanElement
-const _spanToRef = $$(`#${ElementIds.bodyDateInputToButton}>span`) as HTMLSpanElement
-const _inputYearsRef = $(ElementIds.bodyDateInputYears) as HTMLInputElement
-const _inputMonthsRef = $(ElementIds.bodyDateInputMonths) as HTMLInputElement
-const _inputDaysRef = $(ElementIds.bodyDateInputDays) as HTMLInputElement
-const _operationDiffRef = $(ElementIds.bodyDateOperationDifference) as HTMLDivElement
-const _operationAddSubRef = $(ElementIds.bodyDateOperationAddSubtract) as HTMLDivElement
-const _dateOutputRef = $(ElementIds.bodyDateOutput) as HTMLOutputElement
+const _operationRef = $(ElementIds.bdDate_operation) as ComboBoxElement
+const _datePickerFromRef = $(ElementIds.bdDateInp_fromDatePicker) as DatePickerElement
+const _datePickerToRef = $(ElementIds.bdDateInp_toDatePicker) as DatePickerElement
+const _buttonFromRef = $(ElementIds.bdDateInp_fromBtn) as HTMLButtonElement
+const _buttonToRef = $(ElementIds.bdDateInp_toBtn) as HTMLButtonElement
+const _spanFromRef = $$(`#${ElementIds.bdDateInp_fromBtn}>span`) as HTMLSpanElement
+const _spanToRef = $$(`#${ElementIds.bdDateInp_toBtn}>span`) as HTMLSpanElement
+const _inputYearsRef = $(ElementIds.bdDateInp_years) as HTMLInputElement
+const _inputMonthsRef = $(ElementIds.bdDateInp_months) as HTMLInputElement
+const _inputDaysRef = $(ElementIds.bdDateInp_days) as HTMLInputElement
+const _operationDiffRef = $(ElementIds.bdDateOp_diff) as HTMLDivElement
+const _operationAddSubRef = $(ElementIds.bdDateOp_addSub) as HTMLDivElement
+const _dateOutputRef = $(ElementIds.bdDate_output) as HTMLOutputElement
 let _timeCalculateId: number | null | NodeJS.Timeout = null
 let _timeYearsId: number | null | NodeJS.Timeout = null
 let _timeMonthsId: number | null | NodeJS.Timeout = null
@@ -109,7 +109,7 @@ function _calculate(): void {
 	}, 50)
 }
 
-function _subscribeInputYearsChanges(v: DateStoreType, o: DateStoreType): void {
+function _subsInputYearsChanges(v: DateStoreType, o: DateStoreType): void {
 	const years = v.inputYears
 	if (years === o.inputYears) return
 
@@ -120,11 +120,11 @@ function _subscribeInputYearsChanges(v: DateStoreType, o: DateStoreType): void {
 
 	_timeYearsId = setTimeout(() => {
 		_timeYearsId = null
-		saveStorageItem('calc/date/input-years', years)
+		saveStorageItem('calc:date/input-years', years)
 	}, 250)
 }
 
-function _subscribeInputYearsRefView(v: DateStoreType): void {
+function _subsInputYearsView(v: DateStoreType): void {
 	if (
 		v.inputYears === _inputYearsRef.valueAsNumber
 		|| _inputYearsRef === document.activeElement
@@ -133,7 +133,7 @@ function _subscribeInputYearsRefView(v: DateStoreType): void {
 	_inputYearsRef.valueAsNumber = v.inputYears
 }
 
-function _subscribeInputMonthsChanges(v: DateStoreType, o: DateStoreType): void {
+function _subsInputMonthsChanges(v: DateStoreType, o: DateStoreType): void {
 	const monts = v.inputMonths
 	if (monts === o.inputMonths) return
 
@@ -144,11 +144,11 @@ function _subscribeInputMonthsChanges(v: DateStoreType, o: DateStoreType): void 
 
 	_timeMonthsId = setTimeout(() => {
 		_timeMonthsId = null
-		saveStorageItem('calc/date/input-months', monts)
+		saveStorageItem('calc:date/input-months', monts)
 	}, 250)
 }
 
-function _subscribeInputMonthsRefView(v: DateStoreType): void {
+function _subsInputMonthsView(v: DateStoreType): void {
 	if (
 		v.inputMonths === _inputMonthsRef.valueAsNumber
 		|| _inputMonthsRef === document.activeElement
@@ -157,7 +157,7 @@ function _subscribeInputMonthsRefView(v: DateStoreType): void {
 	_inputMonthsRef.valueAsNumber = v.inputMonths
 }
 
-function _subscribeInputDaysChanges(v: DateStoreType, o: DateStoreType): void {
+function _subsInputDaysChanges(v: DateStoreType, o: DateStoreType): void {
 	const days = v.inputDays
 	if (days === o.inputDays) return
 
@@ -168,11 +168,11 @@ function _subscribeInputDaysChanges(v: DateStoreType, o: DateStoreType): void {
 
 	_timeDaysId = setTimeout(() => {
 		_timeDaysId = null
-		saveStorageItem('calc/date/input-days', days)
+		saveStorageItem('calc:date/input-days', days)
 	}, 250)
 }
 
-function _subscribeInputDaysRefView(v: DateStoreType): void {
+function _subsInputDaysView(v: DateStoreType): void {
 	if (
 		v.inputDays === _inputDaysRef.valueAsNumber
 		|| _inputDaysRef === document.activeElement
@@ -181,15 +181,15 @@ function _subscribeInputDaysRefView(v: DateStoreType): void {
 	_inputDaysRef.valueAsNumber = v.inputDays
 }
 
-function _subscribeInputDateFromChanges(v: DateStoreType, o: DateStoreType): void {
+function _subsInputDateFromChanges(v: DateStoreType, o: DateStoreType): void {
 	const date = v.inputFrom
 	if (isDateEqual_YMD(date, o.inputFrom)) return
 
 	_calculate()
-	saveStorageItem('calc/date/input-from', date.toISOString())
+	saveStorageItem('calc:date/input-from', date.toISOString())
 }
 
-function _subscribeInputDateFromRefView(v: DateStoreType, o: DateStoreType): void {
+function _subsInputDateFromView(v: DateStoreType, o: DateStoreType): void {
 	const date = v.inputFrom
 	if (isDateEqual_YMD(date, o.inputFrom)) return
 
@@ -203,15 +203,15 @@ function _subscribeInputDateFromRefView(v: DateStoreType, o: DateStoreType): voi
 	})
 }
 
-function _subscribeInputDateToChanges(v: DateStoreType, o: DateStoreType): void {
+function _subsInputDateToChanges(v: DateStoreType, o: DateStoreType): void {
 	const date = v.inputTo
 	if (isDateEqual_YMD(date, o.inputTo)) return
 
 	_calculate()
-	saveStorageItem("calc/date/input-to", date.toISOString())
+	saveStorageItem("calc:date/input-to", date.toISOString())
 }
 
-function _subscribeInputDateToRefView(v: DateStoreType, o: DateStoreType): void {
+function _subsInputDateToView(v: DateStoreType, o: DateStoreType): void {
 	const date = v.inputTo
 	if (isDateEqual_YMD(date, o.inputTo)) return
 
@@ -225,15 +225,15 @@ function _subscribeInputDateToRefView(v: DateStoreType, o: DateStoreType): void 
 	})
 }
 
-function _subscribeOperationChanges(v: DateStoreType, o: DateStoreType): void {
+function _subsOperationChanges(v: DateStoreType, o: DateStoreType): void {
 	const operation = v.operation
 	if (operation === o.operation) return
 
 	_calculate()
-	saveStorageItem('calc/date/operation', operation)
+	saveStorageItem('calc:date/operation', operation)
 }
 
-function _subscribeOperationRefView(v: DateStoreType, o: DateStoreType): void {
+function _subsOperationView(v: DateStoreType, o: DateStoreType): void {
 	const operation = v.operation
 	if (operation === o.operation) return
 
@@ -251,7 +251,7 @@ function _subscribeOperationRefView(v: DateStoreType, o: DateStoreType): void {
 	}
 }
 
-function _subscribeOutputRefView(v: DateStoreType): void {
+function _subsOutputView(v: DateStoreType): void {
 	const output = v.output
 	if (output === _dateOutputRef.textContent) return
 
@@ -267,19 +267,19 @@ function _initDates(): void {
 }
 
 function _initSubscriber(): void {
-	DateStore.subscribe(_subscribeInputYearsChanges)
-	DateStore.subscribe(_subscribeInputYearsRefView)
-	DateStore.subscribe(_subscribeInputMonthsChanges)
-	DateStore.subscribe(_subscribeInputMonthsRefView)
-	DateStore.subscribe(_subscribeInputDaysChanges)
-	DateStore.subscribe(_subscribeInputDaysRefView)
-	DateStore.subscribe(_subscribeInputDateFromChanges)
-	DateStore.subscribe(_subscribeInputDateFromRefView)
-	DateStore.subscribe(_subscribeInputDateToChanges)
-	DateStore.subscribe(_subscribeInputDateToRefView)
-	DateStore.subscribe(_subscribeOperationChanges)
-	DateStore.subscribe(_subscribeOperationRefView)
-	DateStore.subscribe(_subscribeOutputRefView)
+	DateStore.subscribe(_subsInputYearsChanges)
+	DateStore.subscribe(_subsInputYearsView)
+	DateStore.subscribe(_subsInputMonthsChanges)
+	DateStore.subscribe(_subsInputMonthsView)
+	DateStore.subscribe(_subsInputDaysChanges)
+	DateStore.subscribe(_subsInputDaysView)
+	DateStore.subscribe(_subsInputDateFromChanges)
+	DateStore.subscribe(_subsInputDateFromView)
+	DateStore.subscribe(_subsInputDateToChanges)
+	DateStore.subscribe(_subsInputDateToView)
+	DateStore.subscribe(_subsOperationChanges)
+	DateStore.subscribe(_subsOperationView)
+	DateStore.subscribe(_subsOutputView)
 }
 
 function _initEvents(): void {

@@ -27,9 +27,16 @@ export const ScientificStore = new ObservableStore<ScientificStoreType>({
 	input: '',
 	output: null,
 })
-const _angleRef = $(ElementIds.bodyScientificAngle) as ComboBoxElement
-const _inputRef = $(ElementIds.bodyScientificInput) as HTMLInputElement
-const _outputRef = $(ElementIds.bodyScientificOutput) as HTMLInputElement
+const _angleRef = $(ElementIds.bdSci_angle) as ComboBoxElement
+const _inputRef = $(ElementIds.bdSci_input) as HTMLInputElement
+const _outputRef = $(ElementIds.bdSci_output) as HTMLInputElement
+
+// fn = function
+const _fn_BtnRef = $(ElementIds.bdSciFn_btn) as HTMLButtonElement
+const _fn_MenuRef = $(ElementIds.bdSciFn_menu) as HTMLDivElement
+const _fn_inversRef = $(ElementIds.bdSciFn_inv) as HTMLInputElement
+const _fn_hyperRef = $(ElementIds.bdSciFn_hyper) as HTMLInputElement
+
 let _timeCalculateId: number | null | NodeJS.Timeout = null
 let _timeSaveInputId: number | null | NodeJS.Timeout = null
 
@@ -55,7 +62,7 @@ function _subscribeAngleChanges(value: ScientificStoreType, old: ScientificStore
 
 	_calculate()
 	_angleRef.value = angle
-	saveStorageItem('calc/scientific/angle', angle)
+	saveStorageItem('calc:scientific/angle', angle)
 }
 
 function _subscribeInputChanges(value: ScientificStoreType, old: ScientificStoreType) {
@@ -69,7 +76,7 @@ function _subscribeInputChanges(value: ScientificStoreType, old: ScientificStore
 
 	_timeSaveInputId = setTimeout(() => {
 		_timeSaveInputId = null
-		saveStorageItem('calc/scientific/input', input)
+		saveStorageItem('calc:scientific/input', input)
 	}, 250)
 }
 
@@ -110,7 +117,7 @@ function _initSubscriber(): void {
 	ScientificStore.subscribe(_subscribeAngleRefView)
 }
 
-function _initAngleEvents(): void {
+function _initEvents(): void {
 	_angleRef.addEventListener('change', () => {
 		const value = _angleRef.value as ScientificAngleType
 		if (!isValidEnumValue(value, ScientificAngleType)) return
@@ -120,22 +127,15 @@ function _initAngleEvents(): void {
 			angle: value
 		}))
 	})
-}
 
-function _initFunctionButtonEvents(): void {
-	const buttonRef = $(ElementIds.bodyScientificFunctionButton) as HTMLButtonElement
-	const menuRef = $(ElementIds.bodyScientificFunctionMenu) as HTMLDivElement
-	const inversRef = $(ElementIds.bodyScientificFunctionInvers) as HTMLInputElement
-	const hyperbolicRef = $(ElementIds.bodyScientificFunctionHyperbolic) as HTMLInputElement
-
-	menuRef.addEventListener('toggle', ev => {
+	_fn_MenuRef.addEventListener('toggle', ev => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
-		buttonRef.setAttribute('aria-expanded', String(isOpen))
-		updateButtonRef(buttonRef, {
+		_fn_BtnRef.setAttribute('aria-expanded', String(isOpen))
+		updateButtonRef(_fn_BtnRef, {
 			ButtonVariant: isOpen? ButtonVariant.filled : ButtonVariant.tonal
 		})
 
-		const iconRef = buttonRef.querySelector<HTMLElement>('.' + IconClasses.icon + ":last-child")
+		const iconRef = _fn_BtnRef.querySelector<HTMLElement>('.' + IconClasses.icon + ":last-child")
 		iconRef?.style.setProperty('transform', isOpen? 'rotate(180deg)' : null)
 		if (isAnimationAllowed()) {
 			iconRef?.animate({
@@ -144,13 +144,13 @@ function _initFunctionButtonEvents(): void {
 		}
 	})
 
-	menuRef.addEventListener('change', ev => {
+	_fn_MenuRef.addEventListener('change', ev => {
 		switch (ev.target) {
-		case inversRef:
-		case hyperbolicRef:
-			const refs = document.querySelectorAll<HTMLButtonElement>('.' + CSSClasses.bodyPageScientificTrigonometry)
-			const inv = inversRef.checked
-			const hyp = hyperbolicRef.checked
+		case _fn_inversRef:
+		case _fn_hyperRef:
+			const refs = document.querySelectorAll<HTMLButtonElement>('.' + CSSClasses.bdPageSci_trigonometry)
+			const inv = _fn_inversRef.checked
+			const hyp = _fn_hyperRef.checked
 			const trigonometry = [
 				(inv? 'a' : '') + 'sin' + (hyp? 'h' : ''),
 				(inv? 'a' : '') + 'cos' + (hyp? 'h' : ''),
@@ -178,6 +178,5 @@ function _initFunctionButtonEvents(): void {
 
 export default () => {
 	_initSubscriber()
-	_initAngleEvents()
-	_initFunctionButtonEvents()
+	_initEvents()
 }

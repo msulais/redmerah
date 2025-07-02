@@ -7,54 +7,80 @@ function _createId(): string {
 
 export class ElementIds {
 	static readonly appbar = _createId()
-	static readonly appbarSideBarButton = _createId()
-	static readonly appbarInfoButton = _createId()
-	static readonly appbarInfoMenu = _createId()
-	static readonly appbarInfoMenuShareButton = _createId()
-	static readonly appbarSettingsButton = _createId()
-	static readonly appbarSettingsMenu = _createId()
-	static readonly appbarSettingsAnimationMenu = _createId()
-	static readonly appbarSettingsThemeMenu = _createId()
-	static readonly appbarSettingsDecimalMenu = _createId()
-	static readonly appbarSettingsGroupMenu = _createId()
-	static readonly bodyBasic = _createId()
-	static readonly bodyBasicInput = _createId()
-	static readonly bodyBasicOutput = _createId()
-	static readonly bodyConverter = _createId()
-	static readonly bodyConverterOptions = _createId()
-	static readonly bodyConverterInput = _createId()
-	static readonly bodyConverterOutput = _createId()
-	static readonly bodyConverterType = _createId()
-	static readonly bodyConverterSwap = _createId()
-	static readonly bodyConverterInputUnit = _createId()
-	static readonly bodyConverterOutputUnit = _createId()
-	static readonly bodyDate = _createId()
-	static readonly bodyDateOperation = _createId()
-	static readonly bodyDateOperationDifference = _createId()
-	static readonly bodyDateOperationAddSubtract = _createId()
-	static readonly bodyDateInputYears = _createId()
-	static readonly bodyDateInputMonths = _createId()
-	static readonly bodyDateInputDays = _createId()
-	static readonly bodyDateInputFromButton = _createId()
-	static readonly bodyDateInputToButton = _createId()
-	static readonly bodyDateInputFromDatePicker = _createId()
-	static readonly bodyDateInputToDatePicker = _createId()
-	static readonly bodyDateOutput = _createId()
-	static readonly bodyProgrammer = _createId()
-	static readonly bodyProgrammerInput = _createId()
-	static readonly bodyProgrammerOutput = _createId()
-	static readonly bodyProgrammerOutputDec = _createId()
-	static readonly bodyProgrammerOutputHex = _createId()
-	static readonly bodyProgrammerOutputOct = _createId()
-	static readonly bodyProgrammerOutputBin = _createId()
-	static readonly bodyScientific = _createId()
-	static readonly bodyScientificAngle = _createId()
-	static readonly bodyScientificInput = _createId()
-	static readonly bodyScientificOutput = _createId()
-	static readonly bodyScientificFunctionButton = _createId()
-	static readonly bodyScientificFunctionMenu = _createId()
-	static readonly bodyScientificFunctionInvers = _createId()
-	static readonly bodyScientificFunctionHyperbolic = _createId()
-	static readonly navigationSideBar = _createId()
-	static readonly navigationDrawer = _createId()
+
+	// ap = appbar
+	static readonly ap_sideBarBtn = _createId()
+
+	// apInf = appbar info
+	static readonly apInf_btn = _createId()
+	static readonly apInf_menu = _createId()
+	static readonly apInf_shareBtn = _createId()
+
+	// apSett = appbar settings
+	static readonly apSett_btn = _createId()
+	static readonly apSett_menu = _createId()
+	static readonly apSett_animationMenu = _createId()
+	static readonly apSett_themeMenu = _createId()
+	static readonly apSett_decMenu = _createId()
+	static readonly apSett_groupMenu = _createId()
+
+	// bd = body
+	static readonly bd_basic = _createId()
+	static readonly bd_converter = _createId()
+	static readonly bd_date = _createId()
+	static readonly bd_programmer = _createId()
+	static readonly bd_scientific = _createId()
+
+	// bdBas = body basic
+	static readonly bdBas_input = _createId()
+	static readonly bdBas_output = _createId()
+
+	// bdConv = body conveter
+	static readonly bdConv_options = _createId()
+	static readonly bdConv_input = _createId()
+	static readonly bdConv_output = _createId()
+	static readonly bdConv_type = _createId()
+	static readonly bdConv_swap = _createId()
+	static readonly bdConv_inputUnit = _createId()
+	static readonly bdConv_outputUnit = _createId()
+
+	// bdDate = body date
+	static readonly bdDate_operation = _createId()
+	static readonly bdDate_output = _createId()
+
+	// bdDateOp = body date operation
+	static readonly bdDateOp_diff = _createId()
+	static readonly bdDateOp_addSub = _createId()
+
+	// bdDateInp = body date input
+	static readonly bdDateInp_years = _createId()
+	static readonly bdDateInp_months = _createId()
+	static readonly bdDateInp_days = _createId()
+	static readonly bdDateInp_fromBtn = _createId()
+	static readonly bdDateInp_toBtn = _createId()
+	static readonly bdDateInp_fromDatePicker = _createId()
+	static readonly bdDateInp_toDatePicker = _createId()
+
+	// bdProg = body programmer
+	static readonly bdProg_input = _createId()
+	static readonly bdProg_output = _createId()
+	static readonly bdProg_outDec = _createId()
+	static readonly bdProg_outHex = _createId()
+	static readonly bdProg_outOct = _createId()
+	static readonly bdProg_outBin = _createId()
+
+	// bdSci = body scientific
+	static readonly bdSci_angle = _createId()
+	static readonly bdSci_input = _createId()
+	static readonly bdSci_output = _createId()
+
+	// bdSciFn = body scientific function
+	static readonly bdSciFn_btn = _createId()
+	static readonly bdSciFn_menu = _createId()
+	static readonly bdSciFn_inv = _createId()
+	static readonly bdSciFn_hyper = _createId()
+
+	// nav = navigation
+	static readonly nav_sideBar = _createId()
+	static readonly nav_drawer = _createId()
 }

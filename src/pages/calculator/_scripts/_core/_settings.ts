@@ -32,14 +32,14 @@ export const SettingsStore = new ObservableStore<SettingsStoreType>({
 const _decimalToken = '@_decimal_@'
 const _groupingToken = '@_grouping_@'
 const _rootRef = document.documentElement
-const _themeRef = $(ElementIds.appbarSettingsThemeMenu) as HTMLDivElement
-const _animationRef = $(ElementIds.appbarSettingsAnimationMenu) as HTMLDivElement
-const _decimalFormatRef = $(ElementIds.appbarSettingsDecimalMenu) as HTMLDivElement
-const _groupingFormatRef = $(ElementIds.appbarSettingsGroupMenu) as HTMLDivElement
-const _settingsMenuRef = $(ElementIds.appbarSettingsMenu) as HTMLDivElement
+const _themeMenuRef = $(ElementIds.apSett_themeMenu) as HTMLDivElement
+const _animationMenuRef = $(ElementIds.apSett_animationMenu) as HTMLDivElement
+const _decimalMenuRef = $(ElementIds.apSett_decMenu) as HTMLDivElement
+const _groupingMenuRef = $(ElementIds.apSett_groupMenu) as HTMLDivElement
+const _settingsMenuRef = $(ElementIds.apSett_menu) as HTMLDivElement
 
 function _initEvents(): void {
-	_groupingFormatRef.addEventListener('change', ev => {
+	_groupingMenuRef.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as GroupingNumberFormat
 		if (!isValidEnumValue(value, GroupingNumberFormat)) return
@@ -48,7 +48,7 @@ function _initEvents(): void {
 		_settingsMenuRef.hidePopover()
 	})
 
-	_decimalFormatRef.addEventListener('change', ev => {
+	_decimalMenuRef.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as DecimalNumberFormat
 		if (!isValidEnumValue(value, DecimalNumberFormat)) return
@@ -57,7 +57,7 @@ function _initEvents(): void {
 		_settingsMenuRef.hidePopover()
 	})
 
-	_themeRef.addEventListener('change', ev => {
+	_themeMenuRef.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as PlatformThemeMode
 		if (!value || !isValidEnumValue(value, PlatformThemeMode)) {return}
@@ -68,7 +68,7 @@ function _initEvents(): void {
 		SettingsStore.update(v => ({...v, theme: value}), null)
 	})
 
-	_animationRef.addEventListener('change', ev => {
+	_animationMenuRef.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as PlatformAnimationMode
 		if (!value || !isValidEnumValue(value, PlatformAnimationMode)) {return}
@@ -86,10 +86,10 @@ function _initTheme(): void {
 
 	_rootRef.setAttribute(RootAttributes.theme, theme)
 	const previousRef = $$(
-		`input[name="${CSS.escape(RadioNames.settingsTheme)}"]:checked`
+		`input[name="${CSS.escape(RadioNames.sett_theme)}"]:checked`
 	) as HTMLInputElement
 	const targetRef = $$(
-		`input[name="${CSS.escape(RadioNames.settingsTheme)}"][value="${CSS.escape(theme)}"]`
+		`input[name="${CSS.escape(RadioNames.sett_theme)}"][value="${CSS.escape(theme)}"]`
 	) as HTMLInputElement
 
 	if (previousRef === targetRef) {return}
@@ -103,10 +103,10 @@ function _initAnimation(): void {
 
 	_rootRef.setAttribute(RootAttributes.animation, animation)
 	const previousRef = $$(
-		`input[name="${CSS.escape(RadioNames.settingsAnimation)}"]:checked`
+		`input[name="${CSS.escape(RadioNames.sett_animation)}"]:checked`
 	) as HTMLInputElement
 	const targetRef = $$(
-		`input[name="${CSS.escape(RadioNames.settingsAnimation)}"][value="${CSS.escape(animation)}"]`
+		`input[name="${CSS.escape(RadioNames.sett_animation)}"][value="${CSS.escape(animation)}"]`
 	) as HTMLInputElement
 
 	if (previousRef === targetRef) {return}
@@ -114,7 +114,7 @@ function _initAnimation(): void {
 	if (targetRef) targetRef.checked = true
 }
 
-function _subscribeRecalculate(v: SettingsStoreType, o: SettingsStoreType): void {
+function _subsRecalculate(v: SettingsStoreType, o: SettingsStoreType): void {
 	if (
 		v.decimalFormat === o.decimalFormat
 		&& v.groupingFormat === o.groupingFormat
@@ -127,14 +127,14 @@ function _subscribeRecalculate(v: SettingsStoreType, o: SettingsStoreType): void
 	MemoryStore.notify()
 }
 
-function _subscribeDecimalFormatChanges(v: SettingsStoreType, o: SettingsStoreType): void {
+function _subsDecimalFormatChanges(v: SettingsStoreType, o: SettingsStoreType): void {
 	const decimalFormat = v.decimalFormat
 	const oldDecimalFormat = o.decimalFormat
 	const oldGroupingFormat = o.groupingFormat
 	if (decimalFormat === oldDecimalFormat) return
 
 	let grouping = oldGroupingFormat
-	saveStorageItem('settings/decimal', decimalFormat)
+	saveStorageItem('sett:decimal', decimalFormat)
 
 	// @ts-ignore
 	if (decimalFormat === oldGroupingFormat) {
@@ -166,14 +166,14 @@ function _subscribeDecimalFormatChanges(v: SettingsStoreType, o: SettingsStoreTy
 	}
 }
 
-function _subscribeGroupingFormatChanges(v: SettingsStoreType, o: SettingsStoreType): void {
+function _subsGroupingFormatChanges(v: SettingsStoreType, o: SettingsStoreType): void {
 	const groupingFormat = v.groupingFormat
 	const oldDecimalFormat = o.decimalFormat
 	const oldGroupingFormat = o.groupingFormat
 	if (groupingFormat === oldGroupingFormat) return
 
 	let decimal = oldDecimalFormat
-	saveStorageItem('settings/grouping', groupingFormat)
+	saveStorageItem('sett:grouping', groupingFormat)
 
 	// @ts-ignore
 	if (groupingFormat === oldDecimalFormat) {
@@ -209,17 +209,17 @@ function _subscribeGroupingFormatChanges(v: SettingsStoreType, o: SettingsStoreT
 	}
 }
 
-function _subscribeDecimalFormatRefView(v: SettingsStoreType, o: SettingsStoreType): void {
+function _subsDecimalFormatView(v: SettingsStoreType, o: SettingsStoreType): void {
 	const decimalFormat = v.decimalFormat
 	if (decimalFormat === o.decimalFormat) return
 
-	for (const ref of $$$<HTMLButtonElement>(`[data-command=${Commands.keyDecimal}]`)) {
+	for (const ref of $$$<HTMLButtonElement>(`[data-command="${CSS.escape(Commands.key_dec)}"]`)) {
 		ref.textContent = v.decimalFormat
 	}
 
-	const prevRef = $$<HTMLInputElement>(`input[name="${RadioNames.settingsDecimal}"]:checked`)
+	const prevRef = $$<HTMLInputElement>(`input[name="${RadioNames.sett_decimal}"]:checked`)
 	const targetRef = $$<HTMLInputElement>(
-		`input[name="${RadioNames.settingsDecimal}"][value="${decimalFormat}"]`
+		`input[name="${RadioNames.sett_decimal}"][value="${decimalFormat}"]`
 	)
 
 	if (prevRef === targetRef) return
@@ -227,13 +227,13 @@ function _subscribeDecimalFormatRefView(v: SettingsStoreType, o: SettingsStoreTy
 	if (targetRef) targetRef.checked = true
 }
 
-function _subscribeGroupingFormatRefView(v: SettingsStoreType, o: SettingsStoreType): void {
+function _subsGroupingFormatView(v: SettingsStoreType, o: SettingsStoreType): void {
 	const groupingFormat = v.groupingFormat
 	if (groupingFormat === o.groupingFormat) return
 
-	const prevRef = $$<HTMLInputElement>(`input[name="${RadioNames.settingsGrouping}"]:checked`)
+	const prevRef = $$<HTMLInputElement>(`input[name="${RadioNames.sett_grouping}"]:checked`)
 	const targetRef = $$<HTMLInputElement>(
-		`input[name="${RadioNames.settingsGrouping}"][value="${groupingFormat}"]`
+		`input[name="${RadioNames.sett_grouping}"][value="${groupingFormat}"]`
 	)
 
 	if (prevRef === targetRef) return
@@ -242,11 +242,11 @@ function _subscribeGroupingFormatRefView(v: SettingsStoreType, o: SettingsStoreT
 }
 
 function _initSubscriber(): void {
-	SettingsStore.subscribe(_subscribeRecalculate)
-	SettingsStore.subscribe(_subscribeDecimalFormatChanges)
-	SettingsStore.subscribe(_subscribeGroupingFormatChanges)
-	SettingsStore.subscribe(_subscribeDecimalFormatRefView)
-	SettingsStore.subscribe(_subscribeGroupingFormatRefView)
+	SettingsStore.subscribe(_subsRecalculate)
+	SettingsStore.subscribe(_subsDecimalFormatChanges)
+	SettingsStore.subscribe(_subsGroupingFormatChanges)
+	SettingsStore.subscribe(_subsDecimalFormatView)
+	SettingsStore.subscribe(_subsGroupingFormatView)
 }
 
 export default () => {

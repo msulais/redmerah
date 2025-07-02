@@ -3,7 +3,6 @@ import { APP_BATTERY as app } from '@/constants/apps'
 
 import UIAppBar from './_views/_UIAppBar.astro'
 import UIBody from './_views/_UIBody.astro'
-import UIMenus from './_views/_UIMenus.astro'
 import UIDialog from './_views/_UIDialog.astro'
 import App from '@/native-components/App/index.astro'
 import Html from '@/layouts/Html/index.astro'
@@ -27,7 +26,6 @@ export const prerender = true
 		<UIAppBar slot="appbar"/>
 		<UIBody />
 	</App>
-	<UIMenus />
 	<UIDialog />
 	<script src="./_scripts/_index.ts"/>
 </Html>

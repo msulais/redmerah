@@ -1,7 +1,7 @@
 import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
 import { ColorPickerMode } from "./_enums"
 import { APP_COLOR_PICKER } from "@/constants/apps"
-import { hexToCmyk, hexToHsl, hexToHsv, hexToHwb, hexToRgb, rgbToCmyk, rgbToHsl, rgbToHsv, rgbToHwb } from "@/utils/color"
+import { hexToRgb, rgbToCmyk, rgbToHsl, rgbToHsv, rgbToHwb } from "@/utils/color"
 
 export const DEFAULT_THEME = PlatformThemeMode.auto
 export const DEFAULT_ANIMATION = PlatformAnimationMode.auto
