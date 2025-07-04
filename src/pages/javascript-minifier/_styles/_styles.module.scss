@@ -90,7 +90,8 @@ $SMALL_SCREEN: 650px;
 }
 
 .bodySlider {
-	width: 8px;
+	min-width: 4px;
+	max-width: 4px;
 	margin-top: 24px;
 	height: calc(100% - 40px);
 	opacity: 0;
