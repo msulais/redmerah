@@ -156,6 +156,7 @@ export enum IconCodes {
 	textCaseTitle = 0xF190,
 	textEditStyle = 0xF1D3,
 	textNumberFormat = 0xF235,
+	textQuote = 0xF265,
 	textSortAscending = 0xF267,
 	textSortDescending = 0xF269,
 	textT = 0xF271,

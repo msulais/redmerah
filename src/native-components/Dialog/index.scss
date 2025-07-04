@@ -157,6 +157,10 @@
 	&:not(:empty) + .c-dialog-content {
 		padding-top: 16px !important;
 	}
+
+	&:empty {
+		display: none;
+	}
 }
 
 @keyframes c-dialog-focus {

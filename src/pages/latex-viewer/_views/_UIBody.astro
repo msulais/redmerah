@@ -1,0 +1,80 @@
+---
+import Icon from '@/native-components/Icon/index.astro'
+import Button from '@/native-components/Button/index.astro'
+import TextAreaField from '@/native-components/TextAreaField/index.astro'
+import IconButton from '@/native-components/Button/IconButton.astro'
+import Toast from '@/native-components/Toast/index.astro'
+import Dialog from '@/native-components/Dialog/index.astro'
+import Tooltip from '@/native-components/Tooltip/index.astro'
+import { CSSClasses } from '../_styles/_css'
+import { IconCodes } from '@/enums/icons'
+import { ElementIds } from '../_scripts/_shared/_ids'
+import { ButtonVariant } from '@/native-components/Button'
+import { DEFAULT_LATEX_TEXT } from '../_scripts/_shared/_constant'
+import { Commands } from '../_scripts/_shared/_commands'
+---
+
+<main class={CSSClasses.body}>
+	<Button id={ElementIds.bd_add}
+		style="margin-left:16px"
+		ButtonVariant={ButtonVariant.filled}>
+		<Icon IconCode={IconCodes.add}/>
+		New equation
+	</Button>
+	<ul class={CSSClasses.bodyList} data-text-wrap id={ElementIds.bd_list}>
+		<li>
+			<textarea id={ElementIds.bdLat_textarea}>{DEFAULT_LATEX_TEXT}</textarea>
+			<output for={ElementIds.bdLat_textarea}>
+				<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+					<semantics>
+						<mrow><msubsup><mo>∫</mo><mrow><mo>−</mo><mi mathvariant="normal">∞</mi></mrow><mi mathvariant="normal">∞</mi></msubsup><mfrac><mn>1</mn><msqrt><mrow><mn>2</mn><mi>π</mi><msup><mi>σ</mi><mn>2</mn></msup></mrow></msqrt></mfrac><mi>exp</mi><mo>⁡</mo><mrow><mo fence="true">(</mo><mo>−</mo><mfrac><mrow><mo stretchy="false">(</mo><mi>x</mi><mo>−</mo><mi>μ</mi><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow><mrow><mn>2</mn><msup><mi>σ</mi><mn>2</mn></msup></mrow></mfrac><mo fence="true">)</mo></mrow><mo>⋅</mo><munderover><mo>∑</mo><mrow><mi>n</mi><mo>=</mo><mn>0</mn></mrow><mi mathvariant="normal">∞</mi></munderover><mfrac><mrow><mo stretchy="false">(</mo><mo>−</mo><mn>1</mn><msup><mo stretchy="false">)</mo><mi>n</mi></msup></mrow><mrow><mi>n</mi><mo stretchy="false">!</mo></mrow></mfrac><msup><mrow><mo fence="true">(</mo><mfrac><mrow><mi>x</mi><mo>−</mo><mi>μ</mi></mrow><mi>σ</mi></mfrac><mo fence="true">)</mo></mrow><mrow><mn>2</mn><mi>n</mi></mrow></msup><mi>d</mi><mi>x</mi></mrow>
+					</semantics>
+				</math>
+			</output>
+			<Tooltip>
+				<Button
+					data-command={Commands.eq_new}
+					ButtonVariant={ButtonVariant.outlined}>
+					<Icon IconCode={IconCodes.add}/>
+					New equation
+				</Button>
+				<IconButton
+					data-command={Commands.eq_copy}
+					IconButtonCode={IconCodes.copy}
+					aria-label="Copy"
+					data-tooltip="Copy"
+				/>
+				<IconButton
+					data-command={Commands.eq_copyMathML}
+					IconButtonCode={IconCodes.code}
+					aria-label="MathML"
+					data-tooltip="MathML"
+				/>
+				<IconButton
+					data-command={Commands.eq_delete}
+					IconButtonCode={IconCodes.delete}
+					aria-label="Delete"
+					data-tooltip="Delete"
+					disabled
+				/>
+			</Tooltip>
+		</li>
+	</ul>
+</main>
+<Toast id={ElementIds.bdToas_copied} ToastCloseDelay={1500}>
+	<Icon IconCode={IconCodes.copy} slot="leading"/>
+	Copied
+</Toast>
+<Dialog id={ElementIds.bd_dialogMathML} style="width:512px" autofocus>
+	<Fragment slot="header">MathML</Fragment>
+	<TextAreaField
+		aria-label="MathML"
+		id={ElementIds.bd_inputMathML}
+		style="resize:none;font-family:var(--g-font-family-monospace)"
+		rows={10}
+	/>
+	<form style="display:contents" method="dialog" slot="footer">
+		<Button ButtonVariant={ButtonVariant.tonal}>Close</Button>
+		<Button id={ElementIds.bd_mathMLCopy} ButtonVariant={ButtonVariant.filled}>Copy</Button>
+	</form>
+</Dialog>
