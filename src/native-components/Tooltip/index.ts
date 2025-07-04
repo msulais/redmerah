@@ -354,8 +354,9 @@ function _initTooltipRef(tooltipRef: TooltipElement): void {
 }
 
 function createTooltipRef(options?: TooltipUpdateOptions): TooltipElement {
-	const tooltipRef = document.createElement('div')
-	return updateTooltipRef(tooltipRef, options)
+	const tooltipRef = updateTooltipRef(document.createElement('div'), options)
+	registerTooltipRef(tooltipRef)
+	return tooltipRef
 }
 
 function updateTooltipRef(tooltipRef: TooltipElement, options?: TooltipUpdateOptions): TooltipElement {
