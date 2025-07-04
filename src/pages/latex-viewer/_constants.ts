@@ -1,1 +1,0 @@
-export const MIN_EDITOR_WIDTH = 280 * 2
