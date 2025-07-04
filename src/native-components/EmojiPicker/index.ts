@@ -449,8 +449,9 @@ function unregisterEmojiPickerRef(...emojiPickerRefs: EmojiPickerElement[]): voi
 }
 
 function createEmojiPickerRef(options?: EmojiPickerUpdateOptions): EmojiPickerElement {
-	const emojiPickerRef = document.createElement('div')
-	return updateEmojiPickerRef(emojiPickerRef, options)
+	const emojiPickerRef = updateEmojiPickerRef(document.createElement('div'), options)
+	registerEmojiPickerRef(emojiPickerRef)
+	return emojiPickerRef
 }
 
 function updateEmojiPickerRef(emojiPickerRef: EmojiPickerElement, options?: EmojiPickerUpdateOptions): EmojiPickerElement {

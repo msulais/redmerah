@@ -556,8 +556,9 @@ function isPopoverRefOpen(popoverRef: PopoverElement): boolean {
 }
 
 function createPopoverRef(options?: PopoverUpdateOptions): PopoverElement {
-	const popover = document.createElement('div')
-	return updatePopoverRef(popover, options)
+	const popover = updatePopoverRef(document.createElement('div'), options)
+	registerPopoverRef(popover)
+	return popover
 }
 
 function updatePopoverRef(popoverRef: PopoverElement, options?: PopoverUpdateOptions): PopoverElement {

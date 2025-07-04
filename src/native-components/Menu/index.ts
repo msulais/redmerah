@@ -484,7 +484,9 @@ function updateLinkMenuItemRef(
 function createSubMenuItemRef(options: Omit<SubMenuItemUpdateOptions, 'SubMenuItemPopoverId'> & {
 	SubMenuItemPopoverId: string
 }): SubMenuItemElement {
-	return updateSubMenuItemRef(createMenuItemRef(options))
+	const subMenuItemRef = updateSubMenuItemRef(createMenuItemRef(options))
+	registerSubMenuItemRef(subMenuItemRef)
+	return subMenuItemRef
 }
 
 function updateSubMenuItemRef(

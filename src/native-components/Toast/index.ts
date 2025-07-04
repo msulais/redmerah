@@ -93,8 +93,9 @@ function toggleToastRef(toastRef: ToastElement): boolean {
 }
 
 function createToastRef(options?: ToastUpdateOptions): ToastElement {
-	const toastRef = document.createElement('div')
-	return updateToastRef(toastRef, options)
+	const toastRef = updateToastRef(document.createElement('div'), options)
+	registerToastRef(toastRef)
+	return toastRef
 }
 
 function updateToastRef(toastRef: ToastElement, options?: ToastUpdateOptions): ToastElement {

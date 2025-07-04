@@ -740,8 +740,9 @@ function isModalRefOpen(modalRef: ModalElement): boolean {
 }
 
 function createModalRef(options?: ModalUpdateOptions): ModalElement {
-	const modalRef = document.createElement('dialog')
-	return updateModalRef(modalRef, options)
+	const modalRef = updateModalRef(document.createElement('dialog'), options)
+	registerModalRef(modalRef)
+	return modalRef
 }
 
 function updateModalRef(modalRef: ModalElement, options?: ModalUpdateOptions): ModalElement {

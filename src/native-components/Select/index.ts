@@ -461,8 +461,9 @@ function _initSelectRef(selectRef: SelectElement): void {
 }
 
 function createSelectRef(options?: SelectUpdateOptions): SelectElement {
-	const selectRef = document.createElement('div')
-	return updateSelectRef(selectRef, options)
+	const selectRef = updateSelectRef(document.createElement('div'), options)
+	registerSelectRef(selectRef)
+	return selectRef
 }
 
 function updateSelectRef(selectRef: SelectElement, options?: SelectUpdateOptions): SelectElement {

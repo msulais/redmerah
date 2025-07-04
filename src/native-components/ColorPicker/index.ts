@@ -673,8 +673,9 @@ function unregisterColorPickerRef(...colorPickerRefs: ColorPickerElement[]): voi
 }
 
 function createColorPickerRef(options?: ColorPickerUpdateOptions): ColorPickerElement {
-	const colorPickerRef = document.createElement('div')
-	return updateColorPickerRef(colorPickerRef, options)
+	const colorPickerRef = updateColorPickerRef(document.createElement('div'), options)
+	registerColorPickerRef(colorPickerRef)
+	return colorPickerRef
 }
 
 function updateColorPickerRef(

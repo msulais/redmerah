@@ -142,8 +142,9 @@ function _initDialogRef(dialogRef: DialogElement): void {
 }
 
 function createDialogRef(options?: DialogUpdateOptions): DialogElement {
-	const dialogRef = document.createElement('dialog')
-	return updateDialogRef(dialogRef, options)
+	const dialogRef = updateDialogRef(document.createElement('dialog'), options)
+	registerDialogRef(dialogRef)
+	return dialogRef
 }
 
 function updateDialogRef(dialogRef: DialogElement, options?: DialogUpdateOptions): DialogElement {

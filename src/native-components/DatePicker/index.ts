@@ -435,8 +435,9 @@ function unregisterDatePickerRef(...datePickerRefs: DatePickerElement[]): void {
 }
 
 function createDatePickerRef(options?: DatePickerUpdateOptions): DatePickerElement {
-	const datePickerRef = document.createElement('div')
-	return updateDatePickerRef(datePickerRef, options)
+	const datePickerRef = updateDatePickerRef(document.createElement('div'), options)
+	registerDatePickerRef(datePickerRef)
+	return datePickerRef
 }
 
 function updateDatePickerRef(

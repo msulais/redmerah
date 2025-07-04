@@ -76,13 +76,14 @@ function updateSliderRefValue(sliderRef: SliderElement, value?: number): void {
 }
 
 function createSliderRef(options?: SliderUpdateOptions): SliderElement {
-	const sliderRef = document.createElement('input')
-	return updateSliderRef(sliderRef, {
+	const sliderRef = updateSliderRef(document.createElement('input'), {
 		...options,
 		SliderMax: options?.SliderMax ?? 100,
 		SliderMin: options?.SliderMin ?? 0,
 		SliderValue: options?.SliderValue ?? 0,
 	})
+	registerSliderRef(sliderRef)
+	return sliderRef
 }
 
 function updateSliderRef(sliderRef: SliderElement, options?: SliderUpdateOptions): SliderElement {
