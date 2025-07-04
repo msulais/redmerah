@@ -27,9 +27,9 @@ const {'class': footerClass   , ...footerOther   } = DialogFooterAttr    ?? {}
 	data-c-dialog-important={DialogImportant? '' : undefined}
 	{...other}>
 	<div class={joinClassList(DialogClasses.container, containerClass)} {...containerOther}>
-		<div class={joinClassList(DialogClasses.header, headerClass)} {...headerOther}>
-			<slot name="header"/>
-		</div>
+		<div
+			class={joinClassList(DialogClasses.header, headerClass)}
+			{...headerOther}><slot name="header"/></div>
 		<div class={joinClassList(DialogClasses.content, contentClass)} {...contentOther}>
 			<slot />
 		</div>
