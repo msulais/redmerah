@@ -1,0 +1,14 @@
+---
+import { joinClassList } from '@/utils/attributes'
+import { TextAreaFieldClasses, type TextAreaFieldProps } from '.'
+import './index.scss'
+
+type Props = TextAreaFieldProps
+const {
+	'class': className,
+	...other
+} = Astro.props
+---
+<textarea
+	class={joinClassList(TextAreaFieldClasses.textareafield, className)}
+	{...other}>{other.value}</textarea>
