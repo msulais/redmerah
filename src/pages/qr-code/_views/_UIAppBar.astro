@@ -1,0 +1,405 @@
+---
+import AppBar from '@/native-components/AppBar/index.astro'
+import IconButton from '@/native-components/Button/IconButton.astro'
+import Tooltip from '@/native-components/Tooltip/index.astro'
+import { APP_QR_CODE as APP } from '@/constants/apps'
+import Menu from '@/native-components/Menu/index.astro'
+import Button from '@/native-components/Button/index.astro'
+import TextField from '@/native-components/TextField/index.astro'
+import ColorPicker from '@/native-components/ColorPicker/index.astro'
+import Dialog from '@/native-components/Dialog/index.astro'
+import SubMenu from '@/native-components/Menu/SubMenu.astro'
+import SubMenuItem from '@/native-components/Menu/SubMenuItem.astro'
+import RadioMenuItem from '@/native-components/Menu/RadioMenuItem.astro'
+import MenuHeader from '@/native-components/Menu/MenuHeader.astro'
+import MenuItem from '@/native-components/Menu/MenuItem.astro'
+import MenuIndent from '@/native-components/Menu/MenuIndent.astro'
+import Icon from '@/native-components/Icon/index.astro'
+import LinkMenuItem from '@/native-components/Menu/LinkMenuItem.astro'
+import Divider from '@/native-components/Divider/index.astro'
+import { PlatformAnimationMode, PlatformThemeMode } from '@/enums/platforms'
+import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
+import { RoutesLinks, ExternalLinks } from '@/enums/links'
+import { IconCodes } from '@/enums/icons'
+import { ElementIds } from '../_scripts/_shared/_ids'
+import { RadioNames } from '../_scripts/_shared/_input-names'
+import { DEFAULT_ANIMATION, DEFAULT_ERROR_CORRECTION_LEVEL, DEFAULT_THEME, DEFAULT_ENCODING_MODE, DEFAULT_VERSION, DEFAULT_MARGIN, DEFAULT_BACKGROUND_COLOR, DEFAULT_COLOR } from '../_scripts/_shared/_constant'
+import { EncodingMode, ErrorCorrectionLevel, QRVersion } from '../_scripts/_shared/_enums'
+import { ButtonVariant } from '@/native-components/Button'
+import { FlyoutPosition } from '@/enums/position'
+---
+
+<AppBar id={ElementIds.appbar}>
+	<Fragment slot="leading">
+		<IconButton
+			id={ElementIds.appbarSideBarButton}
+			IconButtonCode={IconCodes.lineHorizontal3}
+		/>
+		<img
+			src={APP.logoUrl}
+			alt={APP.name + ' logo'}
+			width={32}
+			style="margin: 0 8px 0 0"
+		/>
+	</Fragment>
+	<Fragment slot="headline">{APP.name}</Fragment>
+	<Tooltip slot="trailing">
+		<IconButton
+			id={ElementIds.apInf_button}
+			data-tooltip="Info"
+			aria-label="Info"
+			IconButtonCode={IconCodes.info}
+			popovertarget={ElementIds.apInf_menu}
+		/>
+		<Menu id={ElementIds.apInf_menu} PopoverAnchorBy={ElementIds.apInf_button}>
+			<LinkMenuItem href="/">
+				<img src={logoRedmerah.src} width="16"/>
+				Redmerah
+				<MenuIndent />
+			</LinkMenuItem>
+			<LinkMenuItem href={RoutesLinks.apps}>
+				<Icon IconCode={IconCodes.apps}/>
+				More apps
+				<MenuIndent />
+			</LinkMenuItem>
+			<LinkMenuItem href={RoutesLinks.about}>
+				<Icon IconCode={IconCodes.info}/>
+				About us
+				<MenuIndent />
+			</LinkMenuItem>
+			<Divider />
+			<LinkMenuItem href={RoutesLinks.privacy}>
+				<Icon IconCode={IconCodes.shieldCheckmark}/>
+				Privacy policy
+				<MenuIndent />
+			</LinkMenuItem>
+			<LinkMenuItem href={RoutesLinks.terms}>
+				<Icon IconCode={IconCodes.receipt}/>
+				Terms & conditions
+				<MenuIndent />
+			</LinkMenuItem>
+			<Divider />
+			<MenuItem id={ElementIds.apInf_menuShareButton}>
+				<Icon IconCode={IconCodes.shareAndroid}/>
+				Share
+				<MenuIndent />
+			</MenuItem>
+			<LinkMenuItem href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + encodeURI(APP.name)}>
+				<Icon IconCode={IconCodes.chat}/>
+				Send feedback
+				<MenuIndent />
+			</LinkMenuItem>
+			<LinkMenuItem href={ExternalLinks.donate} LinkButtonNewTab>
+				<Icon IconCode={IconCodes.gift}/>
+				Donate
+				<MenuIndent />
+			</LinkMenuItem>
+			<MenuHeader>&copy; {new Date().getFullYear()} Redmerah</MenuHeader>
+		</Menu>
+
+		<IconButton
+			id={ElementIds.apSett_button}
+			data-tooltip="Settings"
+			IconButtonCode={IconCodes.settings}
+			aria-label="Settings"
+			popovertarget={ElementIds.apSett_menu}
+		/>
+		<Menu id={ElementIds.apSett_menu} PopoverAnchorBy={ElementIds.apSett_button}>
+			<SubMenuItem
+				popovertarget={ElementIds.apSett_animationMenu}>
+				<Icon IconCode={IconCodes.playCircleHint}/>
+				Animation
+				<div style="flex:1"/>
+				<Icon IconCode={IconCodes.chevronRight}/>
+			</SubMenuItem>
+			<SubMenu slot="submenus" style="width:150px" id={ElementIds.apSett_animationMenu}>
+				<RadioMenuItem
+					RadioMenuItemInputAttr={{
+						name: RadioNames.set_animation,
+						checked: DEFAULT_ANIMATION === PlatformAnimationMode.auto,
+						value: PlatformAnimationMode.auto
+					}}>
+					<Icon IconCode={IconCodes.videoClipOptimize}/>
+					Automatic
+				</RadioMenuItem>
+				<RadioMenuItem
+					RadioMenuItemInputAttr={{
+						name: RadioNames.set_animation,
+						checked: DEFAULT_ANIMATION === PlatformAnimationMode.on,
+						value: PlatformAnimationMode.on
+					}}>
+					<Icon IconCode={IconCodes.videoClip}/>
+					On
+				</RadioMenuItem>
+				<RadioMenuItem
+					RadioMenuItemInputAttr={{
+						name: RadioNames.set_animation,
+						checked: DEFAULT_ANIMATION === PlatformAnimationMode.off,
+						value: PlatformAnimationMode.off
+					}}>
+					<Icon IconCode={IconCodes.videoClipOff}/>
+					Off
+				</RadioMenuItem>
+			</SubMenu>
+
+			<SubMenuItem
+				popovertarget={ElementIds.apSett_themeMenu}>
+				<Icon IconCode={IconCodes.weatherSunny}/>
+				Theme
+				<div style="flex:1"/>
+				<Icon IconCode={IconCodes.chevronRight}/>
+			</SubMenuItem>
+			<SubMenu slot="submenus" style="width:150px" id={ElementIds.apSett_themeMenu}>
+				<RadioMenuItem
+					RadioMenuItemInputAttr={{
+						name: RadioNames.set_theme,
+						checked: DEFAULT_THEME === PlatformThemeMode.auto,
+						value: PlatformThemeMode.auto
+					}}>
+					<Icon IconCode={IconCodes.laptopSettings}/>
+					Automatic
+				</RadioMenuItem>
+				<RadioMenuItem
+					RadioMenuItemInputAttr={{
+						name: RadioNames.set_theme,
+						checked: DEFAULT_THEME === PlatformThemeMode.light,
+						value: PlatformThemeMode.light
+					}}>
+					<Icon IconCode={IconCodes.weatherSunny}/>
+					Light
+				</RadioMenuItem>
+				<RadioMenuItem
+					RadioMenuItemInputAttr={{
+						name: RadioNames.set_theme,
+						checked: DEFAULT_THEME === PlatformThemeMode.dark,
+						value: PlatformThemeMode.dark
+					}}>
+					<Icon IconCode={IconCodes.weatherMoon}/>
+					Dark
+				</RadioMenuItem>
+			</SubMenu>
+
+			<Divider/>
+			<MenuHeader>QR code generator</MenuHeader>
+
+			<SubMenuItem
+				popovertarget={ElementIds.apSett_correctionMenu}>
+				<Icon IconCode={IconCodes.errorCircleSettings}/>
+				Error correction level
+				<div style="flex:1"/>
+				<Icon IconCode={IconCodes.chevronRight}/>
+			</SubMenuItem>
+			<SubMenu slot="submenus" id={ElementIds.apSett_correctionMenu}>
+				<RadioMenuItem
+					RadioMenuItemInputAttr={{
+						name: RadioNames.set_correction,
+						checked: DEFAULT_ERROR_CORRECTION_LEVEL === ErrorCorrectionLevel.low,
+						value: ErrorCorrectionLevel.low
+					}}>
+					Low
+					<div style="flex:1"/>
+					~7%
+				</RadioMenuItem>
+				<RadioMenuItem
+					RadioMenuItemInputAttr={{
+						name: RadioNames.set_correction,
+						checked: DEFAULT_ERROR_CORRECTION_LEVEL === ErrorCorrectionLevel.medium,
+						value: ErrorCorrectionLevel.medium
+					}}>
+					Medium
+					<div style="flex:1"/>
+					~15%
+				</RadioMenuItem>
+				<RadioMenuItem
+					RadioMenuItemInputAttr={{
+						name: RadioNames.set_correction,
+						checked: DEFAULT_ERROR_CORRECTION_LEVEL === ErrorCorrectionLevel.quartile,
+						value: ErrorCorrectionLevel.quartile
+					}}>
+					Quartile
+					<div style="flex:1"/>
+					~25%
+				</RadioMenuItem>
+				<RadioMenuItem
+					RadioMenuItemInputAttr={{
+						name: RadioNames.set_correction,
+						checked: DEFAULT_ERROR_CORRECTION_LEVEL === ErrorCorrectionLevel.high,
+						value: ErrorCorrectionLevel.high
+					}}>
+					High
+					<div style="flex:1"/>
+					~30%
+				</RadioMenuItem>
+			</SubMenu>
+
+			<SubMenuItem
+				popovertarget={ElementIds.apSett_encodingMenu}>
+				<Icon IconCode={IconCodes.translate}/>
+				Encoding mode
+				<div style="flex:1"/>
+				<Icon IconCode={IconCodes.chevronRight}/>
+			</SubMenuItem>
+			<SubMenu slot="submenus" id={ElementIds.apSett_encodingMenu}>
+				<RadioMenuItem
+					RadioMenuItemInputAttr={{
+						name: RadioNames.set_encoding,
+						checked: DEFAULT_ENCODING_MODE === EncodingMode.auto,
+						value: EncodingMode.auto
+					}}>
+					Automatic
+				</RadioMenuItem>
+				<RadioMenuItem
+					RadioMenuItemInputAttr={{
+						name: RadioNames.set_encoding,
+						checked: DEFAULT_ENCODING_MODE === EncodingMode.alphanumeric,
+						value: EncodingMode.alphanumeric
+					}}>
+					Alphanumeric
+				</RadioMenuItem>
+				<RadioMenuItem
+					RadioMenuItemInputAttr={{
+						name: RadioNames.set_encoding,
+						checked: DEFAULT_ENCODING_MODE === EncodingMode.byte,
+						value: EncodingMode.byte
+					}}>
+					Byte
+				</RadioMenuItem>
+				<RadioMenuItem
+					RadioMenuItemInputAttr={{
+						name: RadioNames.set_encoding,
+						checked: DEFAULT_ENCODING_MODE === EncodingMode.kanji,
+						value: EncodingMode.kanji
+					}}>
+					Kanji
+				</RadioMenuItem>
+				<RadioMenuItem
+					RadioMenuItemInputAttr={{
+						name: RadioNames.set_encoding,
+						checked: DEFAULT_ENCODING_MODE === EncodingMode.numeric,
+						value: EncodingMode.numeric
+					}}>
+					Numeric
+				</RadioMenuItem>
+			</SubMenu>
+
+			<SubMenuItem
+				popovertarget={ElementIds.apSett_versionMenu}>
+				<Icon IconCode={IconCodes.numberRow}/>
+				Version
+				<div style="flex:1"/>
+				<Icon IconCode={IconCodes.chevronRight}/>
+			</SubMenuItem>
+			<SubMenu slot="submenus" id={ElementIds.apSett_versionMenu}>
+				<RadioMenuItem
+					RadioMenuItemInputAttr={{
+						name: RadioNames.set_version,
+						checked: DEFAULT_VERSION === QRVersion.auto,
+						value: QRVersion.auto
+					}}>
+					Automatic
+				</RadioMenuItem>
+				{new Array(40).fill(1).map((_, i) =>
+					<RadioMenuItem
+						RadioMenuItemInputAttr={{
+							name: RadioNames.set_version,
+							checked: DEFAULT_VERSION === String(i + 1),
+							value: String(i + 1)
+						}}>
+						{i + 1}
+					</RadioMenuItem>
+				)}
+			</SubMenu>
+
+			<MenuItem id={ElementIds.apSett_colorBtn}>
+				<Icon IconCode={IconCodes.color}/>
+				Color
+				<MenuIndent />
+			</MenuItem>
+			<MenuItem id={ElementIds.apSett_marginBtn}>
+				<Icon IconCode={IconCodes.checkboxIndeterminate} IconFilled/>
+				Margin
+				<MenuIndent />
+			</MenuItem>
+		</Menu>
+	</Tooltip>
+</AppBar>
+<Dialog id={ElementIds.apSett_colorDialog} style="width:360px">
+	<Fragment slot="header">Color</Fragment>
+	<div style={{
+		display: 'flex',
+		flexWrap: 'wrap',
+		gap: '16px',
+		alignItems: 'flex-start'
+	}}>
+		<div
+			id={ElementIds.apSett_colorPreviewBackground}
+			style={{
+				minWidth: '64px',
+				maxWidth: '64px',
+				minHeight: '64px',
+				maxHeight: '64px',
+				backgroundColor: DEFAULT_BACKGROUND_COLOR,
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
+				borderRadius: '4px'
+			}}>
+			<svg
+				id={ElementIds.apSett_colorPreviewForeground}
+				xmlns="http://www.w3.org/2000/svg"
+				viewBox="0 -960 960 960"
+				height="52px"
+				width="52px"
+				fill={DEFAULT_COLOR}>
+				<path d="M120-560v-240q0-17 11.5-28.5T160-840h240q17 0 28.5 11.5T440-800v240q0 17-11.5 28.5T400-520H160q-17 0-28.5-11.5T120-560Zm80-40h160v-160H200v160Zm-80 440v-240q0-17 11.5-28.5T160-440h240q17 0 28.5 11.5T440-400v240q0 17-11.5 28.5T400-120H160q-17 0-28.5-11.5T120-160Zm80-40h160v-160H200v160Zm320-360v-240q0-17 11.5-28.5T560-840h240q17 0 28.5 11.5T840-800v240q0 17-11.5 28.5T800-520H560q-17 0-28.5-11.5T520-560Zm80-40h160v-160H600v160Zm160 480v-80h80v80h-80ZM520-360v-80h80v80h-80Zm80 80v-80h80v80h-80Zm-80 80v-80h80v80h-80Zm80 80v-80h80v80h-80Zm80-80v-80h80v80h-80Zm0-160v-80h80v80h-80Zm80 80v-80h80v80h-80Z"/>
+			</svg>
+		</div>
+		<div style="flex:1">
+			<p style="font-size:14px;user-select:none;color:rgba(var(--g-color-on-surface),var(--g-opacity-inv2));">Color:</p>
+			<Button
+				style="margin-top:4px;width:100%"
+				ButtonVariant={ButtonVariant.tonal}
+				id={ElementIds.apSett_colorForePickerBtn}
+				popovertarget={ElementIds.apSett_colorForePicker}
+				>{DEFAULT_COLOR}</Button>
+			<ColorPicker
+				id={ElementIds.apSett_colorForePicker}
+				ColorPickerValue={DEFAULT_COLOR}
+				PopoverAnchorBy={ElementIds.apSett_colorForePickerBtn}
+				PopoverPosition={FlyoutPosition.centerCenterLeftTop}
+			/>
+
+			<p style="margin-top:8px;font-size:14px;user-select:none;color:rgba(var(--g-color-on-surface),var(--g-opacity-inv2));">Background color:</p>
+			<Button
+				style="margin-top:4px;width:100%"
+				ButtonVariant={ButtonVariant.tonal}
+				id={ElementIds.apSett_colorBackPickerBtn2}
+				popovertarget={ElementIds.apSett_colorBackPicker}
+				>{DEFAULT_BACKGROUND_COLOR}</Button>
+			<ColorPicker
+				id={ElementIds.apSett_colorBackPicker}
+				ColorPickerValue={DEFAULT_BACKGROUND_COLOR}
+				PopoverAnchorBy={ElementIds.apSett_colorBackPickerBtn2}
+				PopoverPosition={FlyoutPosition.centerCenterLeftTop}
+			/>
+		</div>
+	</div>
+	<form style="display:contents" method="dialog" slot="footer">
+		<Button ButtonVariant={ButtonVariant.tonal}>Cancel</Button>
+		<Button ButtonVariant={ButtonVariant.filled} id={ElementIds.apSett_colorSave}>Save</Button>
+	</form>
+</Dialog>
+<Dialog id={ElementIds.apSett_marginDialog} style="width:360px">
+	<Fragment slot="header">Margin</Fragment>
+	<TextField TextFieldInputAttr={{
+		'aria-label': 'Margin',
+		type: 'number',
+		id: ElementIds.apSett_marginInput,
+		value: DEFAULT_MARGIN,
+		min: '0'
+	}}/>
+	<form style="display:contents" method="dialog" slot="footer">
+		<Button ButtonVariant={ButtonVariant.tonal}>Cancel</Button>
+		<Button ButtonVariant={ButtonVariant.filled} id={ElementIds.apSett_marginSave}>Save</Button>
+	</form>
+</Dialog>
