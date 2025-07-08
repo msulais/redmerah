@@ -1,0 +1,42 @@
+---
+import { DEFAULT_DATA, DEFAULT_PAGE } from '../../_scripts/_shared/_constant'
+import { Pages } from '../../_scripts/_shared/_enums'
+import { ElementIds } from '../../_scripts/_shared/_ids'
+import { CSSClasses } from '../../_styles/_css'
+import TextAreaField from '@/native-components/TextAreaField/index.astro'
+import Button from '@/native-components/Button/index.astro'
+import Toast from '@/native-components/Toast/index.astro'
+import Icon from '@/native-components/Icon/index.astro'
+import { IconCodes } from '@/enums/icons'
+import { ButtonVariant } from '@/native-components/Button'
+---
+
+<div
+	id={ElementIds.bdPage_generate}
+	class={[CSSClasses.bodyPage, CSSClasses.pageGenerate].join(' ')}
+	role="tabpanel"
+	hidden={DEFAULT_PAGE !== Pages.generate}>
+	<TextAreaField
+		style="max-width:min(100%,720px)"
+		id={ElementIds.pgGen_input}
+		placeholder="Link, email, or any text"
+		value={DEFAULT_DATA}
+	/>
+	<div style={{
+		display: 'flex',
+		marginTop: '16px',
+		gap: '16px',
+	}}>
+		<canvas id={ElementIds.pgGen_output}/>
+		<div style="display:flex;gap:8px;flex-direction:column;width:192px">
+			<p style="font-size:var(--g-font-size-xs);">Donwload:</p>
+			<Button id={ElementIds.pgGenDow_png} disabled ButtonVariant={ButtonVariant.tonal}>PNG</Button>
+			<Button id={ElementIds.pgGenDow_jpg} disabled ButtonVariant={ButtonVariant.tonal}>JPEG</Button>
+			<Button id={ElementIds.pgGenDow_svg} disabled ButtonVariant={ButtonVariant.tonal}>SVG</Button>
+		</div>
+	</div>
+</div>
+<Toast id={ElementIds.toa_generateError} ToastCloseDelay={5000}>
+	<Icon IconCode={IconCodes.warning} slot="leading"/>
+	<span id={ElementIds.toa_generateErrorMessage}/>
+</Toast>

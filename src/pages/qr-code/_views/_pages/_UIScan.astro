@@ -1,0 +1,25 @@
+---
+import { ButtonVariant } from '@/native-components/Button'
+import { DEFAULT_PAGE } from '../../_scripts/_shared/_constant'
+import { Pages } from '../../_scripts/_shared/_enums'
+import { ElementIds } from '../../_scripts/_shared/_ids'
+import { CSSClasses } from '../../_styles/_css'
+import TextAreaField from '@/native-components/TextAreaField/index.astro'
+import Button from '@/native-components/Button/index.astro'
+import Icon from '@/native-components/Icon/index.astro'
+import { IconCodes } from '@/enums/icons'
+---
+
+<div
+	id={ElementIds.bdPage_scan}
+	class={[CSSClasses.bodyPage, CSSClasses.pageScan].join(' ')}
+	role="tabpanel"
+	hidden={DEFAULT_PAGE !== Pages.scan}>
+	<Button ButtonVariant={ButtonVariant.filled} id={ElementIds.pgScan_pickImg}>
+		<Icon IconCode={IconCodes.qrCode}/>
+		Pick QR code image
+	</Button>
+	<label for={ElementIds.pgScan_output}>Data:</label>
+	<TextAreaField readonly id={ElementIds.pgScan_output}/>
+	<img src="" alt="" id={ElementIds.pgScan_imgPreview}/>
+</div>

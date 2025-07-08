@@ -44,6 +44,7 @@ export enum IconCodes {
 	circleEraser = 0xE43A,
 	chat = 0xE3CA,
 	checkboxChecked = 0xE3FA,
+	checkboxIndeterminate = 0xE3FE,
 	checkboxUnchecked = 0xE402,
 	checkmark = 0xE406,
 	chevronDown = 0xE42A,
