@@ -99,7 +99,7 @@ function _updateLatexList(index: number): void {
 		outputRef = document.createElement('output')
 		liRef = document.createElement('li')
 		textareaRef.id = textareaId
-		outputRef.htmlFor = textareaId
+		outputRef.setAttribute('for', textareaId)
 		liRef.replaceChildren(textareaRef, outputRef, actions)
 		children.splice(index, 0, liRef)
 		_latexListRef.replaceChildren(...children)
