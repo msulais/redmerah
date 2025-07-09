@@ -80,10 +80,10 @@ function _subsAnimationView(v: SettingsStoreType, o: SettingsStoreType): void {
 
 	_rootRef.setAttribute(RootAttributes.animation, animation)
 	const previousRef = $$(
-		`input[name="${CSS.escape(RadioNames.set_animation)}"]:checked`
+		`input[name="${CSS.escape(RadioNames.animation)}"]:checked`
 	) as HTMLInputElement
 	const targetRef = $$(
-		`input[name="${CSS.escape(RadioNames.set_animation)}"][value="${CSS.escape(animation)}"]`
+		`input[name="${CSS.escape(RadioNames.animation)}"][value="${CSS.escape(animation)}"]`
 	) as HTMLInputElement
 
 	if (previousRef === targetRef) {return}
@@ -97,10 +97,10 @@ function _subsThemeView(v: SettingsStoreType, o: SettingsStoreType): void {
 
 	_rootRef.setAttribute(RootAttributes.theme, theme)
 	const previousRef = $$(
-		`input[name="${CSS.escape(RadioNames.set_theme)}"]:checked`
+		`input[name="${CSS.escape(RadioNames.theme)}"]:checked`
 	) as HTMLInputElement
 	const targetRef = $$(
-		`input[name="${CSS.escape(RadioNames.set_theme)}"][value="${CSS.escape(theme)}"]`
+		`input[name="${CSS.escape(RadioNames.theme)}"][value="${CSS.escape(theme)}"]`
 	) as HTMLInputElement
 
 	if (previousRef === targetRef) {return}
@@ -127,10 +127,10 @@ function _subsEncodingModeView(v: SettingsStoreType, o: SettingsStoreType): void
 	if (encoding === o.encodingMode) return
 
 	const previousRef = $$(
-		`input[name="${CSS.escape(RadioNames.set_encoding)}"]:checked`
+		`input[name="${CSS.escape(RadioNames.encoding)}"]:checked`
 	) as HTMLInputElement
 	const targetRef = $$(
-		`input[name="${CSS.escape(RadioNames.set_encoding)}"][value="${CSS.escape(encoding)}"]`
+		`input[name="${CSS.escape(RadioNames.encoding)}"][value="${CSS.escape(encoding)}"]`
 	) as HTMLInputElement
 
 	if (previousRef === targetRef) {return}
@@ -150,10 +150,10 @@ function _subsECLView(v: SettingsStoreType, o: SettingsStoreType): void {
 	if (ecl === o.errorCorrectionLevel) return
 
 	const previousRef = $$(
-		`input[name="${CSS.escape(RadioNames.set_correction)}"]:checked`
+		`input[name="${CSS.escape(RadioNames.correction)}"]:checked`
 	) as HTMLInputElement
 	const targetRef = $$(
-		`input[name="${CSS.escape(RadioNames.set_correction)}"][value="${CSS.escape(ecl)}"]`
+		`input[name="${CSS.escape(RadioNames.correction)}"][value="${CSS.escape(ecl)}"]`
 	) as HTMLInputElement
 
 	if (previousRef === targetRef) {return}
@@ -180,10 +180,10 @@ function _subsVersionView(v: SettingsStoreType, o: SettingsStoreType): void {
 	if (version === o.version) return
 
 	const previousRef = $$(
-		`input[name="${CSS.escape(RadioNames.set_version)}"]:checked`
+		`input[name="${CSS.escape(RadioNames.version)}"]:checked`
 	) as HTMLInputElement
 	const targetRef = $$(
-		`input[name="${CSS.escape(RadioNames.set_version)}"][value="${CSS.escape(version)}"]`
+		`input[name="${CSS.escape(RadioNames.version)}"][value="${CSS.escape(version)}"]`
 	) as HTMLInputElement
 
 	if (previousRef === targetRef) {return}

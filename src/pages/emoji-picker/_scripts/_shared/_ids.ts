@@ -2,30 +2,45 @@ let _ID_INDEX = 0
 
 function _createId(): string {
 	++_ID_INDEX
-	return 'app-' + _ID_INDEX
+	return 'emoji-picker-' + _ID_INDEX
 }
 
 export class ElementIds {
 	static readonly appbar = _createId()
-	static readonly appbarSideBarButton = _createId()
-	static readonly appbarInfoButton = _createId()
-	static readonly appbarInfoMenu = _createId()
-	static readonly appbarInfoMenuShareButton = _createId()
-	static readonly appbarSettingsButton = _createId()
-	static readonly appbarSettingsMenu = _createId()
-	static readonly appbarSettingsAnimationMenu = _createId()
-	static readonly appbarSettingsThemeMenu = _createId()
-	static readonly appbarSearchButton = _createId()
-	static readonly appbarSearchPopover = _createId()
-	static readonly appbarSearchTextField = _createId()
+
+	// ap = appbar
+	static readonly ap_sideBarBtn = _createId()
+
+	// apInf = appbar info
+	static readonly apInf_btn = _createId()
+	static readonly apInf_menu = _createId()
+	static readonly apInf_shareBtn = _createId()
+
+	// apSett = appbar settings
+	static readonly apSett_btn = _createId()
+	static readonly apSett_menu = _createId()
+	static readonly apSett_animationMenu = _createId()
+	static readonly apSett_themeMenu = _createId()
+
+	// apSrc = appbar search
+	static readonly apSrc_btn = _createId()
+	static readonly apSrc_popover = _createId()
+	static readonly apSrc_input = _createId()
+
 	static readonly body = _createId()
-	static readonly bodyEmojiList = _createId()
-	static readonly bodySkinTone = _createId()
-	static readonly bodyTitle = _createId()
-	static readonly bodyToastCopied = _createId()
-	static readonly bodyTextField = _createId()
-	static readonly bodyTextFieldDismiss = _createId()
-	static readonly bodyTextFieldCopy = _createId()
+
+	// bd = body
+	static readonly bd_emojiList = _createId()
+	static readonly bd_skinTone = _createId()
+	static readonly bd_title = _createId()
+	static readonly bd_input = _createId()
+	static readonly bd_dismissInput = _createId()
+	static readonly bd_copyInput = _createId()
+
+	// nav = navigation
 	static readonly navigationSideBar = _createId()
 	static readonly navigationDrawer = _createId()
+
+	// toa = toast
+	static readonly toa_copied = _createId()
 }

@@ -6,7 +6,7 @@ import { LocalStorageKeys } from "@/enums/storage"
 import { isValidEnumValue } from "@/utils/object"
 import { RootAttributes } from "@/enums/attributes"
 import { RadioNames } from "../_shared/_input-names"
-import { DEFAULT_ANIMATION, DEFAULT_THEME } from "../_shared/_constant"
+import { DEFAULT_ANIMATION, DEFAULT_KEEP_AWAKE, DEFAULT_THEME } from "../_shared/_constant"
 import type { DialogElement } from "@/native-components/Dialog"
 import { saveStorageItem } from "./_database"
 
@@ -19,14 +19,14 @@ export type SettingsStoreType = Readonly<{
 export const SettingsStore = new ObservableStore<SettingsStoreType>({
 	theme    : DEFAULT_THEME,
 	animation: DEFAULT_ANIMATION,
-	keepAwake: false
+	keepAwake: DEFAULT_KEEP_AWAKE
 })
 const _rootRef = document.documentElement
-const _keepAwakeErrorRef = $(ElementIds.bodyAlertWakeLockError) as DialogElement
-const _keepAwakeBtnRef = $(ElementIds.appbarInfoMenuKeepAwake) as HTMLInputElement
-const _themeRef = $(ElementIds.appbarSettingsThemeMenu) as HTMLDivElement
-const _animationRef = $(ElementIds.appbarSettingsAnimationMenu) as HTMLDivElement
-const _settingsMenuRef = $(ElementIds.appbarSettingsMenu) as HTMLDivElement
+const _keepAwakeErrorRef = $(ElementIds.bdDlg_wakeLockError) as DialogElement
+const _keepAwakeBtnRef = $(ElementIds.apSett_keepAwake) as HTMLInputElement
+const _themeRef = $(ElementIds.apSett_themeMenu) as HTMLDivElement
+const _animationRef = $(ElementIds.apSett_animationMenu) as HTMLDivElement
+const _settingsMenuRef = $(ElementIds.apSett_menu) as HTMLDivElement
 let _wakeLock: WakeLockSentinel | null = null
 
 function _subscribeKeepAwakeChanges(v: SettingsStoreType, o: SettingsStoreType): void {
@@ -78,10 +78,10 @@ function _subscribeAnimationRefView(v: SettingsStoreType, o: SettingsStoreType):
 
 	_rootRef.setAttribute(RootAttributes.animation, animation)
 	const previousRef = $$(
-		`input[name="${CSS.escape(RadioNames.settingsAnimation)}"]:checked`
+		`input[name="${CSS.escape(RadioNames.animation)}"]:checked`
 	) as HTMLInputElement
 	const targetRef = $$(
-		`input[name="${CSS.escape(RadioNames.settingsAnimation)}"][value="${CSS.escape(animation)}"]`
+		`input[name="${CSS.escape(RadioNames.animation)}"][value="${CSS.escape(animation)}"]`
 	) as HTMLInputElement
 
 	if (previousRef === targetRef) {return}
@@ -95,10 +95,10 @@ function _subscribeThemeRefView(v: SettingsStoreType, o: SettingsStoreType): voi
 
 	_rootRef.setAttribute(RootAttributes.theme, theme)
 	const previousRef = $$(
-		`input[name="${CSS.escape(RadioNames.settingsTheme)}"]:checked`
+		`input[name="${CSS.escape(RadioNames.theme)}"]:checked`
 	) as HTMLInputElement
 	const targetRef = $$(
-		`input[name="${CSS.escape(RadioNames.settingsTheme)}"][value="${CSS.escape(theme)}"]`
+		`input[name="${CSS.escape(RadioNames.theme)}"][value="${CSS.escape(theme)}"]`
 	) as HTMLInputElement
 
 	if (previousRef === targetRef) {return}

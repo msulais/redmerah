@@ -12,7 +12,7 @@ import { ButtonVariant } from '@/native-components/Button'
 ---
 
 <div
-	id={ElementIds.bdPage_generate}
+	id={ElementIds.pg_generate}
 	class={[CSSClasses.bodyPage, CSSClasses.pageGenerate].join(' ')}
 	role="tabpanel"
 	hidden={DEFAULT_PAGE !== Pages.generate}>
@@ -30,9 +30,9 @@ import { ButtonVariant } from '@/native-components/Button'
 		<canvas id={ElementIds.pgGen_output}/>
 		<div style="display:flex;gap:8px;flex-direction:column;width:192px">
 			<p style="font-size:var(--g-font-size-xs);">Donwload:</p>
-			<Button id={ElementIds.pgGenDow_png} disabled ButtonVariant={ButtonVariant.tonal}>PNG</Button>
-			<Button id={ElementIds.pgGenDow_jpg} disabled ButtonVariant={ButtonVariant.tonal}>JPEG</Button>
-			<Button id={ElementIds.pgGenDow_svg} disabled ButtonVariant={ButtonVariant.tonal}>SVG</Button>
+			<Button id={ElementIds.pgGen_png} disabled ButtonVariant={ButtonVariant.tonal}>PNG</Button>
+			<Button id={ElementIds.pgGen_jpg} disabled ButtonVariant={ButtonVariant.tonal}>JPEG</Button>
+			<Button id={ElementIds.pgGen_svg} disabled ButtonVariant={ButtonVariant.tonal}>SVG</Button>
 		</div>
 	</div>
 </div>

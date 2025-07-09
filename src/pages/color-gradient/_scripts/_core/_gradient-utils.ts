@@ -3,7 +3,11 @@ import { hexToHsl, hexToRgb } from "@/utils/color"
 import { ColorSpace, GradientType, HueInterpolationMethod, PolarColorSpace, RadialGradientShape, RectangularColorSpace } from "../_shared/_enums"
 import type { GradientItem } from "./_gradients"
 
-export function convertColorByColorSpace(color: HEXColor, space: ColorSpace, keepOpacity: boolean = false): string {
+export function convertColorByColorSpace(
+	color: HEXColor,
+	space: ColorSpace,
+	keepOpacity: boolean = false
+): string {
 	const opacity = (color.length > 7
 		? Number.parseInt(color.substring(7).padStart(2, '0'), 16) / 0xff
 		: 1

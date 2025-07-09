@@ -25,7 +25,7 @@ enum _ObjectStoreNames {
 }
 
 const _db = new IDB(DatabaseNames.emojiPicker)
-const _bodyTextFieldRef = $(ElementIds.bodyTextField) as HTMLInputElement
+const _bodyTextFieldRef = $(ElementIds.bd_input) as HTMLInputElement
 
 export function saveStorageItem<K extends _StorageKeys>(key: K, value: _StorageItems[K]) {
 	return _db

@@ -8,11 +8,28 @@ import { IconCodes } from '@/enums/icons'
 import { ElementIds } from '../../_scripts/_shared/_ids'
 import { Commands } from '../../_scripts/_shared/_commands'
 import { CSSClasses } from "../../_styles/_css"
+import { Pages } from '../../_scripts/_shared/_enums'
+import { DEFAULT_BASIC_INPUT, DEFAULT_BASIC_OUTPUT, DEFAULT_PAGE } from '../../_scripts/_shared/_constant'
 ---
-<div class={CSSClasses.bd_page} role="tabpanel" id={ElementIds.bd_basic}>
+<div
+	class={CSSClasses.bd_page}
+	role="tabpanel"
+	id={ElementIds.pg_basic}
+	hidden={DEFAULT_PAGE !== Pages.basic}>
 	<div class={CSSClasses.bdPage_input}>
-		<input id={ElementIds.bdBas_input} readonly placeholder="0" class={CSSClasses.bd_inField}/>
-		<input id={ElementIds.bdBas_output} readonly value="0" class={CSSClasses.bd_outField}/>
+		<input
+			id={ElementIds.pgBas_input}
+			readonly
+			placeholder="0"
+			value={DEFAULT_BASIC_INPUT}
+			class={CSSClasses.bd_inField}
+		/>
+		<input
+			id={ElementIds.pgBas_output}
+			readonly
+			value={DEFAULT_BASIC_OUTPUT ?? '0'}
+			class={CSSClasses.bd_outField}
+		/>
 	</div>
 	<div class={CSSClasses.bdPage_options}>
 		<div class={CSSClasses.bdPage_optionGroup}>

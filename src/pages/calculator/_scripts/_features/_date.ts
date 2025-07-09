@@ -9,6 +9,7 @@ import { isValidEnumValue } from "@/utils/object"
 import { safeNumber } from "@/utils/number"
 import { saveStorageItem } from "../_core/_database"
 import type { ComboBoxElement } from "@/native-components/ComboBox"
+import { DEFAULT_DATE_INPUT_DAYS, DEFAULT_DATE_INPUT_MONTHS, DEFAULT_DATE_INPUT_YEAR, DEFAULT_DATE_INPUT_FROM, DEFAULT_DATE_INPUT_TO, DEFAULT_DATE_OPERATION, DEFAULT_DATE_OUTPUT } from "../_shared/_constant"
 
 export type DateStoreType = Readonly<{
 	inputFrom: Date
@@ -21,27 +22,27 @@ export type DateStoreType = Readonly<{
 }>
 
 export const DateStore = new ObservableStore<DateStoreType>({
-	inputDays: 0,
-	inputFrom: new Date(),
-	inputMonths: 0,
-	inputTo: new Date(),
-	inputYears: 0,
-	operation: DateOperation.difference,
-	output: 'Same date'
+	inputDays: DEFAULT_DATE_INPUT_DAYS,
+	inputMonths: DEFAULT_DATE_INPUT_MONTHS,
+	inputYears: DEFAULT_DATE_INPUT_YEAR,
+	inputFrom: DEFAULT_DATE_INPUT_FROM,
+	inputTo: DEFAULT_DATE_INPUT_TO,
+	operation: DEFAULT_DATE_OPERATION,
+	output: DEFAULT_DATE_OUTPUT
 })
-const _operationRef = $(ElementIds.bdDate_operation) as ComboBoxElement
-const _datePickerFromRef = $(ElementIds.bdDateInp_fromDatePicker) as DatePickerElement
-const _datePickerToRef = $(ElementIds.bdDateInp_toDatePicker) as DatePickerElement
-const _buttonFromRef = $(ElementIds.bdDateInp_fromBtn) as HTMLButtonElement
-const _buttonToRef = $(ElementIds.bdDateInp_toBtn) as HTMLButtonElement
-const _spanFromRef = $$(`#${ElementIds.bdDateInp_fromBtn}>span`) as HTMLSpanElement
-const _spanToRef = $$(`#${ElementIds.bdDateInp_toBtn}>span`) as HTMLSpanElement
-const _inputYearsRef = $(ElementIds.bdDateInp_years) as HTMLInputElement
-const _inputMonthsRef = $(ElementIds.bdDateInp_months) as HTMLInputElement
-const _inputDaysRef = $(ElementIds.bdDateInp_days) as HTMLInputElement
-const _operationDiffRef = $(ElementIds.bdDateOp_diff) as HTMLDivElement
-const _operationAddSubRef = $(ElementIds.bdDateOp_addSub) as HTMLDivElement
-const _dateOutputRef = $(ElementIds.bdDate_output) as HTMLOutputElement
+const _operationRef = $(ElementIds.pgDate_operation) as ComboBoxElement
+const _datePickerFromRef = $(ElementIds.pgDate_fromPicker) as DatePickerElement
+const _datePickerToRef = $(ElementIds.pgDate_toPicker) as DatePickerElement
+const _buttonFromRef = $(ElementIds.pgDate_fromBtn) as HTMLButtonElement
+const _buttonToRef = $(ElementIds.pgDate_toBtn) as HTMLButtonElement
+const _spanFromRef = $$(`#${ElementIds.pgDate_fromBtn}>span`) as HTMLSpanElement
+const _spanToRef = $$(`#${ElementIds.pgDate_toBtn}>span`) as HTMLSpanElement
+const _inputYearsRef = $(ElementIds.pgDate_years) as HTMLInputElement
+const _inputMonthsRef = $(ElementIds.pgDate_months) as HTMLInputElement
+const _inputDaysRef = $(ElementIds.pgDate_days) as HTMLInputElement
+const _operationDiffRef = $(ElementIds.pgDate_diff) as HTMLDivElement
+const _operationAddSubRef = $(ElementIds.pgDate_addSub) as HTMLDivElement
+const _dateOutputRef = $(ElementIds.pgDate_output) as HTMLOutputElement
 let _timeCalculateId: number | null | NodeJS.Timeout = null
 let _timeYearsId: number | null | NodeJS.Timeout = null
 let _timeMonthsId: number | null | NodeJS.Timeout = null

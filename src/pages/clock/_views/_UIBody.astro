@@ -16,7 +16,7 @@ import { ButtonVariant } from '@/native-components/Button'
 	<UIClock />
 	<UITimer />
 	<UIStopwatch />
-	<Dialog id={ElementIds.bodyAlertWakeLockError} style="width:360px">
+	<Dialog id={ElementIds.bdDlg_wakeLockError} style="width:360px">
 		<Fragment slot="header">
 			<Icon IconCode={IconCodes.warning} style="font-size:32px"/>
 			Keep Awake Error
@@ -28,7 +28,7 @@ import { ButtonVariant } from '@/native-components/Button'
 			<Button ButtonVariant={ButtonVariant.filled}>Close</Button>
 		</form>
 	</Dialog>
-	<Toast id={ElementIds.bodyToastCopied}>
+	<Toast id={ElementIds.toa_copied}>
 		<Icon slot="leading" IconCode={IconCodes.copy}/>
 		Copied
 	</Toast>

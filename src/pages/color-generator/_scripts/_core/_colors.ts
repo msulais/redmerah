@@ -1,6 +1,6 @@
 import type { HEXColor, RGBColor } from "@/types/color"
 import { ObservableStore } from "@/utils/store"
-import { DEFAULT_COLOR } from "../_shared/_constant"
+import { DEFAULT_COLOR, DEFAULT_PALETTE } from "../_shared/_constant"
 import { $, $$, $$$ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
 import { ColorPickerEvents, getColorPickerRefValue, updateColorPickerRef, type ColorPickerElement } from "@/native-components/ColorPicker"
@@ -24,19 +24,19 @@ export type ColorsStoreType = {
 
 export const ColorsStore = new ObservableStore<ColorsStoreType>({
 	seed: DEFAULT_COLOR,
-	palette: []
+	palette: DEFAULT_PALETTE
 })
 const _animationOption = {duration: 250, easing: AnimationEffectTiming.spring}
-const _saveButtonRef = $(ElementIds.bodySaveButton) as IconButtonElement
-const _toastCopiedRef = $(ElementIds.bodyToastCopied) as ToastElement
+const _saveButtonRef = $(ElementIds.bd_saveBtn) as IconButtonElement
+const _toastCopiedRef = $(ElementIds.toa_copied) as ToastElement
 const _paletteListRef = $$(`.${CSSClasses.bodyList}`) as HTMLDivElement
 const _colorAccentRef = $(GlobalElementIds.colorAccent) as HTMLStyleElement
-const _colorPickerRef = $(ElementIds.bodyColorPickerPopover) as ColorPickerElement
-const _colorPickerButtonSpanRef = $(ElementIds.bodyColorPickerButtonSpan) as HTMLSpanElement
-const _paletteAccentLightRef = $(ElementIds.bodyColorAccentLight) as HTMLSpanElement
-const _paletteOnAccentLightRef = $(ElementIds.bodyColorOnAccentLight) as HTMLSpanElement
-const _paletteAccentDarkRef = $(ElementIds.bodyColorAccentDark) as HTMLSpanElement
-const _paletteOnAccentDarkRef = $(ElementIds.bodyColorOnAccentDark) as HTMLSpanElement
+const _colorPickerRef = $(ElementIds.bd_picker) as ColorPickerElement
+const _colorPickerButtonSpanRef = $(ElementIds.bd_pickerBtnSpan) as HTMLSpanElement
+const _paletteAccentLightRef = $(ElementIds.bd_accentLight) as HTMLSpanElement
+const _paletteOnAccentLightRef = $(ElementIds.bd_onAccentLight) as HTMLSpanElement
+const _paletteAccentDarkRef = $(ElementIds.bd_accentDark) as HTMLSpanElement
+const _paletteOnAccentDarkRef = $(ElementIds.bd_onAccentDark) as HTMLSpanElement
 let _timeAccentId: NodeJS.Timeout | number | null = null
 
 function _rgbToCSS(rgb: RGBColor) {
@@ -70,36 +70,36 @@ function _subscribePaletteRefView(v: ColorsStoreType, o: ColorsStoreType): void 
 			const copyButton = createIconButtonRef({
 				IconButtonIcon: {IconCode: IconCodes.copy},
 			})
-			copyButton.setAttribute('data-command', Commands.copyPaletteList)
+			copyButton.setAttribute('data-command', Commands.pal_copy)
 			copyButton.setAttribute('aria-label', 'Copy')
 			copyButton.setAttribute('data-tooltip', 'Copy')
 
 			const delButton = createIconButtonRef({
 				IconButtonIcon: {IconCode: IconCodes.delete}
 			})
-			delButton.setAttribute('data-command', Commands.deletePaletteList)
+			delButton.setAttribute('data-command', Commands.pal_delete)
 			delButton.setAttribute('aria-label', 'Delete')
 			delButton.setAttribute('data-tooltip', 'Delete')
 
 			const li = document.createElement('li')
 			li.setAttribute('data-seed-color', seed)
 			li.innerHTML = `
-				<p>
-					${icon.outerHTML}
-					${seed}
-					<span style="display:block;flex:1"></span>
-					${copyButton.outerHTML}
-					${delButton.outerHTML}
-				</p>
-				<div style="background-color:${pal.color};color:${pal.onColor}">
-					<span data-tooltip="Accent Light">${pal.color.toUpperCase()}</span>
-					<span data-tooltip="On Accent Light" style="background-color:${pal.onColor};color:${pal.color}">${pal.onColor.toUpperCase()}</span>
-				</div>
-				<div style="background-color:${pal.colorDark};color:${pal.onColorDark}">
-					<span data-tooltip="Accent Dark">${pal.colorDark.toUpperCase()}</span>
-					<span data-tooltip="On Accent Dark" style="background-color:${pal.onColorDark};color:${pal.colorDark}">${pal.onColorDark.toUpperCase()}</span>
-				</div>
-			`
+<p>
+	${icon.outerHTML}
+	${seed}
+	<span style="display:block;flex:1"></span>
+	${copyButton.outerHTML}
+	${delButton.outerHTML}
+</p>
+<div style="background-color:${pal.color};color:${pal.onColor}">
+	<span data-tooltip="Accent Light">${pal.color.toUpperCase()}</span>
+	<span data-tooltip="On Accent Light" style="background-color:${pal.onColor};color:${pal.color}">${pal.onColor.toUpperCase()}</span>
+</div>
+<div style="background-color:${pal.colorDark};color:${pal.onColorDark}">
+	<span data-tooltip="Accent Dark">${pal.colorDark.toUpperCase()}</span>
+	<span data-tooltip="On Accent Dark" style="background-color:${pal.onColorDark};color:${pal.colorDark}">${pal.onColorDark.toUpperCase()}</span>
+</div>
+`
 
 			_paletteListRef.replaceChildren(li, ...children)
 			if (allowAnimation) {
@@ -235,13 +235,13 @@ function _initEvents(): void {
 		}
 
 		switch (command) {
-		case Commands.copyPaletteList:{
+		case Commands.pal_copy:{
 			const seed = getSeedColor()
 			if (seed) {
 				copyColorPalette(seed)
 			}
 		}	break
-		case Commands.deletePaletteList: {
+		case Commands.pal_delete: {
 			const seed = getSeedColor()
 			if (seed) {
 				ColorsStore.update(v => ({...v,

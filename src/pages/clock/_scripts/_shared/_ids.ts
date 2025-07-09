@@ -2,48 +2,70 @@ let _ID_INDEX = 0
 
 function _createId(): string {
 	++_ID_INDEX
-	return 'app-' + _ID_INDEX
+	return 'clock-' + _ID_INDEX
 }
 
 export class ElementIds {
 	static readonly appbar = _createId()
-	static readonly appbarSideBarButton = _createId()
-	static readonly appbarInfoButton = _createId()
-	static readonly appbarInfoMenu = _createId()
-	static readonly appbarInfoMenuShareButton = _createId()
-	static readonly appbarSettingsButton = _createId()
-	static readonly appbarSettingsMenu = _createId()
-	static readonly appbarSettingsAnimationMenu = _createId()
-	static readonly appbarSettingsThemeMenu = _createId()
-	static readonly appbarInfoMenuKeepAwake = _createId()
-	static readonly bodyAlertWakeLockError = _createId()
-	static readonly bodyClock = _createId()
-	static readonly bodyClockTime = _createId()
-	static readonly bodyClockDate = _createId()
-	static readonly bodyStopwatch = _createId()
-	static readonly bodyStopwatchHHMMSS = _createId()
-	static readonly bodyStopwatchMS = _createId()
-	static readonly bodyStopwatchLaps = _createId()
-	static readonly bodyStopwatchLapsContent = _createId()
-	static readonly bodyStopwatchPlayOrPause = _createId()
-	static readonly bodyStopwatchResetOrLap = _createId()
-	static readonly bodyStopwatchMoreButton = _createId()
-	static readonly bodyStopwatchMoreMenu = _createId()
-	static readonly bodyStopwatchMoreMillisecondsMenu = _createId()
-	static readonly bodyTimer = _createId()
-	static readonly bodyTimerAudio = _createId()
-	static readonly bodyTimerTime = _createId()
-	static readonly bodyTimerActionPlayPause = _createId()
-	static readonly bodyTimerActionEditReset = _createId()
-	static readonly bodyTimerEditDialog = _createId()
-	static readonly bodyTimerEditHours = _createId()
-	static readonly bodyTimerEditMinutes = _createId()
-	static readonly bodyTimerEditSeconds = _createId()
-	static readonly bodyTimerEditSave = _createId()
-	static readonly bodyTimerDone = _createId()
-	static readonly bodyTimerDoneTimeInfo = _createId()
-	static readonly bodyTimerDoneDate = _createId()
-	static readonly bodyToastCopied = _createId()
-	static readonly navigationSideBar = _createId()
-	static readonly navigationDrawer = _createId()
+
+	// ap = appbar
+	static readonly ap_sideBarBtn = _createId()
+
+	// apInf = appbar info
+	static readonly apInf_btn = _createId()
+	static readonly apInf_menu = _createId()
+	static readonly apInf_menuShareBtn = _createId()
+
+	// apSett = appbar settings
+	static readonly apSett_btn = _createId()
+	static readonly apSett_menu = _createId()
+	static readonly apSett_animationMenu = _createId()
+	static readonly apSett_themeMenu = _createId()
+	static readonly apSett_keepAwake = _createId()
+
+	// bdDlg = body dialog
+	static readonly bdDlg_wakeLockError = _createId()
+
+	// pg = page
+	static readonly pg_clock = _createId()
+	static readonly pg_stopwatch = _createId()
+	static readonly pg_timer = _createId()
+
+
+
+	// pgClk = page clock
+	static readonly pgClk_time = _createId()
+	static readonly pgClk_date = _createId()
+
+	// pgSw = page stopwatch
+	static readonly pgSw_hhmmss = _createId()
+	static readonly pgSw_ms = _createId()
+	static readonly pgSw_laps = _createId()
+	static readonly pgSw_lapsContent = _createId()
+	static readonly pgSw_playPause = _createId()
+	static readonly pgSw_resetLap = _createId()
+	static readonly pgSw_moreBtn = _createId()
+	static readonly pgSw_moreMenu = _createId()
+	static readonly pgSw_moreMSMenu = _createId()
+
+	// pgTm = page timer
+	static readonly pgTm_audio = _createId()
+	static readonly pgTm_time = _createId()
+	static readonly pgTm_playPause = _createId()
+	static readonly pgTm_editReset = _createId()
+	static readonly pgTm_editDialog = _createId()
+	static readonly pgTm_hours = _createId()
+	static readonly pgTm_minutes = _createId()
+	static readonly pgTm_seconds = _createId()
+	static readonly pgTm_save = _createId()
+	static readonly pgTm_doneDialog = _createId()
+	static readonly pgTm_doneTime = _createId()
+	static readonly pgTm_doneDate = _createId()
+
+	// nav = navigation
+	static readonly nav_sideBar = _createId()
+	static readonly nav_drawer = _createId()
+
+	// toa = toast
+	static readonly toa_copied = _createId()
 }

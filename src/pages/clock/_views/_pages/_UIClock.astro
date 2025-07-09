@@ -1,12 +1,15 @@
 ---
+import { DEFAULT_PAGE } from '../../_scripts/_shared/_constant'
+import { Pages } from '../../_scripts/_shared/_enums'
 import { ElementIds } from '../../_scripts/_shared/_ids'
 import { CSSClasses } from '../../_styles/_css'
 ---
 
 <div
-	id={ElementIds.bodyClock}
+	id={ElementIds.pg_clock}
 	class={[CSSClasses.bodyPage, CSSClasses.bodyPageClock].join(' ')}
-	role="tabpanel">
-	<h2 id={ElementIds.bodyClockTime}>{new Date().toLocaleTimeString('en', {hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false})}</h2>
-	<p id={ElementIds.bodyClockDate}>{new Date().toLocaleDateString('en', {year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'})}</p>
+	role="tabpanel"
+	hidden={DEFAULT_PAGE !== Pages.clock}>
+	<h2 id={ElementIds.pgClk_time}>{new Date().toLocaleTimeString('en', {hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false})}</h2>
+	<p id={ElementIds.pgClk_date}>{new Date().toLocaleDateString('en', {year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'})}</p>
 </div>

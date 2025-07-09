@@ -5,6 +5,7 @@ import { calculate } from "../_core/_calculator"
 import { isNumberDefined } from "@/utils/number"
 import { formatOutput } from "../_core/_string-utils"
 import { saveStorageItem } from "../_core/_database"
+import { DEFAULT_BASIC_INPUT, DEFAULT_BASIC_OUTPUT } from "../_shared/_constant"
 
 export type BasicStoreType = Readonly<{
 	input: string
@@ -12,11 +13,11 @@ export type BasicStoreType = Readonly<{
 }>
 
 export const BasicStore = new ObservableStore<BasicStoreType>({
-	input: '',
-	output: null,
+	input: DEFAULT_BASIC_INPUT,
+	output: DEFAULT_BASIC_OUTPUT,
 })
-const _inputRef = $(ElementIds.bdBas_input) as HTMLInputElement
-const _outputRef = $(ElementIds.bdBas_output) as HTMLInputElement
+const _inputRef = $(ElementIds.pgBas_input) as HTMLInputElement
+const _outputRef = $(ElementIds.pgBas_output) as HTMLInputElement
 let _timeCalculateId: NodeJS.Timeout | number | null = null
 let _timeSaveInputId: NodeJS.Timeout | number | null = null
 

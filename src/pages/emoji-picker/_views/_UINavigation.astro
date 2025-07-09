@@ -10,66 +10,57 @@ import { IconCodes } from '@/enums/icons'
 import { CSSClasses } from '../_styles/_css'
 import { Pages } from '../_scripts/_shared/_enums'
 import { ElementIds } from '../_scripts/_shared/_ids'
+import { DEFAULT_PAGE } from '../_scripts/_shared/_constant'
 
 const items: {
 	emoji: string
 	name: string
 	page: Pages
-	selected: boolean
 }[] = [
 	{
 		emoji: '😃',
 		name: 'Smiley & Emotion',
 		page: Pages.smileyEmotion,
-		selected: true
 	},
 	{
 		emoji: '🧑',
 		name: 'Person & Body',
 		page: Pages.personBody,
-		selected: false,
 	},
 	{
 		emoji: '🦖',
 		name: 'Animal & Nature',
 		page: Pages.animalNature,
-		selected: false,
 	},
 	{
 		emoji: '🍎',
 		name: 'Food & Drink',
 		page: Pages.foodDrink,
-		selected: false,
 	},
 	{
 		emoji: '🌍',
 		name: 'Travel & Places',
 		page: Pages.travelPlaces,
-		selected: false,
 	},
 	{
 		emoji: '🏓',
 		name: 'Activities',
 		page: Pages.activities,
-		selected: false,
 	},
 	{
 		emoji: '📒',
 		name: 'Object',
 		page: Pages.object,
-		selected: false,
 	},
 	{
 		emoji: '🚹',
 		name: 'Symbols',
 		page: Pages.symbols,
-		selected: false,
 	},
 	{
 		emoji: '🚩',
 		name: 'Flags',
 		page: Pages.flags,
-		selected: false,
 	},
 ]
 ---
@@ -84,12 +75,12 @@ const items: {
 			role="tab"
 			style="padding-left:6px;white-space:nowrap"
 			data-page={v.page}
-			aria-selected={v.selected}
+			aria-selected={DEFAULT_PAGE === v.page}
 			aria-controls={ElementIds.body}
 			data-tooltip={v.name}
-			SideBarButtonSelected={v.selected}
+			SideBarButtonSelected={DEFAULT_PAGE === v.page}
 			SideBarButtonLeadingAttr={{style: 'font-size:20px;line-height:20px'}}
-			ButtonVariant={v.selected ? ButtonVariant.tonal : undefined}>
+			ButtonVariant={DEFAULT_PAGE === v.page ? ButtonVariant.tonal : undefined}>
 			<Fragment slot="leading">{v.emoji}</Fragment>
 			{v.name}
 		</SideBarButton>)}
@@ -106,12 +97,12 @@ const items: {
 		IconButtonCode={IconCodes.lineHorizontal3}
 	/>
 	{items.map(v => <DrawerButton
-		aria-selected={v.selected}
+		aria-selected={DEFAULT_PAGE === v.page}
 		aria-controls={ElementIds.body}
 		style="padding-left:6px"
 		data-page={v.page}
-		DrawerButtonSelected={v.selected}
-		ButtonVariant={v.selected ? ButtonVariant.tonal : undefined}>
+		DrawerButtonSelected={DEFAULT_PAGE === v.page}
+		ButtonVariant={DEFAULT_PAGE === v.page ? ButtonVariant.tonal : undefined}>
 		<span style='font-size:20px;line-height:20px'>{v.emoji}</span>{v.name}
 	</DrawerButton>)}
 </Drawer>

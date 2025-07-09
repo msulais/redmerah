@@ -27,12 +27,55 @@ import { DEFAULT_ANIMATION, DEFAULT_ERROR_CORRECTION_LEVEL, DEFAULT_THEME, DEFAU
 import { EncodingMode, ErrorCorrectionLevel, QRVersion } from '../_scripts/_shared/_enums'
 import { ButtonVariant } from '@/native-components/Button'
 import { FlyoutPosition } from '@/enums/position'
+
+const animations: {
+	value: PlatformAnimationMode
+	text: string
+	icon: number
+}[] = [
+	{
+		value: PlatformAnimationMode.auto,
+		text: 'Automatic',
+		icon: IconCodes.videoClipOptimize
+	},
+	{
+		value: PlatformAnimationMode.on,
+		text: 'On',
+		icon: IconCodes.videoClip
+	},
+	{
+		value: PlatformAnimationMode.off,
+		text: 'Off',
+		icon: IconCodes.videoClipOff
+	},
+]
+const themes: {
+	value: PlatformThemeMode
+	text: string
+	icon: number
+}[] = [
+	{
+		value: PlatformThemeMode.auto,
+		text: 'Automatic',
+		icon: IconCodes.laptopSettings
+	},
+	{
+		value: PlatformThemeMode.light,
+		text: 'Light',
+		icon: IconCodes.weatherSunny
+	},
+	{
+		value: PlatformThemeMode.dark,
+		text: 'Dark',
+		icon: IconCodes.weatherMoon
+	},
+]
 ---
 
 <AppBar id={ElementIds.appbar}>
 	<Fragment slot="leading">
 		<IconButton
-			id={ElementIds.appbarSideBarButton}
+			id={ElementIds.ap_sideBarBtn}
 			IconButtonCode={IconCodes.lineHorizontal3}
 		/>
 		<img
@@ -45,15 +88,15 @@ import { FlyoutPosition } from '@/enums/position'
 	<Fragment slot="headline">{APP.name}</Fragment>
 	<Tooltip slot="trailing">
 		<IconButton
-			id={ElementIds.apInf_button}
+			id={ElementIds.apInf_btn}
 			data-tooltip="Info"
 			aria-label="Info"
 			IconButtonCode={IconCodes.info}
 			popovertarget={ElementIds.apInf_menu}
 		/>
-		<Menu id={ElementIds.apInf_menu} PopoverAnchorBy={ElementIds.apInf_button}>
+		<Menu id={ElementIds.apInf_menu} PopoverAnchorBy={ElementIds.apInf_btn}>
 			<LinkMenuItem href="/">
-				<img src={logoRedmerah.src} width="16"/>
+				<img src={logoRedmerah.src} width="20"/>
 				Redmerah
 				<MenuIndent />
 			</LinkMenuItem>
@@ -79,7 +122,7 @@ import { FlyoutPosition } from '@/enums/position'
 				<MenuIndent />
 			</LinkMenuItem>
 			<Divider />
-			<MenuItem id={ElementIds.apInf_menuShareButton}>
+			<MenuItem id={ElementIds.apInf_shareBtn}>
 				<Icon IconCode={IconCodes.shareAndroid}/>
 				Share
 				<MenuIndent />
@@ -98,13 +141,13 @@ import { FlyoutPosition } from '@/enums/position'
 		</Menu>
 
 		<IconButton
-			id={ElementIds.apSett_button}
+			id={ElementIds.apSett_btn}
 			data-tooltip="Settings"
 			IconButtonCode={IconCodes.settings}
 			aria-label="Settings"
 			popovertarget={ElementIds.apSett_menu}
 		/>
-		<Menu id={ElementIds.apSett_menu} PopoverAnchorBy={ElementIds.apSett_button}>
+		<Menu id={ElementIds.apSett_menu} PopoverAnchorBy={ElementIds.apSett_btn}>
 			<SubMenuItem
 				popovertarget={ElementIds.apSett_animationMenu}>
 				<Icon IconCode={IconCodes.playCircleHint}/>
@@ -113,33 +156,15 @@ import { FlyoutPosition } from '@/enums/position'
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
 			<SubMenu slot="submenus" style="width:150px" id={ElementIds.apSett_animationMenu}>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.set_animation,
-						checked: DEFAULT_ANIMATION === PlatformAnimationMode.auto,
-						value: PlatformAnimationMode.auto
-					}}>
-					<Icon IconCode={IconCodes.videoClipOptimize}/>
-					Automatic
-				</RadioMenuItem>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.set_animation,
-						checked: DEFAULT_ANIMATION === PlatformAnimationMode.on,
-						value: PlatformAnimationMode.on
-					}}>
-					<Icon IconCode={IconCodes.videoClip}/>
-					On
-				</RadioMenuItem>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.set_animation,
-						checked: DEFAULT_ANIMATION === PlatformAnimationMode.off,
-						value: PlatformAnimationMode.off
-					}}>
-					<Icon IconCode={IconCodes.videoClipOff}/>
-					Off
-				</RadioMenuItem>
+				{animations.map(v =>
+					<RadioMenuItem
+						RadioMenuItemName={RadioNames.animation}
+						RadioMenuItemChecked={DEFAULT_ANIMATION === v.value}
+						RadioMenuItemValue={v.value}>
+						<Icon IconCode={v.icon}/>
+						{v.text}
+					</RadioMenuItem>
+				)}
 			</SubMenu>
 
 			<SubMenuItem
@@ -150,33 +175,15 @@ import { FlyoutPosition } from '@/enums/position'
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
 			<SubMenu slot="submenus" style="width:150px" id={ElementIds.apSett_themeMenu}>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.set_theme,
-						checked: DEFAULT_THEME === PlatformThemeMode.auto,
-						value: PlatformThemeMode.auto
-					}}>
-					<Icon IconCode={IconCodes.laptopSettings}/>
-					Automatic
-				</RadioMenuItem>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.set_theme,
-						checked: DEFAULT_THEME === PlatformThemeMode.light,
-						value: PlatformThemeMode.light
-					}}>
-					<Icon IconCode={IconCodes.weatherSunny}/>
-					Light
-				</RadioMenuItem>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.set_theme,
-						checked: DEFAULT_THEME === PlatformThemeMode.dark,
-						value: PlatformThemeMode.dark
-					}}>
-					<Icon IconCode={IconCodes.weatherMoon}/>
-					Dark
-				</RadioMenuItem>
+				{themes.map(v =>
+					<RadioMenuItem
+						RadioMenuItemName={RadioNames.theme}
+						RadioMenuItemChecked={DEFAULT_THEME === v.value}
+						RadioMenuItemValue={v.value}>
+						<Icon IconCode={v.icon}/>
+						{v.text}
+					</RadioMenuItem>
+				)}
 			</SubMenu>
 
 			<Divider/>
@@ -192,7 +199,7 @@ import { FlyoutPosition } from '@/enums/position'
 			<SubMenu slot="submenus" id={ElementIds.apSett_correctionMenu}>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioNames.set_correction,
+						name: RadioNames.correction,
 						checked: DEFAULT_ERROR_CORRECTION_LEVEL === ErrorCorrectionLevel.low,
 						value: ErrorCorrectionLevel.low
 					}}>
@@ -202,7 +209,7 @@ import { FlyoutPosition } from '@/enums/position'
 				</RadioMenuItem>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioNames.set_correction,
+						name: RadioNames.correction,
 						checked: DEFAULT_ERROR_CORRECTION_LEVEL === ErrorCorrectionLevel.medium,
 						value: ErrorCorrectionLevel.medium
 					}}>
@@ -212,7 +219,7 @@ import { FlyoutPosition } from '@/enums/position'
 				</RadioMenuItem>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioNames.set_correction,
+						name: RadioNames.correction,
 						checked: DEFAULT_ERROR_CORRECTION_LEVEL === ErrorCorrectionLevel.quartile,
 						value: ErrorCorrectionLevel.quartile
 					}}>
@@ -222,7 +229,7 @@ import { FlyoutPosition } from '@/enums/position'
 				</RadioMenuItem>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioNames.set_correction,
+						name: RadioNames.correction,
 						checked: DEFAULT_ERROR_CORRECTION_LEVEL === ErrorCorrectionLevel.high,
 						value: ErrorCorrectionLevel.high
 					}}>
@@ -242,7 +249,7 @@ import { FlyoutPosition } from '@/enums/position'
 			<SubMenu slot="submenus" id={ElementIds.apSett_encodingMenu}>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioNames.set_encoding,
+						name: RadioNames.encoding,
 						checked: DEFAULT_ENCODING_MODE === EncodingMode.auto,
 						value: EncodingMode.auto
 					}}>
@@ -250,7 +257,7 @@ import { FlyoutPosition } from '@/enums/position'
 				</RadioMenuItem>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioNames.set_encoding,
+						name: RadioNames.encoding,
 						checked: DEFAULT_ENCODING_MODE === EncodingMode.alphanumeric,
 						value: EncodingMode.alphanumeric
 					}}>
@@ -258,7 +265,7 @@ import { FlyoutPosition } from '@/enums/position'
 				</RadioMenuItem>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioNames.set_encoding,
+						name: RadioNames.encoding,
 						checked: DEFAULT_ENCODING_MODE === EncodingMode.byte,
 						value: EncodingMode.byte
 					}}>
@@ -266,7 +273,7 @@ import { FlyoutPosition } from '@/enums/position'
 				</RadioMenuItem>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioNames.set_encoding,
+						name: RadioNames.encoding,
 						checked: DEFAULT_ENCODING_MODE === EncodingMode.kanji,
 						value: EncodingMode.kanji
 					}}>
@@ -274,7 +281,7 @@ import { FlyoutPosition } from '@/enums/position'
 				</RadioMenuItem>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioNames.set_encoding,
+						name: RadioNames.encoding,
 						checked: DEFAULT_ENCODING_MODE === EncodingMode.numeric,
 						value: EncodingMode.numeric
 					}}>
@@ -292,7 +299,7 @@ import { FlyoutPosition } from '@/enums/position'
 			<SubMenu slot="submenus" id={ElementIds.apSett_versionMenu}>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioNames.set_version,
+						name: RadioNames.version,
 						checked: DEFAULT_VERSION === QRVersion.auto,
 						value: QRVersion.auto
 					}}>
@@ -301,7 +308,7 @@ import { FlyoutPosition } from '@/enums/position'
 				{new Array(40).fill(1).map((_, i) =>
 					<RadioMenuItem
 						RadioMenuItemInputAttr={{
-							name: RadioNames.set_version,
+							name: RadioNames.version,
 							checked: DEFAULT_VERSION === String(i + 1),
 							value: String(i + 1)
 						}}>

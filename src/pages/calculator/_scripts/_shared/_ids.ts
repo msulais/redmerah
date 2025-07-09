@@ -2,7 +2,7 @@ let _ID_INDEX = 0
 
 function _createId(): string {
 	++_ID_INDEX
-	return 'app-' + _ID_INDEX
+	return 'calculator-' + _ID_INDEX
 }
 
 export class ElementIds {
@@ -24,61 +24,55 @@ export class ElementIds {
 	static readonly apSett_decMenu = _createId()
 	static readonly apSett_groupMenu = _createId()
 
-	// bd = body
-	static readonly bd_basic = _createId()
-	static readonly bd_converter = _createId()
-	static readonly bd_date = _createId()
-	static readonly bd_programmer = _createId()
-	static readonly bd_scientific = _createId()
+	// pg = page
+	static readonly pg_basic = _createId()
+	static readonly pg_converter = _createId()
+	static readonly pg_date = _createId()
+	static readonly pg_programmer = _createId()
+	static readonly pg_scientific = _createId()
 
-	// bdBas = body basic
-	static readonly bdBas_input = _createId()
-	static readonly bdBas_output = _createId()
+	// pgBas = page basic
+	static readonly pgBas_input = _createId()
+	static readonly pgBas_output = _createId()
 
-	// bdConv = body conveter
-	static readonly bdConv_options = _createId()
-	static readonly bdConv_input = _createId()
-	static readonly bdConv_output = _createId()
-	static readonly bdConv_type = _createId()
-	static readonly bdConv_swap = _createId()
-	static readonly bdConv_inputUnit = _createId()
-	static readonly bdConv_outputUnit = _createId()
+	// pgConv = page conveter
+	static readonly pgConv_options = _createId()
+	static readonly pgConv_input = _createId()
+	static readonly pgConv_output = _createId()
+	static readonly pgConv_type = _createId()
+	static readonly pgConv_swap = _createId()
+	static readonly pgConv_inputUnit = _createId()
+	static readonly pgConv_outputUnit = _createId()
 
-	// bdDate = body date
-	static readonly bdDate_operation = _createId()
-	static readonly bdDate_output = _createId()
+	// pgDate = pgDate date
+	static readonly pgDate_operation = _createId()
+	static readonly pgDate_output = _createId()
+	static readonly pgDate_diff = _createId()
+	static readonly pgDate_addSub = _createId()
+	static readonly pgDate_years = _createId()
+	static readonly pgDate_months = _createId()
+	static readonly pgDate_days = _createId()
+	static readonly pgDate_fromBtn = _createId()
+	static readonly pgDate_toBtn = _createId()
+	static readonly pgDate_fromPicker = _createId()
+	static readonly pgDate_toPicker = _createId()
 
-	// bdDateOp = body date operation
-	static readonly bdDateOp_diff = _createId()
-	static readonly bdDateOp_addSub = _createId()
+	// pgPro = page programmer
+	static readonly pgPro_input = _createId()
+	static readonly pgPro_output = _createId()
+	static readonly pgPro_outDec = _createId()
+	static readonly pgPro_outHex = _createId()
+	static readonly pgPro_outOct = _createId()
+	static readonly pgPro_outBin = _createId()
 
-	// bdDateInp = body date input
-	static readonly bdDateInp_years = _createId()
-	static readonly bdDateInp_months = _createId()
-	static readonly bdDateInp_days = _createId()
-	static readonly bdDateInp_fromBtn = _createId()
-	static readonly bdDateInp_toBtn = _createId()
-	static readonly bdDateInp_fromDatePicker = _createId()
-	static readonly bdDateInp_toDatePicker = _createId()
-
-	// bdProg = body programmer
-	static readonly bdProg_input = _createId()
-	static readonly bdProg_output = _createId()
-	static readonly bdProg_outDec = _createId()
-	static readonly bdProg_outHex = _createId()
-	static readonly bdProg_outOct = _createId()
-	static readonly bdProg_outBin = _createId()
-
-	// bdSci = body scientific
-	static readonly bdSci_angle = _createId()
-	static readonly bdSci_input = _createId()
-	static readonly bdSci_output = _createId()
-
-	// bdSciFn = body scientific function
-	static readonly bdSciFn_btn = _createId()
-	static readonly bdSciFn_menu = _createId()
-	static readonly bdSciFn_inv = _createId()
-	static readonly bdSciFn_hyper = _createId()
+	// pgSci = page scientific
+	static readonly pgSci_angle = _createId()
+	static readonly pgSci_input = _createId()
+	static readonly pgSci_output = _createId()
+	static readonly pgSci_fnBtn = _createId()
+	static readonly pgSci_fnMenu = _createId()
+	static readonly pgSci_fnInv = _createId()
+	static readonly pgSci_fnHyper = _createId()
 
 	// nav = navigation
 	static readonly nav_sideBar = _createId()

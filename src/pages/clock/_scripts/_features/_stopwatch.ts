@@ -13,6 +13,7 @@ import { AppCSSColors } from "@/enums/app-data"
 import { updateButtonRef, updateIconButtonRef } from "@/native-components/Button"
 import { Commands } from "../_shared/_commands"
 import { openToastRef, type ToastElement } from "@/native-components/Toast"
+import { DEFAULT_STOPWATCH_MS, DEFAULT_STOPWATCH_RUNNING, DEFAULT_STOPWATCH_LAPS } from "../_shared/_constant"
 
 type _StopwatchStoreType = {
 	ms: number
@@ -21,25 +22,25 @@ type _StopwatchStoreType = {
 }
 
 export const StopwatchStore = new ObservableStore<_StopwatchStoreType>({
-	ms: 0,
-	running: false,
-	laps: []
+	ms: DEFAULT_STOPWATCH_MS,
+	running: DEFAULT_STOPWATCH_RUNNING,
+	laps: DEFAULT_STOPWATCH_LAPS
 })
 const _animationOption = {duration: 250, easing: AnimationEffectTiming.spring}
-const _toastCopiedRef = $(ElementIds.bodyToastCopied) as ToastElement
-const _lapsRef = $(ElementIds.bodyStopwatchLaps) as HTMLDivElement
-const _lapsContentRef = $(ElementIds.bodyStopwatchLapsContent) as HTMLDivElement
-const _pageRef = $(ElementIds.bodyStopwatch) as HTMLDivElement
-const _HMSRef = $(ElementIds.bodyStopwatchHHMMSS) as HTMLSpanElement
-const _MSRef = $(ElementIds.bodyStopwatchMS) as HTMLElement
+const _toastCopiedRef = $(ElementIds.toa_copied) as ToastElement
+const _lapsRef = $(ElementIds.pgSw_laps) as HTMLDivElement
+const _lapsContentRef = $(ElementIds.pgSw_lapsContent) as HTMLDivElement
+const _pageRef = $(ElementIds.pg_stopwatch) as HTMLDivElement
+const _HMSRef = $(ElementIds.pgSw_hhmmss) as HTMLSpanElement
+const _MSRef = $(ElementIds.pgSw_ms) as HTMLElement
 const _timeRef = _HMSRef.parentElement as HTMLHeadingElement
-const _moreButtonRef = $(ElementIds.bodyStopwatchMoreButton) as HTMLButtonElement
-const _moreMenuRef = $(ElementIds.bodyStopwatchMoreMenu) as HTMLDivElement
-const _resetOrLapButtonRef = $(ElementIds.bodyStopwatchResetOrLap) as HTMLButtonElement
-const _resetOrLapIconRef = $$(`#${ElementIds.bodyStopwatchResetOrLap}>.${IconClasses.icon}`) as IconElement
-const _playOrPauseButtonRef = $(ElementIds.bodyStopwatchPlayOrPause) as HTMLButtonElement
-const _playOrPauseIconRef = $$(`#${ElementIds.bodyStopwatchPlayOrPause}>.${IconClasses.icon}`) as IconElement
-const _playOrPauseSpanRef = $$(`#${ElementIds.bodyStopwatchPlayOrPause}>span:not(.${IconClasses.icon})`) as HTMLSpanElement
+const _moreButtonRef = $(ElementIds.pgSw_moreBtn) as HTMLButtonElement
+const _moreMenuRef = $(ElementIds.pgSw_moreMenu) as HTMLDivElement
+const _resetOrLapButtonRef = $(ElementIds.pgSw_resetLap) as HTMLButtonElement
+const _resetOrLapIconRef = $$(`#${ElementIds.pgSw_resetLap}>.${IconClasses.icon}`) as IconElement
+const _playOrPauseButtonRef = $(ElementIds.pgSw_playPause) as HTMLButtonElement
+const _playOrPauseIconRef = $$(`#${ElementIds.pgSw_playPause}>.${IconClasses.icon}`) as IconElement
+const _playOrPauseSpanRef = $$(`#${ElementIds.pgSw_playPause}>span:not(.${IconClasses.icon})`) as HTMLSpanElement
 const _navigationButtonIconRefs = $$$(`:is(.${SideBarClasses.button},.${DrawerClasses.button})[data-page=${Pages.stopwatch}] .${IconClasses.icon}`)
 let _intervalId: null | number | NodeJS.Timeout = null
 let _isResetOrLapButtonVisible = false
@@ -337,27 +338,27 @@ function _initEvents(): void {
 		const command = buttonRef.dataset.command
 		const closeMenu = () => _moreMenuRef.hidePopover()
 		switch (command as Commands) {
-		case Commands.stopwatchCopyLapTime:
+		case Commands.swCpLp_time:
 			_copyLaps(true, false)
 			closeMenu()
 			break
-		case Commands.stopwatchCopyLapTotal:
+		case Commands.swCpLp_total:
 			_copyLaps(false, true)
 			closeMenu()
 			break
-		case Commands.stopwatchCopyLapAll:
+		case Commands.swCpLp_all:
 			_copyLaps(true, true)
 			closeMenu()
 			break
-		case Commands.stopwatchCopyLapTimeMS:
+		case Commands.swCpLp_timeMS:
 			_copyLaps(true, false, true)
 			closeMenu()
 			break
-		case Commands.stopwatchCopyLapTotalMS:
+		case Commands.swCpLp_totalMS:
 			_copyLaps(false, true, true)
 			closeMenu()
 			break
-		case Commands.stopwatchCopyLapAllMS:
+		case Commands.swCpLp_allMS:
 			_copyLaps(true, true, true)
 			closeMenu()
 			break

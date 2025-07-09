@@ -1,7 +1,7 @@
 export enum Commands {
 	// eq = equation
-	eq_new = 'eq-new',
-	eq_copy = 'eq-copy',
-	eq_copyMathML = 'eq-copy-mathml',
-	eq_delete = 'eq-delete'
+	eq_new = 'equation-new',
+	eq_copy = 'equation-copy',
+	eq_copyMathML = 'equation-copy-mathml',
+	eq_delete = 'equation-delete'
 }

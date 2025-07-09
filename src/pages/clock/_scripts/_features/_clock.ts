@@ -11,8 +11,8 @@ export type ClockStoreType = Readonly<{
 export const ClockStore = new ObservableStore<ClockStoreType>({
 	datetime: new Date()
 })
-const _timeRef = $(ElementIds.bodyClockTime) as HTMLHeadingElement
-const _dateRef = $(ElementIds.bodyClockDate) as HTMLParagraphElement
+const _timeRef = $(ElementIds.pgClk_time) as HTMLHeadingElement
+const _dateRef = $(ElementIds.pgClk_date) as HTMLParagraphElement
 
 function _initDateTime(): void {
 	setInterval(() => {

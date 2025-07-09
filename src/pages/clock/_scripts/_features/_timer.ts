@@ -14,6 +14,7 @@ import { DrawerClasses } from "@/native-components/Drawer"
 import type { DialogElement } from "@/native-components/Dialog"
 import { safeNumber } from "@/utils/number"
 import { saveStorageItem } from "../_core/_database"
+import { DEFAULT_TIMER_RUNNING, DEFAULT_TIMER_SECONDS } from "../_shared/_constant"
 
 export type TimerStoreType = Readonly<{
 	running: boolean
@@ -22,26 +23,26 @@ export type TimerStoreType = Readonly<{
 }>
 
 export const TimerStore = new ObservableStore<TimerStoreType>({
-	running: false,
-	timerInSeconds: 60 * 10,
-	currentSeconds: 60 * 10,
+	running: DEFAULT_TIMER_RUNNING,
+	timerInSeconds: DEFAULT_TIMER_SECONDS,
+	currentSeconds: DEFAULT_TIMER_SECONDS,
 })
-const _pageRef = $(ElementIds.bodyTimer) as HTMLDivElement
-const _audioRef = $(ElementIds.bodyTimerAudio) as HTMLAudioElement
-const _doneDialogRef = $(ElementIds.bodyTimerDone) as DialogElement
-const _doneTimeInfoRef = $(ElementIds.bodyTimerDoneTimeInfo) as HTMLParagraphElement
-const _doneDateRef = $(ElementIds.bodyTimerDoneDate) as HTMLParagraphElement
-const _playPauseButtonRef = $(ElementIds.bodyTimerActionPlayPause) as ButtonElement
-const _timerViewRef = $(ElementIds.bodyTimerTime) as HTMLHeadingElement
-const _editDialogRef = $(ElementIds.bodyTimerEditDialog) as DialogElement
-const _editHoursRef = $(ElementIds.bodyTimerEditHours) as HTMLInputElement
-const _editMinutesRef = $(ElementIds.bodyTimerEditMinutes) as HTMLInputElement
-const _editSecondsRef = $(ElementIds.bodyTimerEditSeconds) as HTMLInputElement
-const _editSaveButtonRef = $(ElementIds.bodyTimerEditSave) as ButtonElement
+const _pageRef = $(ElementIds.pg_timer) as HTMLDivElement
+const _audioRef = $(ElementIds.pgTm_audio) as HTMLAudioElement
+const _doneDialogRef = $(ElementIds.pgTm_doneDialog) as DialogElement
+const _doneTimeInfoRef = $(ElementIds.pgTm_doneTime) as HTMLParagraphElement
+const _doneDateRef = $(ElementIds.pgTm_doneDate) as HTMLParagraphElement
+const _playPauseButtonRef = $(ElementIds.pgTm_playPause) as ButtonElement
+const _timerViewRef = $(ElementIds.pgTm_time) as HTMLHeadingElement
+const _editDialogRef = $(ElementIds.pgTm_editDialog) as DialogElement
+const _editHoursRef = $(ElementIds.pgTm_hours) as HTMLInputElement
+const _editMinutesRef = $(ElementIds.pgTm_minutes) as HTMLInputElement
+const _editSecondsRef = $(ElementIds.pgTm_seconds) as HTMLInputElement
+const _editSaveButtonRef = $(ElementIds.pgTm_save) as ButtonElement
 const _playPauseIconRef = $$(`.${IconClasses.icon}`, _playPauseButtonRef) as IconElement
 const _playPauseTextRef = $$(`span:not(.${IconClasses.icon})`, _playPauseButtonRef) as HTMLSpanElement
-const _editResetButtonRef = $(ElementIds.bodyTimerActionEditReset) as IconButtonElement
-const _editResetIconRef = $$(`#${ElementIds.bodyTimerActionEditReset}>.${IconClasses.icon}`) as IconElement
+const _editResetButtonRef = $(ElementIds.pgTm_editReset) as IconButtonElement
+const _editResetIconRef = $$(`#${ElementIds.pgTm_editReset}>.${IconClasses.icon}`) as IconElement
 const _navigationButtonIconRefs = $$$(`:is(.${SideBarClasses.button},.${DrawerClasses.button})[data-page=${Pages.timer}] .${IconClasses.icon}`)
 let intervalRunningId: number | NodeJS.Timeout | null = null
 

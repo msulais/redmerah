@@ -6,7 +6,7 @@ import { calculate } from "../_core/_calculator"
 import { isNumberDefined } from "@/utils/number"
 import { formatOutput } from "../_core/_string-utils"
 import { isValidEnumValue } from "@/utils/object"
-import { DEFAULT_SCIENTIFIC_ANGLE } from "../_shared/_constant"
+import { DEFAULT_SCIENTIFIC_ANGLE, DEFAULT_SCIENTIFIC_INPUT, DEFAULT_SCIENTIFIC_OUTPUT } from "../_shared/_constant"
 import { ButtonVariant, updateButtonRef } from "@/native-components/Button"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { isAnimationAllowed } from "@/utils/animation"
@@ -24,18 +24,18 @@ export type ScientificStoreType = Readonly<{
 
 export const ScientificStore = new ObservableStore<ScientificStoreType>({
 	angle: DEFAULT_SCIENTIFIC_ANGLE,
-	input: '',
-	output: null,
+	input: DEFAULT_SCIENTIFIC_INPUT,
+	output: DEFAULT_SCIENTIFIC_OUTPUT,
 })
-const _angleRef = $(ElementIds.bdSci_angle) as ComboBoxElement
-const _inputRef = $(ElementIds.bdSci_input) as HTMLInputElement
-const _outputRef = $(ElementIds.bdSci_output) as HTMLInputElement
+const _angleRef = $(ElementIds.pgSci_angle) as ComboBoxElement
+const _inputRef = $(ElementIds.pgSci_input) as HTMLInputElement
+const _outputRef = $(ElementIds.pgSci_output) as HTMLInputElement
 
 // fn = function
-const _fn_BtnRef = $(ElementIds.bdSciFn_btn) as HTMLButtonElement
-const _fn_MenuRef = $(ElementIds.bdSciFn_menu) as HTMLDivElement
-const _fn_inversRef = $(ElementIds.bdSciFn_inv) as HTMLInputElement
-const _fn_hyperRef = $(ElementIds.bdSciFn_hyper) as HTMLInputElement
+const _fn_BtnRef = $(ElementIds.pgSci_fnBtn) as HTMLButtonElement
+const _fn_MenuRef = $(ElementIds.pgSci_fnMenu) as HTMLDivElement
+const _fn_inversRef = $(ElementIds.pgSci_fnInv) as HTMLInputElement
+const _fn_hyperRef = $(ElementIds.pgSci_fnHyper) as HTMLInputElement
 
 let _timeCalculateId: number | null | NodeJS.Timeout = null
 let _timeSaveInputId: number | null | NodeJS.Timeout = null

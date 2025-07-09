@@ -5,7 +5,7 @@ import { $, $$, $$$ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
 import { LocalStorageKeys } from "@/enums/storage"
 import { isValidEnumValue } from "@/utils/object"
-import { DEFAULT_THEME } from "../_shared/_constant"
+import { DEFAULT_ANIMATION, DEFAULT_DECIMAL_NUMBER_FORMAT, DEFAULT_GROUPING_NUMBER_FORMAT, DEFAULT_THEME } from "../_shared/_constant"
 import { RootAttributes } from "@/enums/attributes"
 import { RadioNames } from "../_shared/_input-names"
 import { DecimalNumberFormat, GroupingNumberFormat, NumberType } from "../_shared/_enums"
@@ -24,10 +24,10 @@ export type SettingsStoreType = Readonly<{
 }>
 
 export const SettingsStore = new ObservableStore<SettingsStoreType>({
-	theme         : PlatformThemeMode.auto,
-	animation     : PlatformAnimationMode.auto,
-	decimalFormat : DecimalNumberFormat.point,
-	groupingFormat: GroupingNumberFormat.comma
+	theme         : DEFAULT_THEME,
+	animation     : DEFAULT_ANIMATION,
+	decimalFormat : DEFAULT_DECIMAL_NUMBER_FORMAT,
+	groupingFormat: DEFAULT_GROUPING_NUMBER_FORMAT
 })
 const _decimalToken = '@_decimal_@'
 const _groupingToken = '@_grouping_@'
@@ -86,10 +86,10 @@ function _initTheme(): void {
 
 	_rootRef.setAttribute(RootAttributes.theme, theme)
 	const previousRef = $$(
-		`input[name="${CSS.escape(RadioNames.sett_theme)}"]:checked`
+		`input[name="${CSS.escape(RadioNames.theme)}"]:checked`
 	) as HTMLInputElement
 	const targetRef = $$(
-		`input[name="${CSS.escape(RadioNames.sett_theme)}"][value="${CSS.escape(theme)}"]`
+		`input[name="${CSS.escape(RadioNames.theme)}"][value="${CSS.escape(theme)}"]`
 	) as HTMLInputElement
 
 	if (previousRef === targetRef) {return}
@@ -103,10 +103,10 @@ function _initAnimation(): void {
 
 	_rootRef.setAttribute(RootAttributes.animation, animation)
 	const previousRef = $$(
-		`input[name="${CSS.escape(RadioNames.sett_animation)}"]:checked`
+		`input[name="${CSS.escape(RadioNames.animation)}"]:checked`
 	) as HTMLInputElement
 	const targetRef = $$(
-		`input[name="${CSS.escape(RadioNames.sett_animation)}"][value="${CSS.escape(animation)}"]`
+		`input[name="${CSS.escape(RadioNames.animation)}"][value="${CSS.escape(animation)}"]`
 	) as HTMLInputElement
 
 	if (previousRef === targetRef) {return}
@@ -217,9 +217,9 @@ function _subsDecimalFormatView(v: SettingsStoreType, o: SettingsStoreType): voi
 		ref.textContent = v.decimalFormat
 	}
 
-	const prevRef = $$<HTMLInputElement>(`input[name="${RadioNames.sett_decimal}"]:checked`)
+	const prevRef = $$<HTMLInputElement>(`input[name="${RadioNames.decimal}"]:checked`)
 	const targetRef = $$<HTMLInputElement>(
-		`input[name="${RadioNames.sett_decimal}"][value="${decimalFormat}"]`
+		`input[name="${RadioNames.decimal}"][value="${decimalFormat}"]`
 	)
 
 	if (prevRef === targetRef) return
@@ -231,9 +231,9 @@ function _subsGroupingFormatView(v: SettingsStoreType, o: SettingsStoreType): vo
 	const groupingFormat = v.groupingFormat
 	if (groupingFormat === o.groupingFormat) return
 
-	const prevRef = $$<HTMLInputElement>(`input[name="${RadioNames.sett_grouping}"]:checked`)
+	const prevRef = $$<HTMLInputElement>(`input[name="${RadioNames.grouping}"]:checked`)
 	const targetRef = $$<HTMLInputElement>(
-		`input[name="${RadioNames.sett_grouping}"][value="${groupingFormat}"]`
+		`input[name="${RadioNames.grouping}"][value="${groupingFormat}"]`
 	)
 
 	if (prevRef === targetRef) return

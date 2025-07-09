@@ -11,48 +11,43 @@ import { IconCodes } from '@/enums/icons'
 import { CSSClasses } from '../_styles/_css'
 import { Pages } from '../_scripts/_shared/_enums'
 import { ElementIds } from '../_scripts/_shared/_ids'
+import { DEFAULT_PAGE } from '../_scripts/_shared/_constant'
 
 const items: {
 	icon: number
 	name: string
 	page: Pages
-	selected: boolean
 	controls: string
 }[] = [
 	{
 		icon: IconCodes.calculator,
 		name: 'Basic',
 		page: Pages.basic,
-		controls: ElementIds.bd_basic,
-		selected: true
+		controls: ElementIds.pg_basic,
 	},
 	{
 		icon: IconCodes.beaker,
 		name: 'Scientific',
 		page: Pages.scientific,
-		controls: ElementIds.bd_scientific,
-		selected: false,
+		controls: ElementIds.pg_scientific,
 	},
 	{
 		icon: IconCodes.arrowSort,
 		name: 'Converter',
 		page: Pages.converter,
-		controls: ElementIds.bd_converter,
-		selected: false,
+		controls: ElementIds.pg_converter,
 	},
 	{
 		icon: IconCodes.code,
 		name: 'Programmer',
 		page: Pages.programmer,
-		controls: ElementIds.bd_programmer,
-		selected: false,
+		controls: ElementIds.pg_programmer,
 	},
 	{
 		icon: IconCodes.calendar,
 		name: 'Date',
 		page: Pages.date,
-		controls: ElementIds.bd_date,
-		selected: false,
+		controls: ElementIds.pg_date,
 	},
 ]
 ---
@@ -67,10 +62,10 @@ const items: {
 			role="tab"
 			style="padding-left: 10px"
 			data-page={v.page}
-			aria-selected={v.selected}
+			aria-selected={DEFAULT_PAGE === v.page}
 			aria-controls={v.controls}
-			SideBarButtonSelected={v.selected}
-			ButtonVariant={v.selected ? ButtonVariant.tonal : undefined}>
+			SideBarButtonSelected={DEFAULT_PAGE === v.page}
+			ButtonVariant={DEFAULT_PAGE === v.page ? ButtonVariant.tonal : undefined}>
 			<Icon
 				slot="leading"
 				IconCode={v.icon}
@@ -91,11 +86,11 @@ const items: {
 		<Icon IconCode={IconCodes.lineHorizontal3}/>
 	</Button>
 	{items.map(v => <DrawerButton
-		aria-selected={v.selected}
+		aria-selected={DEFAULT_PAGE === v.page}
 		aria-controls={v.controls}
 		data-page={v.page}
-		DrawerButtonSelected={v.selected}
-		ButtonVariant={v.selected ? ButtonVariant.tonal : undefined}>
+		DrawerButtonSelected={DEFAULT_PAGE === v.page}
+		ButtonVariant={DEFAULT_PAGE === v.page ? ButtonVariant.tonal : undefined}>
 		<Icon
 			IconCode={v.icon}
 		/>

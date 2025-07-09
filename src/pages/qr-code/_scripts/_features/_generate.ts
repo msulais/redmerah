@@ -22,9 +22,9 @@ const _inputRef = $(ElementIds.pgGen_input) as TextAreaFieldElement
 const _outputRef = $(ElementIds.pgGen_output) as HTMLCanvasElement
 const _errorMessageRef = $(ElementIds.toa_generateErrorMessage) as HTMLSpanElement
 const _toastErrorRef = $(ElementIds.toa_generateError) as ToastElement
-const _downloadPngRef = $(ElementIds.pgGenDow_png) as ButtonElement
-const _downloadJpgRef = $(ElementIds.pgGenDow_jpg) as ButtonElement
-const _downloadSvgRef = $(ElementIds.pgGenDow_svg) as ButtonElement
+const _downloadPngRef = $(ElementIds.pgGen_png) as ButtonElement
+const _downloadJpgRef = $(ElementIds.pgGen_jpg) as ButtonElement
+const _downloadSvgRef = $(ElementIds.pgGen_svg) as ButtonElement
 let _timeInputId: NodeJS.Timeout | number | null = null
 
 function _renderQRCode(): void {

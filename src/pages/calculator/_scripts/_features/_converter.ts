@@ -1,7 +1,7 @@
 import { ObservableStore } from "@/utils/store"
 import { ConverterType } from "../_shared/_enums"
 import { AngleUnits, AreaUnits, FrequencyUnits, LengthUnits, PressureUnits, TemperatureUnits, TimeUnits, VolumeUnits, WeightUnits, type ConverterUnit } from "../_shared/_units"
-import { DEFAULT_CONVERTER_INPUT_UNIT, DEFAULT_CONVERTER_OUTPUT_UNIT, DEFAULT_CONVERTER_TYPE } from "../_shared/_constant"
+import { DEFAULT_CONVERTER_INPUT, DEFAULT_CONVERTER_INPUT_UNIT, DEFAULT_CONVERTER_OUTPUT, DEFAULT_CONVERTER_OUTPUT_UNIT, DEFAULT_CONVERTER_TYPE } from "../_shared/_constant"
 import { calculate, convertUnit } from "../_core/_calculator"
 import { $, scrollInputToEnd } from "../_core/_dom-utils"
 import { isNumberDefined } from "@/utils/number"
@@ -22,16 +22,16 @@ export type ConverterStoreType = Readonly<{
 
 export const ConverterStore = new ObservableStore<ConverterStoreType>({
 	converter: DEFAULT_CONVERTER_TYPE,
-	input: '',
-	output: null,
+	input: DEFAULT_CONVERTER_INPUT,
+	output: DEFAULT_CONVERTER_OUTPUT,
 	inputUnit: DEFAULT_CONVERTER_INPUT_UNIT,
 	outputUnit: DEFAULT_CONVERTER_OUTPUT_UNIT
 })
-const _inputRef      = $(ElementIds.bdConv_input) as HTMLInputElement
-const _outputRef     = $(ElementIds.bdConv_output) as HTMLInputElement
-const _converterRef  = $(ElementIds.bdConv_type) as ComboBoxElement
-const _inputUnitRef  = $(ElementIds.bdConv_inputUnit) as ComboBoxElement
-const _outputUnitRef = $(ElementIds.bdConv_outputUnit) as ComboBoxElement
+const _inputRef      = $(ElementIds.pgConv_input) as HTMLInputElement
+const _outputRef     = $(ElementIds.pgConv_output) as HTMLInputElement
+const _converterRef  = $(ElementIds.pgConv_type) as ComboBoxElement
+const _inputUnitRef  = $(ElementIds.pgConv_inputUnit) as ComboBoxElement
+const _outputUnitRef = $(ElementIds.pgConv_outputUnit) as ComboBoxElement
 let _timeCalculateId: NodeJS.Timeout | number | null = null
 let _timeSaveInputId: NodeJS.Timeout | number | null = null
 

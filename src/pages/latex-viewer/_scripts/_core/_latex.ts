@@ -35,7 +35,7 @@ const _latexListRef = $(ElementIds.bd_list) as HTMLUListElement
 const _mathmlDialogRef = $(ElementIds.bd_dialogMathML) as DialogElement
 const _mathMLInputRef = $(ElementIds.bd_inputMathML) as TextAreaFieldElement
 const _mathMLCopyRef = $(ElementIds.bd_mathMLCopy) as ButtonElement
-const _toastCopiedRef = $(ElementIds.bdToas_copied) as ToastElement
+const _toastCopiedRef = $(ElementIds.toa_copied) as ToastElement
 let _selectedLatexIndex = 0
 
 function _addLatex(index: number): void {

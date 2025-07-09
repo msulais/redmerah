@@ -6,16 +6,16 @@ import { SideBarAttributes, updateSideBarRef } from "@/native-components/SideBar
 import { SCREEN_WIDTH_SMALL } from "../_shared/_constant"
 import type { PopoverElement } from "@/native-components/Popover"
 
-const _infoMenuRef = $(ElementIds.appbarInfoMenu) as HTMLDivElement
-const _infoButtonRef = $(ElementIds.appbarInfoButton) as HTMLButtonElement
-const _settingsMenuRef = $(ElementIds.appbarSettingsMenu) as HTMLDivElement
-const _settingsButtonRef = $(ElementIds.appbarSettingsButton) as HTMLButtonElement
-const _shareButtonRef = $(ElementIds.appbarInfoMenuShareButton) as HTMLButtonElement
-const _sideBarButtonRef = $(ElementIds.appbarSideBarButton) as HTMLButtonElement
+const _infoMenuRef = $(ElementIds.apInf_menu) as HTMLDivElement
+const _infoButtonRef = $(ElementIds.apInf_btn) as HTMLButtonElement
+const _settingsMenuRef = $(ElementIds.apSett_menu) as HTMLDivElement
+const _settingsButtonRef = $(ElementIds.apSett_btn) as HTMLButtonElement
+const _shareButtonRef = $(ElementIds.apInf_shareBtn) as HTMLButtonElement
+const _sideBarButtonRef = $(ElementIds.ap_sideBarBtn) as HTMLButtonElement
 const _sideBarRef = $(ElementIds.navigationSideBar) as HTMLDivElement
 const _drawerRef = $(ElementIds.navigationDrawer) as HTMLDivElement
-const _searchButtonRef = $(ElementIds.appbarSearchButton) as IconButtonElement
-const _searchPopoverRef = $(ElementIds.appbarSearchPopover) as PopoverElement
+const _searchButtonRef = $(ElementIds.apSrc_btn) as IconButtonElement
+const _searchPopoverRef = $(ElementIds.apSrc_popover) as PopoverElement
 
 function _initEvents(): void {
 	_shareButtonRef.addEventListener('click', () => {

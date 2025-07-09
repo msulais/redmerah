@@ -21,12 +21,56 @@ import { RoutesLinks, ExternalLinks } from '@/enums/links'
 import { IconCodes } from '@/enums/icons'
 import { ElementIds } from '../_scripts/_shared/_ids'
 import { RadioNames } from '../_scripts/_shared/_input-names'
+import { DEFAULT_ANIMATION, DEFAULT_THEME } from '../_scripts/_shared/_constant'
+
+const animations: {
+	value: PlatformAnimationMode
+	text: string
+	icon: number
+}[] = [
+	{
+		value: PlatformAnimationMode.auto,
+		text: 'Automatic',
+		icon: IconCodes.videoClipOptimize
+	},
+	{
+		value: PlatformAnimationMode.on,
+		text: 'On',
+		icon: IconCodes.videoClip
+	},
+	{
+		value: PlatformAnimationMode.off,
+		text: 'Off',
+		icon: IconCodes.videoClipOff
+	},
+]
+const themes: {
+	value: PlatformThemeMode
+	text: string
+	icon: number
+}[] = [
+	{
+		value: PlatformThemeMode.auto,
+		text: 'Automatic',
+		icon: IconCodes.laptopSettings
+	},
+	{
+		value: PlatformThemeMode.light,
+		text: 'Light',
+		icon: IconCodes.weatherSunny
+	},
+	{
+		value: PlatformThemeMode.dark,
+		text: 'Dark',
+		icon: IconCodes.weatherMoon
+	},
+]
 ---
 
 <AppBar id={ElementIds.appbar}>
 	<Fragment slot="leading">
 		<IconButton
-			id={ElementIds.appbarSideBarButton}
+			id={ElementIds.ap_sideBarBtn}
 			IconButtonCode={IconCodes.lineHorizontal3}
 		/>
 		<img
@@ -42,13 +86,13 @@ import { RadioNames } from '../_scripts/_shared/_input-names'
 			data-tooltip="Search emoji"
 			aria-label="Search emoji"
 			IconButtonCode={IconCodes.search}
-			id={ElementIds.appbarSearchButton}
-			popovertarget={ElementIds.appbarSearchPopover}
+			id={ElementIds.apSrc_btn}
+			popovertarget={ElementIds.apSrc_popover}
 		/>
 		<Popover
 			popover="manual"
-			id={ElementIds.appbarSearchPopover}
-			PopoverAnchorBy={ElementIds.appbarSearchButton}
+			id={ElementIds.apSrc_popover}
+			PopoverAnchorBy={ElementIds.apSrc_btn}
 			PopoverDraggable
 			PopoverGap={8}
 			PopoverPadding={12}
@@ -62,7 +106,7 @@ import { RadioNames } from '../_scripts/_shared/_input-names'
 					placeholder: 'Search emoji',
 					autofocus: true,
 					style: "padding-left:8px",
-					id: ElementIds.appbarSearchTextField
+					id: ElementIds.apSrc_input
 				}}>
 				<Icon
 					IconCode={IconCodes.search}
@@ -73,15 +117,15 @@ import { RadioNames } from '../_scripts/_shared/_input-names'
 		</Popover>
 
 		<IconButton
-			id={ElementIds.appbarInfoButton}
+			id={ElementIds.apInf_btn}
 			data-tooltip="Info"
 			aria-label="Info"
 			IconButtonCode={IconCodes.info}
-			popovertarget={ElementIds.appbarInfoMenu}
+			popovertarget={ElementIds.apInf_menu}
 		/>
-		<Menu id={ElementIds.appbarInfoMenu} PopoverAnchorBy={ElementIds.appbarInfoButton}>
+		<Menu id={ElementIds.apInf_menu} PopoverAnchorBy={ElementIds.apInf_btn}>
 			<LinkMenuItem href="/">
-				<img src={logoRedmerah.src} width="16"/>
+				<img src={logoRedmerah.src} width="20"/>
 				Redmerah
 				<MenuIndent />
 			</LinkMenuItem>
@@ -107,7 +151,7 @@ import { RadioNames } from '../_scripts/_shared/_input-names'
 				<MenuIndent />
 			</LinkMenuItem>
 			<Divider />
-			<MenuItem id={ElementIds.appbarInfoMenuShareButton}>
+			<MenuItem id={ElementIds.apInf_shareBtn}>
 				<Icon IconCode={IconCodes.shareAndroid}/>
 				Share
 				<MenuIndent />
@@ -126,81 +170,49 @@ import { RadioNames } from '../_scripts/_shared/_input-names'
 		</Menu>
 
 		<IconButton
-			id={ElementIds.appbarSettingsButton}
+			id={ElementIds.apSett_btn}
 			data-tooltip="Settings"
 			IconButtonCode={IconCodes.settings}
 			aria-label="Settings"
-			popovertarget={ElementIds.appbarSettingsMenu}
+			popovertarget={ElementIds.apSett_menu}
 		/>
-		<Menu id={ElementIds.appbarSettingsMenu} PopoverAnchorBy={ElementIds.appbarSettingsButton}>
+		<Menu id={ElementIds.apSett_menu} PopoverAnchorBy={ElementIds.apSett_btn}>
 			<SubMenuItem
-				popovertarget={ElementIds.appbarSettingsAnimationMenu}>
+				popovertarget={ElementIds.apSett_animationMenu}>
 				<Icon IconCode={IconCodes.playCircleHint}/>
 				Animation
 				<div style="flex:1"/>
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
-			<SubMenu slot="submenus" style="width:150px" id={ElementIds.appbarSettingsAnimationMenu}>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.settingsAnimation,
-						checked: true,
-						value: PlatformAnimationMode.auto
-					}}>
-					<Icon IconCode={IconCodes.videoClipOptimize}/>
-					Automatic
-				</RadioMenuItem>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.settingsAnimation,
-						value: PlatformAnimationMode.on
-					}}>
-					<Icon IconCode={IconCodes.videoClip}/>
-					On
-				</RadioMenuItem>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.settingsAnimation,
-						value: PlatformAnimationMode.off
-					}}>
-					<Icon IconCode={IconCodes.videoClipOff}/>
-					Off
-				</RadioMenuItem>
+			<SubMenu slot="submenus" style="width:150px" id={ElementIds.apSett_animationMenu}>
+				{animations.map(v =>
+					<RadioMenuItem
+						RadioMenuItemName={RadioNames.animation}
+						RadioMenuItemChecked={DEFAULT_ANIMATION === v.value}
+						RadioMenuItemValue={v.value}>
+						<Icon IconCode={v.icon}/>
+						{v.text}
+					</RadioMenuItem>
+				)}
 			</SubMenu>
 
 			<SubMenuItem
-				popovertarget={ElementIds.appbarSettingsThemeMenu}>
+				popovertarget={ElementIds.apSett_themeMenu}>
 				<Icon IconCode={IconCodes.weatherSunny}/>
 				Theme
 				<div style="flex:1"/>
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
-			<SubMenu slot="submenus" style="width:150px" id={ElementIds.appbarSettingsThemeMenu}>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.settingsTheme,
-						checked: true,
-						value: PlatformThemeMode.auto
-					}}>
-					<Icon IconCode={IconCodes.laptopSettings}/>
-					Automatic
-				</RadioMenuItem>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.settingsTheme,
-						value: PlatformThemeMode.light
-					}}>
-					<Icon IconCode={IconCodes.weatherSunny}/>
-					Light
-				</RadioMenuItem>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.settingsTheme,
-						value: PlatformThemeMode.dark
-					}}>
-					<Icon IconCode={IconCodes.weatherMoon}/>
-					Dark
-				</RadioMenuItem>
+			<SubMenu slot="submenus" style="width:150px" id={ElementIds.apSett_themeMenu}>
+				{themes.map(v =>
+					<RadioMenuItem
+						RadioMenuItemName={RadioNames.theme}
+						RadioMenuItemChecked={DEFAULT_THEME === v.value}
+						RadioMenuItemValue={v.value}>
+						<Icon IconCode={v.icon}/>
+						{v.text}
+					</RadioMenuItem>
+				)}
 			</SubMenu>
 		</Menu>
 	</Tooltip>

@@ -13,8 +13,8 @@ export const SearchStore = new ObservableStore<SearchStoreType>({
 	isSearching: false,
 	searchText: ''
 })
-const _searchTextFieldRef = $(ElementIds.appbarSearchTextField) as HTMLInputElement
-const _searchPopoverRef = $(ElementIds.appbarSearchPopover) as PopoverElement
+const _searchTextFieldRef = $(ElementIds.apSrc_input) as HTMLInputElement
+const _searchPopoverRef = $(ElementIds.apSrc_popover) as PopoverElement
 let _timeSearchId: NodeJS.Timeout | number | null = null
 
 function _searchEmoji(): void {

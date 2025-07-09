@@ -12,15 +12,32 @@ import { IconCodes } from '@/enums/icons'
 import { ComboBoxVariant } from '@/native-components/ComboBox'
 import { ElementIds } from '../../_scripts/_shared/_ids'
 import { Commands } from '../../_scripts/_shared/_commands'
-import { CONVERTER_TYPES, DEFAULT_CONVERTER_INPUT_UNIT, DEFAULT_CONVERTER_OUTPUT_UNIT, DEFAULT_CONVERTER_TYPE } from '../../_scripts/_shared/_constant'
+import { CONVERTER_TYPES, DEFAULT_CONVERTER_INPUT, DEFAULT_CONVERTER_INPUT_UNIT, DEFAULT_CONVERTER_OUTPUT, DEFAULT_CONVERTER_OUTPUT_UNIT, DEFAULT_CONVERTER_TYPE } from '../../_scripts/_shared/_constant'
 import { LengthUnits } from '../../_scripts/_shared/_units'
+import { Pages } from '../../_scripts/_shared/_enums'
+import { DEFAULT_PAGE } from '../../_scripts/_shared/_constant'
 ---
-<div class={CSSClasses.bd_page} role="tabpanel" id={ElementIds.bd_converter} hidden>
+<div
+	class={CSSClasses.bd_page}
+	role="tabpanel"
+	id={ElementIds.pg_converter}
+	hidden={DEFAULT_PAGE !== Pages.converter}>
 	<div class={CSSClasses.bdPage_input}>
-		<input id={ElementIds.bdConv_input} readonly placeholder="0" class={CSSClasses.bd_inField}/>
-		<input id={ElementIds.bdConv_output} readonly value="0" class={CSSClasses.bd_outField}/>
+		<input
+			id={ElementIds.pgConv_input}
+			readonly
+			placeholder="0"
+			value={DEFAULT_CONVERTER_INPUT}
+			class={CSSClasses.bd_inField}
+		/>
+		<input
+			id={ElementIds.pgConv_output}
+			readonly
+			value={DEFAULT_CONVERTER_OUTPUT ?? '0'}
+			class={CSSClasses.bd_outField}
+		/>
 	</div>
-	<div class={CSSClasses.bdPage_options} id={ElementIds.bdConv_options}>
+	<div class={CSSClasses.bdPage_options} id={ElementIds.pgConv_options}>
 		<div class={CSSClasses.bdPage_optionGroup}>
 			<Tooltip>
 				<Button data-command={Commands.memo_clear} data-tooltip="Memory clear (Ctrl+Shift+C)">MC</Button>
@@ -30,8 +47,8 @@ import { LengthUnits } from '../../_scripts/_shared/_units'
 			</Tooltip>
 		</div>
 		<div class={CSSClasses.bdPage_optionGroup}>
-			<label style="margin:0 8px 0 12px" for={ElementIds.bdConv_type}>Type:</label>
-			<ComboBox id={ElementIds.bdConv_type} aria-label="Converter type" style="width:186px" ComboBoxVariant={ComboBoxVariant.outlined}>
+			<label style="margin:0 8px 0 12px" for={ElementIds.pgConv_type}>Type:</label>
+			<ComboBox id={ElementIds.pgConv_type} aria-label="Converter type" style="width:186px" ComboBoxVariant={ComboBoxVariant.outlined}>
 				{CONVERTER_TYPES.map(c =>
 					<ComboBoxOption value={c.type}
 						selected={c.type === DEFAULT_CONVERTER_TYPE}>
@@ -41,15 +58,15 @@ import { LengthUnits } from '../../_scripts/_shared/_units'
 			</ComboBox>
 		</div>
 		<div class={CSSClasses.bdPage_optionGroup} style="display:grid;grid-template-columns:1fr 40px 1fr;gap:4px">
-			<ComboBox id={ElementIds.bdConv_inputUnit} aria-label="Unit from">
+			<ComboBox id={ElementIds.pgConv_inputUnit} aria-label="Unit from">
 				{LengthUnits.all.map(c =>
 					<ComboBoxOption value={c.id} style="gap:0" selected={c.equals(DEFAULT_CONVERTER_INPUT_UNIT)}>
 						{c.name} [&nbsp;<span style={`color:rgb(${AppCSSColors.accent})`}>{c.symbol}</span>&nbsp;]
 					</ComboBoxOption>
 				)}
 			</ComboBox>
-			<IconButton data-command={Commands.key_unitSwap} id={ElementIds.bdConv_swap} aria-label="Swap unit" IconButtonCode={IconCodes.arrowRight}/>
-			<ComboBox id={ElementIds.bdConv_outputUnit} aria-label="Unit To">
+			<IconButton data-command={Commands.key_unitSwap} id={ElementIds.pgConv_swap} aria-label="Swap unit" IconButtonCode={IconCodes.arrowRight}/>
+			<ComboBox id={ElementIds.pgConv_outputUnit} aria-label="Unit To">
 				{LengthUnits.all.map(c =>
 					<ComboBoxOption value={c.id} style="gap:0" selected={c.equals(DEFAULT_CONVERTER_OUTPUT_UNIT)}>
 						{c.name} [&nbsp;<span style={`color:rgb(${AppCSSColors.accent})`}>{c.symbol}</span>&nbsp;]

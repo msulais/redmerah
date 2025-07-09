@@ -7,13 +7,14 @@ import { DrawerClasses } from "@/native-components/Drawer"
 import { SideBarClasses } from "@/native-components/SideBar"
 import { updateEmojiList } from "./_body"
 import { saveStorageItem } from "./_database"
+import { DEFAULT_PAGE } from "../_shared/_constant"
 
 export type NavigationStoreType = Readonly<{
 	page: Pages
 }>
 
 export const NavigationStore = new ObservableStore<NavigationStoreType>({
-	page: Pages.smileyEmotion
+	page: DEFAULT_PAGE
 })
 
 const _sideBarRef = $(ElementIds.navigationSideBar)

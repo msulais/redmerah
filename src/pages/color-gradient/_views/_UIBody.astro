@@ -48,12 +48,12 @@ import { FlyoutPosition } from '@/enums/position'
 			*/}</ul>
 			<Menu
 				style="width:128px"
-				id={ElementIds.bdSave_actionMenu}
+				id={ElementIds.bdSv_menu}
 				PopoverPosition={FlyoutPosition.centerBottomToRight}>
-				<MenuItem id={ElementIds.bdSave_actionView}><Icon IconCode={IconCodes.eye}/>View</MenuItem>
-				<MenuItem id={ElementIds.bdSave_actionCopy}><Icon IconCode={IconCodes.copy}/>Copy</MenuItem>
+				<MenuItem id={ElementIds.bdSv_view}><Icon IconCode={IconCodes.eye}/>View</MenuItem>
+				<MenuItem id={ElementIds.bdSv_copy}><Icon IconCode={IconCodes.copy}/>Copy</MenuItem>
 				<Divider />
-				<MenuItem id={ElementIds.bdSave_actionDelete}><Icon IconCode={IconCodes.delete}/>Delete</MenuItem>
+				<MenuItem id={ElementIds.bdSv_delete}><Icon IconCode={IconCodes.delete}/>Delete</MenuItem>
 			</Menu>
 		</details>
 		<Divider/>
@@ -131,11 +131,11 @@ import { FlyoutPosition } from '@/enums/position'
 		</details>
 	</div>
 </main>
-<Toast id={ElementIds.bdToas_copied} ToastCloseDelay={1500}>
+<Toast id={ElementIds.toa_copied} ToastCloseDelay={1500}>
 	<Icon IconCode={IconCodes.copy} slot="leading"/>
 	Copied
 </Toast>
-<Toast id={ElementIds.bdToas_saved} ToastCloseDelay={1500}>
+<Toast id={ElementIds.toa_saved} ToastCloseDelay={1500}>
 	<Icon IconCode={IconCodes.save} slot="leading"/>
 	Saved
 </Toast>
