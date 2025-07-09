@@ -13,6 +13,7 @@ import { AppCSSColors } from '@/enums/app-data'
 import { ElementIds } from '../_scripts/_shared/_ids'
 import { SkinToneEmoji } from '../_scripts/_shared/_enums'
 import { RadioNames } from '../_scripts/_shared/_input-names'
+import { DEFAULT_SKIN_TONE } from '../_scripts/_shared/_constant'
 
 const maxEmojiList = Math.max(
 	EMOJIS_SMILEY_AND_EMOTION.length,
@@ -32,43 +33,36 @@ const maxEmojiList = Math.max(
 )
 
 const skinTones: {
-	checked: boolean
 	name: string
 	skinTone: SkinToneEmoji
 	color: string
 }[] = [
 	{
-		checked: true,
 		name: 'Skin Tone: None',
 		color: '#FFC64E',
 		skinTone: SkinToneEmoji.none
 	},
 	{
-		checked: false,
 		name: 'Skin Tone: Light',
 		color: '#F7C1B0',
 		skinTone: SkinToneEmoji.light
 	},
 	{
-		checked: false,
 		name: 'Skin Tone: Medium Light',
 		color: '#E4AB94',
 		skinTone: SkinToneEmoji.mediumLight
 	},
 	{
-		checked: false,
 		name: 'Skin Tone: Medium',
 		color: '#B18378',
 		skinTone: SkinToneEmoji.medium
 	},
 	{
-		checked: false,
 		name: 'Skin Tone: Medium Dark',
 		color: '#8A5D5C',
 		skinTone: SkinToneEmoji.mediumDark
 	},
 	{
-		checked: false,
 		name: 'Skin Tone: Dark',
 		color: '#4B3234',
 		skinTone: SkinToneEmoji.dark
@@ -87,11 +81,11 @@ const skinTones: {
 			<h1 id={ElementIds.bd_title}>Smiley & Emotion</h1>
 			<TextField
 				TextFieldInputAttr={{
-					placeholder: '😃😗😪💕💤',
+					placeholder: '😃😗😪💤',
 					style: 'padding-left:6px;padding-right:4px;font-size:var(--g-font-size-xm);min-height:36px',
 					id: ElementIds.bd_input
 				}}>
-				<Tooltip slot='trailing' style="display:flex; align-items:center; gap:4px">
+				<Tooltip slot='trailing' style="display:flex;align-items:center;gap:4px">
 					<TextFieldButton
 						id={ElementIds.bd_dismissInput}
 						data-tooltip="Clear"
@@ -124,7 +118,7 @@ const skinTones: {
 						<input
 							name={RadioNames.skinTone}
 							type="radio"
-							checked={v.checked}
+							checked={DEFAULT_SKIN_TONE === v.skinTone}
 							autocomplete="off"
 							value={v.skinTone}
 						/>
