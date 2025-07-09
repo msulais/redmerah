@@ -27,6 +27,49 @@ import { DEFAULT_ANIMATION, DEFAULT_ERROR_CORRECTION_LEVEL, DEFAULT_THEME, DEFAU
 import { EncodingMode, ErrorCorrectionLevel, QRVersion } from '../_scripts/_shared/_enums'
 import { ButtonVariant } from '@/native-components/Button'
 import { FlyoutPosition } from '@/enums/position'
+
+const animations: {
+	value: PlatformAnimationMode
+	text: string
+	icon: number
+}[] = [
+	{
+		value: PlatformAnimationMode.auto,
+		text: 'Automatic',
+		icon: IconCodes.videoClipOptimize
+	},
+	{
+		value: PlatformAnimationMode.on,
+		text: 'On',
+		icon: IconCodes.videoClip
+	},
+	{
+		value: PlatformAnimationMode.off,
+		text: 'Off',
+		icon: IconCodes.videoClipOff
+	},
+]
+const themes: {
+	value: PlatformThemeMode
+	text: string
+	icon: number
+}[] = [
+	{
+		value: PlatformThemeMode.auto,
+		text: 'Automatic',
+		icon: IconCodes.laptopSettings
+	},
+	{
+		value: PlatformThemeMode.light,
+		text: 'Light',
+		icon: IconCodes.weatherSunny
+	},
+	{
+		value: PlatformThemeMode.dark,
+		text: 'Dark',
+		icon: IconCodes.weatherMoon
+	},
+]
 ---
 
 <AppBar id={ElementIds.appbar}>
@@ -113,33 +156,15 @@ import { FlyoutPosition } from '@/enums/position'
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
 			<SubMenu slot="submenus" style="width:150px" id={ElementIds.apSett_animationMenu}>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.animation,
-						checked: DEFAULT_ANIMATION === PlatformAnimationMode.auto,
-						value: PlatformAnimationMode.auto
-					}}>
-					<Icon IconCode={IconCodes.videoClipOptimize}/>
-					Automatic
-				</RadioMenuItem>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.animation,
-						checked: DEFAULT_ANIMATION === PlatformAnimationMode.on,
-						value: PlatformAnimationMode.on
-					}}>
-					<Icon IconCode={IconCodes.videoClip}/>
-					On
-				</RadioMenuItem>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.animation,
-						checked: DEFAULT_ANIMATION === PlatformAnimationMode.off,
-						value: PlatformAnimationMode.off
-					}}>
-					<Icon IconCode={IconCodes.videoClipOff}/>
-					Off
-				</RadioMenuItem>
+				{animations.map(v =>
+					<RadioMenuItem
+						RadioMenuItemName={RadioNames.animation}
+						RadioMenuItemChecked={DEFAULT_ANIMATION === v.value}
+						RadioMenuItemValue={v.value}>
+						<Icon IconCode={v.icon}/>
+						{v.text}
+					</RadioMenuItem>
+				)}
 			</SubMenu>
 
 			<SubMenuItem
@@ -150,33 +175,15 @@ import { FlyoutPosition } from '@/enums/position'
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
 			<SubMenu slot="submenus" style="width:150px" id={ElementIds.apSett_themeMenu}>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.theme,
-						checked: DEFAULT_THEME === PlatformThemeMode.auto,
-						value: PlatformThemeMode.auto
-					}}>
-					<Icon IconCode={IconCodes.laptopSettings}/>
-					Automatic
-				</RadioMenuItem>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.theme,
-						checked: DEFAULT_THEME === PlatformThemeMode.light,
-						value: PlatformThemeMode.light
-					}}>
-					<Icon IconCode={IconCodes.weatherSunny}/>
-					Light
-				</RadioMenuItem>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.theme,
-						checked: DEFAULT_THEME === PlatformThemeMode.dark,
-						value: PlatformThemeMode.dark
-					}}>
-					<Icon IconCode={IconCodes.weatherMoon}/>
-					Dark
-				</RadioMenuItem>
+				{themes.map(v =>
+					<RadioMenuItem
+						RadioMenuItemName={RadioNames.theme}
+						RadioMenuItemChecked={DEFAULT_THEME === v.value}
+						RadioMenuItemValue={v.value}>
+						<Icon IconCode={v.icon}/>
+						{v.text}
+					</RadioMenuItem>
+				)}
 			</SubMenu>
 
 			<Divider/>
