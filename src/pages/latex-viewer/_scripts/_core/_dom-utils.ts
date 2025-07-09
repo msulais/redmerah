@@ -15,7 +15,3 @@ export function $$$<T extends HTMLElement>(
 ) {
 	return from.querySelectorAll<T>(selector)
 }
-
-export function scrollInputToEnd(inputRef: HTMLInputElement) {
-	return inputRef.scrollLeft = inputRef.scrollWidth
-}
