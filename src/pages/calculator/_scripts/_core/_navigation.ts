@@ -11,13 +11,14 @@ import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { saveStorageItem } from "./_database"
 import { AppCSSColors, AppCSSOpacity } from "@/enums/app-data"
+import { DEFAULT_PAGE } from "../_shared/_constant"
 
 export type NavigationStoreType = Readonly<{
 	page: Pages
 }>
 
 export const NavigationStore = new ObservableStore<NavigationStoreType>({
-	page: Pages.basic
+	page: DEFAULT_PAGE
 })
 
 const _sideBarRef = $(ElementIds.nav_sideBar)

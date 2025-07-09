@@ -9,6 +9,7 @@ import { isValidEnumValue } from "@/utils/object"
 import { safeNumber } from "@/utils/number"
 import { saveStorageItem } from "../_core/_database"
 import type { ComboBoxElement } from "@/native-components/ComboBox"
+import { DEFAULT_DATE_INPUT_DAYS, DEFAULT_DATE_INPUT_MONTHS, DEFAULT_DATE_INPUT_YEAR, DEFAULT_DATE_INPUT_FROM, DEFAULT_DATE_INPUT_TO, DEFAULT_DATE_OPERATION, DEFAULT_DATE_OUTPUT } from "../_shared/_constant"
 
 export type DateStoreType = Readonly<{
 	inputFrom: Date
@@ -21,13 +22,13 @@ export type DateStoreType = Readonly<{
 }>
 
 export const DateStore = new ObservableStore<DateStoreType>({
-	inputDays: 0,
-	inputFrom: new Date(),
-	inputMonths: 0,
-	inputTo: new Date(),
-	inputYears: 0,
-	operation: DateOperation.difference,
-	output: 'Same date'
+	inputDays: DEFAULT_DATE_INPUT_DAYS,
+	inputMonths: DEFAULT_DATE_INPUT_MONTHS,
+	inputYears: DEFAULT_DATE_INPUT_YEAR,
+	inputFrom: DEFAULT_DATE_INPUT_FROM,
+	inputTo: DEFAULT_DATE_INPUT_TO,
+	operation: DEFAULT_DATE_OPERATION,
+	output: DEFAULT_DATE_OUTPUT
 })
 const _operationRef = $(ElementIds.bdDate_operation) as ComboBoxElement
 const _datePickerFromRef = $(ElementIds.bdDateInp_fromDatePicker) as DatePickerElement

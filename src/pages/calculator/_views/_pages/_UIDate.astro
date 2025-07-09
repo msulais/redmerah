@@ -11,14 +11,26 @@ import { IconCodes } from '@/enums/icons'
 import { FlyoutPosition } from '@/enums/position'
 import { ElementIds } from '../../_scripts/_shared/_ids'
 import { DateOperation } from '../../_scripts/_shared/_enums'
+import { Pages } from '../../_scripts/_shared/_enums'
+import { DEFAULT_DATE_INPUT_DAYS, DEFAULT_DATE_INPUT_FROM, DEFAULT_DATE_INPUT_MONTHS, DEFAULT_DATE_INPUT_TO, DEFAULT_DATE_INPUT_YEAR, DEFAULT_DATE_OPERATION, DEFAULT_DATE_OUTPUT, DEFAULT_PAGE } from '../../_scripts/_shared/_constant'
 ---
 
-<div id={ElementIds.bd_date} role="tabpanel" class={CSSClasses.bdPage_date} hidden>
+<div
+	id={ElementIds.bd_date}
+	role="tabpanel"
+	class={CSSClasses.bdPage_date}
+	hidden={DEFAULT_PAGE !== Pages.date}>
 	<label for={ElementIds.bdDate_operation}>Operation</label>
 	<ComboBox id={ElementIds.bdDate_operation} style="width:256px;margin-top:4px;margin-bottom:16px">
-		<ComboBoxOption value={DateOperation.add}>Add</ComboBoxOption>
-		<ComboBoxOption value={DateOperation.subtract}>Subtract</ComboBoxOption>
-		<ComboBoxOption value={DateOperation.difference} selected>Difference</ComboBoxOption>
+		<ComboBoxOption
+			selected={DEFAULT_DATE_OPERATION === DateOperation.add}
+			value={DateOperation.add}>Add</ComboBoxOption>
+		<ComboBoxOption
+			selected={DEFAULT_DATE_OPERATION === DateOperation.subtract}
+			value={DateOperation.subtract}>Subtract</ComboBoxOption>
+		<ComboBoxOption
+			selected={DEFAULT_DATE_OPERATION === DateOperation.difference}
+			value={DateOperation.difference}>Difference</ComboBoxOption>
 	</ComboBox>
 	<label for={ElementIds.bdDateInp_fromBtn}>From</label>
 	<Button
@@ -26,7 +38,7 @@ import { DateOperation } from '../../_scripts/_shared/_enums'
 		id={ElementIds.bdDateInp_fromBtn}
 		ButtonVariant={ButtonVariant.tonal}
 		popovertarget={ElementIds.bdDateInp_fromDatePicker}>
-		<span style="display:block">{new Date().toLocaleDateString('en', {day:'numeric', month: 'long', year: 'numeric'})}</span>
+		<span style="display:block">{DEFAULT_DATE_INPUT_FROM.toLocaleDateString('en', {day:'numeric', month: 'long', year: 'numeric'})}</span>
 		<div style="flex:1"/>
 		<Icon IconCode={IconCodes.calendar}/>
 	</Button>
@@ -45,7 +57,7 @@ import { DateOperation } from '../../_scripts/_shared/_enums'
 			id={ElementIds.bdDateInp_toBtn}
 			ButtonVariant={ButtonVariant.tonal}
 			popovertarget={ElementIds.bdDateInp_toDatePicker}>
-			<span style="display:block">{new Date().toLocaleDateString('en', {day:'numeric', month: 'long', year: 'numeric'})}</span>
+			<span style="display:block">{DEFAULT_DATE_INPUT_TO.toLocaleDateString('en', {day:'numeric', month: 'long', year: 'numeric'})}</span>
 			<div style="flex:1"/>
 			<Icon IconCode={IconCodes.calendar}/>
 		</Button>
@@ -69,24 +81,39 @@ import { DateOperation } from '../../_scripts/_shared/_enums'
 			<label for={ElementIds.bdDateInp_years}>Years</label>
 			<TextField
 				style="margin-top:4px"
-				TextFieldInputAttr={{id: ElementIds.bdDateInp_years, type: 'number', min: '0', value: '0'}}
+				TextFieldInputAttr={{
+					id: ElementIds.bdDateInp_years,
+					type: 'number',
+					min: '0',
+					value: DEFAULT_DATE_INPUT_YEAR
+				}}
 			/>
 		</div>
 		<div>
 			<label for={ElementIds.bdDateInp_months}>Months</label>
 			<TextField
 				style="margin-top:4px"
-				TextFieldInputAttr={{id: ElementIds.bdDateInp_months, type: 'number', min: '0', value: '0'}}
+				TextFieldInputAttr={{
+					id: ElementIds.bdDateInp_months,
+					type: 'number',
+					min: '0',
+					value: DEFAULT_DATE_INPUT_MONTHS
+				}}
 			/>
 		</div>
 		<div>
 			<label for={ElementIds.bdDateInp_days}>Days</label>
 			<TextField
 				style="margin-top:4px"
-				TextFieldInputAttr={{id: ElementIds.bdDateInp_days, type: 'number', min: '0', value: '0'}}
+				TextFieldInputAttr={{
+					id: ElementIds.bdDateInp_days,
+					type: 'number',
+					min: '0',
+					value: DEFAULT_DATE_INPUT_DAYS
+				}}
 			/>
 		</div>
 	</div>
 	<label for={ElementIds.bdDate_output}>Result</label>
-	<output id={ElementIds.bdDate_output}>Same date</output>
+	<output id={ElementIds.bdDate_output}>{DEFAULT_DATE_OUTPUT}</output>
 </div>

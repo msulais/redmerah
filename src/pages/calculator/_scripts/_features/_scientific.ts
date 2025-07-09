@@ -6,7 +6,7 @@ import { calculate } from "../_core/_calculator"
 import { isNumberDefined } from "@/utils/number"
 import { formatOutput } from "../_core/_string-utils"
 import { isValidEnumValue } from "@/utils/object"
-import { DEFAULT_SCIENTIFIC_ANGLE } from "../_shared/_constant"
+import { DEFAULT_SCIENTIFIC_ANGLE, DEFAULT_SCIENTIFIC_INPUT, DEFAULT_SCIENTIFIC_OUTPUT } from "../_shared/_constant"
 import { ButtonVariant, updateButtonRef } from "@/native-components/Button"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { isAnimationAllowed } from "@/utils/animation"
@@ -24,8 +24,8 @@ export type ScientificStoreType = Readonly<{
 
 export const ScientificStore = new ObservableStore<ScientificStoreType>({
 	angle: DEFAULT_SCIENTIFIC_ANGLE,
-	input: '',
-	output: null,
+	input: DEFAULT_SCIENTIFIC_INPUT,
+	output: DEFAULT_SCIENTIFIC_OUTPUT,
 })
 const _angleRef = $(ElementIds.bdSci_angle) as ComboBoxElement
 const _inputRef = $(ElementIds.bdSci_input) as HTMLInputElement

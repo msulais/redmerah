@@ -8,52 +8,82 @@ import { ButtonVariant } from '@/native-components/Button'
 import { IconCodes } from '@/enums/icons'
 import { ElementIds } from '../../_scripts/_shared/_ids'
 import { Commands } from '../../_scripts/_shared/_commands'
+import { NumberType, Pages } from '../../_scripts/_shared/_enums'
+import { DEFAULT_PAGE, DEFAULT_PROGRAMMER_INPUT, DEFAULT_PROGRAMMER_NUMBER_TYPE, DEFAULT_PROGRAMMER_OUTPUT } from '../../_scripts/_shared/_constant'
 const btnVal = CSSClasses.bdPageProg_btnValue
 const btnHex = CSSClasses.bdPageProg_btnHex
 const btnDec = CSSClasses.bdPageProg_btnDec
 const btnOct = CSSClasses.bdPageProg_btnOct
 const btnBin = CSSClasses.bdPageProg_btnBin
+const types: {id: string, type: NumberType, text: string, value: string | number}[] = [
+	{
+		id: ElementIds.bdProg_outHex,
+		type: NumberType.hexadecimal,
+		text: 'HEX',
+		value: DEFAULT_PROGRAMMER_OUTPUT?.toString(16).toUpperCase() ?? '0'
+	},
+	{
+		id: ElementIds.bdProg_outDec,
+		type: NumberType.decimal,
+		text: 'DEC',
+		value: DEFAULT_PROGRAMMER_OUTPUT ?? '0'
+	},
+	{
+		id: ElementIds.bdProg_outOct,
+		type: NumberType.octal,
+		text: 'OCT',
+		value: DEFAULT_PROGRAMMER_OUTPUT?.toString(8) ?? '0'
+	},
+	{
+		id: ElementIds.bdProg_outBin,
+		type: NumberType.binary,
+		text: 'BIN',
+		value: DEFAULT_PROGRAMMER_OUTPUT?.toString(2) ?? '0'
+	},
+]
 ---
-<div class={CSSClasses.bd_page} role="tabpanel" id={ElementIds.bd_programmer} hidden>
+<div
+	class={CSSClasses.bd_page}
+	role="tabpanel"
+	id={ElementIds.bd_programmer}
+	hidden={DEFAULT_PAGE !== Pages.programmer}>
 	<div class={CSSClasses.bdPage_input}>
-		<input readonly placeholder="0" id={ElementIds.bdProg_input} class={CSSClasses.bd_inField}/>
+		<input
+			type="text"
+			readonly
+			placeholder="0"
+			id={ElementIds.bdProg_input}
+			class={CSSClasses.bd_inField}
+			value={DEFAULT_PROGRAMMER_INPUT}
+		/>
 		<div
 			style="display:contents"
 			role="listbox"
-			aria-activedescendant={ElementIds.bdProg_outDec}
+			aria-activedescendant={
+				DEFAULT_PROGRAMMER_NUMBER_TYPE === NumberType.hexadecimal
+					? ElementIds.bdProg_outHex
+				: DEFAULT_PROGRAMMER_NUMBER_TYPE === NumberType.decimal
+					? ElementIds.bdProg_outDec
+				: DEFAULT_PROGRAMMER_NUMBER_TYPE === NumberType.octal
+					? ElementIds.bdProg_outOct
+				: DEFAULT_PROGRAMMER_NUMBER_TYPE === NumberType.binary
+					? ElementIds.bdProg_outBin
+				: ''}
 			id={ElementIds.bdProg_output}>
-			<div
-				id={ElementIds.bdProg_outHex}
-				class={CSSClasses.bdPageProg_outputGroup}
-				role="option"
-				aria-selected="false">
-				<input type="text" value="0" readonly/>
-				<Button>HEX</Button>
-			</div>
-			<div
-				id={ElementIds.bdProg_outDec}
-				class={CSSClasses.bdPageProg_outputGroup}
-				role="option"
-				aria-selected="true">
-				<input type="text" value="0" readonly/>
-				<Button ButtonVariant={ButtonVariant.filled}>DEC</Button>
-			</div>
-			<div
-				id={ElementIds.bdProg_outOct}
-				class={CSSClasses.bdPageProg_outputGroup}
-				role="option"
-				aria-selected="false">
-				<input type="text" value="0" readonly/>
-				<Button>OCT</Button>
-			</div>
-			<div
-				id={ElementIds.bdProg_outBin}
-				class={CSSClasses.bdPageProg_outputGroup}
-				role="option"
-				aria-selected="false">
-				<input type="text" value="0" readonly/>
-				<Button>BIN</Button>
-			</div>
+			{types.map(v =>
+				<div
+					id={v.id}
+					class={CSSClasses.bdPageProg_outputGroup}
+					role="option"
+					aria-selected={DEFAULT_PROGRAMMER_NUMBER_TYPE === v.type}>
+					<input
+						type="text"
+						value={v.value}
+						readonly
+					/>
+					<Button>{v.text}</Button>
+				</div>
+			)}
 		</div>
 	</div>
 	<div class={CSSClasses.bdPage_options}>

@@ -1,18 +1,35 @@
 import { IconCodes } from "@/enums/icons"
 import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
-import { ConverterType, DecimalNumberFormat, GroupingNumberFormat, NumberType, ScientificAngleType } from "./_enums"
+import { ConverterType, DateOperation, DecimalNumberFormat, GroupingNumberFormat, NumberType, Pages, ScientificAngleType } from "./_enums"
 import { LengthUnits } from "./_units"
 
 export const SCREEN_WIDTH_SMALL = 650
+export const DEFAULT_MEMORY = 0
+export const DEFAULT_PAGE: Pages = Pages.basic
 export const DEFAULT_THEME = PlatformThemeMode.auto
 export const DEFAULT_ANIMATION = PlatformAnimationMode.auto
 export const DEFAULT_DECIMAL_NUMBER_FORMAT = DecimalNumberFormat.point
 export const DEFAULT_GROUPING_NUMBER_FORMAT = GroupingNumberFormat.comma
-export const DEFAULT_SCIENTIFIC_ANGLE = ScientificAngleType.RAD
+export const DEFAULT_BASIC_INPUT: string = ''
+export const DEFAULT_BASIC_OUTPUT: number | null = null
+export const DEFAULT_SCIENTIFIC_ANGLE: ScientificAngleType = ScientificAngleType.RAD
+export const DEFAULT_SCIENTIFIC_INPUT: string = ''
+export const DEFAULT_SCIENTIFIC_OUTPUT: number | null = null
+export const DEFAULT_CONVERTER_INPUT: string = ''
+export const DEFAULT_CONVERTER_OUTPUT: number | null = null
 export const DEFAULT_CONVERTER_TYPE = ConverterType.length
 export const DEFAULT_CONVERTER_INPUT_UNIT = LengthUnits.meter
 export const DEFAULT_CONVERTER_OUTPUT_UNIT = LengthUnits.kilometer
-export const DEFAULT_PROGRAMMER_NUMBER_TYPE = NumberType.decimal
+export const DEFAULT_PROGRAMMER_NUMBER_TYPE: NumberType = NumberType.decimal
+export const DEFAULT_PROGRAMMER_INPUT: string = ''
+export const DEFAULT_PROGRAMMER_OUTPUT: number | null = null
+export const DEFAULT_DATE_INPUT_YEAR = 0
+export const DEFAULT_DATE_INPUT_MONTHS = 0
+export const DEFAULT_DATE_INPUT_DAYS = 0
+export const DEFAULT_DATE_INPUT_FROM = new Date()
+export const DEFAULT_DATE_INPUT_TO = new Date()
+export const DEFAULT_DATE_OPERATION: DateOperation = DateOperation.difference
+export const DEFAULT_DATE_OUTPUT: string = 'Same date'
 export const DIVISION_CHAR = '÷'
 export const MULTIPLY_CHAR = '×'
 export const SQUARE_ROOT_CHAR = '√'

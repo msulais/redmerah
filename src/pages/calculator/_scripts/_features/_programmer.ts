@@ -1,6 +1,6 @@
 import { ObservableStore } from "@/utils/store"
 import { NumberType } from "../_shared/_enums"
-import { DEFAULT_PROGRAMMER_NUMBER_TYPE } from "../_shared/_constant"
+import { DEFAULT_PROGRAMMER_INPUT, DEFAULT_PROGRAMMER_NUMBER_TYPE, DEFAULT_PROGRAMMER_OUTPUT } from "../_shared/_constant"
 import { ElementIds } from "../_shared/_ids"
 import { $, $$, $$$, scrollInputToEnd } from "../_core/_dom-utils"
 import { isTargetValidElement } from "@/utils/element"
@@ -22,9 +22,9 @@ export enum ProgrammerStoreCustomKeys {
 }
 
 export const ProgrammerStore = new ObservableStore<ProgrammerStoreType>({
-	input: '',
+	input: DEFAULT_PROGRAMMER_INPUT,
 	numberType: DEFAULT_PROGRAMMER_NUMBER_TYPE,
-	output: null
+	output: DEFAULT_PROGRAMMER_OUTPUT
 })
 
 const _inputRef = $(ElementIds.bdProg_input) as HTMLInputElement

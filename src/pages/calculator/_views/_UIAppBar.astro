@@ -20,6 +20,69 @@ import { IconCodes } from '@/enums/icons'
 import { ElementIds } from '../_scripts/_shared/_ids'
 import { RadioNames } from '../_scripts/_shared/_input-names'
 import { DecimalNumberFormat, GroupingNumberFormat } from '../_scripts/_shared/_enums'
+import { DEFAULT_ANIMATION, DEFAULT_THEME, DEFAULT_GROUPING_NUMBER_FORMAT, DEFAULT_DECIMAL_NUMBER_FORMAT } from '../_scripts/_shared/_constant'
+
+const animations: {
+	value: PlatformAnimationMode
+	text: string
+	icon: number
+}[] = [
+	{
+		value: PlatformAnimationMode.auto,
+		text: 'Automatic',
+		icon: IconCodes.videoClipOptimize
+	},
+	{
+		value: PlatformAnimationMode.on,
+		text: 'On',
+		icon: IconCodes.videoClip
+	},
+	{
+		value: PlatformAnimationMode.off,
+		text: 'Off',
+		icon: IconCodes.videoClipOff
+	},
+]
+const themes: {
+	value: PlatformThemeMode
+	text: string
+	icon: number
+}[] = [
+	{
+		value: PlatformThemeMode.auto,
+		text: 'Automatic',
+		icon: IconCodes.laptopSettings
+	},
+	{
+		value: PlatformThemeMode.light,
+		text: 'Light',
+		icon: IconCodes.weatherSunny
+	},
+	{
+		value: PlatformThemeMode.dark,
+		text: 'Dark',
+		icon: IconCodes.weatherMoon
+	},
+]
+
+const grouping: {
+	value: GroupingNumberFormat
+	text: string
+}[] = [
+	{value: GroupingNumberFormat.comma, text: 'Comma'},
+	{value: GroupingNumberFormat.point, text: 'Point'},
+	{value: GroupingNumberFormat.space, text: 'Space'},
+	{value: GroupingNumberFormat.none, text: 'None'},
+	{value: GroupingNumberFormat.underscore, text: 'Underscore'},
+]
+
+const decimal: {
+	value: DecimalNumberFormat
+	text: string
+}[] = [
+	{value: DecimalNumberFormat.comma, text: 'Comma'},
+	{value: DecimalNumberFormat.point, text: 'Point'},
+]
 ---
 
 <AppBar id={ElementIds.appbar}>
@@ -112,31 +175,15 @@ import { DecimalNumberFormat, GroupingNumberFormat } from '../_scripts/_shared/_
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
 			<SubMenu slot="submenus" style="width:150px" id={ElementIds.apSett_animationMenu}>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.sett_animation,
-						checked: true,
-						value: PlatformAnimationMode.auto
-					}}>
-					<Icon IconCode={IconCodes.videoClipOptimize}/>
-					Automatic
-				</RadioMenuItem>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.sett_animation,
-						value: PlatformAnimationMode.on
-					}}>
-					<Icon IconCode={IconCodes.videoClip}/>
-					On
-				</RadioMenuItem>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.sett_animation,
-						value: PlatformAnimationMode.off
-					}}>
-					<Icon IconCode={IconCodes.videoClipOff}/>
-					Off
-				</RadioMenuItem>
+				{animations.map(v =>
+					<RadioMenuItem
+						RadioMenuItemName={RadioNames.sett_animation}
+						RadioMenuItemChecked={DEFAULT_ANIMATION === v.value}
+						RadioMenuItemValue={v.value}>
+						<Icon IconCode={v.icon}/>
+						{v.text}
+					</RadioMenuItem>
+				)}
 			</SubMenu>
 
 			<SubMenuItem
@@ -147,31 +194,15 @@ import { DecimalNumberFormat, GroupingNumberFormat } from '../_scripts/_shared/_
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
 			<SubMenu slot="submenus" style="width:150px" id={ElementIds.apSett_themeMenu}>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.sett_theme,
-						checked: true,
-						value: PlatformThemeMode.auto
-					}}>
-					<Icon IconCode={IconCodes.laptopSettings}/>
-					Automatic
-				</RadioMenuItem>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.sett_theme,
-						value: PlatformThemeMode.light
-					}}>
-					<Icon IconCode={IconCodes.weatherSunny}/>
-					Light
-				</RadioMenuItem>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.sett_theme,
-						value: PlatformThemeMode.dark
-					}}>
-					<Icon IconCode={IconCodes.weatherMoon}/>
-					Dark
-				</RadioMenuItem>
+				{themes.map(v =>
+					<RadioMenuItem
+						RadioMenuItemName={RadioNames.sett_theme}
+						RadioMenuItemChecked={DEFAULT_THEME === v.value}
+						RadioMenuItemValue={v.value}>
+						<Icon IconCode={v.icon}/>
+						{v.text}
+					</RadioMenuItem>
+				)}
 			</SubMenu>
 
 			<SubMenuItem
@@ -182,32 +213,14 @@ import { DecimalNumberFormat, GroupingNumberFormat } from '../_scripts/_shared/_
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
 			<SubMenu style="width:150px" slot="submenus" id={ElementIds.apSett_groupMenu}>
-				<RadioMenuItem
-					RadioMenuItemName={RadioNames.sett_grouping}
-					RadioMenuItemValue={GroupingNumberFormat.comma}
-					RadioMenuItemChecked>
-					Comma
-				</RadioMenuItem>
-				<RadioMenuItem
-					RadioMenuItemName={RadioNames.sett_grouping}
-					RadioMenuItemValue={GroupingNumberFormat.point}>
-					Point
-				</RadioMenuItem>
-				<RadioMenuItem
-					RadioMenuItemName={RadioNames.sett_grouping}
-					RadioMenuItemValue={GroupingNumberFormat.space}>
-					Space
-				</RadioMenuItem>
-				<RadioMenuItem
-					RadioMenuItemName={RadioNames.sett_grouping}
-					RadioMenuItemValue={GroupingNumberFormat.none}>
-					None
-				</RadioMenuItem>
-				<RadioMenuItem
-					RadioMenuItemName={RadioNames.sett_grouping}
-					RadioMenuItemValue={GroupingNumberFormat.underscore}>
-					Underscore
-				</RadioMenuItem>
+				{grouping.map(v =>
+					<RadioMenuItem
+						RadioMenuItemName={RadioNames.sett_grouping}
+						RadioMenuItemValue={v.value}
+						RadioMenuItemChecked={DEFAULT_GROUPING_NUMBER_FORMAT === v.value}>
+						{v.text}
+					</RadioMenuItem>
+				)}
 			</SubMenu>
 
 			<SubMenuItem
@@ -218,17 +231,14 @@ import { DecimalNumberFormat, GroupingNumberFormat } from '../_scripts/_shared/_
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
 			<SubMenu slot="submenus" style="width:150px" id={ElementIds.apSett_decMenu}>
-				<RadioMenuItem
-					RadioMenuItemName={RadioNames.sett_decimal}
-					RadioMenuItemValue={DecimalNumberFormat.comma}>
-					Comma
-				</RadioMenuItem>
-				<RadioMenuItem
-					RadioMenuItemName={RadioNames.sett_decimal}
-					RadioMenuItemValue={DecimalNumberFormat.point}
-					RadioMenuItemChecked>
-					Point
-				</RadioMenuItem>
+				{decimal.map(v =>
+					<RadioMenuItem
+						RadioMenuItemName={RadioNames.sett_decimal}
+						RadioMenuItemValue={v.value}
+						RadioMenuItemChecked={DEFAULT_DECIMAL_NUMBER_FORMAT === v.value}>
+						{v.text}
+					</RadioMenuItem>
+				)}
 			</SubMenu>
 		</Menu>
 	</Tooltip>

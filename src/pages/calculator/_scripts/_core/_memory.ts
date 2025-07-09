@@ -12,13 +12,14 @@ import { ConverterStore } from "../_features/_converter"
 import { ProgrammerStore } from "../_features/_programmer"
 import { numberToBinary } from "@/utils/number"
 import { saveStorageItem } from "./_database"
+import { DEFAULT_MEMORY } from "../_shared/_constant"
 
 export type MemoryStoreType = Readonly<{
 	value: number
 }>
 
 export const MemoryStore = new ObservableStore<MemoryStoreType>({
-	value: 0
+	value: DEFAULT_MEMORY
 })
 const _memoryRecallRefs = $$$<HTMLElement>(`.${CSSClasses.bdPage_memoPreview}`)
 

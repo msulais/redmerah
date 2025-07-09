@@ -15,11 +15,28 @@ import { IconCodes } from '@/enums/icons'
 import { ElementIds } from '../../_scripts/_shared/_ids'
 import { Commands } from '../../_scripts/_shared/_commands'
 import { ScientificAngleType } from '../../_scripts/_shared/_enums'
+import { Pages } from '../../_scripts/_shared/_enums'
+import { DEFAULT_PAGE, DEFAULT_SCIENTIFIC_ANGLE, DEFAULT_SCIENTIFIC_INPUT, DEFAULT_SCIENTIFIC_OUTPUT } from '../../_scripts/_shared/_constant'
 ---
-<div class={CSSClasses.bd_page} role="tabpanel" id={ElementIds.bd_scientific} hidden>
+<div
+	class={CSSClasses.bd_page}
+	role="tabpanel"
+	id={ElementIds.bd_scientific}
+	hidden={DEFAULT_PAGE !== Pages.scientific}>
 	<div class={CSSClasses.bdPage_input}>
-		<input id={ElementIds.bdSci_input} readonly placeholder="0" class={CSSClasses.bd_inField}/>
-		<input id={ElementIds.bdSci_output} readonly value="0" class={CSSClasses.bd_outField}/>
+		<input
+			id={ElementIds.bdSci_input}
+			readonly
+			placeholder="0"
+			value={DEFAULT_SCIENTIFIC_INPUT}
+			class={CSSClasses.bd_inField}
+		/>
+		<input
+			id={ElementIds.bdSci_output}
+			readonly
+			value={DEFAULT_SCIENTIFIC_OUTPUT ?? '0'}
+			class={CSSClasses.bd_outField}
+		/>
 	</div>
 	<div class={CSSClasses.bdPage_options}>
 		<div class={CSSClasses.bdPage_optionGroup}>
@@ -74,9 +91,15 @@ import { ScientificAngleType } from '../../_scripts/_shared/_enums'
 				</div>
 			</Popover>
 			<ComboBox id={ElementIds.bdSci_angle}>
-				<ComboBoxOption value={ScientificAngleType.RAD} selected>RAD</ComboBoxOption>
-				<ComboBoxOption value={ScientificAngleType.DEG}>DEG</ComboBoxOption>
-				<ComboBoxOption value={ScientificAngleType.GRAD}>GRAD</ComboBoxOption>
+				<ComboBoxOption
+					selected={DEFAULT_SCIENTIFIC_ANGLE === ScientificAngleType.RAD}
+					value={ScientificAngleType.RAD}>RAD</ComboBoxOption>
+				<ComboBoxOption
+					selected={DEFAULT_SCIENTIFIC_ANGLE === ScientificAngleType.DEG}
+					value={ScientificAngleType.DEG}>DEG</ComboBoxOption>
+				<ComboBoxOption
+					selected={DEFAULT_SCIENTIFIC_ANGLE === ScientificAngleType.GRAD}
+					value={ScientificAngleType.GRAD}>GRAD</ComboBoxOption>
 			</ComboBox>
 		</div>
 	</div>

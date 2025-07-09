@@ -5,7 +5,7 @@ import { $, $$, $$$ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
 import { LocalStorageKeys } from "@/enums/storage"
 import { isValidEnumValue } from "@/utils/object"
-import { DEFAULT_THEME } from "../_shared/_constant"
+import { DEFAULT_ANIMATION, DEFAULT_DECIMAL_NUMBER_FORMAT, DEFAULT_GROUPING_NUMBER_FORMAT, DEFAULT_THEME } from "../_shared/_constant"
 import { RootAttributes } from "@/enums/attributes"
 import { RadioNames } from "../_shared/_input-names"
 import { DecimalNumberFormat, GroupingNumberFormat, NumberType } from "../_shared/_enums"
@@ -24,10 +24,10 @@ export type SettingsStoreType = Readonly<{
 }>
 
 export const SettingsStore = new ObservableStore<SettingsStoreType>({
-	theme         : PlatformThemeMode.auto,
-	animation     : PlatformAnimationMode.auto,
-	decimalFormat : DecimalNumberFormat.point,
-	groupingFormat: GroupingNumberFormat.comma
+	theme         : DEFAULT_THEME,
+	animation     : DEFAULT_ANIMATION,
+	decimalFormat : DEFAULT_DECIMAL_NUMBER_FORMAT,
+	groupingFormat: DEFAULT_GROUPING_NUMBER_FORMAT
 })
 const _decimalToken = '@_decimal_@'
 const _groupingToken = '@_grouping_@'
