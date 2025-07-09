@@ -2,7 +2,7 @@ let _ID_INDEX = 0
 
 function _createId(): string {
 	++_ID_INDEX
-	return 'app-' + _ID_INDEX
+	return 'latex-viewer-' + _ID_INDEX
 }
 
 export class ElementIds {
