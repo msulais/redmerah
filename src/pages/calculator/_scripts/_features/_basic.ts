@@ -16,8 +16,8 @@ export const BasicStore = new ObservableStore<BasicStoreType>({
 	input: DEFAULT_BASIC_INPUT,
 	output: DEFAULT_BASIC_OUTPUT,
 })
-const _inputRef = $(ElementIds.bdBas_input) as HTMLInputElement
-const _outputRef = $(ElementIds.bdBas_output) as HTMLInputElement
+const _inputRef = $(ElementIds.pgBas_input) as HTMLInputElement
+const _outputRef = $(ElementIds.pgBas_output) as HTMLInputElement
 let _timeCalculateId: NodeJS.Timeout | number | null = null
 let _timeSaveInputId: NodeJS.Timeout | number | null = null
 

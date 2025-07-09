@@ -1,4 +1,5 @@
 export enum RadioNames {
-	settingsAnimation = 'settings:animation',
-	settingsTheme = 'settings:theme',
+	// sett = settings
+	sett_animation = 'sett-animation',
+	sett_theme = 'sett-theme',
 }

@@ -21,14 +21,14 @@ const _animationOptions = {
 	easing: AnimationEffectTiming.spring
 }
 const _bodyRef = $(ElementIds.body) as HTMLElement
-const _emojiListRef = $(ElementIds.bodyEmojiList) as HTMLUListElement
+const _emojiListRef = $(ElementIds.bd_emojiList) as HTMLUListElement
 const _emojiButtonRefs = $$$<HTMLButtonElement>(`#${CSS.escape(ElementIds.body)} [data-emoji]`)
-const _skinToneOptionRef = $(ElementIds.bodySkinTone) as TooltipElement
-const _titleRef = $(ElementIds.bodyTitle) as HTMLHeadingElement
-const _toastCopiedRef = $(ElementIds.bodyToastCopied) as ToastElement
-const _textFieldRef = $(ElementIds.bodyTextField) as HTMLInputElement
-const _copyTextFieldRef = $(ElementIds.bodyTextFieldCopy) as TextFieldButtonElement
-const _dismissTextFieldRef = $(ElementIds.bodyTextFieldDismiss) as TextFieldButtonElement
+const _skinToneOptionRef = $(ElementIds.bd_skinTone) as TooltipElement
+const _titleRef = $(ElementIds.bd_title) as HTMLHeadingElement
+const _toastCopiedRef = $(ElementIds.toa_copied) as ToastElement
+const _textFieldRef = $(ElementIds.bd_input) as HTMLInputElement
+const _copyTextFieldRef = $(ElementIds.bd_copyInput) as TextFieldButtonElement
+const _dismissTextFieldRef = $(ElementIds.bd_dismissInput) as TextFieldButtonElement
 let _prevPage = Pages.smileyEmotion
 let _prevEmojiList = EMOJIS_SMILEY_AND_EMOTION.map(v => v[0]).join()
 

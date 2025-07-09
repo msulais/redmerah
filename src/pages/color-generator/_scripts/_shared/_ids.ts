@@ -7,21 +7,31 @@ function _createId(): string {
 
 export class ElementIds {
 	static readonly appbar = _createId()
-	static readonly appbarCopyButton = _createId()
-	static readonly appbarInfoButton = _createId()
-	static readonly appbarInfoMenu = _createId()
-	static readonly appbarInfoMenuShareButton = _createId()
-	static readonly appbarSettingsButton = _createId()
-	static readonly appbarSettingsMenu = _createId()
-	static readonly appbarSettingsAnimationMenu = _createId()
-	static readonly appbarSettingsThemeMenu = _createId()
-	static readonly bodyColorPickerButton = _createId()
-	static readonly bodySaveButton = _createId()
-	static readonly bodyColorPickerButtonSpan = _createId()
-	static readonly bodyColorPickerPopover = _createId()
-	static readonly bodyColorAccentLight = _createId()
-	static readonly bodyColorOnAccentLight = _createId()
-	static readonly bodyColorAccentDark = _createId()
-	static readonly bodyColorOnAccentDark = _createId()
-	static readonly bodyToastCopied = _createId()
+
+	// ap = appbar
+	static readonly ap_copyBtn = _createId()
+
+	// apInf = appbar info
+	static readonly apInf_btn = _createId()
+	static readonly apInf_menu = _createId()
+	static readonly apInf_shareBtn = _createId()
+
+	// apSett = appbar settings
+	static readonly apSett_btn = _createId()
+	static readonly apSett_menu = _createId()
+	static readonly apSett_animationMenu = _createId()
+	static readonly apSett_themeMenu = _createId()
+
+	// bd = body
+	static readonly bd_saveBtn = _createId()
+	static readonly bd_picker = _createId()
+	static readonly bd_pickerBtn = _createId()
+	static readonly bd_pickerBtnSpan = _createId()
+	static readonly bd_accentLight = _createId()
+	static readonly bd_onAccentLight = _createId()
+	static readonly bd_accentDark = _createId()
+	static readonly bd_onAccentDark = _createId()
+
+	// toa = toast
+	static readonly toa_copied = _createId()
 }

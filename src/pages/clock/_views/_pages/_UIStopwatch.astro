@@ -17,26 +17,26 @@ import { Commands } from '../../_scripts/_shared/_commands'
 ---
 
 <div
-	id={ElementIds.bodyStopwatch}
+	id={ElementIds.pg_stopwatch}
 	class={[CSSClasses.bodyPage, CSSClasses.bodyPageStopwatch].join(' ')}
 	role="tabpanel"
 	hidden>
 	<h2>
 		<span
-			id={ElementIds.bodyStopwatchHHMMSS}>0:00:00</span
-		>,<small id={ElementIds.bodyStopwatchMS}>00</small>
+			id={ElementIds.pgSw_hhmmss}>0:00:00</span
+		>,<small id={ElementIds.pgSw_ms}>00</small>
 	</h2>
 	<Tooltip style="display:flex;justify-content:center;gap:8px;padding-bottom:16px">
 		<Button
 			style="width:92px"
-			id={ElementIds.bodyStopwatchPlayOrPause}
+			id={ElementIds.pgSw_playPause}
 			ButtonVariant={ButtonVariant.filled}>
 			<Icon IconCode={IconCodes.play} IconFilled/>
 			<span>Start</span>
 		</Button>
 		<IconButton
 			style="display:none"
-			id={ElementIds.bodyStopwatchResetOrLap}
+			id={ElementIds.pgSw_resetLap}
 			ButtonVariant={ButtonVariant.tonal}
 			IconButtonCode={IconCodes.arrowReset}
 			data-tooltip="Reset"
@@ -44,62 +44,62 @@ import { Commands } from '../../_scripts/_shared/_commands'
 		/>
 		<IconButton
 			style="display:none"
-			popovertarget={ElementIds.bodyStopwatchMoreMenu} id={ElementIds.bodyStopwatchMoreButton} ButtonVariant={ButtonVariant.tonal}
+			popovertarget={ElementIds.pgSw_moreMenu} id={ElementIds.pgSw_moreBtn} ButtonVariant={ButtonVariant.tonal}
 			IconButtonCode={IconCodes.moreVertical}
 			data-tooltip="More actions"
 			aria-label="More actions"
 		/>
 		<Menu
-			id={ElementIds.bodyStopwatchMoreMenu}
-			PopoverAnchorBy={ElementIds.bodyStopwatchMoreButton}>
-			<MenuItem data-command={Commands.stopwatchCopyLapTime}>
+			id={ElementIds.pgSw_moreMenu}
+			PopoverAnchorBy={ElementIds.pgSw_moreBtn}>
+			<MenuItem data-command={Commands.swCpLp_time}>
 				<Icon IconCode={IconCodes.copy}/>
 				Copy time
 				<div style="flex:1"/>
 				<MenuIndent/>
 			</MenuItem>
-			<MenuItem data-command={Commands.stopwatchCopyLapTotal}>
+			<MenuItem data-command={Commands.swCpLp_total}>
 				<Icon IconCode={IconCodes.copy}/>
 				Copy total
 				<div style="flex:1"/>
 				<MenuIndent/>
 			</MenuItem>
-			<MenuItem data-command={Commands.stopwatchCopyLapAll}>
+			<MenuItem data-command={Commands.swCpLp_all}>
 				<Icon IconCode={IconCodes.copy}/>
 				Copy all
 				<div style="flex:1"/>
 				<MenuIndent/>
 			</MenuItem>
 			<Divider />
-			<SubMenuItem popovertarget={ElementIds.bodyStopwatchMoreMillisecondsMenu}>
+			<SubMenuItem popovertarget={ElementIds.pgSw_moreMSMenu}>
 				<Icon IconCode={IconCodes.timer}/>
 				Milliseconds
 				<div style="flex:1"/>
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
-			<SubMenu id={ElementIds.bodyStopwatchMoreMillisecondsMenu} slot="submenus">
-				<MenuItem data-command={Commands.stopwatchCopyLapTimeMS}>
+			<SubMenu id={ElementIds.pgSw_moreMSMenu} slot="submenus">
+				<MenuItem data-command={Commands.swCpLp_timeMS}>
 					<Icon IconCode={IconCodes.copy}/>
 					Copy time
 				</MenuItem>
-				<MenuItem data-command={Commands.stopwatchCopyLapTotalMS}>
+				<MenuItem data-command={Commands.swCpLp_totalMS}>
 					<Icon IconCode={IconCodes.copy}/>
 					Copy total
 				</MenuItem>
-				<MenuItem data-command={Commands.stopwatchCopyLapAllMS}>
+				<MenuItem data-command={Commands.swCpLp_allMS}>
 					<Icon IconCode={IconCodes.copy}/>
 					Copy all
 				</MenuItem>
 			</SubMenu>
 		</Menu>
 	</Tooltip>
-	<div class={CSSClasses.bodyPageStopwatchLaps} id={ElementIds.bodyStopwatchLaps}>
+	<div class={CSSClasses.bodyPageStopwatchLaps} id={ElementIds.pgSw_laps}>
 		<div>
 			<span>Laps</span>
 			<span>Time</span>
 			<span>Total</span>
 		</div>
-		<div id={ElementIds.bodyStopwatchLapsContent}>
+		<div id={ElementIds.pgSw_lapsContent}>
 		</div>
 	</div>
 </div>

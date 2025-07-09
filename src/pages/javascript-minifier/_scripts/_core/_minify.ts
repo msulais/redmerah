@@ -30,9 +30,9 @@ const _openFileRef = $(ElementIds.apMore_open) as MenuItemElement
 const _resetInputRef = $(ElementIds.apMore_reset) as MenuItemElement
 const _copyOutputRef = $(ElementIds.apMore_copy) as MenuItemElement
 const _downloadOutputRef = $(ElementIds.apMore_download) as MenuItemElement
-const _toastCopiedRef = $(ElementIds.bdToas_copied) as ToastElement
-const _toastNoFileRef = $(ElementIds.bdToas_noFile) as ToastElement
-const _toastReadErrorRef = $(ElementIds.bdToas_readError) as ToastElement
+const _toastCopiedRef = $(ElementIds.toa_copied) as ToastElement
+const _toastNoFileRef = $(ElementIds.toa_noFile) as ToastElement
+const _toastReadErrorRef = $(ElementIds.toa_readError) as ToastElement
 let _timeUpdateOutputId: NodeJS.Timeout | number | null = null
 
 function _subscribeInputChanges(v: MinifyStoreType, o: MinifyStoreType): void {

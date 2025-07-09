@@ -19,14 +19,14 @@ import { ElementIds } from '../_scripts/_shared/_ids'
 		}}>
 			<Button
 				ButtonVariant={ButtonVariant.filled}
-				id={ElementIds.bodyColorPickerButton}
-				popovertarget={ElementIds.bodyColorPickerPopover}
+				id={ElementIds.bd_pickerBtn}
+				popovertarget={ElementIds.bd_picker}
 				data-tooltip="Pick color">
 				<Icon IconCode={IconCodes.eyedropper} IconFilled/>
-				<span style="font-weight:bold" id={ElementIds.bodyColorPickerButtonSpan}>{DEFAULT_COLOR}</span>
+				<span style="font-weight:bold" id={ElementIds.bd_pickerBtnSpan}>{DEFAULT_COLOR}</span>
 			</Button>
 			<IconButton
-				id={ElementIds.bodySaveButton}
+				id={ElementIds.bd_saveBtn}
 				ButtonVariant={ButtonVariant.tonal}
 				IconButtonCode={IconCodes.save}
 				aria-label="Save palette"
@@ -40,13 +40,13 @@ import { ElementIds } from '../_scripts/_shared/_ids'
 				backgroundColor: 'rgb(var(--g-color-accent-light))'
 			}}>
 			<span style={{color: 'rgb(var(--g-color-on-accent-light))'}}>
-				Accent Light<br/><span id={ElementIds.bodyColorAccentLight}>#00658F</span>
+				Accent Light<br/><span id={ElementIds.bd_accentLight}>#00658F</span>
 			</span>
 			<span style={{
 				backgroundColor: 'rgb(var(--g-color-on-accent-light))',
 				color: 'rgb(var(--g-color-accent-light))',
 			}}>
-				On Accent Light<br/><span id={ElementIds.bodyColorOnAccentLight}>#FFFFFF</span>
+				On Accent Light<br/><span id={ElementIds.bd_onAccentLight}>#FFFFFF</span>
 			</span>
 		</div>
 		<p>Dark mode:</p>
@@ -56,13 +56,13 @@ import { ElementIds } from '../_scripts/_shared/_ids'
 				backgroundColor: 'rgb(var(--g-color-accent-dark))'
 			}}>
 			<span style={{color: 'rgb(var(--g-color-on-accent-dark))'}}>
-				Accent Dark<br/><span id={ElementIds.bodyColorAccentDark}>#86CEFF</span>
+				Accent Dark<br/><span id={ElementIds.bd_accentDark}>#86CEFF</span>
 			</span>
 			<span style={{
 				backgroundColor: 'rgb(var(--g-color-on-accent-dark))',
 				color: 'rgb(var(--g-color-accent-dark))',
 			}}>
-				On Accent Dark<br/><span id={ElementIds.bodyColorOnAccentDark}>#00344C</span>
+				On Accent Dark<br/><span id={ElementIds.bd_onAccentDark}>#00344C</span>
 			</span>
 		</div>
 	</div>
@@ -73,14 +73,14 @@ import { ElementIds } from '../_scripts/_shared/_ids'
 </main>
 <ColorPicker
 	ColorPickerValue={DEFAULT_COLOR}
-	id={ElementIds.bodyColorPickerPopover}
+	id={ElementIds.bd_picker}
 	PopoverDraggable
 	ColorPickerDisabledOpacity
-	PopoverAnchorBy={ElementIds.bodyColorPickerButton}
+	PopoverAnchorBy={ElementIds.bd_pickerBtn}
 	PopoverGap={8}
 	PopoverPadding={12}
 />
-<Toast id={ElementIds.bodyToastCopied} ToastCloseDelay={1500}>
+<Toast id={ElementIds.toa_copied} ToastCloseDelay={1500}>
 	<Icon IconCode={IconCodes.copy} slot="leading"/>
 	Copied
 </Toast>

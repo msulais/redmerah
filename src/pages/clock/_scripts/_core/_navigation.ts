@@ -19,8 +19,8 @@ export const NavigationStore = new ObservableStore<NavigationStoreType>({
 	page: Pages.clock
 })
 
-const _sideBarRef = $(ElementIds.navigationSideBar)
-const _drawerRef = $(ElementIds.navigationDrawer)
+const _sideBarRef = $(ElementIds.nav_sideBar)
+const _drawerRef = $(ElementIds.nav_drawer)
 
 function _initDrawerEvents(): void {
 	_drawerRef?.addEventListener('click', (ev) => {

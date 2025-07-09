@@ -36,7 +36,7 @@ export const PickerStore = new ObservableStore<PickerStoreType>({
 
 const _previewRef = $(ElementIds.bd_preview) as HTMLOutputElement
 const _inputsRef = $$<TooltipElement>('.' + CSSClasses.bodyInputs)
-const _toastCopiedRef = $(ElementIds.bdToas_copied) as ToastElement
+const _toastCopiedRef = $(ElementIds.toa_copied) as ToastElement
 
 // inp = input
 const _inp_hexRef = $(ElementIds.bdInp_hex) as HTMLInputElement

@@ -16,12 +16,12 @@ import { DEFAULT_DATE_INPUT_DAYS, DEFAULT_DATE_INPUT_FROM, DEFAULT_DATE_INPUT_MO
 ---
 
 <div
-	id={ElementIds.bd_date}
+	id={ElementIds.pg_date}
 	role="tabpanel"
 	class={CSSClasses.bdPage_date}
 	hidden={DEFAULT_PAGE !== Pages.date}>
-	<label for={ElementIds.bdDate_operation}>Operation</label>
-	<ComboBox id={ElementIds.bdDate_operation} style="width:256px;margin-top:4px;margin-bottom:16px">
+	<label for={ElementIds.pgDate_operation}>Operation</label>
+	<ComboBox id={ElementIds.pgDate_operation} style="width:256px;margin-top:4px;margin-bottom:16px">
 		<ComboBoxOption
 			selected={DEFAULT_DATE_OPERATION === DateOperation.add}
 			value={DateOperation.add}>Add</ComboBoxOption>
@@ -32,38 +32,38 @@ import { DEFAULT_DATE_INPUT_DAYS, DEFAULT_DATE_INPUT_FROM, DEFAULT_DATE_INPUT_MO
 			selected={DEFAULT_DATE_OPERATION === DateOperation.difference}
 			value={DateOperation.difference}>Difference</ComboBoxOption>
 	</ComboBox>
-	<label for={ElementIds.bdDateInp_fromBtn}>From</label>
+	<label for={ElementIds.pgDate_fromBtn}>From</label>
 	<Button
 		style="margin:4px 0 16px 0;width:256px"
-		id={ElementIds.bdDateInp_fromBtn}
+		id={ElementIds.pgDate_fromBtn}
 		ButtonVariant={ButtonVariant.tonal}
-		popovertarget={ElementIds.bdDateInp_fromDatePicker}>
+		popovertarget={ElementIds.pgDate_fromPicker}>
 		<span style="display:block">{DEFAULT_DATE_INPUT_FROM.toLocaleDateString('en', {day:'numeric', month: 'long', year: 'numeric'})}</span>
 		<div style="flex:1"/>
 		<Icon IconCode={IconCodes.calendar}/>
 	</Button>
 	<DatePicker
-		id={ElementIds.bdDateInp_fromDatePicker}
-		PopoverAnchorBy={ElementIds.bdDateInp_fromBtn}
+		id={ElementIds.pgDate_fromPicker}
+		PopoverAnchorBy={ElementIds.pgDate_fromBtn}
 		PopoverPosition={FlyoutPosition.centerBottomToRight}
 		PopoverGap={8}
 		PopoverPadding={13}
 	/>
 
-	<div style="display: contents" id={ElementIds.bdDateOp_diff}>
-		<label for={ElementIds.bdDateInp_toBtn}>To</label>
+	<div style="display: contents" id={ElementIds.pgDate_diff}>
+		<label for={ElementIds.pgDate_toBtn}>To</label>
 		<Button
 			style="margin:4px 0 16px 0;width:256px"
-			id={ElementIds.bdDateInp_toBtn}
+			id={ElementIds.pgDate_toBtn}
 			ButtonVariant={ButtonVariant.tonal}
-			popovertarget={ElementIds.bdDateInp_toDatePicker}>
+			popovertarget={ElementIds.pgDate_toPicker}>
 			<span style="display:block">{DEFAULT_DATE_INPUT_TO.toLocaleDateString('en', {day:'numeric', month: 'long', year: 'numeric'})}</span>
 			<div style="flex:1"/>
 			<Icon IconCode={IconCodes.calendar}/>
 		</Button>
 		<DatePicker
-			id={ElementIds.bdDateInp_toDatePicker}
-			PopoverAnchorBy={ElementIds.bdDateInp_toBtn}
+			id={ElementIds.pgDate_toPicker}
+			PopoverAnchorBy={ElementIds.pgDate_toBtn}
 			PopoverPosition={FlyoutPosition.centerBottomToRight}
 			PopoverGap={8}
 			PopoverPadding={13}
@@ -76,13 +76,13 @@ import { DEFAULT_DATE_INPUT_DAYS, DEFAULT_DATE_INPUT_FROM, DEFAULT_DATE_INPUT_MO
 		'width:256px',
 		'gap: 8px',
 		'margin-bottom:16px'
-	].join(';')} id={ElementIds.bdDateOp_addSub}>
+	].join(';')} id={ElementIds.pgDate_addSub}>
 		<div>
-			<label for={ElementIds.bdDateInp_years}>Years</label>
+			<label for={ElementIds.pgDate_years}>Years</label>
 			<TextField
 				style="margin-top:4px"
 				TextFieldInputAttr={{
-					id: ElementIds.bdDateInp_years,
+					id: ElementIds.pgDate_years,
 					type: 'number',
 					min: '0',
 					value: DEFAULT_DATE_INPUT_YEAR
@@ -90,11 +90,11 @@ import { DEFAULT_DATE_INPUT_DAYS, DEFAULT_DATE_INPUT_FROM, DEFAULT_DATE_INPUT_MO
 			/>
 		</div>
 		<div>
-			<label for={ElementIds.bdDateInp_months}>Months</label>
+			<label for={ElementIds.pgDate_months}>Months</label>
 			<TextField
 				style="margin-top:4px"
 				TextFieldInputAttr={{
-					id: ElementIds.bdDateInp_months,
+					id: ElementIds.pgDate_months,
 					type: 'number',
 					min: '0',
 					value: DEFAULT_DATE_INPUT_MONTHS
@@ -102,11 +102,11 @@ import { DEFAULT_DATE_INPUT_DAYS, DEFAULT_DATE_INPUT_FROM, DEFAULT_DATE_INPUT_MO
 			/>
 		</div>
 		<div>
-			<label for={ElementIds.bdDateInp_days}>Days</label>
+			<label for={ElementIds.pgDate_days}>Days</label>
 			<TextField
 				style="margin-top:4px"
 				TextFieldInputAttr={{
-					id: ElementIds.bdDateInp_days,
+					id: ElementIds.pgDate_days,
 					type: 'number',
 					min: '0',
 					value: DEFAULT_DATE_INPUT_DAYS
@@ -114,6 +114,6 @@ import { DEFAULT_DATE_INPUT_DAYS, DEFAULT_DATE_INPUT_FROM, DEFAULT_DATE_INPUT_MO
 			/>
 		</div>
 	</div>
-	<label for={ElementIds.bdDate_output}>Result</label>
-	<output id={ElementIds.bdDate_output}>{DEFAULT_DATE_OUTPUT}</output>
+	<label for={ElementIds.pgDate_output}>Result</label>
+	<output id={ElementIds.pgDate_output}>{DEFAULT_DATE_OUTPUT}</output>
 </div>

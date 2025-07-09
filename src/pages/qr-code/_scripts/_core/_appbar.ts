@@ -7,11 +7,11 @@ import type { DrawerElement } from "@/native-components/Drawer"
 import { SCREEN_WIDTH_SMALL } from "../_shared/_constant"
 
 const _infoMenuRef = $(ElementIds.apInf_menu) as HTMLDivElement
-const _infoButtonRef = $(ElementIds.apInf_button) as HTMLButtonElement
+const _infoButtonRef = $(ElementIds.apInf_btn) as HTMLButtonElement
 const _settingsMenuRef = $(ElementIds.apSett_menu) as HTMLDivElement
-const _settingsButtonRef = $(ElementIds.apSett_button) as HTMLButtonElement
-const _sideBarButtonRef = $(ElementIds.appbarSideBarButton) as HTMLButtonElement
-const _shareButtonRef = $(ElementIds.apInf_menuShareButton) as HTMLButtonElement
+const _settingsButtonRef = $(ElementIds.apSett_btn) as HTMLButtonElement
+const _sideBarButtonRef = $(ElementIds.ap_sideBarBtn) as HTMLButtonElement
+const _shareButtonRef = $(ElementIds.apInf_shareBtn) as HTMLButtonElement
 const _sideBarRef = $(ElementIds.nav_sideBar) as SideBarElement<HTMLDivElement>
 const _drawerRef = $(ElementIds.nav_drawer) as DrawerElement
 

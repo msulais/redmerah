@@ -153,8 +153,8 @@ const _grad_add = $(ElementIds.bdGrad_add) as ButtonElement
 const _grad_copy = $(ElementIds.bdGrad_copy) as IconButtonElement
 const _grad_save = $(ElementIds.bdGrad_save) as IconButtonElement
 
-const _toastCopiedRef = $(ElementIds.bdToas_copied) as ToastElement
-const _toastSavedRef = $(ElementIds.bdToas_saved) as ToastElement
+const _toastCopiedRef = $(ElementIds.toa_copied) as ToastElement
+const _toastSavedRef = $(ElementIds.toa_saved) as ToastElement
 const _previewBoxRef = $(ElementIds.bd_preview) as HTMLDivElement
 const _gradientsRef = $(ElementIds.bd_gradients) as HTMLUListElement
 const _actionsMenuRef = $(ElementIds.bdGrad_actionsMenu) as MenuElement

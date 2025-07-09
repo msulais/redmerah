@@ -27,11 +27,11 @@ export const ConverterStore = new ObservableStore<ConverterStoreType>({
 	inputUnit: DEFAULT_CONVERTER_INPUT_UNIT,
 	outputUnit: DEFAULT_CONVERTER_OUTPUT_UNIT
 })
-const _inputRef      = $(ElementIds.bdConv_input) as HTMLInputElement
-const _outputRef     = $(ElementIds.bdConv_output) as HTMLInputElement
-const _converterRef  = $(ElementIds.bdConv_type) as ComboBoxElement
-const _inputUnitRef  = $(ElementIds.bdConv_inputUnit) as ComboBoxElement
-const _outputUnitRef = $(ElementIds.bdConv_outputUnit) as ComboBoxElement
+const _inputRef      = $(ElementIds.pgConv_input) as HTMLInputElement
+const _outputRef     = $(ElementIds.pgConv_output) as HTMLInputElement
+const _converterRef  = $(ElementIds.pgConv_type) as ComboBoxElement
+const _inputUnitRef  = $(ElementIds.pgConv_inputUnit) as ComboBoxElement
+const _outputUnitRef = $(ElementIds.pgConv_outputUnit) as ComboBoxElement
 let _timeCalculateId: NodeJS.Timeout | number | null = null
 let _timeSaveInputId: NodeJS.Timeout | number | null = null
 

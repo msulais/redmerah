@@ -27,15 +27,15 @@ export const ScientificStore = new ObservableStore<ScientificStoreType>({
 	input: DEFAULT_SCIENTIFIC_INPUT,
 	output: DEFAULT_SCIENTIFIC_OUTPUT,
 })
-const _angleRef = $(ElementIds.bdSci_angle) as ComboBoxElement
-const _inputRef = $(ElementIds.bdSci_input) as HTMLInputElement
-const _outputRef = $(ElementIds.bdSci_output) as HTMLInputElement
+const _angleRef = $(ElementIds.pgSci_angle) as ComboBoxElement
+const _inputRef = $(ElementIds.pgSci_input) as HTMLInputElement
+const _outputRef = $(ElementIds.pgSci_output) as HTMLInputElement
 
 // fn = function
-const _fn_BtnRef = $(ElementIds.bdSciFn_btn) as HTMLButtonElement
-const _fn_MenuRef = $(ElementIds.bdSciFn_menu) as HTMLDivElement
-const _fn_inversRef = $(ElementIds.bdSciFn_inv) as HTMLInputElement
-const _fn_hyperRef = $(ElementIds.bdSciFn_hyper) as HTMLInputElement
+const _fn_BtnRef = $(ElementIds.pgSci_fnBtn) as HTMLButtonElement
+const _fn_MenuRef = $(ElementIds.pgSci_fnMenu) as HTMLDivElement
+const _fn_inversRef = $(ElementIds.pgSci_fnInv) as HTMLInputElement
+const _fn_hyperRef = $(ElementIds.pgSci_fnHyper) as HTMLInputElement
 
 let _timeCalculateId: number | null | NodeJS.Timeout = null
 let _timeSaveInputId: number | null | NodeJS.Timeout = null

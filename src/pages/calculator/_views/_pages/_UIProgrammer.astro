@@ -17,25 +17,25 @@ const btnOct = CSSClasses.bdPageProg_btnOct
 const btnBin = CSSClasses.bdPageProg_btnBin
 const types: {id: string, type: NumberType, text: string, value: string | number}[] = [
 	{
-		id: ElementIds.bdProg_outHex,
+		id: ElementIds.pgPro_outHex,
 		type: NumberType.hexadecimal,
 		text: 'HEX',
 		value: DEFAULT_PROGRAMMER_OUTPUT?.toString(16).toUpperCase() ?? '0'
 	},
 	{
-		id: ElementIds.bdProg_outDec,
+		id: ElementIds.pgPro_outDec,
 		type: NumberType.decimal,
 		text: 'DEC',
 		value: DEFAULT_PROGRAMMER_OUTPUT ?? '0'
 	},
 	{
-		id: ElementIds.bdProg_outOct,
+		id: ElementIds.pgPro_outOct,
 		type: NumberType.octal,
 		text: 'OCT',
 		value: DEFAULT_PROGRAMMER_OUTPUT?.toString(8) ?? '0'
 	},
 	{
-		id: ElementIds.bdProg_outBin,
+		id: ElementIds.pgPro_outBin,
 		type: NumberType.binary,
 		text: 'BIN',
 		value: DEFAULT_PROGRAMMER_OUTPUT?.toString(2) ?? '0'
@@ -45,14 +45,14 @@ const types: {id: string, type: NumberType, text: string, value: string | number
 <div
 	class={CSSClasses.bd_page}
 	role="tabpanel"
-	id={ElementIds.bd_programmer}
+	id={ElementIds.pg_programmer}
 	hidden={DEFAULT_PAGE !== Pages.programmer}>
 	<div class={CSSClasses.bdPage_input}>
 		<input
 			type="text"
 			readonly
 			placeholder="0"
-			id={ElementIds.bdProg_input}
+			id={ElementIds.pgPro_input}
 			class={CSSClasses.bd_inField}
 			value={DEFAULT_PROGRAMMER_INPUT}
 		/>
@@ -61,15 +61,15 @@ const types: {id: string, type: NumberType, text: string, value: string | number
 			role="listbox"
 			aria-activedescendant={
 				DEFAULT_PROGRAMMER_NUMBER_TYPE === NumberType.hexadecimal
-					? ElementIds.bdProg_outHex
+					? ElementIds.pgPro_outHex
 				: DEFAULT_PROGRAMMER_NUMBER_TYPE === NumberType.decimal
-					? ElementIds.bdProg_outDec
+					? ElementIds.pgPro_outDec
 				: DEFAULT_PROGRAMMER_NUMBER_TYPE === NumberType.octal
-					? ElementIds.bdProg_outOct
+					? ElementIds.pgPro_outOct
 				: DEFAULT_PROGRAMMER_NUMBER_TYPE === NumberType.binary
-					? ElementIds.bdProg_outBin
+					? ElementIds.pgPro_outBin
 				: ''}
-			id={ElementIds.bdProg_output}>
+			id={ElementIds.pgPro_output}>
 			{types.map(v =>
 				<div
 					id={v.id}

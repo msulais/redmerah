@@ -4,12 +4,12 @@ import { ElementIds } from "../_shared/_ids"
 import { $ } from "./_dom-utils"
 import { copyColorPalette } from "./_colors"
 
-const _infoMenuRef = $(ElementIds.appbarInfoMenu) as HTMLDivElement
-const _infoButtonRef = $(ElementIds.appbarInfoButton) as HTMLButtonElement
-const _settingsMenuRef = $(ElementIds.appbarSettingsMenu) as HTMLDivElement
-const _settingsButtonRef = $(ElementIds.appbarSettingsButton) as HTMLButtonElement
-const _shareButtonRef = $(ElementIds.appbarInfoMenuShareButton) as HTMLButtonElement
-const _copyButtonRef = $(ElementIds.appbarCopyButton) as HTMLButtonElement
+const _infoMenuRef = $(ElementIds.apInf_menu) as HTMLDivElement
+const _infoButtonRef = $(ElementIds.apInf_btn) as HTMLButtonElement
+const _settingsMenuRef = $(ElementIds.apSett_menu) as HTMLDivElement
+const _settingsButtonRef = $(ElementIds.apSett_btn) as HTMLButtonElement
+const _shareButtonRef = $(ElementIds.apInf_shareBtn) as HTMLButtonElement
+const _copyButtonRef = $(ElementIds.ap_copyBtn) as HTMLButtonElement
 
 function _initEvents(): void {
 	_shareButtonRef.addEventListener('click', () => {

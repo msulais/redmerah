@@ -27,13 +27,13 @@ export const SavedGradients = new ObservableStore<SavedGradientsType>({
 	gradients: []
 })
 
-const _toastCopiedRef = $(ElementIds.bdToas_copied) as ToastElement
+const _toastCopiedRef = $(ElementIds.toa_copied) as ToastElement
 const _savedGradientListRef = $$<HTMLUListElement>('.' + CSSClasses.bodySavedGradient)
-const _actionMenuRef = $(ElementIds.bdSave_actionMenu) as MenuElement
+const _actionMenuRef = $(ElementIds.bdSv_menu) as MenuElement
 const _gradientItemRefs = () => $$$<HTMLButtonElement>(`[data-command="${CSS.escape(Commands.grad_use)}"]`)
-const _actionViewRef = $(ElementIds.bdSave_actionView) as MenuItemElement
-const _actionCopyRef = $(ElementIds.bdSave_actionCopy) as MenuItemElement
-const _actionDeleteRef = $(ElementIds.bdSave_actionDelete) as MenuItemElement
+const _actionViewRef = $(ElementIds.bdSv_view) as MenuItemElement
+const _actionCopyRef = $(ElementIds.bdSv_copy) as MenuItemElement
+const _actionDeleteRef = $(ElementIds.bdSv_delete) as MenuItemElement
 let _selectedGradientIndex = 0
 let _idIndex = 0
 
@@ -70,7 +70,7 @@ function _subscribeGradientsRefView(v: SavedGradientsType): void {
 			]
 		})
 		button.setAttribute('data-command', Commands.grad_use)
-		button.setAttribute('popovertarget', ElementIds.bdSave_actionMenu)
+		button.setAttribute('popovertarget', ElementIds.bdSv_menu)
 		button.setAttribute('popovertargetaction', 'show')
 		li.append(button)
 		children.push(li)

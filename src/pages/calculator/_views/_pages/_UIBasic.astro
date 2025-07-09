@@ -14,18 +14,18 @@ import { DEFAULT_BASIC_INPUT, DEFAULT_BASIC_OUTPUT, DEFAULT_PAGE } from '../../_
 <div
 	class={CSSClasses.bd_page}
 	role="tabpanel"
-	id={ElementIds.bd_basic}
+	id={ElementIds.pg_basic}
 	hidden={DEFAULT_PAGE !== Pages.basic}>
 	<div class={CSSClasses.bdPage_input}>
 		<input
-			id={ElementIds.bdBas_input}
+			id={ElementIds.pgBas_input}
 			readonly
 			placeholder="0"
 			value={DEFAULT_BASIC_INPUT}
 			class={CSSClasses.bd_inField}
 		/>
 		<input
-			id={ElementIds.bdBas_output}
+			id={ElementIds.pgBas_output}
 			readonly
 			value={DEFAULT_BASIC_OUTPUT ?? '0'}
 			class={CSSClasses.bd_outField}

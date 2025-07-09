@@ -21,18 +21,18 @@ import { DEFAULT_PAGE, DEFAULT_SCIENTIFIC_ANGLE, DEFAULT_SCIENTIFIC_INPUT, DEFAU
 <div
 	class={CSSClasses.bd_page}
 	role="tabpanel"
-	id={ElementIds.bd_scientific}
+	id={ElementIds.pg_scientific}
 	hidden={DEFAULT_PAGE !== Pages.scientific}>
 	<div class={CSSClasses.bdPage_input}>
 		<input
-			id={ElementIds.bdSci_input}
+			id={ElementIds.pgSci_input}
 			readonly
 			placeholder="0"
 			value={DEFAULT_SCIENTIFIC_INPUT}
 			class={CSSClasses.bd_inField}
 		/>
 		<input
-			id={ElementIds.bdSci_output}
+			id={ElementIds.pgSci_output}
 			readonly
 			value={DEFAULT_SCIENTIFIC_OUTPUT ?? '0'}
 			class={CSSClasses.bd_outField}
@@ -50,11 +50,11 @@ import { DEFAULT_PAGE, DEFAULT_SCIENTIFIC_ANGLE, DEFAULT_SCIENTIFIC_INPUT, DEFAU
 		<div class={CSSClasses.bdPage_optionGroup}>
 			<Button
 				ButtonVariant={ButtonVariant.tonal}
-				id={ElementIds.bdSciFn_btn}
+				id={ElementIds.pgSci_fnBtn}
 				aria-haspopup="true"
 				aria-expanded="false"
-				aria-controls={ElementIds.bdSciFn_menu}
-				popovertarget={ElementIds.bdSciFn_menu}>
+				aria-controls={ElementIds.pgSci_fnMenu}
+				popovertarget={ElementIds.pgSci_fnMenu}>
 				<Icon IconCode={IconCodes.mathFormula}/>
 				Functions
 				<div style="min-width:4px;max-width:4px;"/>
@@ -66,8 +66,8 @@ import { DEFAULT_PAGE, DEFAULT_SCIENTIFIC_ANGLE, DEFAULT_SCIENTIFIC_INPUT, DEFAU
 				PopoverGap={8}
 				PopoverPosition={PopoverPosition.centerBottomToRight}
 				PopoverPadding={16}
-				id={ElementIds.bdSciFn_menu}
-				PopoverAnchorBy={ElementIds.bdSciFn_btn}>
+				id={ElementIds.pgSci_fnMenu}
+				PopoverAnchorBy={ElementIds.pgSci_fnBtn}>
 				<div class={CSSClasses.bdPageSci_menuGrid}>
 					<Button data-command={Commands.key_char} data-char="abs(" ButtonVariant={ButtonVariant.tonal}>abs(x)</Button>
 					<Button data-command={Commands.key_char} data-char="log(" ButtonVariant={ButtonVariant.tonal}>log(x)</Button>
@@ -78,8 +78,8 @@ import { DEFAULT_PAGE, DEFAULT_SCIENTIFIC_ANGLE, DEFAULT_SCIENTIFIC_INPUT, DEFAU
 				</div>
 				<Divider/>
 				<div style="padding: 16px 16px 0 8px;display:flex;gap:4px;">
-					<CheckBox CheckBoxInputAttr={{id: ElementIds.bdSciFn_inv}}>Invers</CheckBox>
-					<CheckBox CheckBoxInputAttr={{id: ElementIds.bdSciFn_hyper}}>Hyperbolic</CheckBox>
+					<CheckBox CheckBoxInputAttr={{id: ElementIds.pgSci_fnInv}}>Invers</CheckBox>
+					<CheckBox CheckBoxInputAttr={{id: ElementIds.pgSci_fnHyper}}>Hyperbolic</CheckBox>
 				</div>
 				<div style="padding-top: 4px" class={CSSClasses.bdPageSci_menuGrid}>
 					<Button data-command={Commands.key_char} data-char="sin(" class={CSSClasses.bdPageSci_trigonometry} ButtonVariant={ButtonVariant.tonal}>sin(x)</Button>
@@ -90,7 +90,7 @@ import { DEFAULT_PAGE, DEFAULT_SCIENTIFIC_ANGLE, DEFAULT_SCIENTIFIC_INPUT, DEFAU
 					<Button data-command={Commands.key_char} data-char="cot(" class={CSSClasses.bdPageSci_trigonometry} ButtonVariant={ButtonVariant.tonal}>cot(x)</Button>
 				</div>
 			</Popover>
-			<ComboBox id={ElementIds.bdSci_angle}>
+			<ComboBox id={ElementIds.pgSci_angle}>
 				<ComboBoxOption
 					selected={DEFAULT_SCIENTIFIC_ANGLE === ScientificAngleType.RAD}
 					value={ScientificAngleType.RAD}>RAD</ComboBoxOption>

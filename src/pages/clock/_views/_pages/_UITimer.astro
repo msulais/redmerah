@@ -13,22 +13,22 @@ import ringtone from '@/assets/audio/simple-ringtone-84595.mp3'
 ---
 
 <div
-	id={ElementIds.bodyTimer}
+	id={ElementIds.pg_timer}
 	class={[CSSClasses.bodyPage, CSSClasses.bodyPageTimer].join(' ')}
 	role="tabpanel"
 	hidden>
-	<h2 id={ElementIds.bodyTimerTime}>00:10:00</h2>
-	<audio id={ElementIds.bodyTimerAudio} loop src={ringtone}></audio>
+	<h2 id={ElementIds.pgTm_time}>00:10:00</h2>
+	<audio id={ElementIds.pgTm_audio} loop src={ringtone}></audio>
 	<Tooltip style="display:flex;justify-content:center;gap:8px">
 		<Button
 			style="width:92px"
 			ButtonVariant={ButtonVariant.filled}
-			id={ElementIds.bodyTimerActionPlayPause}>
+			id={ElementIds.pgTm_playPause}>
 			<Icon IconCode={IconCodes.play} IconFilled/>
 			<span>Start</span>
 		</Button>
 		<IconButton
-			id={ElementIds.bodyTimerActionEditReset}
+			id={ElementIds.pgTm_editReset}
 			IconButtonCode={IconCodes.edit}
 			ButtonVariant={ButtonVariant.tonal}
 			aria-label="Edit timer"
@@ -36,37 +36,37 @@ import ringtone from '@/assets/audio/simple-ringtone-84595.mp3'
 		/>
 	</Tooltip>
 	<Dialog
-		id={ElementIds.bodyTimerEditDialog}
+		id={ElementIds.pgTm_editDialog}
 		style="width:360px">
 		<Fragment slot="header">Edit Timer</Fragment>
 		<div style={{display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginBottom: '8px'}}>
-			<label for={ElementIds.bodyTimerEditHours}>Hours:</label>
-			<label for={ElementIds.bodyTimerEditMinutes}>Minutes:</label>
-			<label for={ElementIds.bodyTimerEditSeconds}>Seconds:</label>
+			<label for={ElementIds.pgTm_hours}>Hours:</label>
+			<label for={ElementIds.pgTm_minutes}>Minutes:</label>
+			<label for={ElementIds.pgTm_seconds}>Seconds:</label>
 		</div>
 		<div style={{display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px'}}>
 			<TextField TextFieldInputAttr={{
 				type: 'number', value: 0, min: 0, max: 99, placeholder: 'Hours',
-				id: ElementIds.bodyTimerEditHours
+				id: ElementIds.pgTm_hours
 			}}/>
 			<TextField TextFieldInputAttr={{
 				type: 'number', value: 10, min: 0, max: 99, placeholder: 'Minutes',
-				id: ElementIds.bodyTimerEditMinutes
+				id: ElementIds.pgTm_minutes
 			}}/>
 			<TextField TextFieldInputAttr={{
 				type: 'number', value: 0, min: 0, max: 99, placeholder: 'Seconds',
-				id: ElementIds.bodyTimerEditSeconds
+				id: ElementIds.pgTm_seconds
 			}}/>
 		</div>
 		<form slot="footer" method="dialog" style="display:contents">
 			<Button ButtonVariant={ButtonVariant.tonal}>Cancel</Button>
-			<Button id={ElementIds.bodyTimerEditSave} ButtonVariant={ButtonVariant.filled}>Save</Button>
+			<Button id={ElementIds.pgTm_save} ButtonVariant={ButtonVariant.filled}>Save</Button>
 		</form>
 	</Dialog>
-	<Dialog style="width:360px" id={ElementIds.bodyTimerDone}>
+	<Dialog style="width:360px" id={ElementIds.pgTm_doneDialog}>
 		<Fragment slot="header">Timer Done</Fragment>
-		<p id={ElementIds.bodyTimerDoneTimeInfo}></p>
-		<p id={ElementIds.bodyTimerDoneDate}></p>
+		<p id={ElementIds.pgTm_doneTime}></p>
+		<p id={ElementIds.pgTm_doneDate}></p>
 		<form style="display:contents" method="dialog" slot="footer">
 			<Button ButtonVariant={ButtonVariant.filled}>
 				<Icon IconCode={IconCodes.dismiss}/>

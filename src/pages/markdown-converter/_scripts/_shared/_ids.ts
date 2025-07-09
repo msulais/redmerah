@@ -9,19 +9,19 @@ export class ElementIds {
 	static readonly appbar = _createId()
 
 	// apInf = appbar info
-	static readonly apInf_button = _createId()
+	static readonly apInf_btn = _createId()
 	static readonly apInf_menu = _createId()
-	static readonly apInf_menuShareButton = _createId()
+	static readonly apInf_shareBtn = _createId()
 
 	// apSett = appbar settings
-	static readonly apSett_button = _createId()
+	static readonly apSett_btn = _createId()
 	static readonly apSett_menu = _createId()
 	static readonly apSett_animationMenu = _createId()
 	static readonly apSett_themeMenu = _createId()
 	static readonly apSett_textWrap = _createId()
 
 	// apMore = appbar more
-	static readonly apMore_button = _createId()
+	static readonly apMore_btn = _createId()
 	static readonly apMore_menu = _createId()
 	static readonly apMore_open = _createId()
 	static readonly apMore_print = _createId()

@@ -1,4 +1,4 @@
 export enum Commands {
-	copyPaletteList = 'cp-palette-list',
-	deletePaletteList = 'del-palette-list'
+	pal_copy = 'palette-copy',
+	pal_delete = 'palette-delete'
 }

@@ -5,14 +5,14 @@ import { ElementIds } from "../_shared/_ids"
 import { SCREEN_WIDTH_SMALL } from "../_shared/_constant"
 import { SideBarAttributes, updateSideBarRef } from "@/native-components/SideBar"
 
-const _infoMenuRef = $(ElementIds.appbarInfoMenu) as HTMLDivElement
-const _infoButtonRef = $(ElementIds.appbarInfoButton) as HTMLButtonElement
-const _settingsMenuRef = $(ElementIds.appbarSettingsMenu) as HTMLDivElement
-const _settingsButtonRef = $(ElementIds.appbarSettingsButton) as HTMLButtonElement
-const _sideBarButtonRef = $(ElementIds.appbarSideBarButton) as HTMLButtonElement
-const _sideBarRef = $(ElementIds.navigationSideBar) as HTMLDivElement
-const _drawerRef = $(ElementIds.navigationDrawer) as HTMLDivElement
-const _shareButtonRef = $(ElementIds.appbarInfoMenuShareButton) as HTMLButtonElement
+const _infoMenuRef = $(ElementIds.apInf_menu) as HTMLDivElement
+const _infoButtonRef = $(ElementIds.apInf_btn) as HTMLButtonElement
+const _settingsMenuRef = $(ElementIds.apSett_menu) as HTMLDivElement
+const _settingsButtonRef = $(ElementIds.apSett_btn) as HTMLButtonElement
+const _sideBarButtonRef = $(ElementIds.ap_sideBarBtn) as HTMLButtonElement
+const _sideBarRef = $(ElementIds.nav_sideBar) as HTMLDivElement
+const _drawerRef = $(ElementIds.nav_drawer) as HTMLDivElement
+const _shareButtonRef = $(ElementIds.apInf_menuShareBtn) as HTMLButtonElement
 
 function _initEvents(): void {
 	_shareButtonRef.addEventListener('click', () => {

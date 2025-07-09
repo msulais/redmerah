@@ -59,10 +59,10 @@ function _subsAnimationView(v: SettingsStoreType, o: SettingsStoreType): void {
 
 	_rootRef.setAttribute(RootAttributes.animation, animation)
 	const previousRef = $$(
-		`input[name="${CSS.escape(RadioNames.sett_animation)}"]:checked`
+		`input[name="${CSS.escape(RadioNames.animation)}"]:checked`
 	) as HTMLInputElement
 	const targetRef = $$(
-		`input[name="${CSS.escape(RadioNames.sett_animation)}"][value="${CSS.escape(animation)}"]`
+		`input[name="${CSS.escape(RadioNames.animation)}"][value="${CSS.escape(animation)}"]`
 	) as HTMLInputElement
 
 	if (previousRef === targetRef) {return}
@@ -76,10 +76,10 @@ function _subsThemeView(v: SettingsStoreType, o: SettingsStoreType): void {
 
 	_rootRef.setAttribute(RootAttributes.theme, theme)
 	const previousRef = $$(
-		`input[name="${CSS.escape(RadioNames.sett_theme)}"]:checked`
+		`input[name="${CSS.escape(RadioNames.theme)}"]:checked`
 	) as HTMLInputElement
 	const targetRef = $$(
-		`input[name="${CSS.escape(RadioNames.sett_theme)}"][value="${CSS.escape(theme)}"]`
+		`input[name="${CSS.escape(RadioNames.theme)}"][value="${CSS.escape(theme)}"]`
 	) as HTMLInputElement
 
 	if (previousRef === targetRef) {return}

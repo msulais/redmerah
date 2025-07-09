@@ -7,15 +7,17 @@ function _createId(): string {
 
 export class ElementIds {
 	static readonly appbar = _createId()
-	static readonly appbarSideBarButton = _createId()
+
+	// ap = appbar
+	static readonly ap_sideBarBtn = _createId()
 
 	// apInf = appbar info
-	static readonly apInf_button = _createId()
+	static readonly apInf_btn = _createId()
 	static readonly apInf_menu = _createId()
-	static readonly apInf_menuShareButton = _createId()
+	static readonly apInf_shareBtn = _createId()
 
 	// apSett = appbar settings
-	static readonly apSett_button = _createId()
+	static readonly apSett_btn = _createId()
 	static readonly apSett_menu = _createId()
 	static readonly apSett_animationMenu = _createId()
 	static readonly apSett_themeMenu = _createId()
@@ -36,18 +38,16 @@ export class ElementIds {
 	static readonly apSett_colorPreviewForeground = _createId()
 	static readonly apSett_colorPreviewBackground = _createId()
 
-	// bdPage = body page
-	static readonly bdPage_generate = _createId()
-	static readonly bdPage_scan = _createId()
+	// pg = page
+	static readonly pg_generate = _createId()
+	static readonly pg_scan = _createId()
 
 	// pgGen = page generate
 	static readonly pgGen_input = _createId()
 	static readonly pgGen_output = _createId()
-
-	// pgGenDow = page generate download
-	static readonly pgGenDow_png = _createId()
-	static readonly pgGenDow_jpg = _createId()
-	static readonly pgGenDow_svg = _createId()
+	static readonly pgGen_png = _createId()
+	static readonly pgGen_jpg = _createId()
+	static readonly pgGen_svg = _createId()
 
 	// pgScan = page scan
 	static readonly pgScan_pickImg = _createId()

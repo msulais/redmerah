@@ -4,12 +4,12 @@ import { ElementIds } from "../_shared/_ids"
 import { $ } from "./_dom-utils"
 
 const _infoMenuRef = $(ElementIds.apInf_menu) as HTMLDivElement
-const _infoButtonRef = $(ElementIds.apInf_button) as HTMLButtonElement
+const _infoButtonRef = $(ElementIds.apInf_btn) as HTMLButtonElement
 const _moreMenuRef = $(ElementIds.apMore_menu) as HTMLDivElement
-const _moreButtonRef = $(ElementIds.apMore_button) as HTMLButtonElement
+const _moreButtonRef = $(ElementIds.apMore_btn) as HTMLButtonElement
 const _settingsMenuRef = $(ElementIds.apSett_menu) as HTMLDivElement
-const _settingsButtonRef = $(ElementIds.apSett_button) as HTMLButtonElement
-const _shareButtonRef = $(ElementIds.apInf_menuShareButton) as HTMLButtonElement
+const _settingsButtonRef = $(ElementIds.apSett_btn) as HTMLButtonElement
+const _shareButtonRef = $(ElementIds.apInf_shareBtn) as HTMLButtonElement
 
 function _initEvents(): void {
 	_shareButtonRef.addEventListener('click', () => {

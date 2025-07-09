@@ -77,13 +77,13 @@ const themes: {
 	<Fragment slot="headline">{APP.name}</Fragment>
 	<Tooltip slot="trailing">
 		<IconButton
-			id={ElementIds.apInf_button}
+			id={ElementIds.apInf_btn}
 			data-tooltip="Info"
 			aria-label="Info"
 			IconButtonCode={IconCodes.info}
 			popovertarget={ElementIds.apInf_menu}
 		/>
-		<Menu id={ElementIds.apInf_menu} PopoverAnchorBy={ElementIds.apInf_button}>
+		<Menu id={ElementIds.apInf_menu} PopoverAnchorBy={ElementIds.apInf_btn}>
 			<LinkMenuItem href="/">
 				<img src={logoRedmerah.src} width="20"/>
 				Redmerah
@@ -111,7 +111,7 @@ const themes: {
 				<MenuIndent />
 			</LinkMenuItem>
 			<Divider />
-			<MenuItem id={ElementIds.apInf_shareButton}>
+			<MenuItem id={ElementIds.apInf_shareBtn}>
 				<Icon IconCode={IconCodes.shareAndroid}/>
 				Share
 				<MenuIndent />
@@ -147,7 +147,7 @@ const themes: {
 			<SubMenu slot="submenus" style="width:150px" id={ElementIds.apSett_animationMenu}>
 				{animations.map(v =>
 					<RadioMenuItem
-						RadioMenuItemName={RadioNames.sett_animation}
+						RadioMenuItemName={RadioNames.animation}
 						RadioMenuItemChecked={DEFAULT_ANIMATION === v.value}
 						RadioMenuItemValue={v.value}>
 						<Icon IconCode={v.icon}/>
@@ -166,7 +166,7 @@ const themes: {
 			<SubMenu slot="submenus" style="width:150px" id={ElementIds.apSett_themeMenu}>
 				{themes.map(v =>
 					<RadioMenuItem
-						RadioMenuItemName={RadioNames.sett_theme}
+						RadioMenuItemName={RadioNames.theme}
 						RadioMenuItemChecked={DEFAULT_THEME === v.value}
 						RadioMenuItemValue={v.value}>
 						<Icon IconCode={v.icon}/>

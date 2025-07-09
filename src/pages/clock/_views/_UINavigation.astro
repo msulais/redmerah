@@ -23,21 +23,21 @@ const items: {
 		icon: IconCodes.clock,
 		name: 'Clock',
 		page: Pages.clock,
-		controls: ElementIds.bodyClock,
+		controls: ElementIds.pg_clock,
 		selected: true
 	},
 	{
 		icon: IconCodes.timer,
 		name: 'Stopwatch',
 		page: Pages.stopwatch,
-		controls: ElementIds.bodyStopwatch,
+		controls: ElementIds.pg_stopwatch,
 		selected: false,
 	},
 	{
 		icon: IconCodes.hourglass,
 		name: 'Timer',
 		page: Pages.timer,
-		controls: ElementIds.bodyTimer,
+		controls: ElementIds.pg_timer,
 		selected: false,
 	},
 ]
@@ -46,7 +46,7 @@ const items: {
 <SideBar
 	role="tablist"
 	class={CSSClasses.navigationSideBar}
-	id={ElementIds.navigationSideBar}
+	id={ElementIds.nav_sideBar}
 	aria-label="Navigation">
 	<Tooltip>
 		{items.map(v => <SideBarButton
@@ -67,12 +67,12 @@ const items: {
 	</Tooltip>
 </SideBar>
 <Drawer
-	id={ElementIds.navigationDrawer}
+	id={ElementIds.nav_drawer}
 	aria-label="Navigation">
 	<Button
 		slot="header"
 		style="width:min-content"
-		popovertarget={ElementIds.navigationDrawer}
+		popovertarget={ElementIds.nav_drawer}
 		popovertargetaction="hide">
 		<Icon IconCode={IconCodes.lineHorizontal3}/>
 	</Button>

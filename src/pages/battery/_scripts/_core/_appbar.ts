@@ -5,8 +5,8 @@ import { $ } from "./_dom-utils"
 
 // inf = info
 const _inf_menuRef = $(ElementIds.apInf_menu) as HTMLDivElement
-const _inf_buttonRef = $(ElementIds.apInf_button) as HTMLButtonElement
-const _inf_shareButtonRef = $(ElementIds.apInf_shareButton) as HTMLButtonElement
+const _inf_buttonRef = $(ElementIds.apInf_btn) as HTMLButtonElement
+const _inf_shareButtonRef = $(ElementIds.apInf_shareBtn) as HTMLButtonElement
 
 // sett = settings
 const _sett_menuRef = $(ElementIds.apSett_menu) as HTMLDivElement

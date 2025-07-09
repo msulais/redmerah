@@ -27,20 +27,20 @@ export const ProgrammerStore = new ObservableStore<ProgrammerStoreType>({
 	output: DEFAULT_PROGRAMMER_OUTPUT
 })
 
-const _inputRef = $(ElementIds.bdProg_input) as HTMLInputElement
-const _outputRef = $(ElementIds.bdProg_output) as HTMLDivElement
-const _outputGroupDecRef = $(ElementIds.bdProg_outDec) as HTMLDivElement
-const _outputGroupOctRef = $(ElementIds.bdProg_outOct) as HTMLDivElement
-const _outputGroupHexRef = $(ElementIds.bdProg_outHex) as HTMLDivElement
-const _outputGroupBinRef = $(ElementIds.bdProg_outBin) as HTMLDivElement
-const _outputDecRef = $$(`#${ElementIds.bdProg_outDec} input`) as HTMLInputElement
-const _outputOctRef = $$(`#${ElementIds.bdProg_outOct} input`) as HTMLInputElement
-const _outputHexRef = $$(`#${ElementIds.bdProg_outHex} input`) as HTMLInputElement
-const _outputBinRef = $$(`#${ElementIds.bdProg_outBin} input`) as HTMLInputElement
-const _hexButtonRef = $$<HTMLButtonElement>(`#${(ElementIds.bdProg_outHex)}>button`)
-const _decButtonRef = $$<HTMLButtonElement>(`#${(ElementIds.bdProg_outDec)}>button`)
-const _octButtonRef = $$<HTMLButtonElement>(`#${(ElementIds.bdProg_outOct)}>button`)
-const _binButtonRef = $$<HTMLButtonElement>(`#${(ElementIds.bdProg_outBin)}>button`)
+const _inputRef = $(ElementIds.pgPro_input) as HTMLInputElement
+const _outputRef = $(ElementIds.pgPro_output) as HTMLDivElement
+const _outputGroupDecRef = $(ElementIds.pgPro_outDec) as HTMLDivElement
+const _outputGroupOctRef = $(ElementIds.pgPro_outOct) as HTMLDivElement
+const _outputGroupHexRef = $(ElementIds.pgPro_outHex) as HTMLDivElement
+const _outputGroupBinRef = $(ElementIds.pgPro_outBin) as HTMLDivElement
+const _outputDecRef = $$(`#${ElementIds.pgPro_outDec} input`) as HTMLInputElement
+const _outputOctRef = $$(`#${ElementIds.pgPro_outOct} input`) as HTMLInputElement
+const _outputHexRef = $$(`#${ElementIds.pgPro_outHex} input`) as HTMLInputElement
+const _outputBinRef = $$(`#${ElementIds.pgPro_outBin} input`) as HTMLInputElement
+const _hexButtonRef = $$<HTMLButtonElement>(`#${(ElementIds.pgPro_outHex)}>button`)
+const _decButtonRef = $$<HTMLButtonElement>(`#${(ElementIds.pgPro_outDec)}>button`)
+const _octButtonRef = $$<HTMLButtonElement>(`#${(ElementIds.pgPro_outOct)}>button`)
+const _binButtonRef = $$<HTMLButtonElement>(`#${(ElementIds.pgPro_outBin)}>button`)
 const _hexButtonRefs = $$$<HTMLButtonElement>(`.${CSSClasses.bdPageProg_btnHex}`)
 const _decButtonRefs = $$$<HTMLButtonElement>(`.${CSSClasses.bdPageProg_btnDec}`)
 const _octButtonRefs = $$$<HTMLButtonElement>(`.${CSSClasses.bdPageProg_btnOct}`)

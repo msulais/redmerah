@@ -9,12 +9,12 @@ export class ElementIds {
 	static readonly appbar = _createId()
 
 	// apInf = appbar info
-	static readonly apInf_button = _createId()
+	static readonly apInf_btn = _createId()
 	static readonly apInf_menu = _createId()
-	static readonly apInf_menuShareButton = _createId()
+	static readonly apInf_shareBtn = _createId()
 
 	// apSett = appbar settings
-	static readonly apSett_button = _createId()
+	static readonly apSett_btn = _createId()
 	static readonly apSett_menu = _createId()
 	static readonly apSett_animationMenu = _createId()
 	static readonly apSett_themeMenu = _createId()
@@ -24,15 +24,11 @@ export class ElementIds {
 	static readonly bd_preview = _createId()
 	static readonly bd_gradients = _createId()
 
-	// bdToas = body toast
-	static readonly bdToas_copied = _createId()
-	static readonly bdToas_saved = _createId()
-
-	// bdSave = body save
-	static readonly bdSave_actionMenu = _createId()
-	static readonly bdSave_actionView = _createId()
-	static readonly bdSave_actionCopy = _createId()
-	static readonly bdSave_actionDelete = _createId()
+	// bdSv = body saved (saved gradient menu)
+	static readonly bdSv_menu = _createId()
+	static readonly bdSv_view = _createId()
+	static readonly bdSv_copy = _createId()
+	static readonly bdSv_delete = _createId()
 
 	// bdProp = body property
 	static readonly bdProp_borderRadius = _createId()
@@ -88,4 +84,8 @@ export class ElementIds {
 	static readonly bdGradStopAct_newTop = _createId()
 	static readonly bdGradStopAct_newBottom = _createId()
 	static readonly bdGradStopAct_newMenu = _createId()
+
+	// toa = toast
+	static readonly toa_copied = _createId()
+	static readonly toa_saved = _createId()
 }

@@ -177,7 +177,7 @@ const decimal: {
 			<SubMenu slot="submenus" style="width:150px" id={ElementIds.apSett_animationMenu}>
 				{animations.map(v =>
 					<RadioMenuItem
-						RadioMenuItemName={RadioNames.sett_animation}
+						RadioMenuItemName={RadioNames.animation}
 						RadioMenuItemChecked={DEFAULT_ANIMATION === v.value}
 						RadioMenuItemValue={v.value}>
 						<Icon IconCode={v.icon}/>
@@ -196,7 +196,7 @@ const decimal: {
 			<SubMenu slot="submenus" style="width:150px" id={ElementIds.apSett_themeMenu}>
 				{themes.map(v =>
 					<RadioMenuItem
-						RadioMenuItemName={RadioNames.sett_theme}
+						RadioMenuItemName={RadioNames.theme}
 						RadioMenuItemChecked={DEFAULT_THEME === v.value}
 						RadioMenuItemValue={v.value}>
 						<Icon IconCode={v.icon}/>
@@ -215,7 +215,7 @@ const decimal: {
 			<SubMenu style="width:150px" slot="submenus" id={ElementIds.apSett_groupMenu}>
 				{grouping.map(v =>
 					<RadioMenuItem
-						RadioMenuItemName={RadioNames.sett_grouping}
+						RadioMenuItemName={RadioNames.grouping}
 						RadioMenuItemValue={v.value}
 						RadioMenuItemChecked={DEFAULT_GROUPING_NUMBER_FORMAT === v.value}>
 						{v.text}
@@ -233,7 +233,7 @@ const decimal: {
 			<SubMenu slot="submenus" style="width:150px" id={ElementIds.apSett_decMenu}>
 				{decimal.map(v =>
 					<RadioMenuItem
-						RadioMenuItemName={RadioNames.sett_decimal}
+						RadioMenuItemName={RadioNames.decimal}
 						RadioMenuItemValue={v.value}
 						RadioMenuItemChecked={DEFAULT_DECIMAL_NUMBER_FORMAT === v.value}>
 						{v.text}
