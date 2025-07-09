@@ -10,13 +10,14 @@ import { ButtonVariant } from "@/native-components/Button"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { saveStorageItem } from "./_database"
+import { DEFAULT_PAGE } from "../_shared/_constant"
 
 export type NavigationStoreType = Readonly<{
 	page: Pages
 }>
 
 export const NavigationStore = new ObservableStore<NavigationStoreType>({
-	page: Pages.clock
+	page: DEFAULT_PAGE
 })
 
 const _sideBarRef = $(ElementIds.nav_sideBar)

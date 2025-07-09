@@ -6,7 +6,7 @@ import { LocalStorageKeys } from "@/enums/storage"
 import { isValidEnumValue } from "@/utils/object"
 import { RootAttributes } from "@/enums/attributes"
 import { RadioNames } from "../_shared/_input-names"
-import { DEFAULT_ANIMATION, DEFAULT_THEME } from "../_shared/_constant"
+import { DEFAULT_ANIMATION, DEFAULT_KEEP_AWAKE, DEFAULT_THEME } from "../_shared/_constant"
 import type { DialogElement } from "@/native-components/Dialog"
 import { saveStorageItem } from "./_database"
 
@@ -19,7 +19,7 @@ export type SettingsStoreType = Readonly<{
 export const SettingsStore = new ObservableStore<SettingsStoreType>({
 	theme    : DEFAULT_THEME,
 	animation: DEFAULT_ANIMATION,
-	keepAwake: false
+	keepAwake: DEFAULT_KEEP_AWAKE
 })
 const _rootRef = document.documentElement
 const _keepAwakeErrorRef = $(ElementIds.bdDlg_wakeLockError) as DialogElement
@@ -78,10 +78,10 @@ function _subscribeAnimationRefView(v: SettingsStoreType, o: SettingsStoreType):
 
 	_rootRef.setAttribute(RootAttributes.animation, animation)
 	const previousRef = $$(
-		`input[name="${CSS.escape(RadioNames.sett_animation)}"]:checked`
+		`input[name="${CSS.escape(RadioNames.animation)}"]:checked`
 	) as HTMLInputElement
 	const targetRef = $$(
-		`input[name="${CSS.escape(RadioNames.sett_animation)}"][value="${CSS.escape(animation)}"]`
+		`input[name="${CSS.escape(RadioNames.animation)}"][value="${CSS.escape(animation)}"]`
 	) as HTMLInputElement
 
 	if (previousRef === targetRef) {return}
@@ -95,10 +95,10 @@ function _subscribeThemeRefView(v: SettingsStoreType, o: SettingsStoreType): voi
 
 	_rootRef.setAttribute(RootAttributes.theme, theme)
 	const previousRef = $$(
-		`input[name="${CSS.escape(RadioNames.sett_theme)}"]:checked`
+		`input[name="${CSS.escape(RadioNames.theme)}"]:checked`
 	) as HTMLInputElement
 	const targetRef = $$(
-		`input[name="${CSS.escape(RadioNames.sett_theme)}"][value="${CSS.escape(theme)}"]`
+		`input[name="${CSS.escape(RadioNames.theme)}"][value="${CSS.escape(theme)}"]`
 	) as HTMLInputElement
 
 	if (previousRef === targetRef) {return}

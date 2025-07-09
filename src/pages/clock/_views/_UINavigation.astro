@@ -11,12 +11,12 @@ import { IconCodes } from '@/enums/icons'
 import { CSSClasses } from '../_styles/_css'
 import { Pages } from '../_scripts/_shared/_enums'
 import { ElementIds } from '../_scripts/_shared/_ids'
+import { DEFAULT_PAGE } from '../_scripts/_shared/_constant'
 
 const items: {
 	icon: number
 	name: string
 	page: Pages
-	selected: boolean
 	controls: string
 }[] = [
 	{
@@ -24,21 +24,18 @@ const items: {
 		name: 'Clock',
 		page: Pages.clock,
 		controls: ElementIds.pg_clock,
-		selected: true
 	},
 	{
 		icon: IconCodes.timer,
 		name: 'Stopwatch',
 		page: Pages.stopwatch,
 		controls: ElementIds.pg_stopwatch,
-		selected: false,
 	},
 	{
 		icon: IconCodes.hourglass,
 		name: 'Timer',
 		page: Pages.timer,
 		controls: ElementIds.pg_timer,
-		selected: false,
 	},
 ]
 ---
@@ -51,12 +48,11 @@ const items: {
 	<Tooltip>
 		{items.map(v => <SideBarButton
 			role="tab"
-			style="padding-left: 10px"
 			data-page={v.page}
-			aria-selected={v.selected}
+			aria-selected={DEFAULT_PAGE === v.page}
 			aria-controls={v.controls}
-			SideBarButtonSelected={v.selected}
-			ButtonVariant={v.selected ? ButtonVariant.tonal : undefined}>
+			SideBarButtonSelected={DEFAULT_PAGE === v.page}
+			ButtonVariant={DEFAULT_PAGE === v.page ? ButtonVariant.tonal : undefined}>
 			<Icon
 				slot="leading"
 				IconCode={v.icon}
@@ -77,11 +73,11 @@ const items: {
 		<Icon IconCode={IconCodes.lineHorizontal3}/>
 	</Button>
 	{items.map(v => <DrawerButton
-		aria-selected={v.selected}
+		aria-selected={DEFAULT_PAGE === v.page}
 		aria-controls={v.controls}
 		data-page={v.page}
-		DrawerButtonSelected={v.selected}
-		ButtonVariant={v.selected ? ButtonVariant.tonal : undefined}>
+		DrawerButtonSelected={DEFAULT_PAGE === v.page}
+		ButtonVariant={DEFAULT_PAGE === v.page ? ButtonVariant.tonal : undefined}>
 		<Icon
 			IconCode={v.icon}
 		/>

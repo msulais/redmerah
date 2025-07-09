@@ -14,6 +14,7 @@ import { DrawerClasses } from "@/native-components/Drawer"
 import type { DialogElement } from "@/native-components/Dialog"
 import { safeNumber } from "@/utils/number"
 import { saveStorageItem } from "../_core/_database"
+import { DEFAULT_TIMER_RUNNING, DEFAULT_TIMER_SECONDS } from "../_shared/_constant"
 
 export type TimerStoreType = Readonly<{
 	running: boolean
@@ -22,9 +23,9 @@ export type TimerStoreType = Readonly<{
 }>
 
 export const TimerStore = new ObservableStore<TimerStoreType>({
-	running: false,
-	timerInSeconds: 60 * 10,
-	currentSeconds: 60 * 10,
+	running: DEFAULT_TIMER_RUNNING,
+	timerInSeconds: DEFAULT_TIMER_SECONDS,
+	currentSeconds: DEFAULT_TIMER_SECONDS,
 })
 const _pageRef = $(ElementIds.pg_timer) as HTMLDivElement
 const _audioRef = $(ElementIds.pgTm_audio) as HTMLAudioElement

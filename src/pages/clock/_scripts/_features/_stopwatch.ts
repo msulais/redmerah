@@ -13,6 +13,7 @@ import { AppCSSColors } from "@/enums/app-data"
 import { updateButtonRef, updateIconButtonRef } from "@/native-components/Button"
 import { Commands } from "../_shared/_commands"
 import { openToastRef, type ToastElement } from "@/native-components/Toast"
+import { DEFAULT_STOPWATCH_MS, DEFAULT_STOPWATCH_RUNNING, DEFAULT_STOPWATCH_LAPS } from "../_shared/_constant"
 
 type _StopwatchStoreType = {
 	ms: number
@@ -21,9 +22,9 @@ type _StopwatchStoreType = {
 }
 
 export const StopwatchStore = new ObservableStore<_StopwatchStoreType>({
-	ms: 0,
-	running: false,
-	laps: []
+	ms: DEFAULT_STOPWATCH_MS,
+	running: DEFAULT_STOPWATCH_RUNNING,
+	laps: DEFAULT_STOPWATCH_LAPS
 })
 const _animationOption = {duration: 250, easing: AnimationEffectTiming.spring}
 const _toastCopiedRef = $(ElementIds.toa_copied) as ToastElement

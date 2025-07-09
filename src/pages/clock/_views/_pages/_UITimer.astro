@@ -10,24 +10,34 @@ import Dialog from '@/native-components/Dialog/index.astro'
 import TextField from '@/native-components/TextField/index.astro'
 import { IconCodes } from '@/enums/icons'
 import ringtone from '@/assets/audio/simple-ringtone-84595.mp3'
+import { Pages } from '../../_scripts/_shared/_enums'
+import { DEFAULT_PAGE, DEFAULT_TIMER_RUNNING, DEFAULT_TIMER_SECONDS } from '../../_scripts/_shared/_constant'
+
+const hours = Math.floor(DEFAULT_TIMER_SECONDS / 3600)
+const minutes = Math.floor(Math.floor(DEFAULT_TIMER_SECONDS % 3600) / 60)
+const seconds = Math.floor(Math.floor(DEFAULT_TIMER_SECONDS % 3600) % 60)
 ---
 
 <div
 	id={ElementIds.pg_timer}
 	class={[CSSClasses.bodyPage, CSSClasses.bodyPageTimer].join(' ')}
 	role="tabpanel"
-	hidden>
-	<h2 id={ElementIds.pgTm_time}>00:10:00</h2>
+	hidden={DEFAULT_PAGE !== Pages.timer}>
+	<h2 id={ElementIds.pgTm_time}>{[hours, minutes, seconds]
+		.map(v => v.toString().padStart(2, '0'))
+		.join(':')
+	}</h2>
 	<audio id={ElementIds.pgTm_audio} loop src={ringtone}></audio>
 	<Tooltip style="display:flex;justify-content:center;gap:8px">
 		<Button
 			style="width:92px"
 			ButtonVariant={ButtonVariant.filled}
 			id={ElementIds.pgTm_playPause}>
-			<Icon IconCode={IconCodes.play} IconFilled/>
-			<span>Start</span>
+			<Icon IconCode={DEFAULT_TIMER_RUNNING? IconCodes.pause : IconCodes.play} IconFilled/>
+			<span>{DEFAULT_TIMER_RUNNING? 'Pause' : 'Start'}</span>
 		</Button>
 		<IconButton
+			style={DEFAULT_TIMER_RUNNING? "display:none" : undefined}
 			id={ElementIds.pgTm_editReset}
 			IconButtonCode={IconCodes.edit}
 			ButtonVariant={ButtonVariant.tonal}
@@ -46,15 +56,15 @@ import ringtone from '@/assets/audio/simple-ringtone-84595.mp3'
 		</div>
 		<div style={{display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px'}}>
 			<TextField TextFieldInputAttr={{
-				type: 'number', value: 0, min: 0, max: 99, placeholder: 'Hours',
+				type: 'number', value: hours, min: 0, max: 99, placeholder: 'Hours',
 				id: ElementIds.pgTm_hours
 			}}/>
 			<TextField TextFieldInputAttr={{
-				type: 'number', value: 10, min: 0, max: 99, placeholder: 'Minutes',
+				type: 'number', value: minutes, min: 0, max: 99, placeholder: 'Minutes',
 				id: ElementIds.pgTm_minutes
 			}}/>
 			<TextField TextFieldInputAttr={{
-				type: 'number', value: 0, min: 0, max: 99, placeholder: 'Seconds',
+				type: 'number', value: seconds, min: 0, max: 99, placeholder: 'Seconds',
 				id: ElementIds.pgTm_seconds
 			}}/>
 		</div>
