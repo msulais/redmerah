@@ -20,6 +20,68 @@ import { IconCodes } from '@/enums/icons'
 import { ElementIds } from '../_scripts/_shared/_ids'
 import { RadioNames } from '../_scripts/_shared/_input-names'
 import { ColorSpace } from '../_scripts/_shared/_enums'
+import { DEFAULT_ANIMATION, DEFAULT_COLOR_SPACE, DEFAULT_THEME } from '../_scripts/_shared/_constant'
+
+const animations: {
+	value: PlatformAnimationMode
+	text: string
+	icon: number
+}[] = [
+	{
+		value: PlatformAnimationMode.auto,
+		text: 'Automatic',
+		icon: IconCodes.videoClipOptimize
+	},
+	{
+		value: PlatformAnimationMode.on,
+		text: 'On',
+		icon: IconCodes.videoClip
+	},
+	{
+		value: PlatformAnimationMode.off,
+		text: 'Off',
+		icon: IconCodes.videoClipOff
+	},
+]
+const themes: {
+	value: PlatformThemeMode
+	text: string
+	icon: number
+}[] = [
+	{
+		value: PlatformThemeMode.auto,
+		text: 'Automatic',
+		icon: IconCodes.laptopSettings
+	},
+	{
+		value: PlatformThemeMode.light,
+		text: 'Light',
+		icon: IconCodes.weatherSunny
+	},
+	{
+		value: PlatformThemeMode.dark,
+		text: 'Dark',
+		icon: IconCodes.weatherMoon
+	},
+]
+
+const colorSpaces: {
+	value: ColorSpace
+	text: string
+}[] = [
+	{
+		value: ColorSpace.hex,
+		text: 'Hex',
+	},
+	{
+		value: ColorSpace.rgba,
+		text: 'RGBA',
+	},
+	{
+		value: ColorSpace.hsla,
+		text: 'HSLA',
+	},
+]
 ---
 
 <AppBar id={ElementIds.appbar}>
@@ -102,31 +164,15 @@ import { ColorSpace } from '../_scripts/_shared/_enums'
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
 			<SubMenu slot="submenus" style="width:150px" id={ElementIds.apSett_animationMenu}>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.animation,
-						checked: true,
-						value: PlatformAnimationMode.auto
-					}}>
-					<Icon IconCode={IconCodes.videoClipOptimize}/>
-					Automatic
-				</RadioMenuItem>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.animation,
-						value: PlatformAnimationMode.on
-					}}>
-					<Icon IconCode={IconCodes.videoClip}/>
-					On
-				</RadioMenuItem>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.animation,
-						value: PlatformAnimationMode.off
-					}}>
-					<Icon IconCode={IconCodes.videoClipOff}/>
-					Off
-				</RadioMenuItem>
+				{animations.map(v =>
+					<RadioMenuItem
+						RadioMenuItemName={RadioNames.animation}
+						RadioMenuItemChecked={DEFAULT_ANIMATION === v.value}
+						RadioMenuItemValue={v.value}>
+						<Icon IconCode={v.icon}/>
+						{v.text}
+					</RadioMenuItem>
+				)}
 			</SubMenu>
 
 			<SubMenuItem
@@ -137,31 +183,15 @@ import { ColorSpace } from '../_scripts/_shared/_enums'
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
 			<SubMenu slot="submenus" style="width:150px" id={ElementIds.apSett_themeMenu}>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.theme,
-						checked: true,
-						value: PlatformThemeMode.auto
-					}}>
-					<Icon IconCode={IconCodes.laptopSettings}/>
-					Automatic
-				</RadioMenuItem>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.theme,
-						value: PlatformThemeMode.light
-					}}>
-					<Icon IconCode={IconCodes.weatherSunny}/>
-					Light
-				</RadioMenuItem>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.theme,
-						value: PlatformThemeMode.dark
-					}}>
-					<Icon IconCode={IconCodes.weatherMoon}/>
-					Dark
-				</RadioMenuItem>
+				{themes.map(v =>
+					<RadioMenuItem
+						RadioMenuItemName={RadioNames.theme}
+						RadioMenuItemChecked={DEFAULT_THEME === v.value}
+						RadioMenuItemValue={v.value}>
+						<Icon IconCode={v.icon}/>
+						{v.text}
+					</RadioMenuItem>
+				)}
 			</SubMenu>
 
 			<SubMenuItem
@@ -172,28 +202,14 @@ import { ColorSpace } from '../_scripts/_shared/_enums'
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
 			<SubMenu slot="submenus" style="width:150px" id={ElementIds.apSett_colorSpaceMenu}>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.colorSpace,
-						checked: true,
-						value: ColorSpace.hex
-					}}>
-					Hex
-				</RadioMenuItem>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.colorSpace,
-						value: ColorSpace.rgba
-					}}>
-					RGBA
-				</RadioMenuItem>
-				<RadioMenuItem
-					RadioMenuItemInputAttr={{
-						name: RadioNames.colorSpace,
-						value: ColorSpace.hsla
-					}}>
-					HSLA
-				</RadioMenuItem>
+				{colorSpaces.map(v =>
+					<RadioMenuItem
+						RadioMenuItemName={RadioNames.colorSpace}
+						RadioMenuItemChecked={DEFAULT_COLOR_SPACE === v.value}
+						RadioMenuItemValue={v.value}>
+						{v.text}
+					</RadioMenuItem>
+				)}
 			</SubMenu>
 		</Menu>
 	</Tooltip>
