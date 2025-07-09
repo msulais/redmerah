@@ -1,6 +1,6 @@
 import type { HEXColor, RGBColor } from "@/types/color"
 import { ObservableStore } from "@/utils/store"
-import { DEFAULT_COLOR } from "../_shared/_constant"
+import { DEFAULT_COLOR, DEFAULT_PALETTE } from "../_shared/_constant"
 import { $, $$, $$$ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
 import { ColorPickerEvents, getColorPickerRefValue, updateColorPickerRef, type ColorPickerElement } from "@/native-components/ColorPicker"
@@ -24,7 +24,7 @@ export type ColorsStoreType = {
 
 export const ColorsStore = new ObservableStore<ColorsStoreType>({
 	seed: DEFAULT_COLOR,
-	palette: []
+	palette: DEFAULT_PALETTE
 })
 const _animationOption = {duration: 250, easing: AnimationEffectTiming.spring}
 const _saveButtonRef = $(ElementIds.bd_saveBtn) as IconButtonElement
@@ -84,22 +84,22 @@ function _subscribePaletteRefView(v: ColorsStoreType, o: ColorsStoreType): void 
 			const li = document.createElement('li')
 			li.setAttribute('data-seed-color', seed)
 			li.innerHTML = `
-				<p>
-					${icon.outerHTML}
-					${seed}
-					<span style="display:block;flex:1"></span>
-					${copyButton.outerHTML}
-					${delButton.outerHTML}
-				</p>
-				<div style="background-color:${pal.color};color:${pal.onColor}">
-					<span data-tooltip="Accent Light">${pal.color.toUpperCase()}</span>
-					<span data-tooltip="On Accent Light" style="background-color:${pal.onColor};color:${pal.color}">${pal.onColor.toUpperCase()}</span>
-				</div>
-				<div style="background-color:${pal.colorDark};color:${pal.onColorDark}">
-					<span data-tooltip="Accent Dark">${pal.colorDark.toUpperCase()}</span>
-					<span data-tooltip="On Accent Dark" style="background-color:${pal.onColorDark};color:${pal.colorDark}">${pal.onColorDark.toUpperCase()}</span>
-				</div>
-			`
+<p>
+	${icon.outerHTML}
+	${seed}
+	<span style="display:block;flex:1"></span>
+	${copyButton.outerHTML}
+	${delButton.outerHTML}
+</p>
+<div style="background-color:${pal.color};color:${pal.onColor}">
+	<span data-tooltip="Accent Light">${pal.color.toUpperCase()}</span>
+	<span data-tooltip="On Accent Light" style="background-color:${pal.onColor};color:${pal.color}">${pal.onColor.toUpperCase()}</span>
+</div>
+<div style="background-color:${pal.colorDark};color:${pal.onColorDark}">
+	<span data-tooltip="Accent Dark">${pal.colorDark.toUpperCase()}</span>
+	<span data-tooltip="On Accent Dark" style="background-color:${pal.onColorDark};color:${pal.colorDark}">${pal.onColorDark.toUpperCase()}</span>
+</div>
+`
 
 			_paletteListRef.replaceChildren(li, ...children)
 			if (allowAnimation) {
