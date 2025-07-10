@@ -90,10 +90,23 @@
 	// z-index
 	--g-z-index-select-popover: 9;
 
+	// duration
+	--g-duration-transition: .25s;
+
 	background-color: rgb(var(--g-color-background));
 	font-family: var(--g-font-family-sans-serif);
 	color: rgb(var(--g-color-on-surface));
 	color-scheme: light;
+
+	&:root[data-animation=off] {
+		--g-duration-transition: 0s;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		&:root[data-animation=auto] {
+			--g-duration-transition: 0s;
+		}
+	}
 
 	& * {
 		color-scheme: inherit;
