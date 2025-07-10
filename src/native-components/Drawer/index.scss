@@ -17,6 +17,9 @@
 	top: 8px;
 	translate: calc(-100% - 8px) 0;
 	transition-timing-function: var(--g-transition-spring-inverse);
+	transition-property: display, overlay, translate;
+	transition-duration: var(--g-duration-transition);
+	transition-behavior: allow-discrete;
 
 	&:popover-open {
 		translate: 0 0;
@@ -25,20 +28,6 @@
 
 	&::backdrop {
 		background-color: transparent;
-	}
-
-	:root[data-animation=on] & {
-		transition-property: display, overlay, translate;
-		transition-duration: .3s;
-		transition-behavior: allow-discrete;
-	}
-
-	@media (prefers-reduced-motion: no-preference) {
-		:root[data-animation=auto] & {
-			transition-property: display, overlay, translate;
-			transition-duration: .3s;
-			transition-behavior: allow-discrete;
-		}
 	}
 
 	:root[data-theme=dark] & {
@@ -78,18 +67,8 @@
 		transform: translateY(-50%);
 		height: 3px;
 		border-radius: 999px;
-
-		:root[data-animation=on] & {
-			transition-duration: .2s;
-			transition-property: height;
-		}
-
-		@media (prefers-reduced-motion: no-preference) {
-			:root[data-animation=auto] & {
-				transition-duration: .2s;
-				transition-property: height;
-			}
-		}
+		transition-property: height;
+		transition-duration: var(--g-duration-transition);
 	}
 
 	&[data-c-drawer-button-selected]::before {

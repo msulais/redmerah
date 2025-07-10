@@ -23,7 +23,6 @@
 	right: 12px;
 	top: 50%;
 	transform: translateY(-50%);
-	pointer-events: none;
 
 	.c-select[data-c-select-variant=filled] & {
 		color: rgb(var(--g-color-on-accent))
@@ -52,18 +51,8 @@
 		transform: translateY(-50%);
 		height: 3px;
 		border-radius: 999px;
-
-		:root[data-animation=on] & {
-			transition-duration: .2s;
-			transition-property: height;
-		}
-
-		@media (prefers-reduced-motion: no-preference) {
-			:root[data-animation=auto] & {
-				transition-duration: .2s;
-				transition-property: height;
-			}
-		}
+		transition-property: height;
+		transition-duration: var(--g-duration-transition);
 	}
 
 	.c-select:not([data-c-select-expanded])[data-c-select-variant=filled] & {

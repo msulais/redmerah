@@ -8,22 +8,12 @@
 	max-width: 280px;
 	max-height: 100%;
 	overflow-x: hidden;
+	transition-property: width, max-width;
+	transition-duration: var(--g-duration-transition);
 
 	&[data-c-sidebar-minimized] {
 		width: 50px;
 		max-width: 50px;
-	}
-
-	:root[data-animation=on] & {
-		transition-property: width, max-width;
-		transition-duration: .25s;
-	}
-
-	@media (prefers-reduced-motion: no-preference) {
-		:root[data-animation=auto] & {
-			transition-property: width, max-width;
-			transition-duration: .25s;
-		}
 	}
 }
 
@@ -56,18 +46,8 @@
 		transform: translateY(-50%);
 		height: 3px;
 		border-radius: 999px;
-
-		:root[data-animation=on] & {
-			transition-duration: .2s;
-			transition-property: height;
-		}
-
-		@media (prefers-reduced-motion: no-preference) {
-			:root[data-animation=auto] & {
-				transition-duration: .2s;
-				transition-property: height;
-			}
-		}
+		transition-property: height;
+		transition-duration: var(--g-duration-transition);
 	}
 
 	&[data-c-sidebar-button-selected]::before {

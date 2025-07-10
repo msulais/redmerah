@@ -51,18 +51,8 @@
 			rgb(var(--g-color-accent)) var(--c-slider-percent),
 			rgba(var(--g-color-on-surface), var(--g-opacity5)) var(--c-slider-percent)
 		);
-
-		:root[data-animation=on] & {
-			transition-property: opacity;
-			transition-duration: .25s;
-		}
-
-		@media (prefers-reduced-motion: no-preference) {
-			:root[data-animation=auto] & {
-				transition-property: opacity;
-				transition-duration: .25s;
-			}
-		}
+		transition-property: opacity;
+		transition-duration: var(--g-duration-transition);
 	}
 
 	&::-moz-range-track {
@@ -76,18 +66,8 @@
 			rgb(var(--g-color-accent)) var(--c-slider-percent),
 			rgba(var(--g-color-on-surface), var(--g-opacity5)) var(--c-slider-percent)
 		);
-
-		:root[data-animation=on] & {
-			transition-property: opacity;
-			transition-duration: .25s;
-		}
-
-		@media (prefers-reduced-motion: no-preference) {
-			:root[data-animation=auto] & {
-				transition-property: opacity;
-				transition-duration: .25s;
-			}
-		}
+		transition-property: opacity;
+		transition-duration: var(--g-duration-transition);
 	}
 
 	&::-webkit-slider-thumb {
@@ -103,18 +83,8 @@
 		bottom: 8px;
 		box-shadow: var(--g-elevation2);
 		background: rgb(var(--g-color-accent));
-
-		:root[data-animation=on] & {
-			transition-property: border-width;
-			transition-duration: .25s;
-		}
-
-		@media (prefers-reduced-motion: no-preference) {
-			:root[data-animation=auto] & {
-				transition-property: border-width;
-				transition-duration: .25s;
-			}
-		}
+		transition-property: border-width;
+		transition-duration: var(--g-duration-transition);
 
 		@media (hover: hover) {
 			&:hover {
@@ -143,18 +113,8 @@
 		bottom: 8px;
 		box-shadow: var(--g-elevation2);
 		background: rgb(var(--g-color-accent));
-
-		:root[data-animation=on] & {
-			transition-property: border-width;
-			transition-duration: .25s;
-		}
-
-		@media (prefers-reduced-motion: no-preference) {
-			:root[data-animation=auto] & {
-				transition-property: border-width;
-				transition-duration: .25s;
-			}
-		}
+		transition-property: border-width;
+		transition-duration: var(--g-duration-transition);
 
 		@media (hover: hover) {
 			&:hover {
