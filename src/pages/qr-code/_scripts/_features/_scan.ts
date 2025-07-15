@@ -71,7 +71,7 @@ async function _subsImgUrlView(v: ScanStoreType, o: ScanStoreType): Promise<void
 	ScanStore.update(v => v.outputText = outputText ?? '')
 	if (outputText !== null) {return}
 
-	// TODO: add into the abyss
+	// TODO: into the abyss
 	// openToast(toastErrorScanQRCodeRef)
 }
 
