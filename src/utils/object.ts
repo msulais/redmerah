@@ -14,6 +14,29 @@ export function isObjectHasValue(data: unknown): boolean {
 	return data != undefined && data != null
 }
 
+export function deepCopy<T>(obj: T): T {
+	if (window && 'structuredClone' in window) {
+		return structuredClone(obj)
+	}
+
+	if (typeof obj === 'object') {
+		if (Array.isArray(obj)) {
+			return [...obj].map(v => deepCopy(v)) as T
+		}
+		else if (Object.keys(obj as any).length > 0) {
+			const copy = {...obj}
+			for (const key of Object.keys(obj as any)) {
+				// @ts-ignore
+				copy[key] = deepCopy(copy[key])
+			}
+
+			return copy as T
+		}
+	}
+
+	return obj
+}
+
 export function moveArrayElement<T>(
 	arr: T[],
 	oldIndex: number,
@@ -63,12 +86,12 @@ export function createObject<T>(...data: [key: keyof T, value: unknown][]): T {
  * @param args
  * @returns
  */
-export function statementMatchCase<T, U>(
+export function match<T, U>(
 	source: T,
 	...args: [value: T, callback: (() => U) | U][]
 ): U | void {
 	for (const arg of args) {
-		if (arg[0] == source) {
+		if (arg[0] === source) {
 			return typeof arg[1] === 'function'
 				? (arg[1] as () => U)()
 				: arg[1] as U
