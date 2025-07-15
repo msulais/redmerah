@@ -14,24 +14,38 @@ export function isObjectHasValue(data: unknown): boolean {
 	return data != undefined && data != null
 }
 
-export function deepCopy<T>(obj: T): T {
-	if (window && 'structuredClone' in window) {
-		return structuredClone(obj)
+export function isInstanceOfClass(obj: any): boolean {
+	const isCtorClass = (
+		obj.constructor
+		&& obj.constructor.toString().startsWith('class')
+	)
+	if(obj.prototype === undefined) {
+		return isCtorClass
 	}
 
-	if (typeof obj === 'object') {
-		if (Array.isArray(obj)) {
-			return [...obj].map(v => deepCopy(v)) as T
-		}
-		else if (Object.keys(obj as any).length > 0) {
-			const copy = {...obj}
-			for (const key of Object.keys(obj as any)) {
-				// @ts-ignore
-				copy[key] = deepCopy(copy[key])
-			}
+	const isPrototypeCtorClass = (
+		obj.prototype.constructor
+		&& obj.prototype.constructor.toString
+		&& obj.prototype.constructor.toString().startsWith('class')
+	)
+	return isCtorClass || isPrototypeCtorClass
+}
 
-			return copy as T
+export function deepCopy<T>(obj: T): T {
+	if (typeof obj !== 'object') {return obj}
+
+	if (Array.isArray(obj)) {
+		return [...obj].map(v => deepCopy(v)) as T
+	}
+
+	if (obj && !isInstanceOfClass(obj) && Object.keys(obj as any).length > 0) {
+		const copy = {...obj}
+		for (const key of Object.keys(obj as any)) {
+			// @ts-ignore
+			copy[key] = deepCopy(copy[key])
 		}
+
+		return copy as T
 	}
 
 	return obj
