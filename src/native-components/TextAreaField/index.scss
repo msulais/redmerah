@@ -16,10 +16,27 @@
 		border-color: rgb(var(--g-color-accent));
 	}
 
-	&:hover:not(:focus:read-write) {
-		--c: rgba(var(--g-color-accent), var(--g-opacity-inv5));
-		border-top-color: var(--c);
-		border-left-color: var(--c);
-		border-right-color: var(--c);
+	&:not(:is(:read-only,:disabled)){
+		&:user-invalid {
+			border-color: rgb(var(--g-color-error));
+		}
+
+		&:hover:not(:focus:read-write) {
+			--c: rgba(var(--g-color-accent), var(--g-opacity-inv5));
+			border-top-color: var(--c);
+			border-left-color: var(--c);
+			border-right-color: var(--c);
+		}
+	}
+
+	&:is(:read-only,:disabled) {
+		border-bottom-color: rgba(var(--g-color-on-surface), var(--g-opacity5));
+
+		&:hover {
+			--c: rgba(var(--g-color-on-surface), var(--g-opacity5));
+			border-top-color: var(--c);
+			border-left-color: var(--c);
+			border-right-color: var(--c);
+		}
 	}
 }
