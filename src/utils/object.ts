@@ -35,7 +35,7 @@ export function deepCopy<T>(obj: T): T {
 	if (typeof obj !== 'object') {return obj}
 
 	if (Array.isArray(obj)) {
-		return [...obj].map(v => deepCopy(v)) as T
+		return [].concat(obj as any).map(v => deepCopy(v)) as T
 	}
 
 	if (obj && !isInstanceOfClass(obj) && Object.keys(obj as any).length > 0) {
