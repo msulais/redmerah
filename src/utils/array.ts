@@ -24,3 +24,33 @@ export function shuffleArray<T>(arr: T[]): T[] {
 
 	return arr
 }
+
+export function moveArrayElement<T>(
+	arr: T[],
+	oldIndex: number,
+	newIndex: number,
+	allowOutOfIndex: boolean = true
+) {
+	while (oldIndex < 0) {
+		oldIndex += arr.length
+	}
+	while (newIndex < 0) {
+		newIndex += arr.length
+	}
+
+	if (newIndex >= arr.length) {
+		if (allowOutOfIndex) {
+			let k = newIndex - arr.length
+			while ((k--) + 1) {
+				arr.push(undefined as T)
+			}
+		}
+		else {
+			return arr
+		}
+	}
+
+	const [element] = arr.splice(oldIndex, 1)
+	arr.splice(newIndex, 0, element)
+	return arr
+}

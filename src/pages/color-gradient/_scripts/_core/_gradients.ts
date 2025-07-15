@@ -4,7 +4,7 @@ import { ElementIds } from "../_shared/_ids"
 import { CSSClasses, CSSGroup } from "../../_styles/_css"
 import type { TooltipElement } from "@/native-components/Tooltip"
 import { isTargetValidElement } from "@/utils/element"
-import { moveArrayElement, isValidEnumValue } from "@/utils/object"
+import { isValidEnumValue } from "@/utils/object"
 import { Commands } from "../_shared/_commands"
 import { createElementId } from "@/utils/ids"
 import { isPopoverRefOpen, repositionPopoverRef, updatePopoverRef } from "@/native-components/Popover"
@@ -28,6 +28,7 @@ import { ColorPickerEvents, getColorPickerRefValue, updateColorPickerRef, type C
 import { generateSavedGradientId, SavedGradients } from "./_saved-gradients"
 import type { ToastElement } from "@/native-components/Toast"
 import { saveGradientDB } from "./_database"
+import { moveArrayElement } from "@/utils/array"
 
 export type ColorStopGradient = {
 	color: HEXColor
