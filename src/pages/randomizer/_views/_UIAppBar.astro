@@ -1,0 +1,359 @@
+---
+import AppBar from '@/native-components/AppBar/index.astro'
+import IconButton from '@/native-components/Button/IconButton.astro'
+import Tooltip from '@/native-components/Tooltip/index.astro'
+import Dialog from '@/native-components/Dialog/index.astro'
+import CheckBox from '@/native-components/CheckBox/index.astro'
+import TextField from '@/native-components/TextField/index.astro'
+import TextAreaField from '@/native-components/TextAreaField/index.astro'
+import List from '@/native-components/List/index.astro'
+import { APP_RANDOMIZER as APP } from '@/constants/apps'
+import Menu from '@/native-components/Menu/index.astro'
+import Button from '@/native-components/Button/index.astro'
+import SubMenu from '@/native-components/Menu/SubMenu.astro'
+import SubMenuItem from '@/native-components/Menu/SubMenuItem.astro'
+import RadioMenuItem from '@/native-components/Menu/RadioMenuItem.astro'
+import MenuHeader from '@/native-components/Menu/MenuHeader.astro'
+import MenuItem from '@/native-components/Menu/MenuItem.astro'
+import CheckMenuItem from '@/native-components/Menu/CheckMenuItem.astro'
+import MenuIndent from '@/native-components/Menu/MenuIndent.astro'
+import Icon from '@/native-components/Icon/index.astro'
+import LinkMenuItem from '@/native-components/Menu/LinkMenuItem.astro'
+import Divider from '@/native-components/Divider/index.astro'
+import { PlatformAnimationMode, PlatformThemeMode } from '@/enums/platforms'
+import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
+import { RoutesLinks, ExternalLinks } from '@/enums/links'
+import { IconCodes } from '@/enums/icons'
+import { ElementIds } from '../_scripts/_shared/_ids'
+import { RadioNames } from '../_scripts/_shared/_input-names'
+import { DEFAULT_ANIMATION, DEFAULT_LISTS, DEFAULT_THEME, DEFAULT_INSTANT_RESULT } from '../_scripts/_shared/_constant'
+import { ButtonVariant } from '@/native-components/Button'
+import { ListVariant } from '@/native-components/List'
+import { CSSClasses } from '../_styles/_css'
+import { Commands } from '../_scripts/_shared/_commands'
+import { AppCSSFontSizes, AppCSSColors } from '@/enums/app-data'
+
+const animations: {
+	value: PlatformAnimationMode
+	text: string
+	icon: number
+}[] = [
+	{
+		value: PlatformAnimationMode.auto,
+		text: 'Automatic',
+		icon: IconCodes.videoClipOptimize
+	},
+	{
+		value: PlatformAnimationMode.on,
+		text: 'On',
+		icon: IconCodes.videoClip
+	},
+	{
+		value: PlatformAnimationMode.off,
+		text: 'Off',
+		icon: IconCodes.videoClipOff
+	},
+]
+const themes: {
+	value: PlatformThemeMode
+	text: string
+	icon: number
+}[] = [
+	{
+		value: PlatformThemeMode.auto,
+		text: 'Automatic',
+		icon: IconCodes.laptopSettings
+	},
+	{
+		value: PlatformThemeMode.light,
+		text: 'Light',
+		icon: IconCodes.weatherSunny
+	},
+	{
+		value: PlatformThemeMode.dark,
+		text: 'Dark',
+		icon: IconCodes.weatherMoon
+	},
+]
+---
+
+<AppBar id={ElementIds.appbar}>
+	<Fragment slot="leading">
+		<IconButton
+			id={ElementIds.ap_sideBarBtn}
+			IconButtonCode={IconCodes.lineHorizontal3}
+		/>
+		<img
+			src={APP.logoUrl}
+			alt={APP.name + ' logo'}
+			width={32}
+			style="margin: 0 8px 0 0"
+		/>
+	</Fragment>
+	<Fragment slot="headline">{APP.name}</Fragment>
+	<Tooltip slot="trailing">
+		<Button
+			ButtonVariant={ButtonVariant.filled}
+			class={CSSClasses.generateBtn}
+			id={ElementIds.ap_generator}>
+			<Icon IconCode={IconCodes.arrowSync}/>
+			<div>Generate</div>
+		</Button>
+		<IconButton
+			id={ElementIds.apInf_btn}
+			data-tooltip="Info"
+			IconButtonCode={IconCodes.info}
+			aria-label="Info"
+			aria-haspopup="menu"
+			aria-controls={ElementIds.apInf_menu}
+			popovertarget={ElementIds.apInf_menu}
+			aria-expanded="false"
+		/>
+		<Menu id={ElementIds.apInf_menu} PopoverAnchorBy={ElementIds.apInf_btn}>
+			<LinkMenuItem href="/">
+				<img src={logoRedmerah.src} width="20"/>
+				Redmerah
+				<MenuIndent />
+			</LinkMenuItem>
+			<LinkMenuItem href={RoutesLinks.apps}>
+				<Icon IconCode={IconCodes.apps}/>
+				More apps
+				<MenuIndent />
+			</LinkMenuItem>
+			<LinkMenuItem href={RoutesLinks.about}>
+				<Icon IconCode={IconCodes.info}/>
+				About us
+				<MenuIndent />
+			</LinkMenuItem>
+			<Divider />
+			<LinkMenuItem href={RoutesLinks.privacy}>
+				<Icon IconCode={IconCodes.shieldCheckmark}/>
+				Privacy policy
+				<MenuIndent />
+			</LinkMenuItem>
+			<LinkMenuItem href={RoutesLinks.terms}>
+				<Icon IconCode={IconCodes.receipt}/>
+				Terms & conditions
+				<MenuIndent />
+			</LinkMenuItem>
+			<Divider />
+			<MenuItem id={ElementIds.apInf_shareBtn}>
+				<Icon IconCode={IconCodes.shareAndroid}/>
+				Share
+				<MenuIndent />
+			</MenuItem>
+			<LinkMenuItem href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + encodeURI(APP.name)}>
+				<Icon IconCode={IconCodes.chat}/>
+				Send feedback
+				<MenuIndent />
+			</LinkMenuItem>
+			<LinkMenuItem href={ExternalLinks.donate} LinkButtonNewTab>
+				<Icon IconCode={IconCodes.gift}/>
+				Donate
+				<MenuIndent />
+			</LinkMenuItem>
+			<MenuHeader>&copy; {new Date().getFullYear()} Redmerah</MenuHeader>
+		</Menu>
+
+		<IconButton
+			id={ElementIds.apSett_btn}
+			data-tooltip="Settings"
+			IconButtonCode={IconCodes.settings}
+			aria-label="Settings"
+			aria-haspopup="menu"
+			aria-controls={ElementIds.apSett_menu}
+			popovertarget={ElementIds.apSett_menu}
+			aria-expanded="false"
+		/>
+		<Menu id={ElementIds.apSett_menu} PopoverAnchorBy={ElementIds.apSett_btn}>
+			<SubMenuItem
+				popovertarget={ElementIds.apSett_animationMenu}>
+				<Icon IconCode={IconCodes.playCircleHint}/>
+				Animation
+				<div style="flex:1"/>
+				<Icon IconCode={IconCodes.chevronRight}/>
+			</SubMenuItem>
+			<SubMenu slot="submenus" style="width:150px" id={ElementIds.apSett_animationMenu}>
+				{animations.map(v =>
+					<RadioMenuItem
+						RadioMenuItemName={RadioNames.animation}
+						RadioMenuItemChecked={DEFAULT_ANIMATION === v.value}
+						RadioMenuItemValue={v.value}>
+						<Icon IconCode={v.icon}/>
+						{v.text}
+					</RadioMenuItem>
+				)}
+			</SubMenu>
+
+			<SubMenuItem
+				popovertarget={ElementIds.apSett_themeMenu}>
+				<Icon IconCode={IconCodes.weatherSunny}/>
+				Theme
+				<div style="flex:1"/>
+				<Icon IconCode={IconCodes.chevronRight}/>
+			</SubMenuItem>
+			<SubMenu slot="submenus" style="width:150px" id={ElementIds.apSett_themeMenu}>
+				{themes.map(v =>
+					<RadioMenuItem
+						RadioMenuItemName={RadioNames.theme}
+						RadioMenuItemChecked={DEFAULT_THEME === v.value}
+						RadioMenuItemValue={v.value}>
+						<Icon IconCode={v.icon}/>
+						{v.text}
+					</RadioMenuItem>
+				)}
+			</SubMenu>
+
+			<MenuItem id={ElementIds.apSett_listBtn}>
+				<Icon IconCode={IconCodes.appsListDetail}/>
+				Lists
+				<MenuIndent/>
+			</MenuItem>
+
+			<Divider />
+			<CheckMenuItem
+				CheckMenuItemChecked={DEFAULT_INSTANT_RESULT}
+				CheckMenuItemInputAttr={{id: ElementIds.apSett_instant}}>
+				Instant result
+				<MenuIndent/>
+			</CheckMenuItem>
+		</Menu>
+
+		<IconButton
+			IconButtonCode={IconCodes.copy}
+			id={ElementIds.ap_copyBtn}
+			aria-label="Copy result"
+			data-tooltip="Copy result"
+		/>
+	</Tooltip>
+</AppBar>
+<Dialog id={ElementIds.apSett_listDialog} style="width:512px">
+	<Fragment slot="header">Lists</Fragment>
+	<Tooltip>
+		<ul
+			id={ElementIds.apSett_list}
+			style={{
+				display: 'flex',
+				flexDirection: 'column',
+				gap: '4px'
+			}}>
+			{[...DEFAULT_LISTS].sort((a,b) => a.name.localeCompare(b.name)).map(v =>
+				<List
+					class={CSSClasses.listItem}
+					ListTagName="li"
+					ListVariant={ListVariant.tonal}
+					ListTrailingAttr={{style: {
+						display: 'flex',
+						alignItems: 'center',
+						gap: '1px'
+					}}}
+					style={{paddingRight: '4px'}}
+					data-list-id={v.id}>
+					{v.name}
+					<Icon
+						style={`color:rgb(${AppCSSColors.accent})`}
+						IconCode={IconCodes.textBulletListLtr}
+						IconFilled
+						slot="leading"
+					/>
+					<Fragment slot="subtitle">{v.items.length} items</Fragment>
+					<Fragment slot="trailing">
+						<IconButton
+							aria-label="Edit"
+							data-tooltip="Edit"
+							IconButtonCode={IconCodes.edit}
+							data-command={Commands.editList}
+						/>
+						<IconButton
+							aria-label="Delete"
+							data-tooltip="Delete"
+							IconButtonCode={IconCodes.delete}
+							data-command={Commands.deleteList}
+						/>
+					</Fragment>
+				</List>
+			)}
+		</ul>
+	</Tooltip>
+	<form slot="footer" method="dialog" style="display:contents">
+		<Button ButtonVariant={ButtonVariant.tonal}>Close</Button>
+		<Button
+			ButtonVariant={ButtonVariant.filled}
+			id={ElementIds.apSett_listNew}>New</Button>
+	</form>
+</Dialog>
+<Dialog id={ElementIds.apSett_listNewDialog} style="width:512px">
+	<Fragment slot="header">New list</Fragment>
+	<label for={ElementIds.apSett_listNewName}>Name:</label>
+	<TextField
+		TextFieldInputAttr={{
+			id: ElementIds.apSett_listNewName,
+		}}
+		style="margin-top:2px"
+	/>
+
+	<label
+		style="margin-top:8px"
+		for={ElementIds.apSett_listNewItems}>Items:</label>
+	<TextAreaField
+		required
+		id={ElementIds.apSett_listNewItems}
+		style="resize:none;margin-top:2px"
+		rows="5"
+	/>
+	<p style={{
+		fontSize: AppCSSFontSizes.xs,
+		marginTop: '8px'
+	}}>Each item separated by semicolon (;), tab or new line.</p>
+	<form slot="footer" method="dialog" style="display:contents">
+		<Button ButtonVariant={ButtonVariant.tonal}>Cancel</Button>
+		<Button
+			ButtonVariant={ButtonVariant.filled}
+			id={ElementIds.apSett_listSave}>Save</Button>
+	</form>
+</Dialog>
+<Dialog id={ElementIds.apSett_listDeleteDialog} style="width:360px">
+	<Fragment slot="header">Delete list</Fragment>
+	<p>Are you sure want to delete this list?</p>
+	<List
+		style={{
+			marginTop: '8px',
+			borderWidth: '2px',
+			borderColor: `rgb(${AppCSSColors.accent})`
+		}}
+		id={ElementIds.apSett_listDeleteItem}
+		ListVariant={ListVariant.outlined}>
+		<Icon
+			IconCode={IconCodes.textBulletListLtr}
+			IconFilled
+			slot="leading"
+			style={`color:rgb(${AppCSSColors.accent})`}
+		/>
+	</List>
+	<form slot="footer" method="dialog" style="display:contents">
+		<Button ButtonVariant={ButtonVariant.tonal}>Cancel</Button>
+		<Button
+			ButtonVariant={ButtonVariant.filled}
+			id={ElementIds.apSett_listDelete}>Delete</Button>
+	</form>
+</Dialog>
+<Dialog id={ElementIds.ap_copyColorsDialog} style="width:360px">
+	<Fragment slot="header">Copy colors</Fragment>
+	<CheckBox
+		CheckBoxChecked
+		CheckBoxInputAttr={{id: ElementIds.ap_copyColorsHex}}>Hex</CheckBox>
+	<CheckBox
+		style="margin-top:4px"
+		CheckBoxChecked
+		CheckBoxInputAttr={{id: ElementIds.ap_copyColorsRgb}}>RGB</CheckBox>
+	<CheckBox
+		style="margin-top:4px"
+		CheckBoxChecked
+		CheckBoxInputAttr={{id: ElementIds.ap_copyColorsHsl}}>HSL</CheckBox>
+	<form slot="footer" method="dialog" style="display:contents">
+		<Button ButtonVariant={ButtonVariant.tonal}>Cancel</Button>
+		<Button
+			ButtonVariant={ButtonVariant.filled}
+			id={ElementIds.ap_copyColorsBtn}>Copy</Button>
+	</form>
+</Dialog>

@@ -14,6 +14,9 @@
 	scale: .85;
 	box-shadow: var(--g-elevation3);
 	transition-timing-function: var(--g-transition-spring-inverse);
+	transition-property: display, overlay, opacity, translate, scale;
+	transition-duration: var(--g-duration-transition);
+	transition-behavior: allow-discrete;
 
 	&[data-c-toast-position=top-left] {
 		top: 8px;
@@ -59,20 +62,6 @@
 
 		&[data-c-toast-position*=center] {
 			translate: -50% 0;
-		}
-	}
-
-	:root[data-animation=on] & {
-		transition-property: display, overlay, opacity, translate, scale;
-		transition-duration: .25s;
-		transition-behavior: allow-discrete;
-	}
-
-	@media (prefers-reduced-motion: no-preference) {
-		:root[data-animation=auto] & {
-			transition-property: display, overlay, opacity, translate, scale;
-			transition-duration: .25s;
-			transition-behavior: allow-discrete;
 		}
 	}
 

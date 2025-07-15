@@ -1,0 +1,26 @@
+---
+import Toast from '@/native-components/Toast/index.astro'
+import Icon from '@/native-components/Icon/index.astro'
+import { CSSClasses } from "../_styles/_css"
+import UIColors from './_pages/_UIColors.astro'
+import UINumbers from './_pages/_UINumbers.astro'
+import UISelection from './_pages/_UISelection.astro'
+import UIString from './_pages/_UIString.astro'
+import UITeams from './_pages/_UITeams.astro'
+import UIWords from './_pages/_UIWords.astro'
+import { ElementIds } from '../_scripts/_shared/_ids'
+import { IconCodes } from '@/enums/icons'
+---
+
+<main class={CSSClasses.body}>
+	<UIColors/>
+	<UINumbers/>
+	<UISelection/>
+	<UIString/>
+	<UITeams/>
+	<UIWords/>
+</main>
+<Toast id={ElementIds.toa_copied} ToastCloseDelay={1500}>
+	<Icon IconCode={IconCodes.copy} slot="leading"/>
+	Copied
+</Toast>

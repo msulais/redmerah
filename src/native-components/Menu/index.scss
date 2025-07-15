@@ -45,18 +45,8 @@
 
 .c-menu-check-item-icon {
 	scale: 0;
-
-	:root[data-animation=on] & {
-		transition-property: scale;
-		transition-duration: .2s;
-	}
-
-	@media (prefers-reduced-motion: no-preference) {
-		:root[data-animation=auto] & {
-			transition-property: scale;
-			transition-duration: .2s;
-		}
-	}
+	transition-property: scale;
+	transition-duration: var(--g-duration-transition);
 }
 
 .c-menu-check-item-leading {
@@ -123,18 +113,8 @@
 
 .c-menu-radio-item-icon {
 	color: rgb(var(--g-color-accent));
-
-	:root[data-animation=on] & {
-		transition-property: scale;
-		transition-duration: .2s;
-	}
-
-	@media (prefers-reduced-motion: no-preference) {
-		:root[data-animation=auto] & {
-			transition-property: scale;
-			transition-duration: .2s;
-		}
-	}
+	transition-property: scale;
+	transition-duration: var(--g-duration-transition);
 
 	.c-menu-radio-item-input:not(:checked) + & {
 		scale: 0;

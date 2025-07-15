@@ -16,24 +16,13 @@
 	opacity: 0;
 	box-shadow: var(--g-elevation3);
 	transition-timing-function: var(--g-transition-spring-bounce-inverse);
+	transition-property: display, overlay, opacity;
+	transition-duration: var(--g-duration-transition);
+	transition-behavior: allow-discrete;
 
 	&:popover-open {
 		opacity: 1;
 		transition-timing-function: var(--g-transition-spring-bounce);
-	}
-
-	:root[data-animation=on] & {
-		transition-property: display, overlay, opacity;
-		transition-duration: .25s;
-		transition-behavior: allow-discrete;
-	}
-
-	@media (prefers-reduced-motion: no-preference) {
-		:root[data-animation=auto] & {
-			transition-property: display, overlay, opacity;
-			transition-duration: .25s;
-			transition-behavior: allow-discrete;
-		}
 	}
 
 	:root[data-theme=dark] & {
@@ -94,20 +83,12 @@
 	z-index: 5;
 	border-radius: 999px;
 	background-color: rgb(var(--g-color-accent));
-
-	:root[data-animation=on] & {
-		transition-duration: .2s;
-	}
-
-	@media (prefers-reduced-motion: no-preference) {
-		:root[data-animation=auto] & {
-			transition-duration: .2s;
-		}
-	}
+	cursor: grab;
+	transition-property: width, height;
+	transition-duration: var(--g-duration-transition);
 
 	@media (hover: hover) {
 		&:hover {
-			cursor: grab;
 			width: min(88px, var(--c-popover-draghandle-width-hover));
 			height: 8px;
 		}

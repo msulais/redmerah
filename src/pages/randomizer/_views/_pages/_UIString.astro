@@ -1,0 +1,96 @@
+---
+import TextField from '@/native-components/TextField/index.astro'
+import CheckBox from '@/native-components/CheckBox/index.astro'
+import Tooltip from '@/native-components/Tooltip/index.astro'
+import { DEFAULT_PAGE, DEFAULT_STRING_LENGTH, DEFAULT_STRING_CUSTOM, DEFAULT_STRING_LOWERCASE, DEFAULT_STRING_NUMBERS, DEFAULT_STRING_SYMBOLS, DEFAULT_STRING_UPPERCASE, DEFAULT_STRING_OUTPUT } from "../../_scripts/_shared/_constant"
+import { Pages } from "../../_scripts/_shared/_enums"
+import { ElementIds } from "../../_scripts/_shared/_ids"
+import { CSSClasses } from "../../_styles/_css"
+const subColor = 'rgba(var(--g-color-on-surface),var(--g-opacity-inv2))'
+---
+
+<div
+	class={CSSClasses.bodyPage}
+	id={ElementIds.pg_string}
+	role="tabpanel"
+	hidden={DEFAULT_PAGE !== Pages.string}>
+	<output
+		id={ElementIds.pgStr_output}
+		class:list={[CSSClasses.bodyResult, CSSClasses.resultString]}
+		for={[
+			ElementIds.pgStr_length,
+			ElementIds.pgStr_custom,
+			ElementIds.pgStr_upper,
+			ElementIds.pgStr_lower,
+			ElementIds.pgStr_number,
+			ElementIds.pgStr_symbol
+		].join(' ')}>{DEFAULT_STRING_OUTPUT}</output>
+	<Tooltip class={CSSClasses.bodyOptions}>
+		<label for={ElementIds.pgStr_length}>Length:</label>
+		<TextField
+			style="margin-top:2px"
+			TextFieldInputAttr={{
+				id: ElementIds.pgStr_length,
+				value: DEFAULT_STRING_LENGTH,
+				type: 'number',
+				min: 1
+			}}
+		/>
+
+		<label
+			style="margin-top:8px"
+			for={ElementIds.pgStr_custom}>
+			Custom character:
+		</label>
+		<TextField
+			style="margin-top:2px"
+			TextFieldInputAttr={{
+				id: ElementIds.pgStr_custom,
+				value: DEFAULT_STRING_CUSTOM
+			}}
+		/>
+
+		<CheckBox
+			style="margin-top:8px;min-height:46px"
+			CheckBoxChecked={DEFAULT_STRING_UPPERCASE}
+			CheckBoxInputAttr={{id: ElementIds.pgStr_upper}}>
+			<div>
+				Uppercase
+				<div
+					data-tooltip="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+					style={`color:${subColor}`}>ABCDEFGHIJKLM...</div>
+			</div>
+		</CheckBox>
+		<CheckBox
+			style="min-height:46px"
+			CheckBoxChecked={DEFAULT_STRING_LOWERCASE}
+			CheckBoxInputAttr={{id: ElementIds.pgStr_lower}}>
+			<div>
+				Lowercase
+				<div
+					data-tooltip="abcdefghijklmnopqrstuvwxyz"
+					style={`color:${subColor}`}>abcdefghijklmop...</div>
+			</div>
+		</CheckBox>
+		<CheckBox
+			style="min-height:46px"
+			CheckBoxChecked={DEFAULT_STRING_NUMBERS}
+			CheckBoxInputAttr={{id: ElementIds.pgStr_number}}>
+			<div>
+				Numbers
+				<div style={`color:${subColor}`}>0123456789</div>
+			</div>
+		</CheckBox>
+		<CheckBox
+			style="min-height:46px"
+			CheckBoxChecked={DEFAULT_STRING_SYMBOLS}
+			CheckBoxInputAttr={{id: ElementIds.pgStr_symbol}}>
+			<div>
+				Symbols
+				<div
+					data-tooltip={"<({[!@#$%^&*_-+=~`\\|\"':;?/.,]})>"}
+					style={`color:${subColor}`}>{'<({[!@#$%^&*_...'}</div>
+			</div>
+		</CheckBox>
+	</Tooltip>
+</div>

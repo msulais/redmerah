@@ -1,4 +1,5 @@
 type CheckBoxProps = astroHTML.JSX.LabelHTMLAttributes & {
+	CheckBoxChecked    ?: boolean
 	CheckBoxInputAttr  ?: astroHTML.JSX.InputHTMLAttributes
 	CheckBoxIconAttr   ?: astroHTML.JSX.SVGAttributes
 	CheckBoxContentAttr?: astroHTML.JSX.HTMLAttributes

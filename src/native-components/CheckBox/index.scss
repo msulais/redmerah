@@ -5,7 +5,7 @@
 	color: rgb(var(--g-color-on-surface));
 	gap: 8px;
 	min-height: 32px;
-	padding: 4px 12px 4px 8px;
+	padding: 4px 12px 4px 0;
 	border-radius: 4px;
 	position: relative;
 	user-select: none;
@@ -48,11 +48,9 @@
 
 .c-checkbox-content {
 	display: contents;
-	pointer-events: none;
 }
 
 .c-checkbox-icon {
-	pointer-events: none;
 	position: absolute;
 	scale: 0;
 	height: 20px;
@@ -80,18 +78,8 @@
 	min-height: 20px;
 	max-height: 20px;
 	border-radius: 4px;
-
-	:root[data-animation=on] & {
-		transition-property: background-color, opacity;
-		transition-duration: .2s;
-	}
-
-	@media (prefers-reduced-motion: no-preference) {
-		:root[data-animation=auto] & {
-			transition-property: background-color, opacity;
-			transition-duration: .2s;
-		}
-	}
+	transition-property: background-color;
+	transition-duration: var(--g-duration-transition);
 
 	&:focus-visible {
 		outline: none;

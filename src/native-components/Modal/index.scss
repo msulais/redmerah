@@ -82,16 +82,7 @@
 	z-index: 5;
 	border-radius: 999px;
 	background-color: rgb(var(--g-color-accent));
-
-	:root[data-animation=on] & {
-		transition-duration: .2s;
-	}
-
-	@media (prefers-reduced-motion: no-preference) {
-		:root[data-animation=auto] & {
-			transition-duration: .2s;
-		}
-	}
+	transition-duration: var(--g-duration-transition);
 
 	@media (hover: hover) {
 		&:hover {

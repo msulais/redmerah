@@ -1,0 +1,75 @@
+---
+import TextField from '@/native-components/TextField/index.astro'
+import ComboBox from '@/native-components/ComboBox/index.astro'
+import ComboBoxOption from '@/native-components/ComboBox/ComboBoxOption.astro'
+import { DEFAULT_LISTS, DEFAULT_PAGE, DEFAULT_TEAMS_COUNT, DEFAULT_TEAMS_OUTPUT, DEFAULT_TEAMS_MEMBERS_ID, DEFAULT_TEAMS_NAMES_ID } from "../../_scripts/_shared/_constant"
+import { Pages } from "../../_scripts/_shared/_enums"
+import { ElementIds } from "../../_scripts/_shared/_ids"
+import { CSSClasses } from "../../_styles/_css"
+---
+
+<div
+	class={CSSClasses.bodyPage}
+	id={ElementIds.pg_teams}
+	role="tabpanel"
+	hidden={DEFAULT_PAGE !== Pages.teams}>
+	<output
+		class:list={[CSSClasses.bodyResult, CSSClasses.resultTeams]}
+		for={[
+			ElementIds.pgTm_names,
+			ElementIds.pgTm_members,
+			ElementIds.pgTm_count,
+		].join(' ')}>
+		<ul id={ElementIds.pgTm_output}>
+			{DEFAULT_TEAMS_OUTPUT.map(v =>
+				<li>
+					{v[0]}
+					<ul>
+						{v.slice(1).map(u =>
+							<li>{u}</li>
+						)}
+					</ul>
+				</li>
+			)}
+		</ul>
+	</output>
+	<div class={CSSClasses.bodyOptions}>
+		<label for={ElementIds.pgTm_names}>Names:</label>
+		<ComboBox
+			style="margin-top:2px"
+			id={ElementIds.pgTm_names}>
+			{DEFAULT_LISTS.map(v =>
+				<ComboBoxOption
+					value={v.id}
+					selected={v.id === DEFAULT_TEAMS_NAMES_ID}>{v.name} ({v.items.length})</ComboBoxOption>
+			)}
+		</ComboBox>
+
+		<label
+			style="margin-top:8px"
+			for={ElementIds.pgTm_members}>Members:</label>
+		<ComboBox
+			style="margin-top:2px"
+			id={ElementIds.pgTm_members}>
+			{DEFAULT_LISTS.map(v =>
+				<ComboBoxOption
+					value={v.id}
+					selected={v.id === DEFAULT_TEAMS_MEMBERS_ID}>{v.name} ({v.items.length})</ComboBoxOption>
+			)}
+		</ComboBox>
+
+		<label
+			style="margin-top:8px"
+			for={ElementIds.pgTm_count}>Count:</label>
+		<TextField
+			style="margin-top:2px"
+			TextFieldInputAttr={{
+				id: ElementIds.pgTm_count,
+				value: DEFAULT_TEAMS_COUNT,
+				type: 'number',
+				min: 1,
+				max: DEFAULT_LISTS.find(v => v.id === DEFAULT_TEAMS_MEMBERS_ID)!.items.length
+			}}
+		/>
+	</div>
+</div>
