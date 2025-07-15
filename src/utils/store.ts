@@ -58,7 +58,7 @@ export class ObservableStore<T extends object> {
 	 * @param oldState
 	 */
 	notify(keys: string[] = [], oldState: T = this.state) {
-		for (const key of (keys.length == 0? this.listeners.keys() : keys)) {
+		for (const key of (keys.length === 0? this.listeners.keys() : keys)) {
 			this.listeners.get(key)?.(this.state, oldState)
 		}
 	}
