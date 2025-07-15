@@ -1,0 +1,179 @@
+---
+import TextField from '@/native-components/TextField/index.astro'
+import ComboBox from '@/native-components/ComboBox/index.astro'
+import CheckBox from '@/native-components/CheckBox/index.astro'
+import ComboBoxOption from '@/native-components/ComboBox/ComboBoxOption.astro'
+import { DEFAULT_NUMBERS_COUNT, DEFAULT_NUMBERS_OUTPUT, DEFAULT_NUMBERS_DIGITS, DEFAULT_NUMBERS_MAX, DEFAULT_NUMBERS_MIN, DEFAULT_NUMBERS_PREFIX, DEFAULT_NUMBERS_REPEAT, DEFAULT_NUMBERS_SEPARATOR, DEFAULT_NUMBERS_SORT, DEFAULT_NUMBERS_SUFFIX, DEFAULT_NUMBERS_TYPE, DEFAULT_PAGE } from "../../_scripts/_shared/_constant"
+import { NumbersRandomizerSort, NumbersRandomizerType, Pages } from "../../_scripts/_shared/_enums"
+import { ElementIds } from "../../_scripts/_shared/_ids"
+import { CSSClasses } from "../../_styles/_css"
+
+const sorts: {
+	text: string
+	value: NumbersRandomizerSort
+}[] = [
+	{value: NumbersRandomizerSort.ascending, text: 'Ascending'},
+	{value: NumbersRandomizerSort.descending, text: 'Descending'},
+	{value: NumbersRandomizerSort.none, text: 'None'}
+]
+
+const types: {
+	text: string,
+	value: NumbersRandomizerType
+}[] = [
+	{value: NumbersRandomizerType.decimal, text: 'Decimal'},
+	{value: NumbersRandomizerType.hexadecimal, text: 'Hexadecimal'},
+	{value: NumbersRandomizerType.octal, text: 'Octal'},
+	{value: NumbersRandomizerType.binary, text: 'Binary'},
+]
+---
+
+<div
+	class={CSSClasses.bodyPage}
+	id={ElementIds.pg_numbers}
+	role="tabpanel"
+	hidden={DEFAULT_PAGE !== Pages.numbers}>
+	<output
+		id={ElementIds.pgNum_output}
+		class:list={[CSSClasses.bodyResult, CSSClasses.resultNumbers]}
+		for={[
+			ElementIds.pgNum_min,
+			ElementIds.pgNum_max,
+			ElementIds.pgNum_count,
+			ElementIds.pgNum_sort,
+			ElementIds.pgNum_type,
+			ElementIds.pgNum_digits,
+			ElementIds.pgNum_separator,
+			ElementIds.pgNum_prefix,
+			ElementIds.pgNum_suffix,
+			ElementIds.pgNum_repeat
+		].join(' ')}>{DEFAULT_NUMBERS_OUTPUT}</output>
+	<div class={CSSClasses.bodyOptions}>
+		<div style={{
+			display: 'grid',
+			gridTemplateColumns: '1fr 1fr',
+			gap: '8px'
+		}}>
+			<div>
+				<label for={ElementIds.pgNum_min}>Min:</label>
+				<TextField
+					style="margin-top:2px"
+					TextFieldInputAttr={{
+						id: ElementIds.pgNum_min,
+						type: 'number',
+						value: DEFAULT_NUMBERS_MIN,
+						min: 0,
+						max: DEFAULT_NUMBERS_MAX
+					}}
+				/>
+			</div>
+			<div>
+				<label for={ElementIds.pgNum_max}>Max:</label>
+				<TextField
+					style="margin-top:2px"
+					TextFieldInputAttr={{
+						id: ElementIds.pgNum_max,
+						value: DEFAULT_NUMBERS_MAX,
+						type: 'number',
+						min: DEFAULT_NUMBERS_MIN
+					}}
+				/>
+			</div>
+		</div>
+
+		<label
+			style="margin-top:8px"
+			for={ElementIds.pgNum_count}>Count:</label>
+		<TextField
+			style="margin-top:2px"
+			TextFieldInputAttr={{
+				id: ElementIds.pgNum_count,
+				value: DEFAULT_NUMBERS_COUNT,
+				min: 1,
+				type: 'number'
+			}}
+		/>
+
+		<label
+			style="margin-top:8px"
+			for={ElementIds.pgNum_sort}>Sort:</label>
+		<ComboBox
+			style="margin-top:2px"
+			id={ElementIds.pgNum_sort}>
+			{sorts.map(v =>
+				<ComboBoxOption
+					value={v.value}
+					selected={v.value === DEFAULT_NUMBERS_SORT}>{v.text}</ComboBoxOption>
+			)}
+		</ComboBox>
+
+		<label
+			style="margin-top:8px"
+			for={ElementIds.pgNum_type}>Number type:</label>
+		<ComboBox
+			style="margin-top:2px"
+			id={ElementIds.pgNum_type}>
+			{types.map(v =>
+				<ComboBoxOption
+					value={v.value as number}
+					selected={v.value === DEFAULT_NUMBERS_TYPE}>{v.text}</ComboBoxOption>
+			)}
+		</ComboBox>
+
+		<label
+			style="margin-top:8px"
+			for={ElementIds.pgNum_digits}>Min digits:</label>
+		<TextField
+			style="margin-top:2px"
+			TextFieldInputAttr={{
+				id: ElementIds.pgNum_digits,
+				value: DEFAULT_NUMBERS_DIGITS,
+				min: 0,
+				type: 'number'
+			}}
+		/>
+
+		<label
+			style="margin-top:8px"
+			for={ElementIds.pgNum_separator}>Separator:</label>
+		<TextField
+			style="margin-top:2px"
+			TextFieldInputAttr={{
+				id: ElementIds.pgNum_separator,
+				value: DEFAULT_NUMBERS_SEPARATOR
+			}}
+		/>
+
+		<div style={{
+			display: 'grid',
+			gridTemplateColumns: '1fr 1fr',
+			gap: '8px',
+			marginTop: '8px'
+		}}>
+			<div>
+				<label for={ElementIds.pgNum_prefix}>Prefix:</label>
+				<TextField
+					style="margin-top:2px"
+					TextFieldInputAttr={{
+						id: ElementIds.pgNum_prefix,
+						value: DEFAULT_NUMBERS_PREFIX
+					}}
+				/>
+			</div>
+			<div>
+				<label for={ElementIds.pgNum_suffix}>Suffix:</label>
+				<TextField
+					style="margin-top:2px"
+					TextFieldInputAttr={{
+						id: ElementIds.pgNum_suffix,
+						value: DEFAULT_NUMBERS_SUFFIX
+					}}
+				/>
+			</div>
+		</div>
+		<CheckBox
+			style="margin-top:8px"
+			CheckBoxChecked={DEFAULT_NUMBERS_REPEAT}
+			CheckBoxInputAttr={{id: ElementIds.pgNum_repeat}}>Repeat</CheckBox>
+	</div>
+</div>

@@ -1,0 +1,107 @@
+---
+import SideBar from '@/native-components/SideBar/index.astro'
+import Tooltip from '@/native-components/Tooltip/index.astro'
+import Icon from '@/native-components/Icon/index.astro'
+import Drawer from '@/native-components/Drawer/index.astro'
+import DrawerButton from '@/native-components/Drawer/DrawerButton.astro'
+import Button from '@/native-components/Button/index.astro'
+import SideBarButton from '@/native-components/SideBar/SideBarButton.astro'
+import { ButtonVariant } from '@/native-components/Button'
+import { IconCodes } from '@/enums/icons'
+import { CSSClasses } from '../_styles/_css'
+import { Pages } from '../_scripts/_shared/_enums'
+import { ElementIds } from '../_scripts/_shared/_ids'
+import { DEFAULT_PAGE } from '../_scripts/_shared/_constant'
+
+const items: {
+	icon: number
+	name: string
+	page: Pages
+	controls: string
+}[] = [
+	{
+		icon: IconCodes.textNumberFormat,
+		name: 'String',
+		page: Pages.string,
+		controls: ElementIds.pg_string,
+	},
+	{
+		icon: IconCodes.codeText,
+		name: 'Words',
+		page: Pages.words,
+		controls: ElementIds.pg_words,
+	},
+	{
+		icon: IconCodes.numberRow,
+		name: 'Numbers',
+		page: Pages.numbers,
+		controls: ElementIds.pg_numbers,
+	},
+	{
+		icon: IconCodes.color,
+		name: 'Colors',
+		page: Pages.colors,
+		controls: ElementIds.pg_colors,
+	},
+	{
+		icon: IconCodes.textBulletListSquare,
+		name: 'Selection',
+		page: Pages.selection,
+		controls: ElementIds.pg_selection,
+	},
+	{
+		icon: IconCodes.people,
+		name: 'Teams',
+		page: Pages.teams,
+		controls: ElementIds.pg_teams,
+	},
+]
+---
+
+<SideBar
+	role="tablist"
+	class={CSSClasses.navigationSideBar}
+	id={ElementIds.nav_sideBar}
+	aria-label="Navigation">
+	<Tooltip>
+		{items.map(v => <SideBarButton
+			role="tab"
+			style="padding-left: 10px"
+			data-page={v.page}
+			aria-selected={DEFAULT_PAGE === v.page}
+			aria-controls={v.controls}
+			SideBarButtonSelected={DEFAULT_PAGE === v.page}
+			ButtonVariant={DEFAULT_PAGE === v.page ? ButtonVariant.tonal : undefined}>
+			<Icon
+				slot="leading"
+				IconCode={v.icon}
+				data-tooltip={v.name}
+			/>
+			{v.name}
+		</SideBarButton>)}
+	</Tooltip>
+</SideBar>
+<Drawer
+	role="tablist"
+	id={ElementIds.nav_drawer}
+	aria-label="Navigation">
+	<Button
+		slot="header"
+		style="width:min-content"
+		popovertarget={ElementIds.nav_drawer}
+		popovertargetaction="hide">
+		<Icon IconCode={IconCodes.lineHorizontal3}/>
+	</Button>
+	{items.map(v => <DrawerButton
+		role="tab"
+		aria-selected={DEFAULT_PAGE === v.page}
+		aria-controls={v.controls}
+		data-page={v.page}
+		DrawerButtonSelected={DEFAULT_PAGE === v.page}
+		ButtonVariant={DEFAULT_PAGE === v.page ? ButtonVariant.tonal : undefined}>
+		<Icon
+			IconCode={v.icon}
+		/>
+		{v.name}
+	</DrawerButton>)}
+</Drawer>
