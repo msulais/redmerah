@@ -1,6 +1,7 @@
 import { deepCopy } from "./object"
 
 type Listener<T> = (state: T, oldState: T) => void
+type ReadWrite<T> = {-readonly [P in keyof T]: T[P]}
 
 export class ObservableStore<T extends object> {
 	private state: Readonly<T>
@@ -15,7 +16,7 @@ export class ObservableStore<T extends object> {
 	}
 
 	get listenerKeys() {
-		return [...this.listeners.keys()]
+		return new Set([...this.listeners.keys()])
 	}
 
 	/**
@@ -23,7 +24,7 @@ export class ObservableStore<T extends object> {
 	 * @param updater
 	 * @param notifyKeys Keys of listener. Order matter. It is possible to repeat key.
 	 */
-	update(updater: (state: {-readonly [P in keyof T]: T[P]}) => unknown, notifyKeys: Symbol[] | null = []) {
+	update(updater: (state: ReadWrite<T>) => unknown, notifyKeys: Symbol[] | null = []) {
 		const oldState = this.state
 		updater(this.state = deepCopy(this.state))
 		if (notifyKeys !== null) {
