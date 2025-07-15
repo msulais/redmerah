@@ -32,7 +32,7 @@ function _initDrawerEvents(): void {
 		if (!isValidEnumValue(page, Pages)) return
 
 		_drawerRef.hidePopover()
-		NavigationStore.update(v => ({...v, page: page as Pages}))
+		NavigationStore.update(v => v.page = page as Pages)
 	})
 }
 
@@ -44,7 +44,7 @@ function _initSideBarEvents(): void {
 		const page = targetRef.dataset.page
 		if (!isValidEnumValue(page, Pages)) return
 
-		NavigationStore.update(v => ({...v, page: page as Pages}))
+		NavigationStore.update(v => v.page = page as Pages)
 	})
 }
 

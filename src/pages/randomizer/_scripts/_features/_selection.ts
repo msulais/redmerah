@@ -48,7 +48,7 @@ export function updateOutput(): void {
 		shuffleArray(output)
 	}
 
-	SelectionStore.update(v => ({...v, output: output}))
+	SelectionStore.update(v => v.output = output)
 }
 
 function _subsStorage(v: SelectionStoreType): void {
@@ -100,7 +100,7 @@ function _subsView(v: SelectionStoreType, o: SelectionStoreType): void {
 	if (v.listId !== o.listId) {
 		const list = ListsStore.value.list.find(a => a.id ===  v.listId)
 		if (list) {
-			SelectionStore.update(v => ({...v, listItems: list.items}))
+			SelectionStore.update(v => v.listItems = [...list.items])
 		}
 	}
 }
@@ -118,10 +118,10 @@ function _initEvents(): void {
 		if (!list.some(v => v.id === id)) {return}
 
 		const items = list.find(v => v.id === id)!.items
-		SelectionStore.update(v => ({...v,
-			listId: id,
-			count: Math_clamp(v.count, 1, items.length-1)
-		}))
+		SelectionStore.update(v => {
+			v.listId = id
+			v.count = Math_clamp(v.count, 1, items.length-1)
+		})
 	})
 
 	// the only place to dynamically set HTMLInputElement.max
@@ -134,7 +134,7 @@ function _initEvents(): void {
 
 	_countRef.addEventListener("input", () => {
 		const value = Math_clamp(safeNumber(_countRef.valueAsNumber), 1, Number.MAX_VALUE)
-		SelectionStore.update(v => ({...v, count: value}))
+		SelectionStore.update(v => v.count = value)
 	})
 
 	_countRef.addEventListener("blur", () => {

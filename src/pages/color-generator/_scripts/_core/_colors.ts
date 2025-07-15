@@ -218,7 +218,7 @@ function _initSubscriber(): void {
 
 function _initEvents(): void {
 	_colorPickerRef.addEventListener(ColorPickerEvents.input, () => {
-		ColorsStore.update(v => ({...v, seed: getColorPickerRefValue(_colorPickerRef)}))
+		ColorsStore.update(v => v.seed = getColorPickerRefValue(_colorPickerRef))
 	})
 
 	_paletteListRef.addEventListener('click', () => {
@@ -244,9 +244,7 @@ function _initEvents(): void {
 		case Commands.pal_delete: {
 			const seed = getSeedColor()
 			if (seed) {
-				ColorsStore.update(v => ({...v,
-					palette: v.palette.filter(v => v !== seed)
-				}))
+				ColorsStore.update(v => v.palette = v.palette.filter(v => v !== seed))
 			}
 		}	break
 		}
@@ -257,7 +255,7 @@ function _initEvents(): void {
 		const color = value.seed
 		if (value.palette.includes(color)) {return}
 
-		ColorsStore.update(v => ({...v, palette: [color, ...v.palette]}))
+		ColorsStore.update(v => v.palette = [color, ...v.palette])
 	})
 }
 

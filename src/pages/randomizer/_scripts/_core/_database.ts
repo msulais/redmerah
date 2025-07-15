@@ -114,225 +114,219 @@ function _readStorageAll(store: IDBObjectStore): void {
 		const isArray = Array.isArray(value)
 		switch (key as _StorageKeys) {
 		case "page":
-			isString
-			&& isValidEnumValue(value, Pages)
-			&& NavigationStore.update(v => ({...v, page: value as Pages}))
+			isValidEnumValue(value, Pages)
+			&& NavigationStore.update(v => v.page = value)
 			break
 		case "settings:instant-result":
 			isBoolean
-			&& SettingsStore.update(v => ({...v, instantResult: value}))
+			&& SettingsStore.update(v => v.instantResult = value)
 			break
 		case "colors:count":
 			isNumber
-			&& ColorsStore.update(v => ({...v, count: value}))
+			&& ColorsStore.update(v => v.count = value)
 			break
 		case "colors:color-space":
-			isString
-			&& isValidEnumValue(value, ColorsRandomizerSpace)
-			&& ColorsStore.update(v => ({...v, colorSpace: value as ColorsRandomizerSpace}))
+			isValidEnumValue(value, ColorsRandomizerSpace)
+			&& ColorsStore.update(v => v.colorSpace = value)
 		 	break
 		case "colors:hex-min":
 			isNumber
-			&& ColorsStore.update(v => ({...v, hexMin: value}))
+			&& ColorsStore.update(v => v.hexMin = value)
 			break
 		case "colors:hex-max":
 			isNumber
-			&& ColorsStore.update(v => ({...v, hexMax: value}))
+			&& ColorsStore.update(v => v.hexMax = value)
 			break
 		case "colors:rgb-r-min":
 			isNumber
-			&& ColorsStore.update(v => ({...v, rgbRMin: value}))
+			&& ColorsStore.update(v => v.rgbRMin = value)
 			break
 		case "colors:rgb-r-max":
 			isNumber
-			&& ColorsStore.update(v => ({...v, rgbRMax: value}))
+			&& ColorsStore.update(v => v.rgbRMax = value)
 			break
 		case "colors:rgb-g-min":
 			isNumber
-			&& ColorsStore.update(v => ({...v, rgbGMin: value}))
+			&& ColorsStore.update(v => v.rgbGMin = value)
 			break
 		case "colors:rgb-g-max":
 			isNumber
-			&& ColorsStore.update(v => ({...v, rgbGMax: value}))
+			&& ColorsStore.update(v => v.rgbGMax = value)
 			break
 		case "colors:rgb-b-min":
 			isNumber
-			&& ColorsStore.update(v => ({...v, rgbBMin: value}))
+			&& ColorsStore.update(v => v.rgbBMin = value)
 			break
 		case "colors:rgb-b-max":
 			isNumber
-			&& ColorsStore.update(v => ({...v, rgbBMax: value}))
+			&& ColorsStore.update(v => v.rgbBMax = value)
 			break
 		case "colors:hsl-h-min":
 			isNumber
-			&& ColorsStore.update(v => ({...v, hslHMin: value}))
+			&& ColorsStore.update(v => v.hslHMin = value)
 			break
 		case "colors:hsl-h-max":
 			isNumber
-			&& ColorsStore.update(v => ({...v, hslHMax: value}))
+			&& ColorsStore.update(v => v.hslHMax = value)
 			break
 		case "colors:hsl-s-min":
 			isNumber
-			&& ColorsStore.update(v => ({...v, hslSMin: value}))
+			&& ColorsStore.update(v => v.hslSMin = value)
 			break
 		case "colors:hsl-s-max":
 			isNumber
-			&& ColorsStore.update(v => ({...v, hslSMax: value}))
+			&& ColorsStore.update(v => v.hslSMax = value)
 			break
 		case "colors:hsl-l-min":
 			isNumber
-			&& ColorsStore.update(v => ({...v, hslLMin: value}))
+			&& ColorsStore.update(v => v.hslLMin = value)
 			break
 		case "colors:hsl-l-max":
 			isNumber
-			&& ColorsStore.update(v => ({...v, hslLMax: value}))
+			&& ColorsStore.update(v => v.hslLMax = value)
 			break
 		case "colors:output":
 			isArray
-			&& ColorsStore.update(v => ({...v, output: value.filter(v => isColorValid(v))}))
+			&& ColorsStore.update(v => v.output =  value.filter(v => isColorValid(v)))
 			break
 		case "numbers:min":
 			isNumber
-			&& NumbersStore.update(v => ({...v, min: value}))
+			&& NumbersStore.update(v => v.min = value)
 			break
 		case "numbers:max":
 			isNumber
-			&& NumbersStore.update(v => ({...v, max: value}))
+			&& NumbersStore.update(v => v.max = value)
 			break
 		case "numbers:count":
 			isNumber
-			&& NumbersStore.update(v => ({...v, count: value}))
+			&& NumbersStore.update(v => v.count = value)
 			break
 		case "numbers:sort":
-			isString
-			&& isValidEnumValue(value, NumbersRandomizerSort)
-			&& NumbersStore.update(v => ({...v, sort: value as NumbersRandomizerSort}))
+			isValidEnumValue(value, NumbersRandomizerSort)
+			&& NumbersStore.update(v => v.sort = value)
 			break
 		case "numbers:type":
-			isNumber
-			&& isValidEnumValue(value, NumbersRandomizerType)
-			&& NumbersStore.update(v => ({...v, type: value as NumbersRandomizerType}))
+			isValidEnumValue(value, NumbersRandomizerType)
+			&& NumbersStore.update(v => v.type = value)
 			break
 		case "numbers:min-digits":
 			isNumber
-			&& NumbersStore.update(v => ({...v, minDigits: value}))
+			&& NumbersStore.update(v => v.minDigits = value)
 			break
 		case "numbers:separator":
 			isString
-			&& NumbersStore.update(v => ({...v, separator: value}))
+			&& NumbersStore.update(v => v.separator = value)
 			break
 		case "numbers:prefix":
 			isString
-			&& NumbersStore.update(v => ({...v, prefix: value}))
+			&& NumbersStore.update(v => v.prefix = value)
 			break
 		case "numbers:suffix":
 			isString
-			&& NumbersStore.update(v => ({...v, suffix: value}))
+			&& NumbersStore.update(v => v.suffix = value)
 			break
 		case "numbers:repeat":
 			isBoolean
-			&& NumbersStore.update(v => ({...v, repeat: value}))
+			&& NumbersStore.update(v => v.repeat = value)
 			break
 		case "numbers:output":
 			isString
-			&& NumbersStore.update(v => ({...v, output: value}))
+			&& NumbersStore.update(v => v.output = value)
 			break
 		case "selection:count":
 			isNumber
-			&& SelectionStore.update(v => ({...v, count: value}))
+			&& SelectionStore.update(v => v.count = value)
 			break
 		case "selection:list-id":
 			isNumber
-			&& SelectionStore.update(v => ({...v, listId: value}))
+			&& SelectionStore.update(v => v.listId = value)
 			break
 		case "selection:list-items":
 			isArray
-			&& SelectionStore.update(v => ({...v, listItems: value.map(v => String(v))}))
+			&& SelectionStore.update(v => v.listItems = value.map(v => String(v)))
 			break
 		case "selection:output":
 			isArray
-			&& SelectionStore.update(v => ({...v, output: value.map(v => String(v))}))
+			&& SelectionStore.update(v => v.output = value.map(v => String(v)))
 			break
 		case "string:length":
 			isNumber
-			&& StringStore.update(v => ({...v, length: value}))
+			&& StringStore.update(v => v.length = value)
 			break
 		case "string:output":
 			isString
-			&& StringStore.update(v => ({...v, output: value}))
+			&& StringStore.update(v => v.output = value)
 			break
 		case "string:custom":
 			isString
-			&& StringStore.update(v => ({...v, custom: value}))
+			&& StringStore.update(v => v.custom = value)
 			break
 		case "string:uppercase":
 			isBoolean
-			&& StringStore.update(v => ({...v, uppercase: value}))
+			&& StringStore.update(v => v.uppercase = value)
 			break
 		case "string:lowercase":
 			isBoolean
-			&& StringStore.update(v => ({...v, lowercase: value}))
+			&& StringStore.update(v => v.lowercase = value)
 			break
 		case "string:numbers":
 			isBoolean
-			&& StringStore.update(v => ({...v, numbers: value}))
+			&& StringStore.update(v => v.numbers = value)
 			break
 		case "string:symbols":
 			isBoolean
-			&& StringStore.update(v => ({...v, symbols: value}))
+			&& StringStore.update(v => v.symbols = value)
 			break
 		case "teams:names-id":
 			isNumber
-			&& TeamsStore.update(v => ({...v, namesId: value}))
+			&& TeamsStore.update(v => v.namesId = value)
 			break
 		case "teams:members-id":
 			isNumber
-			&& TeamsStore.update(v => ({...v, membersId: value}))
+			&& TeamsStore.update(v => v.membersId = value)
 			break
 		case "teams:count":
 			isNumber
-			&& TeamsStore.update(v => ({...v, count: value}))
+			&& TeamsStore.update(v => v.count = value)
 			break
 		case "teams:output":
 			isArray
-			&& TeamsStore.update(v => ({...v,
-				output: value
-					.filter(v => Array.isArray(v))
-					.map(v => v.map(v => String(v)))
-			}))
+			&& TeamsStore.update(v => v.output = value
+				.filter(v => Array.isArray(v))
+				.map(v => v.map(v => String(v)))
+			)
 			break
 		case "words:count":
 			isNumber
-			&& WordsStore.update(v => ({...v, count: value}))
+			&& WordsStore.update(v => v.count = value)
 			break
 		case "words:list-id":
 			isNumber
-			&& WordsStore.update(v => ({...v, listId: value}))
+			&& WordsStore.update(v => v.listId = value)
 			break
 		case "words:prefix":
 			isString
-			&& WordsStore.update(v => ({...v, prefix: value}))
+			&& WordsStore.update(v => v.prefix = value)
 			break
 		case "words:suffix":
 			isString
-			&& WordsStore.update(v => ({...v, suffix: value}))
+			&& WordsStore.update(v => v.suffix = value)
 			break
 		case "words:separator":
 			isString
-			&& WordsStore.update(v => ({...v, separator: value}))
+			&& WordsStore.update(v => v.separator = value)
 			break
 		case "words:word-case":
-			isString
-			&& isValidEnumValue(value, WordsRandomizerCase)
-			&& WordsStore.update(v => ({...v, wordCase: value as WordsRandomizerCase}))
+			isValidEnumValue(value, WordsRandomizerCase)
+			&& WordsStore.update(v => v.wordCase = value)
 			break
 		case "words:repeat":
 			isBoolean
-			&& WordsStore.update(v => ({...v, repeat: value}))
+			&& WordsStore.update(v => v.repeat = value)
 			break
 		case "words:output":
 			isString
-			&& WordsStore.update(v => ({...v, output: value}))
+			&& WordsStore.update(v => v.output = value)
 			break
 		}
 
@@ -358,9 +352,9 @@ function _readLists(): void {
 		}
 
 		lists.sort((a, b) => a.name.localeCompare(b.name))
-		ListsStore.update(v => ({...v, list: lists
+		ListsStore.update(v => v.list = lists
 			.map(v => (v.items.sort((a, b) => a.localeCompare(b)), v))
-		}))
+		)
 		updateSelectedList()
 	})
 

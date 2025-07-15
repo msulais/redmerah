@@ -82,10 +82,7 @@ function _calculate(): void {
 		_timeCalculateId = null
 		const output = calculate(_inputToDecimal(ProgrammerStore.value.input))
 		const parsedOutput = Number.parseFloat(output)
-		ProgrammerStore.update(v => ({
-			...v,
-			output: isNumberDefined(parsedOutput)? parsedOutput : null
-		}))
+		ProgrammerStore.update(v => v.output = isNumberDefined(parsedOutput)? parsedOutput : null)
 	}, 50)
 }
 
@@ -96,7 +93,7 @@ function _subsNumberTypeChanges(v: ProgrammerStoreType, o: ProgrammerStoreType):
 	const output = v.output
 	saveStorageItem('calc:programmer/number-type', numberType)
 	if (output === null) {
-		return ProgrammerStore.update(v => ({...v, input: ''}))
+		return ProgrammerStore.update(v => v.input = '')
 	}
 
 	let text = formatOutput(output!)
@@ -114,7 +111,7 @@ function _subsNumberTypeChanges(v: ProgrammerStoreType, o: ProgrammerStoreType):
 		text = bin
 		break
 	}
-	ProgrammerStore.update(v => ({...v, input: text}))
+	ProgrammerStore.update(v => v.input = text)
 }
 
 function _subsInputChanges(v: ProgrammerStoreType, o: ProgrammerStoreType): void {
@@ -253,10 +250,7 @@ function _initEvents(): void {
 		case _binButtonRef: type = NumberType.binary; break
 		}
 
-		ProgrammerStore.update(v => ({
-			...v,
-			numberType: type
-		}))
+		ProgrammerStore.update(v => v.numberType = type)
 	})
 }
 

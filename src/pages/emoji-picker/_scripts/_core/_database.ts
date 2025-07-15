@@ -42,19 +42,16 @@ function _readStorageAll(store: IDBObjectStore): void {
 		const isString = typeof value === 'string'
 		switch (key as _StorageKeys) {
 		case 'selected-emoji':
-			if (isString) {
-				_bodyTextFieldRef.value = value
-			}
+			isString
+			&& (_bodyTextFieldRef.value = value)
 			break
 		case "page":
-			if (isString && isValidEnumValue(value, Pages)) {
-				NavigationStore.update(v => ({...v, page: value as Pages}))
-			}
+			isValidEnumValue(value, Pages)
+			&& NavigationStore.update(v => v.page = value)
 			break
 		case 'settings/skin-tone':
-			if (isString && isValidEnumValue(value, SkinToneEmoji)) {
-				SettingsStore.update(v => ({...v, skinTone: value as SkinToneEmoji}))
-			}
+			isValidEnumValue(value, SkinToneEmoji)
+			&& SettingsStore.update(v => v.skinTone = value)
 		}
 
 		return true

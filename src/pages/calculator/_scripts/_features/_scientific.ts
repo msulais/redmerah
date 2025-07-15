@@ -49,10 +49,7 @@ function _calculate(): void {
 		_timeCalculateId = null
 		const output = calculate(ScientificStore.value.input)
 		const parsedOutput = Number.parseFloat(output)
-		ScientificStore.update(v => ({
-			...v,
-			output: isNumberDefined(parsedOutput)? parsedOutput : null
-		}))
+		ScientificStore.update(v => v.output = isNumberDefined(parsedOutput)? parsedOutput : null)
 	}, 50)
 }
 
@@ -122,10 +119,7 @@ function _initEvents(): void {
 		const value = _angleRef.value as ScientificAngleType
 		if (!isValidEnumValue(value, ScientificAngleType)) return
 
-		ScientificStore.update(v => ({
-			...v,
-			angle: value
-		}))
+		ScientificStore.update(v => v.angle = value)
 	})
 
 	_fn_MenuRef.addEventListener('toggle', ev => {

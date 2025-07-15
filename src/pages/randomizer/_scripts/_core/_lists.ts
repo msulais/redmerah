@@ -68,9 +68,7 @@ export function updateSelectedList(): void {
 			listId = firstList.id
 		}
 
-		WordsStore.update(v => ({...v,
-			listId: listId ?? v.listId
-		}))
+		WordsStore.update(v => v.listId = listId ?? v.listId)
 
 		break words
 	}
@@ -95,11 +93,11 @@ export function updateSelectedList(): void {
 			members = [...items]
 		}
 
-		SelectionStore.update(v => ({...v,
-			listId: listId ?? v.listId,
-			count: count ?? v.count,
-			listItems: members ?? v.listItems
-		}))
+		SelectionStore.update(v => {
+			v.listId = listId ?? v.listId
+			v.count = count ?? v.count
+			v.listItems = members ?? v.listItems
+		})
 
 		break selection
 	}
@@ -122,11 +120,11 @@ export function updateSelectedList(): void {
 			count = members.length
 		}
 
-		TeamsStore.update(v => ({...v,
-			count: count ?? v.count,
-			membersId: memberListId ?? v.membersId,
-			namesId: nameListId ?? v.namesId,
-		}))
+		TeamsStore.update(v => {
+			v.count = count ?? v.count
+			v.membersId = memberListId ?? v.membersId
+			v.namesId = nameListId ?? v.namesId
+		})
 
 		break teams
 	}
@@ -144,10 +142,7 @@ function _newList(name: string, items: string[]): void {
 	const newList: ListItem = {id, name, items}
 	lists.push(newList)
 	saveListItem(newList)
-	ListsStore.update(v => ({
-		...v,
-		list: lists.sort((a, b) => a.name.localeCompare(b.name))
-	}))
+	ListsStore.update(v => v.list = lists.sort((a, b) => a.name.localeCompare(b.name)))
 }
 
 function _editList(listIndex: number, name: string, items: string[]): void {
@@ -161,7 +156,7 @@ function _editList(listIndex: number, name: string, items: string[]): void {
 	}
 
 	saveListItem(lists[_listIndexToEdit])
-	ListsStore.update(v => ({...v, list: lists}))
+	ListsStore.update(v => v.list = lists)
 }
 
 function _deleteList(index: number): void {
@@ -170,7 +165,7 @@ function _deleteList(index: number): void {
 
 	deleteListItem(list[index].id)
 	list.splice(index, 1)
-	ListsStore.update(v => ({...v, list}))
+	ListsStore.update(v => v.list = list)
 }
 
 function _subsListView(v: ListsStoreType, o: ListsStoreType): void {

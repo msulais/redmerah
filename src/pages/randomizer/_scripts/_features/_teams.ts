@@ -70,7 +70,7 @@ export function updateOutput(): void {
 		]
 	}
 
-	TeamsStore.update(v => ({...v, output: output}))
+	TeamsStore.update(v => v.output = output)
 }
 
 function _subsStorage(v: TeamsStoreType): void {
@@ -152,9 +152,7 @@ function _initEvents(): void {
 		const id = Number.parseInt(_namesRef.value)
 		if (!ListsStore.value.list.some(v => v.id === id)) {return}
 
-		TeamsStore.update(v => ({...v,
-			namesId: id
-		}))
+		TeamsStore.update(v => v.namesId = id)
 	})
 
 	_membersRef.addEventListener('change', () => {
@@ -163,10 +161,10 @@ function _initEvents(): void {
 		if (!list.some(v => v.id === id)) {return}
 
 		const items = list.find(v => v.id === id)!.items
-		TeamsStore.update(v => ({...v,
-			membersId: id,
-			count: Math_clamp(v.count, 1, items.length-1)
-		}))
+		TeamsStore.update(v => {
+			v.membersId = id
+			v.count = Math_clamp(v.count, 1, items.length-1)
+		})
 	})
 
 	_countRef.addEventListener('focus', () => {
@@ -178,7 +176,7 @@ function _initEvents(): void {
 
 	_countRef.addEventListener('input', () => {
 		const value = Math_clamp(safeNumber(_countRef.valueAsNumber), 1, Number.MAX_VALUE)
-		TeamsStore.update(v => ({...v, count: value}))
+		TeamsStore.update(v => v.count = value)
 	})
 
 	_countRef.addEventListener('blur', () => {

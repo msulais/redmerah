@@ -52,10 +52,14 @@ function _changeUnit(type: 'input' | 'output', unitId: string): void {
 	const unit = units.find(v => v.id === unitId)
 	if (!unit) return;
 
-	ConverterStore.update(v => type === 'input'
-		? ({ ...v, inputUnit: unit })
-		: ({ ...v, outputUnit: unit })
-	)
+	ConverterStore.update(v => {
+		if (type === 'input') {
+			v.inputUnit = unit
+		}
+		else {
+			v.outputUnit = unit
+		}
+	})
 }
 
 function _calculate(value: ConverterStoreType): void {
@@ -66,10 +70,7 @@ function _calculate(value: ConverterStoreType): void {
 	_timeCalculateId = setTimeout(() => {
 		const output = calculate(value.input)
 		const parsedOutput = convertUnit(Number.parseFloat(output), value.converter, value.inputUnit, value.outputUnit)
-		ConverterStore.update(v => ({
-			...v,
-			output: isNumberDefined(parsedOutput)? parsedOutput : null
-		}))
+		ConverterStore.update(v => v.output = isNumberDefined(parsedOutput)? parsedOutput : null)
 	}, 50)
 }
 
@@ -124,11 +125,10 @@ function _subsConverterChanges(value: ConverterStoreType, old: ConverterStoreTyp
 		ComboBoxChildren: outputOptionRefs
 	})
 
-	ConverterStore.update(v => ({
-		...v,
-		inputUnit: units[0],
-		outputUnit: units[1]
-	}))
+	ConverterStore.update(v => {
+		v.inputUnit = units[0]
+		v.outputUnit = units[1]
+	})
 }
 
 function _subsUnitChanges(value: ConverterStoreType, old: ConverterStoreType): void {
@@ -215,10 +215,7 @@ function _initEvents(): void {
 		const value = _converterRef.value
 		if (!isValidEnumValue(value, ConverterType)) return
 
-		ConverterStore.update(v => ({
-			...v,
-			converter: value as ConverterType
-		}))
+		ConverterStore.update(v => v.converter = value as ConverterType)
 	})
 
 	_inputUnitRef.addEventListener('change', () => {

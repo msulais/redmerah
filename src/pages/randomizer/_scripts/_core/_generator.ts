@@ -102,7 +102,7 @@ function _subsIsGeneratingChanges(v: GeneratorStoreType, o: GeneratorStoreType):
 	}
 	if (SettingsStore.value.instantResult) {
 		generate()
-		GeneratorStore.update(v => ({...v, isGenerating: false}))
+		GeneratorStore.update(v => v.isGenerating = true)
 		return
 	}
 
@@ -111,7 +111,7 @@ function _subsIsGeneratingChanges(v: GeneratorStoreType, o: GeneratorStoreType):
 	let i = 0
 	_intervalId = setInterval(() => {
 		if (i >= duration / step) {
-			GeneratorStore.update(v => ({...v, isGenerating: false}))
+			GeneratorStore.update(v => v.isGenerating = false)
 			return
 		}
 
@@ -127,7 +127,7 @@ function _initSubscriber(): void {
 
 function _initEvents(): void {
 	_generatorBtnRef.addEventListener('click', () => {
-		GeneratorStore.update(v => ({...v, isGenerating: !v.isGenerating}))
+		GeneratorStore.update(v => v.isGenerating = !v.isGenerating)
 	})
 
 	_copyBtnRef.addEventListener('click', () => {

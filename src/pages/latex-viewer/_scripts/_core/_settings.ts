@@ -150,7 +150,7 @@ function _initEvents(): void {
 		if (!value || !isValidEnumValue(value, PlatformThemeMode)) {return}
 
 		_settingsMenuRef.hidePopover()
-		SettingsStore.update(v => ({...v, theme: value as PlatformThemeMode}))
+		SettingsStore.update(v => v.theme = value)
 	})
 
 	_animationRef.addEventListener('change', ev => {
@@ -159,7 +159,7 @@ function _initEvents(): void {
 		if (!value || !isValidEnumValue(value, PlatformAnimationMode)) {return}
 
 		_settingsMenuRef.hidePopover()
-		SettingsStore.update(v => ({...v, animation: value}))
+		SettingsStore.update(v => v.animation = value)
 	})
 
 	_prefixSuffixRef.addEventListener('click', () => {
@@ -174,7 +174,7 @@ function _initEvents(): void {
 
 		_timePrefixId = setTimeout(() => {
 			_timePrefixId = null
-			SettingsStore.update(v => ({...v, prefix: _prefixRef.value}))
+			SettingsStore.update(v => v.prefix = _prefixRef.value)
 		}, 100)
 	})
 
@@ -185,13 +185,13 @@ function _initEvents(): void {
 
 		_timeSuffixId = setTimeout(() => {
 			_timeSuffixId = null
-			SettingsStore.update(v => ({...v, suffix: _suffixRef.value}))
+			SettingsStore.update(v => v.suffix = _suffixRef.value)
 		}, 100)
 	})
 
 	_textWrapRef.addEventListener('change', () => {
 		_settingsMenuRef.hidePopover()
-		SettingsStore.update(v => ({...v, textWrap: _textWrapRef.checked}))
+		SettingsStore.update(v => v.textWrap = _textWrapRef.checked)
 	})
 }
 
@@ -199,14 +199,14 @@ function _initTheme(): void {
 	const theme = localStorage.getItem(LocalStorageKeys.platformTheme) as PlatformThemeMode
 	if (!theme || !isValidEnumValue(theme, PlatformThemeMode) || theme === DEFAULT_THEME) return
 
-	SettingsStore.update(v => ({...v, theme}))
+	SettingsStore.update(v => v.theme = theme)
 }
 
 function _initAnimation(): void {
 	const animation = localStorage.getItem(LocalStorageKeys.platformAnimation) as PlatformAnimationMode
 	if (!animation || !isValidEnumValue(animation, PlatformAnimationMode)) return
 
-	SettingsStore.update(v => ({...v, animation}))
+	SettingsStore.update(v => v.animation = animation)
 }
 
 export default () => {

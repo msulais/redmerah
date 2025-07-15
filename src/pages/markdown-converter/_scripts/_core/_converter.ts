@@ -164,7 +164,7 @@ function _initEvents(): void {
 
 			timeMarkdownId = setTimeout(() => {
 				timeMarkdownId = null
-				ConverterStore.update(v => ({...v, markdown: _inp_markdownRef.value}))
+				ConverterStore.update(v => v.markdown = _inp_markdownRef.value)
 			}, 100)
 		})
 
@@ -175,7 +175,7 @@ function _initEvents(): void {
 
 			timeCSSId = setTimeout(() => {
 				timeCSSId = null
-				ConverterStore.update(v => ({...v, css: _inp_cssRef.value}))
+				ConverterStore.update(v => v.css = _inp_cssRef.value)
 			}, 100)
 		})
 	}
@@ -207,22 +207,18 @@ function _initEvents(): void {
 					return
 				}
 
-				ConverterStore.update(v => ({...v, markdown: text}))
+				ConverterStore.update(v => v.markdown = text)
 			})
 		})
 
 		_resetMarkdownRef.addEventListener('click', () => {
 			_moreMenuRef.hidePopover()
-			ConverterStore.update(v => ({...v,
-				markdown: DEFAULT_MARKDOWN_TEXT,
-			}))
+			ConverterStore.update(v => v.markdown = DEFAULT_MARKDOWN_TEXT)
 		})
 
 		_resetCSSRef.addEventListener('click', () => {
 			_moreMenuRef.hidePopover()
-			ConverterStore.update(v => ({...v,
-				css: DEFAULT_CSS_TEXT,
-			}))
+			ConverterStore.update(v => v.css = DEFAULT_CSS_TEXT)
 		})
 
 		_cp_menuRef.addEventListener('click', () => {

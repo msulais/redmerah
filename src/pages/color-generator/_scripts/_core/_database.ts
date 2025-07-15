@@ -38,14 +38,13 @@ function _readStorageAll(store: IDBObjectStore): void {
 		const isArray = Array.isArray(value)
 		switch (key as _StorageKeys) {
 		case "colors/seed":
-			if (isString && isColorValid(value)) {
-				ColorsStore.update(v => ({...v, seed: value as HEXColor}))
-			}
+			isString
+			&& isColorValid(value)
+			&& ColorsStore.update(v => v.seed = value as HEXColor)
 			break
 		case "colors/palette":
-			if (isArray) {
-				ColorsStore.update(v => ({...v, palette: value.filter(v => isColorValid(v))}))
-			}
+			isArray
+			&& ColorsStore.update(v => v.palette = value.filter(v => isColorValid(v)))
 			break
 		}
 

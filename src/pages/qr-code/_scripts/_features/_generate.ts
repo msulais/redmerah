@@ -87,7 +87,7 @@ function _initEvents(): void {
 
 		_timeInputId = setTimeout(() => {
 			_timeInputId = null
-			GenerateStore.update(v => ({...v, data: _inputRef.value}))
+			GenerateStore.update(v => v.data = _inputRef.value)
 		}, 100)
 	})
 

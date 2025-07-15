@@ -68,7 +68,7 @@ async function _subsImgUrlView(v: ScanStoreType, o: ScanStoreType): Promise<void
 		} catch {}
 	}
 
-	ScanStore.update(v => ({...v, outputText: outputText ?? ''}))
+	ScanStore.update(v => v.outputText = outputText ?? '')
 	if (outputText !== null) {return}
 
 	// TODO: add into the abyss
@@ -88,7 +88,7 @@ function _initEvents(): void {
 			for (const file of files) {
 				if (!file.type.startsWith('image')) {continue}
 
-				ScanStore.update(v => ({...v, imgUrl: URL.createObjectURL(file)}))
+				ScanStore.update(v => v.imgUrl = URL.createObjectURL(file))
 				break
 			}
 		})

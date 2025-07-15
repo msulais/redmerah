@@ -44,7 +44,7 @@ function _initEvents(): void {
 		const value = target?.value as GroupingNumberFormat
 		if (!isValidEnumValue(value, GroupingNumberFormat)) return
 
-		SettingsStore.update(v => ({...v, groupingFormat: value}))
+		SettingsStore.update(v => v.groupingFormat = value)
 		_settingsMenuRef.hidePopover()
 	})
 
@@ -53,7 +53,7 @@ function _initEvents(): void {
 		const value = target?.value as DecimalNumberFormat
 		if (!isValidEnumValue(value, DecimalNumberFormat)) return
 
-		SettingsStore.update(v => ({...v, decimalFormat: value}))
+		SettingsStore.update(v => v.decimalFormat = value)
 		_settingsMenuRef.hidePopover()
 	})
 
@@ -65,7 +65,7 @@ function _initEvents(): void {
 		_rootRef.setAttribute(RootAttributes.theme, value)
 		_settingsMenuRef.hidePopover()
 		localStorage.setItem(LocalStorageKeys.platformTheme, value)
-		SettingsStore.update(v => ({...v, theme: value}), null)
+		SettingsStore.update(v => v.theme = value, null)
 	})
 
 	_animationMenuRef.addEventListener('change', ev => {
@@ -76,7 +76,7 @@ function _initEvents(): void {
 		_rootRef.setAttribute(RootAttributes.animation, value)
 		_settingsMenuRef.hidePopover()
 		localStorage.setItem(LocalStorageKeys.platformAnimation, value)
-		SettingsStore.update(v => ({...v, animation: value}), null)
+		SettingsStore.update(v => v.animation = value, null)
 	})
 }
 
@@ -147,7 +147,7 @@ function _subsDecimalFormatChanges(v: SettingsStoreType, o: SettingsStoreType): 
 			break
 		}
 
-		SettingsStore.update(v => ({...v, groupingFormat: grouping}))
+		SettingsStore.update(v => v.groupingFormat = grouping)
 	}
 
 	const format = (input: string) => (input
@@ -158,11 +158,11 @@ function _subsDecimalFormatChanges(v: SettingsStoreType, o: SettingsStoreType): 
 		.replaceAll(_groupingToken, grouping)
 	)
 
-	BasicStore.update(v => ({...v, input: format(v.input)}))
-	ScientificStore.update(v => ({...v, input: format(v.input)}))
-	ConverterStore.update(v => ({...v, input: format(v.input)}))
+	BasicStore.update(v => v.input = format(v.input))
+	ScientificStore.update(v => v.input = format(v.input))
+	ConverterStore.update(v => v.input = format(v.input))
 	if (ProgrammerStore.value.numberType === NumberType.decimal) {
-		ProgrammerStore.update(v => ({...v, input: format(v.input)}))
+		ProgrammerStore.update(v => v.input = format(v.input))
 	}
 }
 
@@ -190,7 +190,7 @@ function _subsGroupingFormatChanges(v: SettingsStoreType, o: SettingsStoreType):
 			break
 		}
 
-		SettingsStore.update(v => ({...v, decimalFormat: decimal}))
+		SettingsStore.update(v => v.decimalFormat = decimal)
 	}
 
 	const format = (input: string) => (input
@@ -201,11 +201,11 @@ function _subsGroupingFormatChanges(v: SettingsStoreType, o: SettingsStoreType):
 		.replaceAll(_groupingToken, groupingFormat)
 	)
 
-	BasicStore.update(v => ({...v, input: format(v.input)}))
-	ScientificStore.update(v => ({...v, input: format(v.input)}))
-	ConverterStore.update(v => ({...v, input: format(v.input)}))
+	BasicStore.update(v => v.input = format(v.input))
+	ScientificStore.update(v => v.input = format(v.input))
+	ConverterStore.update(v => v.input = format(v.input))
 	if (ProgrammerStore.value.numberType === NumberType.decimal) {
-		ProgrammerStore.update(v => ({...v, input: format(v.input)}))
+		ProgrammerStore.update(v => v.input = format(v.input))
 	}
 }
 

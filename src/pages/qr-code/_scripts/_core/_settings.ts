@@ -222,7 +222,7 @@ function _initEvents(): void {
 		if (!value || !isValidEnumValue(value, PlatformThemeMode)) {return}
 
 		_settingsMenuRef.hidePopover()
-		SettingsStore.update(v => ({...v, theme: value as PlatformThemeMode}))
+		SettingsStore.update(v => v.theme = value)
 	})
 
 	_animationRef.addEventListener('change', ev => {
@@ -231,7 +231,7 @@ function _initEvents(): void {
 		if (!value || !isValidEnumValue(value, PlatformAnimationMode)) {return}
 
 		_settingsMenuRef.hidePopover()
-		SettingsStore.update(v => ({...v, animation: value}))
+		SettingsStore.update(v => v.animation = value)
 	})
 
 	_marginRef.addEventListener('click', () => {
@@ -242,7 +242,7 @@ function _initEvents(): void {
 
 	_marginSaveRef.addEventListener('click', () => {
 		const margin = Math_clamp(safeNumber(_marginInputRef.valueAsNumber), 0, Number.POSITIVE_INFINITY)
-		SettingsStore.update(v => ({...v, margin}))
+		SettingsStore.update(v => v.margin = margin)
 	})
 
 	_colorBtnRef.addEventListener('click', () => {
@@ -292,7 +292,10 @@ function _initEvents(): void {
 	_colorSaveRef.addEventListener('click', () => {
 		const backgroundColor = getColorPickerRefValue(_pickerBackRef)
 		const foregroundColor = getColorPickerRefValue(_pickerForeRef)
-		SettingsStore.update(v => ({...v, backgroundColor, color: foregroundColor}))
+		SettingsStore.update(v => {
+			v.backgroundColor = backgroundColor
+			v.color = foregroundColor
+		})
 	})
 
 	_versionMenuRef.addEventListener('change', (ev) => {
@@ -301,7 +304,7 @@ function _initEvents(): void {
 		const target = ev.target as HTMLInputElement
 		const value = target.value
 		if (value === QRVersion.auto) {
-			SettingsStore.update(v => ({...v, version: value}))
+			SettingsStore.update(v => v.version = value)
 			return
 		}
 
@@ -309,7 +312,7 @@ function _initEvents(): void {
 		if (parsed < 1 || parsed > 40) {return}
 
 		if (isValidEnumValue(String(parsed), QRVersion)) {
-			SettingsStore.update(v => ({...v, version: String(parsed) as QRVersion}))
+			SettingsStore.update(v => v.version = String(parsed) as QRVersion)
 		}
 	})
 
@@ -319,7 +322,7 @@ function _initEvents(): void {
 		const value = target.value as EncodingMode
 		if (!isValidEnumValue(value, EncodingMode)) {return}
 
-		SettingsStore.update(v => ({...v, encodingMode: value}))
+		SettingsStore.update(v => v.encodingMode = value)
 	})
 
 	_correctionMenuRef.addEventListener('change', (ev) => {
@@ -328,7 +331,7 @@ function _initEvents(): void {
 		const value = target.value as ErrorCorrectionLevel
 		if (!isValidEnumValue(value, ErrorCorrectionLevel)) {return}
 
-		SettingsStore.update(v => ({...v, errorCorrectionLevel: value}))
+		SettingsStore.update(v => v.errorCorrectionLevel = value)
 	})
 }
 
@@ -336,14 +339,14 @@ function _initTheme(): void {
 	const theme = localStorage.getItem(LocalStorageKeys.platformTheme) as PlatformThemeMode
 	if (!theme || !isValidEnumValue(theme, PlatformThemeMode) || theme === DEFAULT_THEME) return
 
-	SettingsStore.update(v => ({...v, theme}))
+	SettingsStore.update(v => v.theme = theme)
 }
 
 function _initAnimation(): void {
 	const animation = localStorage.getItem(LocalStorageKeys.platformAnimation) as PlatformAnimationMode
 	if (!animation || !isValidEnumValue(animation, PlatformAnimationMode)) return
 
-	SettingsStore.update(v => ({...v, animation}))
+	SettingsStore.update(v => v.animation = animation)
 }
 
 export default () => {

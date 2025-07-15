@@ -42,39 +42,32 @@ function _readStorageAll(store: IDBObjectStore): void {
 		const isString = typeof value === 'string'
 		switch (key as _StorageKeys) {
 		case "input":
-			if (isString) {
-				MinifyStore.update(v => ({...v, input: value}))
-			}
+			isString
+			&& MinifyStore.update(v => v.input = value)
 			break
 		case "settings:beautify":
-			if (isBoolean) {
-				SettingsStore.update(v => ({...v, beautify: value}))
-			}
+			isBoolean
+			&& SettingsStore.update(v => v.beautify = value)
 			break
 		case "settings:keep-class-names":
-			if (isBoolean) {
-				SettingsStore.update(v => ({...v, keepClassNames: value}))
-			}
+			isBoolean
+			&& SettingsStore.update(v => v.keepClassNames = value)
 			break
 		case "settings:keep-function-names":
-			if (isBoolean) {
-				SettingsStore.update(v => ({...v, keepFunctionNames: value}))
-			}
+			isBoolean
+			&& SettingsStore.update(v => v.keepFunctionNames = value)
 			break
 		case "settings:module":
-			if (isBoolean) {
-				SettingsStore.update(v => ({...v, module: value}))
-			}
+			isBoolean
+			&& SettingsStore.update(v => v.module = value)
 			break
 		case "settings:text-wrap":
-			if (isBoolean) {
-				SettingsStore.update(v => ({...v, textWrap: value}))
-			}
+			isBoolean
+			&& SettingsStore.update(v => v.textWrap = value)
 			break
 		case "settings:top-level":
-			if (isBoolean) {
-				SettingsStore.update(v => ({...v, topLevel: value}))
-			}
+			isBoolean
+			&& SettingsStore.update(v => v.topLevel = value)
 			break
 		}
 

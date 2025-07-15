@@ -130,7 +130,7 @@ function _initEvents(): void {
 
 			_timeUpdateOutputId = setTimeout(() => {
 				_timeUpdateOutputId = null
-				MinifyStore.update(v => ({...v, input: _inputRef.value}))
+				MinifyStore.update(v => v.input = _inputRef.value)
 			}, 100)
 		})
 
@@ -160,12 +160,12 @@ function _initEvents(): void {
 						return
 					}
 
-					MinifyStore.update(v => ({...v, input: text}))
+					MinifyStore.update(v => v.input = text)
 				})
 				close()
 				break
 			case _resetInputRef:
-				MinifyStore.update(v => ({...v, input: DEFAULT_JAVASCRIPT_INPUT_TEXT}))
+				MinifyStore.update(v => v.input = DEFAULT_JAVASCRIPT_INPUT_TEXT)
 				close()
 				break
 			case _downloadOutputRef:

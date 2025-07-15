@@ -167,7 +167,7 @@ function _initEvents(): void {
 			arr.push(newGradient)
 		}
 
-		GradientStore.update(v => ({...v, gradients: arr}))
+		GradientStore.update(v => v.gradients = arr)
 	})
 
 	_actionCopyRef.addEventListener('click', () => {
@@ -193,7 +193,7 @@ function _initEvents(): void {
 		removeGradientDB(gradientId)
 		const gradients = [...SavedGradients.value.gradients]
 		gradients.splice(_selectedGradientIndex, 1)
-		SavedGradients.update(v => ({...v, gradients: gradients}))
+		SavedGradients.update(v => v.gradients = gradients)
 	})
 }
 

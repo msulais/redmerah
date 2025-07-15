@@ -46,39 +46,34 @@ function _readStorageAll(store: IDBObjectStore): void {
 		const isString = typeof value === 'string'
 		switch (key as _StorageKeys) {
 		case "page":
-			if (isString && isValidEnumValue(value, Pages)) {
-				NavigationStore.update(v => ({...v, page: value as Pages}))
-			}
+			isValidEnumValue(value, Pages)
+			&& NavigationStore.update(v => v.page = value)
 			break
 		case "settings:ecl":
-			if (isString && isValidEnumValue(value, ErrorCorrectionLevel)) {
-				SettingsStore.update(v => ({...v, errorCorrectionLevel: value as ErrorCorrectionLevel}))
-			}
+			isValidEnumValue(value, ErrorCorrectionLevel)
+			&& SettingsStore.update(v => v.errorCorrectionLevel = value)
 			break
 		case "settings:encoding-mode":
-			if (isString && isValidEnumValue(value, EncodingMode)) {
-				SettingsStore.update(v => ({...v, encodingMode: value as EncodingMode}))
-			}
+			isValidEnumValue(value, EncodingMode)
+			&& SettingsStore.update(v => v.encodingMode = value)
 			break
 		case "settings:version":
-			if (isString && isValidEnumValue(value, QRVersion)) {
-				SettingsStore.update(v => ({...v, version: value as QRVersion}))
-			}
+			isValidEnumValue(value, QRVersion)
+			&& SettingsStore.update(v => v.version = value)
 			break
 		case "settings:background-color":
-			if (isString && isColorValidWithAlpha(value)) {
-				SettingsStore.update(v => ({...v, backgroundColor: value as HEXColor}))
-			}
+			isString
+			&& isColorValidWithAlpha(value)
+			&& SettingsStore.update(v => v.backgroundColor = value as HEXColor)
 			break
 		case "settings:color":
-			if (isString && isColorValidWithAlpha(value)) {
-				SettingsStore.update(v => ({...v, color: value as HEXColor}))
-			}
+			isString
+			&& isColorValidWithAlpha(value)
+			&& SettingsStore.update(v => v.color = value as HEXColor)
 			break
 		case "settings:margin":
-			if (isNumber) {
-				SettingsStore.update(v => ({...v, margin: Math.max(value, 0)}))
-			}
+			isNumber
+			&& SettingsStore.update(v => v.margin = Math.max(value, 0))
 			break
 		}
 

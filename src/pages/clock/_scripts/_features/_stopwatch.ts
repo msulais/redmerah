@@ -84,7 +84,7 @@ function _subscribeRunningChanges(v: _StopwatchStoreType, o: _StopwatchStoreType
 	if (!running) {return}
 
 	_intervalId = setInterval(() => {
-		StopwatchStore.update(v => ({...v, ms: v.ms + 10}))
+		StopwatchStore.update(v => v.ms += 10)
 	}, 10)
 }
 
@@ -308,18 +308,17 @@ function _initEvents(): void {
 		const value = StopwatchStore.value
 		switch (buttonRef) {
 		case _playOrPauseButtonRef:
-			StopwatchStore.update(v => ({...v, running: !v.running}))
+			StopwatchStore.update(v => v.running = !v.running)
 			break
 		case _resetOrLapButtonRef:
 			if (value.running) {
-				StopwatchStore.update(v => ({...v, laps: [v.ms, ...v.laps]}))
+				StopwatchStore.update(v => v.laps = [v.ms, ...v.laps])
 			}
 			else {
-				StopwatchStore.update(v => ({
-					...v,
-					ms: 0,
-					laps: []
-				}))
+				StopwatchStore.update(v => {
+					v.ms = 0
+					v.laps = []
+				})
 			}
 		}
 	})

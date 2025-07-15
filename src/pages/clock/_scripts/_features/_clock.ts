@@ -18,7 +18,7 @@ function _initDateTime(): void {
 	setInterval(() => {
 		if (NavigationStore.value.page !== Pages.clock) return
 
-		ClockStore.update(v => ({...v, datetime: new Date()}))
+		ClockStore.update(v => v.datetime = new Date())
 	}, 250)
 }
 

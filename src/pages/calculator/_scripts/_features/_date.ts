@@ -75,7 +75,7 @@ function _calculate(): void {
 				month: 'long',
 				day: 'numeric'
 			})
-			DateStore.update(v => ({...v, output}))
+			DateStore.update(v => v.output = output)
 			break
 		case DateOperation.difference: {
 			let days = Math.abs(dateDiffInDays(store.inputFrom, store.inputTo))
@@ -104,7 +104,7 @@ function _calculate(): void {
 				if (diffInDays == 0) output = "Same date"
 				else if (diffInDays >= 7) output += ` (${diffInDays} day${diffInDays > 1? "s" : ""})`
 
-				DateStore.update(v => ({...v, output}))
+				DateStore.update(v => v.output = output)
 			} break
 		}
 	}, 50)
@@ -260,11 +260,10 @@ function _subsOutputView(v: DateStoreType): void {
 }
 
 function _initDates(): void {
-	DateStore.update(v => ({
-		...v,
-		inputFrom: new Date(),
-		inputTo: new Date()
-	}))
+	DateStore.update(v => {
+		v.inputFrom = new Date()
+		v.inputTo = new Date()
+	})
 }
 
 function _initSubscriber(): void {
@@ -284,10 +283,9 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_datePickerFromRef.addEventListener(DatePickerEvents.change, () => DateStore.update(v => ({
-		...v,
-		inputFrom: getDatePickerRefValue(_datePickerFromRef)!
-	})))
+	_datePickerFromRef.addEventListener(DatePickerEvents.change, () => DateStore.update(v =>
+		v.inputFrom = getDatePickerRefValue(_datePickerFromRef)!
+	))
 
 	_datePickerFromRef.addEventListener('beforetoggle', ev => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
@@ -296,10 +294,9 @@ function _initEvents(): void {
 		})
 	})
 
-	_datePickerToRef.addEventListener(DatePickerEvents.change, () => DateStore.update(v => ({
-		...v,
-		inputTo: getDatePickerRefValue(_datePickerToRef)!
-	})))
+	_datePickerToRef.addEventListener(DatePickerEvents.change, () => DateStore.update(v =>
+		v.inputTo = getDatePickerRefValue(_datePickerToRef)!
+	))
 
 	_datePickerToRef.addEventListener('beforetoggle', ev => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
@@ -312,25 +309,25 @@ function _initEvents(): void {
 		const value = _operationRef.value as DateOperation
 		if (!isValidEnumValue(value, DateOperation)) return
 
-		DateStore.update(v => ({...v, operation: value}))
+		DateStore.update(v => v.operation = value)
 	})
 
 	_inputYearsRef.addEventListener('input', () => {
 		const value = Math.floor(safeNumber(_inputYearsRef.valueAsNumber, DateStore.value.inputYears))
 
-		DateStore.update(v => ({...v, inputYears: value}))
+		DateStore.update(v => v.inputYears = value)
 	})
 
 	_inputMonthsRef.addEventListener('input', () => {
 		const value = Math.floor(safeNumber(_inputMonthsRef.valueAsNumber, DateStore.value.inputMonths))
 
-		DateStore.update(v => ({...v, inputMonths: value}))
+		DateStore.update(v => v.inputMonths = value)
 	})
 
 	_inputDaysRef.addEventListener('input', () => {
 		const value = Math.floor(safeNumber(_inputDaysRef.valueAsNumber, DateStore.value.inputDays))
 
-		DateStore.update(v => ({...v, inputDays: value}))
+		DateStore.update(v => v.inputDays = value)
 	})
 
 	_operationAddSubRef.addEventListener('focusout', ev => {

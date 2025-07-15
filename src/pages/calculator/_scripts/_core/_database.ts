@@ -10,7 +10,7 @@ import { ScientificStore, type ScientificStoreType } from "../_features/_scienti
 import { ConverterStore, type ConverterStoreType } from "../_features/_converter"
 import { ProgrammerStore, type ProgrammerStoreType } from "../_features/_programmer"
 import { DateStore, type DateStoreType } from "../_features/_date"
-import { isNumberNotDefined } from "@/utils/number"
+import { isNumberDefined } from "@/utils/number"
 import { AllUnits } from "../_shared/_units"
 
 type _IDBStoreStorage<T = unknown> = {
@@ -70,80 +70,62 @@ function _readStorageAll(store: IDBObjectStore): void {
 		case "calc:programmer/number-type":
 			break
 		case "page":
-			if  (isValidEnumValue(value, Pages)) {
-				NavigationStore.update(v => ({...v, page: value as Pages}))
-			}
+			isValidEnumValue(value, Pages)
+			&& NavigationStore.update(v => v.page = value)
 			break
 		case "sett:decimal":
-			if (isValidEnumValue(value, DecimalNumberFormat)) {
-				SettingsStore.update(v => ({...v, decimalFormat: value as DecimalNumberFormat}))
-			}
+			isValidEnumValue(value, DecimalNumberFormat)
+			&& SettingsStore.update(v => v.decimalFormat = value)
 			break
 		case "sett:grouping":
-			if (isValidEnumValue(value, GroupingNumberFormat)) {
-				SettingsStore.update(v => ({...v, groupingFormat: value as GroupingNumberFormat}))
-			}
+			isValidEnumValue(value, GroupingNumberFormat)
+			&& SettingsStore.update(v => v.groupingFormat = value)
 			break
 		case "memory-value":
-			if (isNumber) {
-				MemoryStore.update(v => ({...v, value}))
-			}
+			isNumber
+			&& MemoryStore.update(v => v.value = value)
 			break
 		case "calc:basic/input":
-			if (isString) {
-				BasicStore.update(v => ({...v, input: value}))
-			}
+			isString
+			&& BasicStore.update(v => v.input = value)
 			break
 		case "calc:scientific/input":
-			if (isString) {
-				ScientificStore.update(v => ({...v, input: value}))
-			}
+			isString
+			&& ScientificStore.update(v => v.input = value)
 			break
 		case "calc:scientific/angle":
-			if (isValidEnumValue(value, ScientificAngleType)) {
-				ScientificStore.update(v => ({...v, angle: value as ScientificAngleType}))
-			}
+			isValidEnumValue(value, ScientificAngleType)
+			&& ScientificStore.update(v => v.angle = value)
 			break
 		case "calc:converter/input":
-			if (isString) {
-				ConverterStore.update(v => ({...v, input: value}))
-			}
+			isString
+			&& ConverterStore.update(v => v.input = value)
 			break
 		case "calc:date/operation":
-			if (isValidEnumValue(value, DateOperation)) {
-				DateStore.update(v => ({...v, operation: value as DateOperation}))
-			}
+			isValidEnumValue(value, DateOperation)
+			&& DateStore.update(v => v.operation = value)
 			break
 		case "calc:date/input-from":
-			if (isString) {
-				const date = new Date(value)
-				if (isNumberNotDefined(date.valueOf())) break
-
-				DateStore.update(v => ({...v, inputFrom: date}))
-			}
+			isString
+			&& isNumberDefined(new Date(value).valueOf())
+			&& DateStore.update(v => v.inputFrom = new Date(value))
 			break
 		case "calc:date/input-to":
-			if (isString) {
-				const date = new Date(value)
-				if (isNumberNotDefined(date.valueOf())) break
-
-				DateStore.update(v => ({...v, inputTo: date}))
-			}
+			isString
+			&& isNumberDefined(new Date(value).valueOf())
+			&& DateStore.update(v => v.inputTo = new Date(value))
 			break
 		case "calc:date/input-years":
-			if (isNumber) {
-				DateStore.update(v => ({...v, inputYears: value}))
-			}
+			isNumber
+			&& DateStore.update(v => v.inputYears = value)
 			break
 		case "calc:date/input-months":
-			if (isNumber) {
-				DateStore.update(v => ({...v, inputMonths: value}))
-			}
+			isNumber
+			&& DateStore.update(v => v.inputMonths = value)
 			break
 		case "calc:date/input-days":
-			if (isNumber) {
-				DateStore.update(v => ({...v, inputDays: value}))
-			}
+			isNumber
+			&& DateStore.update(v => v.inputDays = value)
 			break
 		}
 
@@ -158,7 +140,7 @@ function _readStorageConverter(store: IDBObjectStore): void {
 		const value = v?.value
 		if (!value || !isValidEnumValue(value, ConverterType)) return
 
-		ConverterStore.update(v => ({...v, converter: value as ConverterType}))
+		ConverterStore.update(v => v.converter = value as ConverterType)
 		_db.get<_IDBStoreStorage<_StorageItems['calc:converter/input-unit']>>(store,
 			'calc:converter/input-unit' satisfies _StorageKeys
 		).then(v => {
@@ -168,7 +150,7 @@ function _readStorageConverter(store: IDBObjectStore): void {
 			const unit = AllUnits.find(v => v.id === value)
 			if (!unit) return
 
-			ConverterStore.update(v => ({...v, inputUnit: unit}))
+			ConverterStore.update(v => v.inputUnit = unit)
 		})
 
 		_db.get<_IDBStoreStorage<_StorageItems['calc:converter/output-unit']>>(store,
@@ -180,7 +162,7 @@ function _readStorageConverter(store: IDBObjectStore): void {
 			const unit = AllUnits.find(v => v.id === value)
 			if (!unit) return
 
-			ConverterStore.update(v => ({...v, outputUnit: unit}))
+			ConverterStore.update(v => v.outputUnit = unit)
 		})
 	})
 }
@@ -192,7 +174,7 @@ function _readStorageProgrammer(store: IDBObjectStore): void {
 		const value = v?.value
 		if (!value || !isValidEnumValue(value, NumberType)) return
 
-		ProgrammerStore.update(v => ({...v, numberType: value}))
+		ProgrammerStore.update(v => v.numberType = value)
 
 		_db.get<_IDBStoreStorage<_StorageItems['calc:programmer/input']>>(store,
 			'calc:programmer/input' satisfies _StorageKeys
@@ -200,7 +182,7 @@ function _readStorageProgrammer(store: IDBObjectStore): void {
 			const value = v?.value
 			if (!value) return
 
-			ProgrammerStore.update(v => ({...v, input: value}))
+			ProgrammerStore.update(v => v.input = value)
 		})
 	})
 }

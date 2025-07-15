@@ -40,9 +40,7 @@ let _selectedLatexIndex = 0
 
 function _addLatex(index: number): void {
 	LatexStore.update(v => {
-		const latex = [...v.latex]
-		latex.splice(index, 0, '')
-		return {...v, latex}
+		v.latex.splice(index, 0, '')
 	})
 }
 
@@ -123,13 +121,10 @@ function _updateLatexList(index: number): void {
 			timeId = setTimeout(() => {
 				timeId = null
 				LatexStore.update(v => {
-					const latex = [...v.latex]
 					const index = [..._latexListRef.children].findIndex(v => v === liRef)
 					if (index >= 0) {
-						latex[index] = textareaRef!.value
+						v.latex[index] = textareaRef!.value
 					}
-
-					return ({...v, latex})
 				})
 			}, 100)
 		}
@@ -214,11 +209,7 @@ function _initEvents(): void {
 			break
 		case Commands.eq_delete:
 			_selectedLatexIndex = getLatexIndex()
-			LatexStore.update(v => {
-				const latex = [...v.latex]
-				latex.splice(_selectedLatexIndex, 1)
-				return ({...v, latex})
-			})
+			LatexStore.update(v => v.latex.splice(_selectedLatexIndex, 1))
 			break
 		}
 	})
@@ -242,7 +233,7 @@ function _initEvents(): void {
 
 	_resetRef.addEventListener('click', () => {
 		_moreMenuRef.hidePopover()
-		LatexStore.update(v => ({...v, latex: [DEFAULT_LATEX_TEXT]}))
+		LatexStore.update(v => v.latex = [DEFAULT_LATEX_TEXT])
 	})
 }
 

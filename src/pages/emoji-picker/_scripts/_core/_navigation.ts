@@ -29,7 +29,7 @@ function _initEvents(): void {
 		if (!isValidEnumValue(page, Pages)) return
 
 		_drawerRef.hidePopover()
-		NavigationStore.update(v => ({...v, page: page as Pages}))
+		NavigationStore.update(v => v.page = page as Pages)
 	})
 
 	_sideBarRef?.addEventListener('click', (ev) => {
@@ -39,7 +39,7 @@ function _initEvents(): void {
 		const page = targetRef.dataset.page
 		if (!isValidEnumValue(page, Pages)) return
 
-		NavigationStore.update(v => ({...v, page: page as Pages}))
+		NavigationStore.update(v => v.page = page as Pages)
 	})
 }
 

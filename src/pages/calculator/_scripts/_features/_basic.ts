@@ -30,10 +30,7 @@ function _calculate(): void {
 		_timeCalculateId = null
 		const output = calculate(BasicStore.value.input)
 		const parsedOutput = Number.parseFloat(output)
-		BasicStore.update(v => ({
-			...v,
-			output: isNumberDefined(parsedOutput)? parsedOutput : null
-		}))
+		BasicStore.update(v => v.output = isNumberDefined(parsedOutput)? parsedOutput : null)
 	}, 50)
 }
 
