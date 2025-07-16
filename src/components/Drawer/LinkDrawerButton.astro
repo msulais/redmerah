@@ -1,0 +1,25 @@
+---
+import { joinClassList } from '@/utils/attributes'
+
+import {
+	type LinkDrawerButtonProps,
+	DrawerClasses
+} from '.'
+import LinkButton from '@/components/Button/LinkButton.astro'
+import './index.scss'
+
+type Props = LinkDrawerButtonProps
+
+const {
+	'class': className,
+	LinkDrawerButtonSelected,
+	...other
+} = Astro.props
+---
+
+<LinkButton
+	class={joinClassList(DrawerClasses.button, className)}
+	data-c-drawer-button-selected={LinkDrawerButtonSelected? '' : undefined}
+	{...other}>
+	<slot/>
+</LinkButton>

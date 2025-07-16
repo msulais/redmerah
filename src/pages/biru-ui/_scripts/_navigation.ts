@@ -1,10 +1,10 @@
-import { SideBarClasses, updateSideBarButtonRef } from "@/native-components/SideBar"
+import { SideBarClasses, updateSideBarButtonRef } from "@/components/SideBar"
 import { ElementIds } from "./_enums"
-import { ButtonVariant } from "@/native-components/Button"
+import { ButtonVariant } from "@/components/Button"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { isTargetValidElement } from "@/utils/element"
-import { closeDrawerRef, DrawerClasses, updateDrawerButtonRef } from "@/native-components/Drawer"
+import { closeDrawerRef, DrawerClasses, updateDrawerButtonRef } from "@/components/Drawer"
 import CSS from '../_index.module.scss'
 
 const $ = (id: string) => document.getElementById(id)

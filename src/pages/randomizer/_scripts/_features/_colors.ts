@@ -6,7 +6,7 @@ import { DEFAULT_COLORS_COUNT, DEFAULT_COLORS_HEX_MAX, DEFAULT_COLORS_HEX_MIN, D
 import type { HEXColor } from "@/types/color"
 import { Math_clamp } from "@/utils/math"
 import { safeNumber } from "@/utils/number"
-import type { ComboBoxElement } from "@/native-components/ComboBox"
+import type { ComboBoxElement } from "@/components/ComboBox"
 import { isValidEnumValue } from "@/utils/object"
 import { colorContrastRatio, hexToRgb, hslToHex, rgbToHex, rgbToHsl } from "@/utils/color"
 import { saveStorageItem } from "../_core/_database"

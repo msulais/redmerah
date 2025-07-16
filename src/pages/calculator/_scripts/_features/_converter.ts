@@ -10,7 +10,7 @@ import { ElementIds } from "../_shared/_ids"
 import { isValidEnumValue } from "@/utils/object"
 import { AppCSSColors } from "@/enums/app-data"
 import { saveStorageItem } from "../_core/_database"
-import { createComboBoxOptionRef, updateComboBoxRef, type ComboBoxElement, type ComboBoxOptionElement } from "@/native-components/ComboBox"
+import { createComboBoxOptionRef, updateComboBoxRef, type ComboBoxElement, type ComboBoxOptionElement } from "@/components/ComboBox"
 
 export type ConverterStoreType = Readonly<{
 	input: string

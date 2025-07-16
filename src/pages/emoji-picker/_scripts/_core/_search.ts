@@ -2,7 +2,7 @@ import { ObservableStore } from "@/utils/store"
 import { updateEmojiList } from "./_body"
 import { $ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
-import type { PopoverElement } from "@/native-components/Popover"
+import type { PopoverElement } from "@/components/Popover"
 
 export type SearchStoreType = Readonly<{
 	isSearching: boolean

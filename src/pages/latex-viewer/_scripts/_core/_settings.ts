@@ -7,8 +7,8 @@ import { RootAttributes } from "@/enums/attributes"
 import { RadioNames } from "../_shared/_input-names"
 import { DEFAULT_ANIMATION, DEFAULT_PREFIX, DEFAULT_SUFFIX, DEFAULT_TEXT_WRAP, DEFAULT_THEME } from "../_shared/_constant"
 import { $, $$ } from "./_dom-utils"
-import type { DialogElement } from "@/native-components/Dialog"
-import type { MenuItemElement } from "@/native-components/Menu"
+import type { DialogElement } from "@/components/Dialog"
+import type { MenuItemElement } from "@/components/Menu"
 import { saveStorageItem } from "./_database"
 
 export type SettingsStoreType = Readonly<{

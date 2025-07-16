@@ -1,12 +1,12 @@
 import { ElementIds, ID, RadioGroupNames } from "./_enums"
-import { updateIconButtonRef } from "@/native-components/Button"
+import { updateIconButtonRef } from "@/components/Button"
 import { isValidEnumValue } from "@/utils/object"
 import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
 import { LocalStorageKeys } from "@/enums/storage"
 import { RootAttributes } from "@/enums/attributes"
 import { generateColorPalette, hexToRgb, isColorValid } from "@/utils/color"
 import { GlobalElementIds } from "@/enums/ids"
-import { ColorPickerAttributes, ColorPickerEvents, updateColorPickerRef } from "@/native-components/ColorPicker"
+import { ColorPickerAttributes, ColorPickerEvents, updateColorPickerRef } from "@/components/ColorPicker"
 import type { RGBColor, HEXColor } from "@/types/color"
 
 const $ = (id: string) => document.getElementById(id)

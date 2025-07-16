@@ -1,10 +1,10 @@
-import { ButtonVariant, updateIconButtonRef, type IconButtonElement } from "@/native-components/Button"
+import { ButtonVariant, updateIconButtonRef, type IconButtonElement } from "@/components/Button"
 import { APP_CLOCK as app } from "@/constants/apps"
 import { ElementIds } from "../_shared/_ids"
 import { $ } from "./_dom-utils"
-import { SideBarAttributes, updateSideBarRef } from "@/native-components/SideBar"
+import { SideBarAttributes, updateSideBarRef } from "@/components/SideBar"
 import { SCREEN_WIDTH_SMALL } from "../_shared/_constant"
-import type { PopoverElement } from "@/native-components/Popover"
+import type { PopoverElement } from "@/components/Popover"
 
 const _infoMenuRef = $(ElementIds.apInf_menu) as HTMLDivElement
 const _infoButtonRef = $(ElementIds.apInf_btn) as HTMLButtonElement

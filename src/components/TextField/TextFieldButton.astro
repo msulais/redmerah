@@ -1,0 +1,22 @@
+---
+import { joinClassList } from '@/utils/attributes'
+
+import {
+	type TextFieldButtonProps,
+	TextFieldClasses
+} from '.'
+import Button from '@/components/Button/index.astro'
+import './index.scss'
+
+type Props = TextFieldButtonProps
+const {
+	'class': className,
+	...other
+} = Astro.props
+---
+
+<Button
+	class={joinClassList(TextFieldClasses.button, className)}
+	{...other}>
+	<slot/>
+</Button>

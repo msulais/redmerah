@@ -1,0 +1,76 @@
+---
+import { joinClassList } from '@/utils/attributes'
+import { IconCodes } from '@/enums/icons'
+
+import {
+	type RadioMenuItemProps,
+	MenuClasses
+} from '.'
+import { ButtonClasses } from '@/components/Button'
+import Icon from '@/components/Icon/index.astro'
+import './index.scss'
+
+type Props = RadioMenuItemProps
+const {
+	'class': className,
+	RadioMenuItemChecked,
+	RadioMenuItemDisabled,
+	RadioMenuItemName,
+	RadioMenuItemValue,
+	RadioMenuItemLeadingAttr = {},
+	RadioMenuItemInputAttr = {},
+	RadioMenuItemIconAttr,
+	RadioMenuItemContentAttr = {},
+	...other
+} = Astro.props
+const {'class': leadingClassName, ...leadingOther} = RadioMenuItemLeadingAttr
+const {'class': contentClassName, ...contentOther} = RadioMenuItemContentAttr
+const {
+	'class': iconClassName,
+	IconCode: iconIcon = IconCodes.circleSmall,
+	IconFilled: iconFilled = true,
+	...iconOther
+} = RadioMenuItemIconAttr ?? {}
+const {
+	'class': inputClassName,
+	name: inputName = RadioMenuItemName,
+	checked: inputChecked = RadioMenuItemChecked,
+	disabled: inputDisabled = RadioMenuItemDisabled,
+	type: inputType = "radio",
+	role: inputRole = "menuitemradio",
+	value: inputValue = RadioMenuItemValue,
+	autocomplete: inputAutocomplete = 'off',
+	...inputOther
+} = RadioMenuItemInputAttr
+---
+<label
+	class={joinClassList(ButtonClasses.button, MenuClasses.item, MenuClasses.radioItem, className)}
+	{...other}>
+	<div
+		class={joinClassList(MenuClasses.radioItemLeading, leadingClassName)}
+		{...leadingOther}>
+		<slot name="leading"/>
+	</div>
+	<input
+		name={inputName}
+		checked={inputChecked}
+		disabled={inputDisabled}
+		type={inputType}
+		role={inputRole}
+		value={inputValue}
+		autocomplete={inputAutocomplete}
+		class={joinClassList(MenuClasses.radioItemInput, inputClassName)}
+		{...inputOther}
+	/>
+	<Icon
+		class={joinClassList(MenuClasses.radioItemIcon, iconClassName)}
+		IconCode={iconIcon}
+		IconFilled={iconFilled}
+		{...iconOther}
+	/>
+	<div
+		class={joinClassList(MenuClasses.radioItemContent, contentClassName)}
+		{...contentOther}>
+		<slot />
+	</div>
+</label>

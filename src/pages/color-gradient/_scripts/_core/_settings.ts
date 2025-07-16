@@ -7,7 +7,7 @@ import { RootAttributes } from "@/enums/attributes"
 import { RadioNames } from "../_shared/_input-names"
 import { DEFAULT_ANIMATION, DEFAULT_COLOR_SPACE, DEFAULT_THEME } from "../_shared/_constant"
 import { $, $$ } from "./_dom-utils"
-import type { SubMenuElement } from "@/native-components/Menu"
+import type { SubMenuElement } from "@/components/Menu"
 import { ColorSpace } from "../_shared/_enums"
 import { saveStorageItem } from "./_database"
 

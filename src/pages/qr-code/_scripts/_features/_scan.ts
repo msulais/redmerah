@@ -1,4 +1,4 @@
-import type { ButtonElement } from "@/native-components/Button"
+import type { ButtonElement } from "@/components/Button"
 import { $ } from "../_core/_dom-utils"
 import { ElementIds } from "../_shared/_ids"
 import { BrowserQRCodeReader } from '@zxing/browser'
@@ -7,7 +7,7 @@ import { pickFile } from "@/utils/file"
 import { ObservableStore } from "@/utils/store"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEffectTiming } from "@/enums/animation"
-import type { TextAreaFieldElement } from "@/native-components/TextAreaField"
+import type { TextAreaFieldElement } from "@/components/TextAreaField"
 
 export type ScanStoreType = Readonly<{
 	imgUrl: string | null
