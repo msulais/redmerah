@@ -1,12 +1,21 @@
 {
 	"extends": "astro/tsconfigs/strict",
+	"include": [
+		".astro/types.d.ts",
+		"**/*"
+	],
+	"exclude": [
+		"dist"
+	],
 	"compilerOptions": {
-		"lib": ["ESNext", "DOM", "DOM.Iterable"],
+		"lib": [
+			"ESNext",
+			"DOM",
+			"DOM.Iterable"
+		],
 		"target": "ESNext",
 		"module": "ESNext",
 		"moduleDetection": "force",
-		"jsx": "preserve",
-		"jsxImportSource": "solid-js",
 		"allowJs": true,
 
 		// Bundler mode
@@ -29,10 +38,9 @@
 		"removeComments": true,
 		"noFallthroughCasesInSwitch": true,
 		"noUnusedLocals": true,
-    	"noUnusedParameters": true,
+		"noUnusedParameters": true,
 		"noImplicitAny": true,
 		"noImplicitThis": true,
-
 		"paths": {
 			"@/*": [
 				"src/*"

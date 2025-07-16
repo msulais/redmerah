@@ -1,7 +1,5 @@
 export enum RootAttributes {
 	theme = 'data-theme',
-	corner = 'data-corner',
-	platform = 'data-platform',
 	animation = 'data-animation'
 }
 

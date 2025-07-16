@@ -1,15 +1,10 @@
 import { AnimationEffectTiming } from "@/enums/animation"
+import { KeyboardValue } from "@/enums/keyboard"
 import { FlyoutPosition as PopoverPosition } from "@/enums/position"
 import { isAnimationAllowed } from "@/utils/animation"
 import { getFlyoutPosition } from "@/utils/flyout"
 import { safeNumber } from "@/utils/number"
 import { isValidEnumValue } from "@/utils/object"
-import {
-	KEY_ARROW_DOWN,
-	KEY_ARROW_LEFT,
-	KEY_ARROW_RIGHT,
-	KEY_ARROW_UP,
-} from "@/constants/key-code"
 
 type PopoverProps = astroHTML.JSX.DialogHTMLAttributes & {
 	PopoverAnchorBy      ?: string
@@ -340,12 +335,12 @@ function _initPopoverRef(popoverRef: PopoverElement): void {
 	}
 
 	function dragHandleRefOnKeyDown(ev: KeyboardEvent): void {
-		const code = ev.code
+		const key = ev.key
 		if (
-			code !== KEY_ARROW_UP
-			&& code !== KEY_ARROW_DOWN
-			&& code !== KEY_ARROW_LEFT
-			&& code !== KEY_ARROW_RIGHT
+			key !== KeyboardValue.arrowUp
+			&& key !== KeyboardValue.arrowDown
+			&& key !== KeyboardValue.arrowLeft
+			&& key !== KeyboardValue.arrowRight
 		) return
 
 		const onePercentWidth = screenWidth / 100
@@ -361,17 +356,17 @@ function _initPopoverRef(popoverRef: PopoverElement): void {
 			timeoutScreenSizeId = setTimeout(() => timeoutScreenSizeId = null, 1000)
 		}
 
-		switch (code) {
-		case KEY_ARROW_UP:
+		switch (key) {
+		case KeyboardValue.arrowUp:
 			keyTop -= onePercentHeight
 			break
-		case KEY_ARROW_DOWN:
+		case KeyboardValue.arrowDown:
 			keyTop += onePercentHeight
 			break
-		case KEY_ARROW_LEFT:
+		case KeyboardValue.arrowLeft:
 			keyLeft -= onePercentWidth
 			break
-		case KEY_ARROW_RIGHT:
+		case KeyboardValue.arrowRight:
 			keyLeft += onePercentWidth
 			break
 		}

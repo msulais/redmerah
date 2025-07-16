@@ -3,7 +3,6 @@ import type { HEXColor } from '@/types/color'
 import { RoutesLinks } from '@/enums/links'
 import { APPS } from '@/constants/apps'
 import { generateColorPalette } from '@/utils/color'
-import { ICON_ARROW_RIGHT, ICON_DATABASE_PERSON, ICON_OPEN_FOLDER, ICON_SETTINGS_COG_MULTIPLE, ICON_SPARKLE } from '@/constants/icons'
 
 import Html from '@/layouts/Html/index.astro'
 import Icon from '@/native-components/Icon/index.astro'
@@ -13,22 +12,23 @@ import Appbar from '@/layouts/Appbar/index.astro'
 import BottomBar from '@/layouts/BottomBar/index.astro'
 import CSSAnimation from '@/styles/animation.module.scss'
 import CSS from './_index.module.scss'
+import { IconCodes } from '@/enums/icons'
 
 const features = [
 	{
 		title: 'Prioritize UI/UX & functionality',
 		description: 'Experience the perfect blend of aesthetics and usability. Our apps offer a visually stunning interface that is easy to navigate and packed with features.',
-		icon: ICON_SPARKLE
+		icon: IconCodes.sparkle
 	},
 	{
 		title: 'Store data locally on your device',
 		description: 'We respect your privacy. All your settings, preferences, and history are stored securely in your browser, not on our server. Your data, your control.',
-		icon: ICON_DATABASE_PERSON
+		icon: IconCodes.databasePerson
 	},
 	{
 		title: 'Continue working offline',
 		description: 'No internet connection? No problem! Our apps work seamlessly offline, ensuring you can stay productive wherever you are.',
-		icon: ICON_SETTINGS_COG_MULTIPLE
+		icon: IconCodes.settingsCogMultiple
 	},
 ]
 
@@ -56,7 +56,7 @@ function color_app_background(color: HEXColor): string {
 					<LinkButton
 						class={CSSAnimation.btn_scale_up_icon}
 						LinkButtonVariant={ButtonVariant.outlined}
-						href={v.link}>Open <Icon IconCode={ICON_OPEN_FOLDER}/></LinkButton>
+						href={v.link}>Open <Icon IconCode={IconCodes.openFolder}/></LinkButton>
 				</div>}</>)}
 			</section>
 			<LinkButton
@@ -64,7 +64,7 @@ function color_app_background(color: HEXColor): string {
 				LinkButtonVariant={ButtonVariant.filled}
 				href={RoutesLinks.apps}>
 				See more apps
-				<Icon IconFilled IconCode={ICON_ARROW_RIGHT}/>
+				<Icon IconFilled IconCode={IconCodes.arrowRight}/>
 			</LinkButton>
 			<section class={CSS.features}>
 				<h2>Features</h2>

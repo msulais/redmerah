@@ -1,29 +1,25 @@
 ---
-import { ICON_HOME } from '@/constants/icons'
 import { RoutesLinks } from '@/enums/links'
-import logo from '@/assets/images/logos/redmerah-logo.svg'
-
 import Html from '@/layouts/Html/index.astro'
-import Icon from '@/components/Icon/index.astro'
-import LinkButton from '@/components/Button/LinkButton.astro'
-import { ButtonVariant } from '@/components/Button'
+import Icon from '@/native-components/Icon/index.astro'
+import LinkButton from '@/native-components/Button/LinkButton.astro'
 import Appbar from '@/layouts/Appbar/index.astro'
 import Main from '@/layouts/Main/index.astro'
 import BottomBar from '@/layouts/BottomBar/index.astro'
 import CSS from './_404.module.scss'
-import Splash from '@/layouts/Splash/index.astro'
+import { ButtonVariant } from '@/native-components/Button'
+import { IconCodes } from '@/enums/icons'
 
 export const prerender = true
 ---
 
-<Html componentCount={2} title='404: Page not found | Redmerah'>
+<Html title='404: Page not found • Redmerah'>
 	<script is:inline src='/scripts/root-settings.min.js'/>
-	<Splash src={logo.src} alt={`Redmerah splash icon`} />
 	<Appbar/>
 	<Main classList={[CSS.main]}>
 		<h1><span>PAGE&nbsp;&nbsp;&nbsp;&nbsp;<br/>NOT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><br/>FOUND</h1>
-		<LinkButton href={RoutesLinks.home} variant={ButtonVariant.filled}>
-			<Icon code={ICON_HOME} filled/>
+		<LinkButton href={RoutesLinks.home} LinkButtonVariant={ButtonVariant.filled}>
+			<Icon IconCode={IconCodes.home} IconFilled/>
 			Back to home
 		</LinkButton>
 	</Main>

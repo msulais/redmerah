@@ -1,10 +1,3 @@
-import {
-	KEY_ARROW_DOWN,
-	KEY_ARROW_UP,
-	KEY_ENTER,
-	KEY_ESCAPE,
-	KEY_SPACE
-} from "@/constants/keyboard-value"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { createElementId } from "@/utils/ids"
 import { isAnimationAllowed } from "@/utils/animation"
@@ -18,6 +11,7 @@ import {
 	updateButtonRef,
 } from "@/native-components/Button"
 import { IconCodes } from "@/enums/icons"
+import { KeyboardValue } from "@/enums/keyboard"
 
 type SelectProps = astroHTML.JSX.HTMLAttributes & {
 	SelectVariant        ?: SelectVariant
@@ -341,63 +335,59 @@ function _initSelectRef(selectRef: SelectElement): void {
 
 	function selectRefOnKeyDown(ev: KeyboardEvent): void {
 		const key = ev.key
-		if (![
-			KEY_ARROW_DOWN,
-			KEY_ARROW_UP,
-			KEY_ESCAPE,
-			KEY_SPACE,
-			KEY_ENTER
-		].includes(key)) return
-
 		const optionRef = document.activeElement as SelectOptionElement | null
-		if ([KEY_ARROW_DOWN, KEY_ARROW_UP].includes(key)){
-			if (ev.altKey) {
-				return isExpanded()? closeSelectRef(selectRef) : openSelectRef(selectRef)
-			}
+		switch (key) {
+			case KeyboardValue.arrowDown:
+			case KeyboardValue.arrowUp: {
+				if (ev.altKey) {
+					return isExpanded()? closeSelectRef(selectRef) : openSelectRef(selectRef)
+				}
 
-			if (!isOptionRef(optionRef)) return
-			if (timeOptionsId === null) {
-				optionRefs.length = 0
-				optionRefs.push(...selectRef.querySelectorAll<SelectOptionElement>(`.${SelectClasses.option}`))
-				timeOptionsId = setTimeout(() => {
-					timeOptionsId = null
-				}, 100)
-			}
+				if (!isOptionRef(optionRef)) return
+				if (timeOptionsId === null) {
+					optionRefs.length = 0
+					optionRefs.push(...selectRef.querySelectorAll<SelectOptionElement>(`.${SelectClasses.option}`))
+					timeOptionsId = setTimeout(() => {
+						timeOptionsId = null
+					}, 100)
+				}
 
-			const index = optionRefs.findIndex(v => v === optionRef)
-			if (index < 0) return
+				const index = optionRefs.findIndex(v => v === optionRef)
+				if (index < 0) return
 
-			switch (key) {
-			case KEY_ARROW_UP:
-				if (index === 0) return
+				switch (key) {
+				case KeyboardValue.arrowUp:
+					if (index === 0) return
 
-				if (!isExpanded()) selectOptionRef(optionRefs[index - 1])
-				optionRefs[index - 1].focus()
+					if (!isExpanded()) selectOptionRef(optionRefs[index - 1])
+					optionRefs[index - 1].focus()
+					break
+				case KeyboardValue.arrowDown:
+					if (index === optionRefs.length - 1) return
+
+					if (!isExpanded()) selectOptionRef(optionRefs[index + 1])
+					optionRefs[index + 1].focus()
+					break
+				}
+			} break
+			case KeyboardValue.space:
+			case KeyboardValue.enter:
+				disableClickEvent = true
+				if (!isExpanded()) {
+					return openSelectRef(selectRef)
+				}
+
+				closeSelectRef(selectRef)
+				if (isOptionRef(optionRef)) {
+					selectOptionRef(optionRef!)
+				}
 				break
-			case KEY_ARROW_DOWN:
-				if (index === optionRefs.length - 1) return
-
-				if (!isExpanded()) selectOptionRef(optionRefs[index + 1])
-				optionRefs[index + 1].focus()
+			case KeyboardValue.escape:
+				closeSelectRef(selectRef)
+				selectRef.querySelector<SelectOptionElement>(
+					`.${SelectClasses.option}[aria-selected=true]:not(:disabled)`
+				)?.focus()
 				break
-			}
-		}
-		else if (key === KEY_ESCAPE) {
-			closeSelectRef(selectRef)
-			selectRef.querySelector<SelectOptionElement>(
-				`.${SelectClasses.option}[aria-selected=true]:not(:disabled)`
-			)?.focus()
-		}
-		else if ([KEY_SPACE, KEY_ENTER].includes(key)) {
-			disableClickEvent = true
-			if (!isExpanded()) {
-				return openSelectRef(selectRef)
-			}
-
-			closeSelectRef(selectRef)
-			if (isOptionRef(optionRef)) {
-				selectOptionRef(optionRef!)
-			}
 		}
 	}
 

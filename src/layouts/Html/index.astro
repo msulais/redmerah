@@ -1,11 +1,8 @@
 ---
 import type { HEXColor } from '@/types/color'
-import { ThemeData } from '@/enums/theme'
 import { generateColorPalette, hexToRgb } from '@/utils/color'
-import { CornerData } from '@/enums/corner'
 import { GlobalElementIds } from '@/enums/ids'
-import { PlatformData } from '@/enums/platforms'
-import { AnimationData } from '@/enums/animation'
+import { PlatformAnimationMode, PlatformThemeMode } from '@/enums/platforms'
 import Dialog from '@/native-components/Dialog/index.astro'
 import Icon from '@/native-components/Icon/index.astro'
 import Button from '@/native-components/Button/index.astro'
@@ -21,20 +18,18 @@ type Props = {
 	title?: string
 	description?: string
 	lang?: string
-	theme?: ThemeData
+	theme?: PlatformThemeMode
+	animation?: PlatformAnimationMode
 	accentColor?: HEXColor
-	corner?: CornerData
-	componentCount?: number
 }
 
 const {
 	title = 'Redmerah • Increase your productivity with our apps',
 	description = 'Get things done faster with zero interruptions! Redmerah offers powerful, privacy-focused tools to boost your productivity. Free, secure & data stays local.',
 	lang = 'en-US',
-	theme = ThemeData.system,
+	theme = PlatformThemeMode.auto,
+	animation = PlatformAnimationMode.auto,
 	accentColor = '#FF0000',
-	corner = CornerData.semiRound,
-	componentCount = 0
 } = Astro.props
 
 const colors = generateColorPalette(accentColor)
@@ -44,7 +39,7 @@ const colorToCSS = (hex: HEXColor) => {
 }
 ---
 
-<html lang={ lang } data-animation={AnimationData.on} data-platform={ PlatformData.desktop } data-theme={ theme } data-corner={ corner }>
+<html lang={ lang } data-animation={ animation } data-theme={ theme }>
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -61,7 +56,7 @@ const colorToCSS = (hex: HEXColor) => {
 		</slot>
 		<slot name="open-graph-protocol" />
 	</head>
-	<body data-g-component-count={componentCount}>
+	<body>
 		<slot />
 		<Dialog
 			id={GlobalElementIds.popoverWarningNotice}

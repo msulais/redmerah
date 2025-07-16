@@ -21,12 +21,6 @@ import {
 	type EyeDropper as EyeDropperInterface
 } from "@/interfaces/eye-dropper"
 import { isValidEnumValue } from "@/utils/object"
-import {
-	KEY_ARROW_DOWN,
-	KEY_ARROW_LEFT,
-	KEY_ARROW_RIGHT,
-	KEY_ARROW_UP
-} from "@/constants/keyboard-value"
 
 import {
 	type PopoverProps,
@@ -63,6 +57,7 @@ import {
 	type IconProps
 } from "@/native-components/Icon"
 import { IconCodes } from "@/enums/icons"
+import { KeyboardValue } from "@/enums/keyboard"
 
 type ColorPickerProps = PopoverProps & {
 	ColorPickerValue               ?: HEXColor
@@ -435,16 +430,16 @@ function _initColorPickerRef(colorPickerRef: ColorPickerElement): void {
 	function rectRefOnKeyDown(ev: KeyboardEvent): void {
 		const key = ev.key
 		switch (key) {
-		case KEY_ARROW_RIGHT:
+		case KeyboardValue.arrowRight:
 			++rectX
 			break
-		case KEY_ARROW_LEFT:
+		case KeyboardValue.arrowLeft:
 			--rectX
 			break
-		case KEY_ARROW_DOWN:
+		case KeyboardValue.arrowDown:
 			++rectY
 			break
-		case KEY_ARROW_UP:
+		case KeyboardValue.arrowUp:
 			--rectY
 			break
 		}

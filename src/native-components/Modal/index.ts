@@ -4,14 +4,8 @@ import { isAnimationAllowed } from "@/utils/animation"
 import { getFlyoutPosition } from "@/utils/flyout"
 import { safeNumber } from "@/utils/number"
 import { isValidEnumValue } from "@/utils/object"
-import {
-	KEY_ARROW_DOWN,
-	KEY_ARROW_LEFT,
-	KEY_ARROW_RIGHT,
-	KEY_ARROW_UP,
-	KEY_ESCAPE
-} from "@/constants/key-code"
 import { BodyAttributes, GlobalAttributes } from "@/enums/attributes"
+import { KeyboardValue } from "@/enums/keyboard"
 
 type ModalProps = astroHTML.JSX.DialogHTMLAttributes & {
 	ModalAnchorBy      ?: string
@@ -497,12 +491,12 @@ function _initModalRef(modalRef: ModalElement): void {
 	}
 
 	function dragHandleRefOnKeyDown(ev: KeyboardEvent): void {
-		const code = ev.code
+		const code = ev.key
 		if (
-			code !== KEY_ARROW_UP
-			&& code !== KEY_ARROW_DOWN
-			&& code !== KEY_ARROW_LEFT
-			&& code !== KEY_ARROW_RIGHT
+			code !== KeyboardValue.arrowUp
+			&& code !== KeyboardValue.arrowDown
+			&& code !== KeyboardValue.arrowLeft
+			&& code !== KeyboardValue.arrowRight
 		) return
 
 		const onePercentWidth = screenWidth / 100
@@ -519,16 +513,16 @@ function _initModalRef(modalRef: ModalElement): void {
 		}
 
 		switch (code) {
-		case KEY_ARROW_UP:
+		case KeyboardValue.arrowUp:
 			keyTop -= onePercentHeight
 			break
-		case KEY_ARROW_DOWN:
+		case KeyboardValue.arrowDown:
 			keyTop += onePercentHeight
 			break
-		case KEY_ARROW_LEFT:
+		case KeyboardValue.arrowLeft:
 			keyLeft -= onePercentWidth
 			break
-		case KEY_ARROW_RIGHT:
+		case KeyboardValue.arrowRight:
 			keyLeft += onePercentWidth
 			break
 		}
@@ -546,6 +540,7 @@ function _initModalRef(modalRef: ModalElement): void {
 	function dragHandleRefOnPointerMove(ev: PointerEvent): void {
 		if (!isDragging) return
 
+		// TODO -- use requestAnimationFrame()
 		modalRef.style.setProperty(ModalCSSVariables.left, ev.clientX - diffPositionX + 'px')
 		modalRef.style.setProperty(ModalCSSVariables.top, ev.clientY - diffPositionY + 'px')
 	}
@@ -569,8 +564,8 @@ function _initModalRef(modalRef: ModalElement): void {
 	}
 
 	function modalRefOnKeyDown(ev: KeyboardEvent): void {
-		const code = ev.code
-		if (code === KEY_ESCAPE
+		const key = ev.key
+		if (key === KeyboardValue.escape
 			&& !ev.altKey
 			&& !ev.ctrlKey
 			&& !ev.metaKey

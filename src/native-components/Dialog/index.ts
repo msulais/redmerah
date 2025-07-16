@@ -1,4 +1,4 @@
-import { KEY_ESCAPE } from "@/constants/keyboard-value"
+import { KeyboardValue } from "@/enums/keyboard"
 
 type DialogProps = astroHTML.JSX.DialogHTMLAttributes & {
 	DialogImportant    ?: boolean
@@ -96,7 +96,7 @@ function _initDialogRef(dialogRef: DialogElement): void {
 	}
 
 	function dialogRefOnKeyDown(ev: KeyboardEvent): void {
-		if (ev.key === KEY_ESCAPE
+		if (ev.key === KeyboardValue.escape
 			&& !ev.altKey
 			&& !ev.ctrlKey
 			&& !ev.metaKey
