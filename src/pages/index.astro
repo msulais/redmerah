@@ -3,14 +3,13 @@ import type { HEXColor } from '@/types/color'
 import { RoutesLinks } from '@/enums/links'
 import { APPS } from '@/constants/apps'
 import { generateColorPalette } from '@/utils/color'
-
+import Splash from '@/layouts/Splash/index.astro'
 import Html from '@/layouts/Html/index.astro'
 import Icon from '@/components/Icon/index.astro'
 import LinkButton from '@/components/Button/LinkButton.astro'
 import { ButtonVariant } from '@/components/Button'
 import Appbar from '@/layouts/Appbar/index.astro'
 import BottomBar from '@/layouts/BottomBar/index.astro'
-import CSSAnimation from '@/styles/animation.module.scss'
 import CSS from './_index.module.scss'
 import { IconCodes } from '@/enums/icons'
 
@@ -39,12 +38,34 @@ function color_app_background(color: HEXColor): string {
 ---
 
 <Html>
-	<script is:inline src='/scripts/root-settings.min.js'/>
+	<Splash>
+		<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<g clip-path="url(#clip0_536_18)">
+				<rect y="10" width="8" height="22" rx="2" fill="#FF1414"/>
+				<path d="M14.1504 19.4785C12.7754 18.4093 12.0879 17.8747 12.0142 17.4068C11.9505 17.0018 12.1036 16.5932 12.4224 16.3179C12.7906 16 13.6786 16 15.4544 16H29.9394C30.6607 16 31.0213 16 31.2968 16.1336C31.5391 16.251 31.7362 16.4385 31.8596 16.669C32 16.9311 32 17.2743 32 17.9605V29.2243C32 30.5454 32 31.2059 31.7161 31.5421C31.4693 31.8344 31.0954 32.0031 30.7013 32C30.2481 31.9963 29.7105 31.5783 28.6354 30.7423L14.1504 19.4785Z" fill="url(#paint0_linear_536_18)"/>
+				<rect x="22" width="8" height="22" rx="2" transform="rotate(90 22 0)" fill="url(#paint1_linear_536_18)"/>
+				<path d="M31.0477 3.02574C31.6985 2.0423 32.0239 1.55059 31.9986 1.14307C31.9766 0.788019 31.8005 0.460331 31.5166 0.246004C31.1908 0 30.6011 0 29.4219 0H11.9496C11.2672 0 10.926 0 10.6653 0.132816C10.436 0.249644 10.2496 0.43606 10.1328 0.665348C10 0.926014 10 1.26724 10 1.9497V28.3519C10 30.2994 10 31.2731 10.3413 31.6271C10.636 31.9329 11.0688 32.0632 11.4833 31.9709C11.9633 31.864 12.5007 31.052 13.5754 29.4279L31.0477 3.02574Z" fill="#FF1414"/>
+			</g>
+			<defs>
+				<linearGradient id="paint0_linear_536_18" x1="32.7513" y1="31.9802" x2="8.79067" y2="11.6166" gradientUnits="userSpaceOnUse">
+					<stop offset="0.388321" stop-color="#E80000"/>
+					<stop offset="1" stop-color="#820000"/>
+				</linearGradient>
+				<linearGradient id="paint1_linear_536_18" x1="25.9481" y1="22" x2="25.9481" y2="-6.43077" gradientUnits="userSpaceOnUse">
+					<stop offset="0.239659" stop-color="#E80000"/>
+					<stop offset="1" stop-color="#820000"/>
+				</linearGradient>
+				<clipPath id="clip0_536_18">
+					<rect width="32" height="32" fill="white"/>
+				</clipPath>
+			</defs>
+		</svg>
+	</Splash>
 	<Appbar route={RoutesLinks.home}/>
 	<div class={CSS.body}>
 		<div class={CSS.header}>
-			<h1>📱✅🔥🚀<br/>Discover a suite of powerful <span data-color=green>apps</span> designed to simplify your <span data-color=blue>tasks</span> and enhance your <span data-color=red>productivity</span>.</h1>
-			<p>Whether you’re a developer, designer, or just someone who loves efficiency, our app has something for you.</p>
+			<h1>📱✅🔥🚀<br/><span data-color=blue>Tasks</span>, <span data-color=green>Apps</span>, and <span data-color=red>Productivity</span>.</h1>
+			<p>Discover a suite of powerful apps designed to simplify your tasks and enhance your productivity. Whether you’re a developer, designer, or just someone who loves efficiency, our app has something for you.</p>
 		</div>
 		<main class={CSS.main}>
 			<section class={CSS.apps}>
@@ -54,13 +75,12 @@ function color_app_background(color: HEXColor): string {
 					<h3>{v.name}</h3>
 					<p>{v.description}</p>
 					<LinkButton
-						class={CSSAnimation.btn_scale_up_icon}
 						LinkButtonVariant={ButtonVariant.outlined}
 						href={v.link}>Open <Icon IconCode={IconCodes.openFolder}/></LinkButton>
 				</div>}</>)}
 			</section>
 			<LinkButton
-				class={[CSS.more_apps, CSSAnimation.btn_move_right_icon].join(' ')}
+				class={[CSS.more_apps].join(' ')}
 				LinkButtonVariant={ButtonVariant.filled}
 				href={RoutesLinks.apps}>
 				See more apps
@@ -86,6 +106,7 @@ function color_app_background(color: HEXColor): string {
 
 <script>
 	import { isAnimationAllowed } from "@/utils/animation"
+	import { removeSplashScreen } from "@/utils/splash"
 
 	const quote = document.getElementById('quote') as HTMLParagraphElement
 	const spans = document.querySelectorAll<HTMLSpanElement>('#quote span')
@@ -112,4 +133,5 @@ function color_app_background(color: HEXColor): string {
 	})
 
 	observer.observe(quote)
+	removeSplashScreen()
 </script>

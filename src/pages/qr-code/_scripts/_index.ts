@@ -4,6 +4,7 @@ import database from "./_core/_database"
 import navigation from "./_core/_navigation"
 import generate from "./_features/_generate"
 import scan from "./_features/_scan"
+import { removeSplashScreen } from "@/utils/splash"
 
 function main() {
 	appbar()
@@ -12,6 +13,7 @@ function main() {
 	navigation()
 	generate()
 	scan()
+	removeSplashScreen()
 }
 
 main()

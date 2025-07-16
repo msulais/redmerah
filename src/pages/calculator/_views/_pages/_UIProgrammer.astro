@@ -81,7 +81,7 @@ const types: {id: string, type: NumberType, text: string, value: string | number
 						value={v.value}
 						readonly
 					/>
-					<Button>{v.text}</Button>
+					<Button ButtonVariant={DEFAULT_PROGRAMMER_NUMBER_TYPE === v.type? ButtonVariant.filled : undefined}>{v.text}</Button>
 				</div>
 			)}
 		</div>

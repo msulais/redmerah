@@ -10,5 +10,4 @@ export enum GlobalAttributes {
 export enum BodyAttributes {
 	/** Disable all element pointer event. Except element that has `GlobalAttributes.keepPointerEvent` */
 	noPointerEvent = 'data-g-no-pointer-event',
-	componentCount = 'data-g-component-count',
 }

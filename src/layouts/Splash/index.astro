@@ -1,0 +1,50 @@
+---
+import { GlobalElementIds } from '@/enums/ids'
+---
+<style>
+	.splash {
+		z-index: 999;
+		width: 100%;
+		height: 100dvh;
+		background-color: rgb(var(--g-color-background));
+		position: fixed;
+		left: 0;
+		top: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.splash > :global(svg) {
+		width: 128px !important;
+		height: 128px !important;
+		animation: img-splash-start 1s var(--g-transition-spring);
+
+	}
+
+	:root[data-animation=off] .splash > :global(svg) {
+		animation: none;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		:root[data-animation=off] .splash > :global(svg) {
+			animation: none;
+		}
+	}
+
+	@keyframes img-splash-start {
+		from {
+			scale: 0;
+			opacity: 0;
+		}
+		to {
+			scale: 1;
+			opacity: 1;
+		}
+	}
+</style>
+<div
+	class="splash"
+	id={GlobalElementIds.splash}>
+	<slot />
+</div>

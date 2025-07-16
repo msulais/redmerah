@@ -4,6 +4,7 @@ import { APP_CLOCK as app } from '@/constants/apps'
 import UIAppBar from './_views/_UIAppBar.astro'
 import UIBody from './_views/_UIBody.astro'
 import UINavigation from './_views/_UINavigation.astro'
+import UISplash from './_views/_UISplash.astro'
 import App from '@/components/App/index.astro'
 import Html from '@/layouts/Html/index.astro'
 
@@ -21,7 +22,7 @@ export const prerender = true
 		<link rel="icon" type="image/png" sizes="16x16" href={`/favicon${app.link}/favicon-16x16.png`}>
 		<link rel="manifest" href={`/favicon${app.link}/site.webmanifest`}>
 	</Fragment>
-	<script is:inline src='/scripts/root-settings.min.js'/>
+	<UISplash/>
 	<App>
 		<UIAppBar slot="appbar"/>
 		<UINavigation slot="left-sidebar"/>

@@ -5,6 +5,7 @@ import Menus from './_views/_UIMenus.astro'
 import Body from './_views/_UIBody.astro'
 import Navigation from './_views/_UINavigation.astro'
 import AppBar from './_views/_UIAppBar.astro'
+import UISplash from './_views/_UISplash.astro'
 export const prerender = true
 ---
 
@@ -19,7 +20,7 @@ export const prerender = true
 		<link rel="icon" type="image/png" sizes="16x16" href="/favicon/biru-ui/favicon-16x16.png">
 		<link rel="manifest" href="/favicon/biru-ui/site.webmanifest">
 	</Fragment>
-	<script is:inline src='/scripts/root-settings.min.js'/>
+	<UISplash/>
 	<App AppTagName='div'>
 		<AppBar slot='appbar'/>
 		<Navigation slot="left-sidebar"/>
