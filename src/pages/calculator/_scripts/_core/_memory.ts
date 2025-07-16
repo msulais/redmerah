@@ -27,17 +27,10 @@ export function recallMemory(): void {
 	const memory = MemoryStore.value.value
 	let value = formatOutput(memory)
 	switch (NavigationStore.value.page) {
-	case Pages.basic:
-		BasicStore.update(v => ({...v, input: v.input + value}))
-		break
-	case Pages.scientific:
-		ScientificStore.update(v => ({...v, input: v.input + value}))
-		break
-	case Pages.converter:
-		ConverterStore.update(v => ({...v, input: v.input + value}))
-		break
+	case Pages.basic     : return BasicStore     .update(v => v.input = v.input + value)
+	case Pages.scientific: return ScientificStore.update(v => v.input = v.input + value)
+	case Pages.converter : return ConverterStore .update(v => v.input = v.input + value)
 	case Pages.programmer:
-
 		const bin = numberToBinary(memory)
 		const parsedBin = Number.parseInt(bin, 2)
 		switch (ProgrammerStore.value.numberType) {
@@ -52,7 +45,7 @@ export function recallMemory(): void {
 			value = bin
 			break
 		}
-		ProgrammerStore.update(v => ({...v, input: v.input + value}))
+		ProgrammerStore.update(v => v.input = v.input + value)
 		break
 	case Pages.date:
 	}
@@ -77,15 +70,12 @@ export function updateMemory(type: 'add' | 'min'): void {
 	}
 
 	if (output !== null) {
-		MemoryStore.update(v => ({
-			...v,
-			value: v.value + (output * (type === 'min'? -1 : 1))
-		}))
+		MemoryStore.update(v => v.value = v.value + (output * (type === 'min'? -1 : 1)))
 	}
 }
 
 export function clearMemory(): void {
-	MemoryStore.update(v => ({...v, value: 0}))
+	MemoryStore.update(v => v.value = 0)
 }
 
 function _subscribeValueChanges(v: MemoryStoreType, o: MemoryStoreType): void {

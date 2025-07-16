@@ -1,7 +1,7 @@
-import { ButtonAttributes, ButtonVariant } from "@/native-components/Button"
+import { ButtonAttributes, ButtonVariant } from "@/components/Button"
 import { CSSClasses } from "../../_styles/_css"
 import { $, $$, $$$ } from "./_dom-utils"
-import { repositionEdgePopoverRef, type PopoverElement } from "@/native-components/Popover"
+import { repositionEdgePopoverRef, type PopoverElement } from "@/components/Popover"
 import { ElementIds } from "../_shared/_ids"
 
 const _gradControlPopoverRef = $(ElementIds.bdGrad_controlPopover) as PopoverElement

@@ -3,7 +3,7 @@ import { NumbersRandomizerType, NumbersRandomizerSort } from "../_shared/_enums"
 import { DEFAULT_NUMBERS_COUNT, DEFAULT_NUMBERS_DIGITS, DEFAULT_NUMBERS_MAX, DEFAULT_NUMBERS_MIN, DEFAULT_NUMBERS_OUTPUT, DEFAULT_NUMBERS_PREFIX, DEFAULT_NUMBERS_REPEAT, DEFAULT_NUMBERS_SEPARATOR, DEFAULT_NUMBERS_SORT, DEFAULT_NUMBERS_SUFFIX, DEFAULT_NUMBERS_TYPE } from "../_shared/_constant"
 import { $ } from "../_core/_dom-utils"
 import { ElementIds } from "../_shared/_ids"
-import type { ComboBoxElement } from "@/native-components/ComboBox"
+import type { ComboBoxElement } from "@/components/ComboBox"
 import { isValidEnumValue } from "@/utils/object"
 import { Math_clamp } from "@/utils/math"
 import { safeNumber } from "@/utils/number"
@@ -94,13 +94,11 @@ export function updateOutput(): void {
 		values.sort((a, b) => sort == NumbersRandomizerSort.ascending? a - b : b - a)
 	}
 
-	NumbersStore.update(v => ({...v,
-		output: values.map(v => [
-			store.prefix,
-			v.toString(store.type as number).padStart(store.minDigits, '0').toUpperCase(),
-			store.suffix
-		].join('')).join(store.separator)
-	}))
+	NumbersStore.update(v => v.output = values.map(v => [
+		store.prefix,
+		v.toString(store.type as number).padStart(store.minDigits, '0').toUpperCase(),
+		store.suffix
+	].join('')).join(store.separator))
 }
 
 function _subsStorage(v: NumbersStoreType): void {
@@ -168,7 +166,7 @@ function _initSubscriber(): void {
 function _initEvents(): void {
 	_countRef.addEventListener('input', () => {
 		const value = Math_clamp(safeNumber(_countRef.valueAsNumber), 1, Number.MAX_VALUE)
-		NumbersStore.update(v => ({ ...v, count: value }))
+		NumbersStore.update(v => v.count = value)
 	})
 
 	_countRef.addEventListener('blur', () => {
@@ -177,7 +175,7 @@ function _initEvents(): void {
 
 	_maxRef.addEventListener('input', () => {
 		const max = Math_clamp(safeNumber(_maxRef.valueAsNumber), NumbersStore.value.min, Number.MAX_VALUE)
-		NumbersStore.update(v => ({ ...v, max }))
+		NumbersStore.update(v => v.max = max)
 	})
 
 	_maxRef.addEventListener('blur', () => {
@@ -186,7 +184,7 @@ function _initEvents(): void {
 
 	_minRef.addEventListener('input', () => {
 		const min = Math_clamp(safeNumber(_minRef.valueAsNumber), 0, NumbersStore.value.max)
-		NumbersStore.update(v => ({ ...v, min }))
+		NumbersStore.update(v => v.min = min)
 	})
 
 	_minRef.addEventListener('blur', () => {
@@ -195,7 +193,7 @@ function _initEvents(): void {
 
 	_minDigitsRef.addEventListener('input', () => {
 		const value = Math_clamp(safeNumber(_minDigitsRef.valueAsNumber), 0, Number.MAX_VALUE)
-		NumbersStore.update(v => ({ ...v, minDigits: value }))
+		NumbersStore.update(v => v.minDigits = value)
 	})
 
 	_minDigitsRef.addEventListener('blur', () => {
@@ -203,33 +201,33 @@ function _initEvents(): void {
 	})
 
 	_prefixRef.addEventListener('input', () => {
-		NumbersStore.update(v => ({ ...v, prefix: _prefixRef.value }))
+		NumbersStore.update(v => v.prefix = _prefixRef.value)
 	})
 
 	_repeatRef.addEventListener('change', () => {
-		NumbersStore.update(v => ({ ...v, repeat: _repeatRef.checked }))
+		NumbersStore.update(v => v.repeat = _repeatRef.checked)
 	})
 
 	_separatorRef.addEventListener('input', () => {
-		NumbersStore.update(v => ({ ...v, separator: _separatorRef.value }))
+		NumbersStore.update(v => v.separator = _separatorRef.value)
 	})
 
 	_sortRef.addEventListener('change', () => {
-		const value = _sortRef.value
+		const value = _sortRef.value as NumbersRandomizerSort
 		if (!isValidEnumValue(value, NumbersRandomizerSort)) { return }
 
-		NumbersStore.update(v => ({ ...v, sort: value as NumbersRandomizerSort }))
+		NumbersStore.update(v => v.sort = value)
 	})
 
 	_suffixRef.addEventListener('input', () => {
-		NumbersStore.update(v => ({ ...v, suffix: _suffixRef.value }))
+		NumbersStore.update(v => v.suffix = _suffixRef.value)
 	})
 
 	_typeRef.addEventListener('change', () => {
-		const value = Number.parseInt(_typeRef.value)
+		const value = Number.parseInt(_typeRef.value) as NumbersRandomizerType
 		if (!isValidEnumValue(value, NumbersRandomizerType)) { return }
 
-		NumbersStore.update(v => ({ ...v, type: value as NumbersRandomizerType }))
+		NumbersStore.update(v => v.type = value)
 	})
 }
 

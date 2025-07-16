@@ -1,19 +1,28 @@
 ---
-import { setAttrIfExist } from '@/utils/attributes'
+import { joinClassList } from '@/utils/attributes'
+
+import {
+	type IconProps,
+	IconClasses
+} from '.'
+
 import './index.scss'
 
-type Props = astroHTML.JSX.HTMLAttributes & {
-	inline?: boolean
-	filled?: boolean
-	classList?: string[]
-	code: number
-}
+type Props = IconProps
 
-let {inline, filled, code, classList = [], ...other} = Astro.props
-
-if (filled) code -= 1
+const {
+	'class': className,
+	IconFilled,
+	IconInline,
+	IconCode,
+	translate,
+	...other
+} = Astro.props
 ---
-
-<i class:list={["c-icon", ...classList]} translate="no" data-c-inline={setAttrIfExist(inline)} {...other}>{
-	String.fromCharCode(code)
-}</i>
+<i
+	class={joinClassList(IconClasses.icon, className)}
+	data-c-icon-inline={IconInline? '' : undefined}
+	translate={translate ?? 'no'}
+	{...other}>
+	{String.fromCharCode(IconCode - (IconFilled? 1 : 0))}
+</i>

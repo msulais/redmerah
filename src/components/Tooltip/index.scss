@@ -1,3 +1,7 @@
+.c-tooltip {
+	display: contents;
+}
+
 #c-text-tooltip {
 	align-items: center;
 	border-radius: 4px;
@@ -5,7 +9,6 @@
 	box-shadow: var(--g-elevation2);
 	display: flex;
 	inset: unset;
-	opacity: 0;
 	color: rgb(var(--g-color-surface));
 	background-color: rgb(var(--g-color-on-surface));
 	max-height: calc(100dvh - 16px);
@@ -22,21 +25,9 @@
 	position: fixed;
 	white-space: pre-wrap;
 	position: fixed;
-	z-index: 99;
+	opacity: 0;
 
-	:root[data-corner=sharp] & { border-radius: 0 }
-	:root[data-corner=full-round] & { border-radius: 14px }
-}
-
-.c-popover.c-rich-tooltip {
-	box-shadow: var(--g-elevation3);
-
-	> div {
-		padding: 12px;
-		font-size: var(--g-font-size-xs);
+	&:popover-open {
+		opacity: 1;
 	}
-}
-
-.c-tooltip {
-	display: contents;
 }

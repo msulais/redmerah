@@ -3,7 +3,7 @@ import { WordsRandomizerCase } from "../_shared/_enums"
 import { DEFAULT_WORDS_CASE, DEFAULT_WORDS_COUNT, DEFAULT_WORDS_LIST_ID, DEFAULT_WORDS_OUTPUT, DEFAULT_WORDS_PREFIX, DEFAULT_WORDS_REPEAT, DEFAULT_WORDS_SEPARATOR, DEFAULT_WORDS_SUFFIX } from "../_shared/_constant"
 import { ElementIds } from "../_shared/_ids"
 import { $ } from "../_core/_dom-utils"
-import type { ComboBoxElement } from "@/native-components/ComboBox"
+import type { ComboBoxElement } from "@/components/ComboBox"
 import { ListsStore } from "../_core/_lists"
 import { Math_clamp } from "@/utils/math"
 import { safeNumber } from "@/utils/number"
@@ -74,7 +74,7 @@ export function updateOutput(): void {
 		}
 	}
 
-	WordsStore.update(v => ({...v, output: output.map(text => {
+	WordsStore.update(v => v.output = output.map(text => {
 		switch (store.wordCase) {
 		case WordsRandomizerCase.uppercase: text = text.toUpperCase(); break
 		case WordsRandomizerCase.lowercase: text = text.toLowerCase(); break
@@ -84,7 +84,7 @@ export function updateOutput(): void {
 		}
 
 		return [store.prefix, text, store.suffix].join('')
-	}).join(store.separator)}))
+	}).join(store.separator))
 }
 
 function _subsStorage(v: WordsStoreType): void {
@@ -135,12 +135,12 @@ function _initEvents(): void {
 		const id = Number.parseInt(_listRef.value)
 		if (!ListsStore.value.list.some(v => v.id === id)) {return}
 
-		WordsStore.update(v => ({...v, listId: id}))
+		WordsStore.update(v => v.listId = id)
 	})
 
 	_countRef.addEventListener('input', () => {
 		const value = Math_clamp(safeNumber(_countRef.valueAsNumber), 1, Number.MAX_VALUE)
-		WordsStore.update(v => ({...v, count: value}))
+		WordsStore.update(v => v.count = value)
 	})
 
 	_countRef.addEventListener('blur', () => {
@@ -151,27 +151,27 @@ function _initEvents(): void {
 		const value = _wordCaseRef.value as WordsRandomizerCase
 		if (!isValidEnumValue(value, WordsRandomizerCase)) {return}
 
-		WordsStore.update(v => ({...v, wordCase: value}))
+		WordsStore.update(v => v.wordCase = value)
 	})
 
 	_separatorRef.addEventListener('input', () => {
 		const value = _separatorRef.value
-		WordsStore.update(v => ({...v, separator: value}))
+		WordsStore.update(v => v.separator = value)
 	})
 
 	_prefixRef.addEventListener('input', () => {
 		const value = _prefixRef.value
-		WordsStore.update(v => ({...v, prefix: value}))
+		WordsStore.update(v => v.prefix = value)
 	})
 
 	_suffixRef.addEventListener('input', () => {
 		const value = _suffixRef.value
-		WordsStore.update(v => ({...v, suffix: value}))
+		WordsStore.update(v => v.suffix = value)
 	})
 
 	_repeatRef.addEventListener('change', () => {
 		const value = _repeatRef.checked
-		WordsStore.update(v => ({...v, repeat: value}))
+		WordsStore.update(v => v.repeat = value)
 	})
 }
 

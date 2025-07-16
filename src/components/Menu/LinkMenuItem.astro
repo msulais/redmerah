@@ -1,0 +1,24 @@
+---
+import { joinClassList } from '@/utils/attributes'
+
+import {
+	MenuClasses,
+	type LinkMenuItemProps
+} from '.'
+import LinkButton from '@/components/Button/LinkButton.astro'
+import './index.scss'
+
+type Props = LinkMenuItemProps
+const {
+	'class': className,
+	role,
+	...other
+} = Astro.props
+---
+
+<LinkButton
+	class={joinClassList(MenuClasses.item, className)}
+	role={role ?? "menuitem"}
+	{...other}>
+	<slot/>
+</LinkButton>

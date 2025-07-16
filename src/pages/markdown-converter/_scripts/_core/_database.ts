@@ -38,19 +38,16 @@ function _readStorageAll(store: IDBObjectStore): void {
 		const isString = typeof value === 'string'
 		switch (key as _StorageKeys) {
 		case "input:markdown":
-			if (isString) {
-				ConverterStore.update(v => ({...v, markdown: value}))
-			}
+			isString
+			&& ConverterStore.update(v => v.markdown = value)
 			break
 		case "input:css":
-			if (isString) {
-				ConverterStore.update(v => ({...v, css: value}))
-			}
+			isString
+			&& ConverterStore.update(v => v.css = value)
 			break
 		case "settings:text-wrap":
-			if (isBoolean) {
-				SettingsStore.update(v => ({...v, textWrap: value}))
-			}
+			isBoolean
+			&& SettingsStore.update(v => v.textWrap = value)
 		}
 
 		return true

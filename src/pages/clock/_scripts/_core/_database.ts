@@ -41,19 +41,16 @@ function _readStorageAll(store: IDBObjectStore): void {
 		const isBoolean = typeof value === 'boolean'
 		switch (key as _StorageKeys) {
 		case "page":
-			if (isValidEnumValue(value, Pages)) {
-				NavigationStore.update(v => ({...v, page: value as Pages}))
-			}
+			isValidEnumValue(value, Pages)
+			&& NavigationStore.update(v => v.page = value)
 			break
 		case "settings/keep-awake":
-			if (isBoolean) {
-				SettingsStore.update(v => ({...v, keepAwake: value}))
-			}
+			isBoolean
+			&& SettingsStore.update(v => v.keepAwake = value)
 			break
 		case "timer/seconds":
-			if (isNumber) {
-				TimerStore.update(v => ({...v, currentSeconds: value, timerInSeconds: value}))
-			}
+			isNumber
+			&& TimerStore.update(v => v.currentSeconds = v.timerInSeconds = value)
 			break
 		}
 

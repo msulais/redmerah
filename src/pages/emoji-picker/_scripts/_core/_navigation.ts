@@ -3,8 +3,8 @@ import { Pages } from "../_shared/_enums"
 import { ElementIds } from "../_shared/_ids"
 import { $ } from "./_dom-utils"
 import { isValidEnumValue } from "@/utils/object"
-import { DrawerClasses } from "@/native-components/Drawer"
-import { SideBarClasses } from "@/native-components/SideBar"
+import { DrawerClasses } from "@/components/Drawer"
+import { SideBarClasses } from "@/components/SideBar"
 import { updateEmojiList } from "./_body"
 import { saveStorageItem } from "./_database"
 import { DEFAULT_PAGE } from "../_shared/_constant"
@@ -29,7 +29,7 @@ function _initEvents(): void {
 		if (!isValidEnumValue(page, Pages)) return
 
 		_drawerRef.hidePopover()
-		NavigationStore.update(v => ({...v, page: page as Pages}))
+		NavigationStore.update(v => v.page = page as Pages)
 	})
 
 	_sideBarRef?.addEventListener('click', (ev) => {
@@ -39,7 +39,7 @@ function _initEvents(): void {
 		const page = targetRef.dataset.page
 		if (!isValidEnumValue(page, Pages)) return
 
-		NavigationStore.update(v => ({...v, page: page as Pages}))
+		NavigationStore.update(v => v.page = page as Pages)
 	})
 }
 

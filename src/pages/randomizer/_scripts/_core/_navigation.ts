@@ -3,10 +3,10 @@ import { Pages } from "../_shared/_enums"
 import { ElementIds } from "../_shared/_ids"
 import { $, $$, $$$ } from "./_dom-utils"
 import { isValidEnumValue } from "@/utils/object"
-import { DrawerClasses, updateDrawerButtonRef } from "@/native-components/Drawer"
-import { SideBarClasses, updateSideBarButtonRef } from "@/native-components/SideBar"
+import { DrawerClasses, updateDrawerButtonRef } from "@/components/Drawer"
+import { SideBarClasses, updateSideBarButtonRef } from "@/components/SideBar"
 import { CSSClasses } from "../../_styles/_css"
-import { ButtonVariant } from "@/native-components/Button"
+import { ButtonVariant } from "@/components/Button"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { DEFAULT_PAGE, HIDE_NAVIGATION } from "../_shared/_constant"
@@ -117,7 +117,7 @@ function _initEvents(): void {
 		if (!isValidEnumValue(page, Pages)) return
 
 		_drawerRef.hidePopover()
-		NavigationStore.update(v => ({...v, page: page as Pages}))
+		NavigationStore.update(v => v.page = page as Pages)
 	})
 
 	_sideBarRef?.addEventListener('click', (ev) => {
@@ -127,7 +127,7 @@ function _initEvents(): void {
 		const page = targetRef.dataset.page
 		if (!isValidEnumValue(page, Pages)) return
 
-		NavigationStore.update(v => ({...v, page: page as Pages}))
+		NavigationStore.update(v => v.page = page as Pages)
 	})
 }
 

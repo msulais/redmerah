@@ -2,12 +2,12 @@ import { ObservableStore } from "@/utils/store"
 import { DEFAULT_CSS_TEXT, DEFAULT_MARKDOWN_TEXT } from "../_shared/_constant"
 import { $ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
-import { ButtonVariant, updateButtonRef, type ButtonElement } from "@/native-components/Button"
+import { ButtonVariant, updateButtonRef, type ButtonElement } from "@/components/Button"
 import { Math_clamp } from "@/utils/math"
 import { marked } from "marked"
 import { html_beautify } from "js-beautify"
-import type { MenuItemElement, SubMenuElement } from "@/native-components/Menu"
-import type { ToastElement } from "@/native-components/Toast"
+import type { MenuItemElement, SubMenuElement } from "@/components/Menu"
+import type { ToastElement } from "@/components/Toast"
 import { downloadFile, pickFile, readFileAsText } from "@/utils/file"
 import { isTargetValidElement } from "@/utils/element"
 import { saveStorageItem } from "./_database"
@@ -164,7 +164,7 @@ function _initEvents(): void {
 
 			timeMarkdownId = setTimeout(() => {
 				timeMarkdownId = null
-				ConverterStore.update(v => ({...v, markdown: _inp_markdownRef.value}))
+				ConverterStore.update(v => v.markdown = _inp_markdownRef.value)
 			}, 100)
 		})
 
@@ -175,7 +175,7 @@ function _initEvents(): void {
 
 			timeCSSId = setTimeout(() => {
 				timeCSSId = null
-				ConverterStore.update(v => ({...v, css: _inp_cssRef.value}))
+				ConverterStore.update(v => v.css = _inp_cssRef.value)
 			}, 100)
 		})
 	}
@@ -207,22 +207,18 @@ function _initEvents(): void {
 					return
 				}
 
-				ConverterStore.update(v => ({...v, markdown: text}))
+				ConverterStore.update(v => v.markdown = text)
 			})
 		})
 
 		_resetMarkdownRef.addEventListener('click', () => {
 			_moreMenuRef.hidePopover()
-			ConverterStore.update(v => ({...v,
-				markdown: DEFAULT_MARKDOWN_TEXT,
-			}))
+			ConverterStore.update(v => v.markdown = DEFAULT_MARKDOWN_TEXT)
 		})
 
 		_resetCSSRef.addEventListener('click', () => {
 			_moreMenuRef.hidePopover()
-			ConverterStore.update(v => ({...v,
-				css: DEFAULT_CSS_TEXT,
-			}))
+			ConverterStore.update(v => v.css = DEFAULT_CSS_TEXT)
 		})
 
 		_cp_menuRef.addEventListener('click', () => {

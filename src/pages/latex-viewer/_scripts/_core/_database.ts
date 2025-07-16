@@ -40,24 +40,20 @@ function _readStorageAll(store: IDBObjectStore): void {
 		const isArray = Array.isArray(value)
 		switch (key as _StorageKeys) {
 		case "latex":
-			if (isArray) {
-				LatexStore.update(v => ({...v, latex: value.map(v => String(v))}))
-			}
+			isArray
+			&& LatexStore.update(v => v.latex = value.map(v => String(v)))
 			break
 		case "settings:prefix":
-			if (isString) {
-				SettingsStore.update(v => ({...v, prefix: value}))
-			}
+			isString
+			&& SettingsStore.update(v => v.prefix = value)
 			break
 		case "settings:suffix":
-			if (isString) {
-				SettingsStore.update(v => ({...v, suffix: value}))
-			}
+			isString
+			&& SettingsStore.update(v => v.suffix = value)
 			break
 		case "settings:text-wrap":
-			if (isBoolean) {
-				SettingsStore.update(v => ({...v, textWrap: value}))
-			}
+			isBoolean
+			&& SettingsStore.update(v => v.textWrap = value)
 			break
 		}
 

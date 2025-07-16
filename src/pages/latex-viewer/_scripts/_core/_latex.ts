@@ -2,21 +2,21 @@ import { ObservableStore } from "@/utils/store"
 import { DEFAULT_LATEX_TEXT } from "../_shared/_constant"
 import { ElementIds } from "../_shared/_ids"
 import { $, $$ } from "./_dom-utils"
-import { createTooltipRef } from "@/native-components/Tooltip"
-import { ButtonVariant, createButtonRef, createIconButtonRef, type ButtonElement } from "@/native-components/Button"
+import { createTooltipRef } from "@/components/Tooltip"
+import { ButtonVariant, createButtonRef, createIconButtonRef, type ButtonElement } from "@/components/Button"
 import { Commands } from "../_shared/_commands"
-import { createIconRef } from "@/native-components/Icon"
+import { createIconRef } from "@/components/Icon"
 import { IconCodes } from "@/enums/icons"
 import katex from "katex"
 import { AppCSSColors } from "@/enums/app-data"
 import { createElementId } from "@/utils/ids"
 import { isTargetValidElement } from "@/utils/element"
 import { Math_clamp } from "@/utils/math"
-import type { DialogElement } from "@/native-components/Dialog"
-import type { TextAreaFieldElement } from "@/native-components/TextAreaField"
+import type { DialogElement } from "@/components/Dialog"
+import type { TextAreaFieldElement } from "@/components/TextAreaField"
 import { html_beautify } from "js-beautify"
-import type { ToastElement } from "@/native-components/Toast"
-import type { MenuElement, MenuItemElement } from "@/native-components/Menu"
+import type { ToastElement } from "@/components/Toast"
+import type { MenuElement, MenuItemElement } from "@/components/Menu"
 import { SettingsStore } from "./_settings"
 import { saveStorageItem } from "./_database"
 
@@ -40,9 +40,7 @@ let _selectedLatexIndex = 0
 
 function _addLatex(index: number): void {
 	LatexStore.update(v => {
-		const latex = [...v.latex]
-		latex.splice(index, 0, '')
-		return {...v, latex}
+		v.latex.splice(index, 0, '')
 	})
 }
 
@@ -123,13 +121,10 @@ function _updateLatexList(index: number): void {
 			timeId = setTimeout(() => {
 				timeId = null
 				LatexStore.update(v => {
-					const latex = [...v.latex]
 					const index = [..._latexListRef.children].findIndex(v => v === liRef)
 					if (index >= 0) {
-						latex[index] = textareaRef!.value
+						v.latex[index] = textareaRef!.value
 					}
-
-					return ({...v, latex})
 				})
 			}, 100)
 		}
@@ -214,11 +209,7 @@ function _initEvents(): void {
 			break
 		case Commands.eq_delete:
 			_selectedLatexIndex = getLatexIndex()
-			LatexStore.update(v => {
-				const latex = [...v.latex]
-				latex.splice(_selectedLatexIndex, 1)
-				return ({...v, latex})
-			})
+			LatexStore.update(v => v.latex.splice(_selectedLatexIndex, 1))
 			break
 		}
 	})
@@ -242,7 +233,7 @@ function _initEvents(): void {
 
 	_resetRef.addEventListener('click', () => {
 		_moreMenuRef.hidePopover()
-		LatexStore.update(v => ({...v, latex: [DEFAULT_LATEX_TEXT]}))
+		LatexStore.update(v => v.latex = [DEFAULT_LATEX_TEXT])
 	})
 }
 

@@ -1,33 +1,34 @@
-import { updateMenuRef, type MenuElement, type MenuItemElement, type SubMenuItemElement } from "@/native-components/Menu"
+import { updateMenuRef, type MenuElement, type MenuItemElement, type SubMenuItemElement } from "@/components/Menu"
 import { $, $$, $$$ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
 import { CSSClasses, CSSGroup } from "../../_styles/_css"
-import type { TooltipElement } from "@/native-components/Tooltip"
+import type { TooltipElement } from "@/components/Tooltip"
 import { isTargetValidElement } from "@/utils/element"
-import { moveArrayElement, isValidEnumValue } from "@/utils/object"
+import { isValidEnumValue } from "@/utils/object"
 import { Commands } from "../_shared/_commands"
 import { createElementId } from "@/utils/ids"
-import { isPopoverRefOpen, repositionPopoverRef, updatePopoverRef } from "@/native-components/Popover"
-import { createButtonRef, createIconButtonRef, updateButtonRef, updateIconButtonRef, type ButtonElement, type IconButtonElement } from "@/native-components/Button"
+import { isPopoverRefOpen, repositionPopoverRef, updatePopoverRef } from "@/components/Popover"
+import { createButtonRef, createIconButtonRef, updateButtonRef, updateIconButtonRef, type ButtonElement, type IconButtonElement } from "@/components/Button"
 import type { HEXColor } from "@/types/color"
 import { ColorSpace, GradientType, HueInterpolationMethod, PolarColorSpace, RadialGradientShape, type RectangularColorSpace } from "../_shared/_enums"
 import { ObservableStore } from "@/utils/store"
-import type { ComboBoxElement } from "@/native-components/ComboBox"
+import type { ComboBoxElement } from "@/components/ComboBox"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { DEFAULT_STOP_COLOR_1, DEFAULT_STOP_COLOR_2 } from "../_shared/_constant"
-import { createSliderRef, registerSliderRef, SliderClasses, updateSliderRefValue, type SliderElement } from "@/native-components/Slider"
+import { createSliderRef, registerSliderRef, SliderClasses, updateSliderRefValue, type SliderElement } from "@/components/Slider"
 import { safeNumber } from "@/utils/number"
 import { Math_clamp } from "@/utils/math"
-import { createTextFieldButtonRef, createTextFieldRef, type TextFieldButtonElement } from "@/native-components/TextField"
-import { createIconRef } from "@/native-components/Icon"
+import { createTextFieldButtonRef, createTextFieldRef, type TextFieldButtonElement } from "@/components/TextField"
+import { createIconRef } from "@/components/Icon"
 import { IconCodes } from "@/enums/icons"
 import { gradientToCSSText } from "./_gradient-utils"
 import { SettingsStore } from "./_settings"
-import { ColorPickerEvents, getColorPickerRefValue, updateColorPickerRef, type ColorPickerElement } from "@/native-components/ColorPicker"
+import { ColorPickerEvents, getColorPickerRefValue, updateColorPickerRef, type ColorPickerElement } from "@/components/ColorPicker"
 import { generateSavedGradientId, SavedGradients } from "./_saved-gradients"
-import type { ToastElement } from "@/native-components/Toast"
+import type { ToastElement } from "@/components/Toast"
 import { saveGradientDB } from "./_database"
+import { moveArrayElement } from "@/utils/array"
 
 export type ColorStopGradient = {
 	color: HEXColor
@@ -555,7 +556,7 @@ function _sortStopColors(): void {
 }
 
 function _initEvents(): void {
-	const updateGradient = (updater: (state: Readonly<GradientItem>) => Readonly<GradientItem>) => {
+	const updateGradient = (updater: (state: GradientItem) => void) => {
 		GradientStore.value.selected.update(updater)
 	}
 	let stopColorInputRef: HTMLInputElement | null | undefined = null
@@ -566,7 +567,7 @@ function _initEvents(): void {
 			const value = _ctrlProp_colorSpaceRef.value as PolarColorSpace
 			if (!isValidEnumValue(value, PolarColorSpace)) {return}
 
-			updateGradient(v => ({...v, colorMethod: value}))
+			updateGradient(v => v.colorMethod = value)
 			_updateGradientControlView(false)
 		})
 
@@ -575,26 +576,24 @@ function _initEvents(): void {
 			if (!isValidEnumValue(value, GradientType)) {return}
 
 			updateGradient(v => {
+				v.type = value
 				switch (value) {
-				case GradientType.linear: return { ...v,
-					type: value,
-					angle: 0
+				case GradientType.linear:
+					v.angle = 0
+					break
+				case GradientType.radial:
+					v.positionX = 50
+					v.positionY = 50
+					v.shape = RadialGradientShape.ellipse
+					v.height = 100
+					v.size = 350
+					v.width = 100
+					break
+				case GradientType.conic:
+					v.angle = 0
+					v.positionX = 50
+					v.positionY = 50
 				}
-				case GradientType.radial: return { ...v,
-					type: value,
-					positionX: 50,
-					positionY: 50,
-					shape: RadialGradientShape.ellipse,
-					height: 100,
-					size: 350,
-					width: 100
-				}
-				case GradientType.conic: return { ...v,
-					type: value,
-					angle: 0,
-					positionX: 50,
-					positionY: 50
-				}}
 			})
 			_updateGradientControlView(false)
 		})
@@ -603,7 +602,7 @@ function _initEvents(): void {
 			const value = _ctrlProp_radialShapeRef.value as RadialGradientShape
 			if (!isValidEnumValue(value, RadialGradientShape)) {return}
 
-			updateGradient(v => ({...v, shape: value}))
+			updateGradient(v => v.shape = value)
 			_updateGradientControlView(false)
 		})
 
@@ -611,42 +610,42 @@ function _initEvents(): void {
 			const value = _ctrlProp_hueInterpolationRef.value as HueInterpolationMethod
 			if (!isValidEnumValue(value, HueInterpolationMethod)) {return}
 
-			updateGradient(v => ({...v, hueMethod: value}))
+			updateGradient(v => v.hueMethod = value)
 			_updateGradientControlView(false)
 		})
 
 		_ctrlProp_repeatRef.addEventListener('change', () => {
-			updateGradient(v => ({...v, repeat: _ctrlProp_repeatRef.checked}))
+			updateGradient(v => v.repeat = _ctrlProp_repeatRef.checked)
 		})
 
 		_ctrlProp_positionXRef.addEventListener('input', () => {
 			const value = safeNumber(Number.parseFloat(_ctrlProp_positionXRef.value))
-			updateGradient(v => ({...v, positionX: value}))
+			updateGradient(v => v.positionX = value)
 		})
 
 		_ctrlProp_positionYRef.addEventListener('input', () => {
 			const value = safeNumber(Number.parseFloat(_ctrlProp_positionYRef.value))
-			updateGradient(v => ({...v, positionY: value}))
+			updateGradient(v => v.positionY = value)
 		})
 
 		_ctrlProp_widthRef.addEventListener('input', () => {
 			const value = safeNumber(Number.parseFloat(_ctrlProp_widthRef.value))
-			updateGradient(v => ({...v, width: value}))
+			updateGradient(v => v.width = value)
 		})
 
 		_ctrlProp_heightRef.addEventListener('input', () => {
 			const value = safeNumber(Number.parseFloat(_ctrlProp_heightRef.value))
-			updateGradient(v => ({...v, height: value}))
+			updateGradient(v => v.height = value)
 		})
 
 		_ctrlProp_sizeRef.addEventListener('input', () => {
 			const value = safeNumber(Number.parseFloat(_ctrlProp_sizeRef.value))
-			updateGradient(v => ({...v, size: value}))
+			updateGradient(v => v.size = value)
 		})
 
 		_ctrlProp_angleRef.addEventListener('input', () => {
 			const value = safeNumber(Number.parseFloat(_ctrlProp_angleRef.value))
-			updateGradient(v => ({...v, angle: value}))
+			updateGradient(v => v.angle = value)
 		})
 	}
 
@@ -918,7 +917,7 @@ function _initEvents(): void {
 					return ev.preventDefault()
 				}
 
-				GradientStore.update(v => ({...v, selected: gradientItem}))
+				GradientStore.update(v => v.selected = gradientItem)
 				updatePopoverRef(_controlPopoverRef, {PopoverAnchorBy: id})
 
 				// wait for open
@@ -942,7 +941,7 @@ function _initEvents(): void {
 					return ev.preventDefault()
 				}
 
-				GradientStore.update(v => ({...v, selected: gradientItem}))
+				GradientStore.update(v => v.selected = gradientItem)
 				updateMenuRef(_actionsMenuRef, {PopoverAnchorBy: id})
 
 				// wait for open
@@ -1028,14 +1027,7 @@ function _initEvents(): void {
 					({...v.value, stops: [...v.value.stops.map(v => ({...v}))]})
 				)]
 			}
-			SavedGradients.update(v => {
-				v.gradients = [
-					grad,
-					...v.gradients
-				]
-				return {...v}
-			})
-
+			SavedGradients.update(v => v.gradients = [grad, ...v.gradients])
 			_toastSavedRef.showPopover()
 			saveGradientDB(grad.id, grad.gradients)
 		})
@@ -1106,18 +1098,20 @@ function _addGradient(index: number = 0): void {
 			return ({...v, color: color as HEXColor})
 		})
 	})
-	GradientStore.update(v => ({...v, gradients: [
+	GradientStore.update(v => v.gradients = [
 		...v.gradients.slice(0, index),
 		newGradient,
 		...v.gradients.slice(index)
-	]}))
+	])
 }
 
 function _moveGradient(index: number): void {
 	const gradient = GradientStore.value.gradients[index]
 	if (index === _selectedGradientIndex || !gradient) {return}
 
-	GradientStore.update(v => ({...v, gradients: moveArrayElement(v.gradients, _selectedGradientIndex, index, false)}))
+	GradientStore.update(v =>
+		v.gradients = moveArrayElement(v.gradients, _selectedGradientIndex, index, false)
+	)
 	_updateGradientListView()
 }
 
@@ -1127,7 +1121,7 @@ function _moveColorStop(index: number): void {
 	const stop = stops[_selectedStopIndex]
 	if (index === _selectedStopIndex || !stop) {return}
 
-	gradient.update(v => ({...v, stops: moveArrayElement(stops, _selectedStopIndex, index, false)}))
+	gradient.update(v => v.stops = moveArrayElement(stops, _selectedStopIndex, index, false))
 	_updateGradientControlView()
 }
 
@@ -1167,12 +1161,11 @@ function _addColorStop(index: number = 0): void {
 		size: size,
 		color: color
 	}
-
-	gradient.update(v => ({...v, stops: [
+	gradient.update(v => v.stops = [
 		...v.stops.slice(0, index),
 		stop,
 		...v.stops.slice(index)
-	]}))
+	])
 	_updateGradientControlView() // add new elements
 }
 

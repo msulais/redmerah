@@ -10,58 +10,45 @@ import { numberToBinary } from "@/utils/number"
 import { clearMemory, recallMemory, updateMemory } from "./_memory"
 
 export function insertKeyBackspace(): void {
+	const backspace = (input: string) => input.substring(0, input.length-1)
 	switch (NavigationStore.value.page) {
-	case Pages.basic:
-		return BasicStore.update(v => ({...v, input: v.input.substring(0, v.input.length-1)}))
-	case Pages.scientific:
-		return ScientificStore.update(v => ({...v, input: v.input.substring(0, v.input.length-1)}))
-	case Pages.converter:
-		return ConverterStore.update(v => ({...v, input: v.input.substring(0, v.input.length-1)}))
-	case Pages.programmer:
-		return ProgrammerStore.update(v => ({...v, input: v.input.substring(0, v.input.length-1)}))
+	case Pages.basic     : return BasicStore     .update(v => v.input = backspace(v.input))
+	case Pages.scientific: return ScientificStore.update(v => v.input = backspace(v.input))
+	case Pages.converter : return ConverterStore .update(v => v.input = backspace(v.input))
+	case Pages.programmer: return ProgrammerStore.update(v => v.input = backspace(v.input))
 	case Pages.date: break
 	}
 }
 
 export function insertKeyClear(): void {
 	switch (NavigationStore.value.page) {
-	case Pages.basic:
-		return BasicStore.update(v => ({...v, input: ''}))
-	case Pages.scientific:
-		return ScientificStore.update(v => ({...v, input: ''}))
-	case Pages.converter:
-		return ConverterStore.update(v => ({...v, input: ''}))
-	case Pages.programmer:
-		return ProgrammerStore.update(v => ({...v, input: ''}))
+	case Pages.basic     : return BasicStore     .update(v => v.input = '')
+	case Pages.scientific: return ScientificStore.update(v => v.input = '')
+	case Pages.converter : return ConverterStore .update(v => v.input = '')
+	case Pages.programmer: return ProgrammerStore.update(v => v.input = '')
 	case Pages.date: break
 	}
 }
 
 export function insertKeyEqual(): void {
-	let output: number | null = null
+	const isNumber = (v: any) => typeof v === 'number'
 	switch (NavigationStore.value.page) {
-	case Pages.basic:
-		output = BasicStore.value.output
-		if (output !== null) BasicStore.update(
-			v => ({...v, input: formatOutput(output!)})
-		)
-		break
-	case Pages.scientific:
-		output = ScientificStore.value.output
-		if (output !== null) ScientificStore.update(
-			v => ({...v, input: formatOutput(output!)})
-		)
-		break
-	case Pages.converter:
-		output = ConverterStore.value.output
-		if (output !== null) ConverterStore.update(
-			v => ({...v, input: formatOutput(output!)})
-		)
-		break
+	case Pages.basic: {
+		const output = BasicStore.value.output
+		BasicStore.update(v => v.input = isNumber(output)? formatOutput(output) : v.input)
+	}	break
+	case Pages.scientific: {
+		const output = ScientificStore.value.output
+		ScientificStore.update(v => v.input = isNumber(output)? formatOutput(output) : v.input)
+	}	break
+	case Pages.converter: {
+		const output = ConverterStore.value.output
+		ConverterStore.update(v => v.input = isNumber(output)? formatOutput(output) : v.input)
+	}	break
 	case Pages.programmer: {
-		output = ProgrammerStore.value.output
+		const output = ProgrammerStore.value.output
 		if (output !== null) {
-			let text = formatOutput(output!)
+			let text = formatOutput(output)
 			const bin = numberToBinary(output)
 			const parsedBin = Number.parseInt(bin, 2)
 			type: switch (ProgrammerStore.value.numberType) {
@@ -76,7 +63,7 @@ export function insertKeyEqual(): void {
 				text = bin
 				break type
 			}
-			ProgrammerStore.update(v => ({...v, input: text}))
+			ProgrammerStore.update(v => v.input = text)
 		}
 	};	break
 	case Pages.date: break
@@ -84,21 +71,18 @@ export function insertKeyEqual(): void {
 }
 
 export function insertKeyChar(char: string): void {
+	const add = (input: string) => input + char
 	switch (NavigationStore.value.page) {
-	case Pages.basic:
-		return BasicStore.update(v => ({...v, input: v.input + char}))
-	case Pages.scientific:
-		return ScientificStore.update(v => ({...v, input: v.input + char}))
-	case Pages.converter:
-		return ConverterStore.update(v => ({...v, input: v.input + char}))
-	case Pages.programmer:
-		return ProgrammerStore.update(v => ({...v, input: v.input + char}))
+	case Pages.basic     : return BasicStore     .update(v => v.input = add(v.input))
+	case Pages.scientific: return ScientificStore.update(v => v.input = add(v.input))
+	case Pages.converter : return ConverterStore .update(v => v.input = add(v.input))
+	case Pages.programmer: return ProgrammerStore.update(v => v.input = add(v.input))
 	case Pages.date: break
 	}
 }
 
 export function insertKeyPlusMinus(): void {
-	const inversLastExpression = (value: string) => {
+	const inverse = (value: string) => {
 		const re = /(.*?)([-+]{0,2})(\d*(?:\.\d*)?)$/s
 		const match = value.match(re)
 		if (value.trim().length === 0) {
@@ -138,23 +122,18 @@ export function insertKeyPlusMinus(): void {
 	}
 
 	switch (NavigationStore.value.page) {
-	case Pages.basic:
-		return BasicStore.update(v => ({...v, input: inversLastExpression(v.input)}))
-	case Pages.scientific:
-		return ScientificStore.update(v => ({...v, input: inversLastExpression(v.input)}))
-	case Pages.converter:
-		return ConverterStore.update(v => ({...v, input: inversLastExpression(v.input)}))
-	case Pages.programmer:
-		return ProgrammerStore.update(v => ({...v, input: inversLastExpression(v.input)}))
+	case Pages.basic     : return BasicStore     .update(v => v.input = inverse(v.input))
+	case Pages.scientific: return ScientificStore.update(v => v.input = inverse(v.input))
+	case Pages.converter : return ConverterStore .update(v => v.input = inverse(v.input))
+	case Pages.programmer: return ProgrammerStore.update(v => v.input = inverse(v.input))
 	case Pages.date: break
 	}
 }
 
 export function insertKeySwap(): void {
-	ConverterStore.update(v => ({...v,
-		inputUnit: v.outputUnit,
-		outputUnit: v.inputUnit
-	}))
+	ConverterStore.update(v => {
+		[v.inputUnit, v.outputUnit] = [v.outputUnit, v.inputUnit]
+	})
 }
 
 function _initEvents(): void {

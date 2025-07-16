@@ -46,13 +46,19 @@ function _readStorageAll(store: IDBObjectStore): void {
 				const hsv = hslToHsv(hsl)
 				const cmyk = rgbToCmyk(rgb)
 				const hwb = hsvToHwb(hsv)
-				PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+				PickerStore.update(v =>{
+					v.rgb = rgb
+					v.hex = hex
+					v.hsv = hsv
+					v.hsl = hsl
+					v.cmyk = cmyk
+					v.hwb = hwb
+				})
 			}
 			break
 		case "settings:picker-mode":
-			if (isValidEnumValue(value, ColorPickerMode)) {
-				SettingsStore.update(v => ({...v, pickerMode: value as ColorPickerMode}))
-			}
+			isValidEnumValue(value, ColorPickerMode)
+			&& SettingsStore.update(v => v.pickerMode = value)
 		}
 
 		return true

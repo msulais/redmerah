@@ -6,7 +6,7 @@ import { DEFAULT_COLORS_COUNT, DEFAULT_COLORS_HEX_MAX, DEFAULT_COLORS_HEX_MIN, D
 import type { HEXColor } from "@/types/color"
 import { Math_clamp } from "@/utils/math"
 import { safeNumber } from "@/utils/number"
-import type { ComboBoxElement } from "@/native-components/ComboBox"
+import type { ComboBoxElement } from "@/components/ComboBox"
 import { isValidEnumValue } from "@/utils/object"
 import { colorContrastRatio, hexToRgb, hslToHex, rgbToHex, rgbToHsl } from "@/utils/color"
 import { saveStorageItem } from "../_core/_database"
@@ -110,7 +110,7 @@ export function updateOutput(): void {
 		break
 	}}
 
-	ColorsStore.update(v => ({...v, output: colors}))
+	ColorsStore.update(v => v.output = colors)
 }
 
 function _subsStorage(v: ColorsStoreType): void {
@@ -310,7 +310,7 @@ function _initSubscriber(): void {
 function _initEvents(): void {
 	_countRef.addEventListener('input', () => {
 		const value = Math_clamp(safeNumber(_countRef.valueAsNumber), 1, Number.MAX_VALUE)
-		ColorsStore.update(v => ({...v, count: value}))
+		ColorsStore.update(v => v.count = value)
 	})
 
 	_countRef.addEventListener('blur', () => {
@@ -321,14 +321,14 @@ function _initEvents(): void {
 		const value = _spaceRef.value
 		if (!isValidEnumValue(value, ColorsRandomizerSpace)) {return}
 
-		ColorsStore.update(v => ({...v, colorSpace: value as ColorsRandomizerSpace}))
+		ColorsStore.update(v => v.colorSpace = value as ColorsRandomizerSpace)
 	})
 
 	_hexMinRef.addEventListener('input', () => {
 		const value = Math_clamp(
 			safeNumber(_hexMinRef.valueAsNumber), 0, ColorsStore.value.hexMax
 		)
-		ColorsStore.update(v => ({...v, hexMin: value}))
+		ColorsStore.update(v => v.hexMin = value)
 	})
 
 	_hexMinRef.addEventListener('blur', () => {
@@ -339,7 +339,7 @@ function _initEvents(): void {
 		const value = Math_clamp(
 			safeNumber(_hexMaxRef.valueAsNumber), ColorsStore.value.hexMin, 0xffffff
 		)
-		ColorsStore.update(v => ({...v, hexMax: value}))
+		ColorsStore.update(v => v.hexMax = value)
 	})
 
 	_hexMaxRef.addEventListener('blur', () => {
@@ -350,7 +350,7 @@ function _initEvents(): void {
 		const value = Math_clamp(
 			safeNumber(_redMinRef.valueAsNumber), 0, ColorsStore.value.rgbRMax
 		)
-		ColorsStore.update(v => ({...v, rgbRMin: value}))
+		ColorsStore.update(v => v.rgbRMin = value)
 	})
 
 	_redMinRef.addEventListener('blur', () => {
@@ -361,7 +361,7 @@ function _initEvents(): void {
 		const value = Math_clamp(
 			safeNumber(_redMaxRef.valueAsNumber), ColorsStore.value.rgbRMin, 0xff
 		)
-		ColorsStore.update(v => ({...v, rgbRMax: value}))
+		ColorsStore.update(v => v.rgbRMax = value)
 	})
 
 	_redMaxRef.addEventListener('blur', () => {
@@ -372,7 +372,7 @@ function _initEvents(): void {
 		const value = Math_clamp(
 			safeNumber(_greenMinRef.valueAsNumber), 0, ColorsStore.value.rgbGMax
 		)
-		ColorsStore.update(v => ({...v, rgbGMin: value}))
+		ColorsStore.update(v => v.rgbGMin = value)
 	})
 
 	_greenMinRef.addEventListener('blur', () => {
@@ -383,7 +383,7 @@ function _initEvents(): void {
 		const value = Math_clamp(
 			safeNumber(_greenMaxRef.valueAsNumber), ColorsStore.value.rgbGMin, 0xff
 		)
-		ColorsStore.update(v => ({...v, rgbGMax: value}))
+		ColorsStore.update(v => v.rgbGMax = value)
 	})
 
 	_greenMaxRef.addEventListener('blur', () => {
@@ -394,7 +394,7 @@ function _initEvents(): void {
 		const value = Math_clamp(
 			safeNumber(_blueMinRef.valueAsNumber), 0, ColorsStore.value.rgbBMax
 		)
-		ColorsStore.update(v => ({...v, rgbBMin: value}))
+		ColorsStore.update(v => v.rgbBMin = value)
 	})
 
 	_blueMinRef.addEventListener('blur', () => {
@@ -405,7 +405,7 @@ function _initEvents(): void {
 		const value = Math_clamp(
 			safeNumber(_blueMaxRef.valueAsNumber), ColorsStore.value.rgbBMin, 0xff
 		)
-		ColorsStore.update(v => ({...v, rgbBMax: value}))
+		ColorsStore.update(v => v.rgbBMax = value)
 	})
 
 	_blueMaxRef.addEventListener('blur', () => {
@@ -416,7 +416,7 @@ function _initEvents(): void {
 		const value = Math_clamp(
 			safeNumber(_hueMinRef.valueAsNumber), 0, ColorsStore.value.hslHMax
 		)
-		ColorsStore.update(v => ({...v, hslHMin: value}))
+		ColorsStore.update(v => v.hslHMin = value)
 	})
 
 	_hueMinRef.addEventListener('blur', () => {
@@ -427,7 +427,7 @@ function _initEvents(): void {
 		const value = Math_clamp(
 			safeNumber(_hueMaxRef.valueAsNumber), ColorsStore.value.hslHMin, 360
 		)
-		ColorsStore.update(v => ({...v, hslHMax: value}))
+		ColorsStore.update(v => v.hslHMax = value)
 	})
 
 	_hueMaxRef.addEventListener('blur', () => {
@@ -438,7 +438,7 @@ function _initEvents(): void {
 		const value = Math_clamp(
 			safeNumber(_saturationMinRef.valueAsNumber), 0, ColorsStore.value.hslSMax
 		)
-		ColorsStore.update(v => ({...v, hslSMin: value}))
+		ColorsStore.update(v => v.hslSMin = value)
 	})
 
 	_saturationMinRef.addEventListener('blur', () => {
@@ -449,7 +449,7 @@ function _initEvents(): void {
 		const value = Math_clamp(
 			safeNumber(_saturationMaxRef.valueAsNumber), ColorsStore.value.hslSMin, 100
 		)
-		ColorsStore.update(v => ({...v, hslSMax: value}))
+		ColorsStore.update(v => v.hslSMax = value)
 	})
 
 	_saturationMaxRef.addEventListener('blur', () => {
@@ -460,7 +460,7 @@ function _initEvents(): void {
 		const value = Math_clamp(
 			safeNumber(_lightMinRef.valueAsNumber), 0, ColorsStore.value.hslLMax
 		)
-		ColorsStore.update(v => ({...v, hslLMin: value}))
+		ColorsStore.update(v => v.hslLMin = value)
 	})
 
 	_lightMinRef.addEventListener('blur', () => {
@@ -471,7 +471,7 @@ function _initEvents(): void {
 		const value = Math_clamp(
 			safeNumber(_lightMaxRef.valueAsNumber), ColorsStore.value.hslLMin, 100
 		)
-		ColorsStore.update(v => ({...v, hslLMax: value}))
+		ColorsStore.update(v => v.hslLMax = value)
 	})
 
 	_lightMaxRef.addEventListener('blur', () => {

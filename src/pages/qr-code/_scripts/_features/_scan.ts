@@ -1,4 +1,4 @@
-import type { ButtonElement } from "@/native-components/Button"
+import type { ButtonElement } from "@/components/Button"
 import { $ } from "../_core/_dom-utils"
 import { ElementIds } from "../_shared/_ids"
 import { BrowserQRCodeReader } from '@zxing/browser'
@@ -7,7 +7,7 @@ import { pickFile } from "@/utils/file"
 import { ObservableStore } from "@/utils/store"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEffectTiming } from "@/enums/animation"
-import type { TextAreaFieldElement } from "@/native-components/TextAreaField"
+import type { TextAreaFieldElement } from "@/components/TextAreaField"
 
 export type ScanStoreType = Readonly<{
 	imgUrl: string | null
@@ -68,10 +68,10 @@ async function _subsImgUrlView(v: ScanStoreType, o: ScanStoreType): Promise<void
 		} catch {}
 	}
 
-	ScanStore.update(v => ({...v, outputText: outputText ?? ''}))
+	ScanStore.update(v => v.outputText = outputText ?? '')
 	if (outputText !== null) {return}
 
-	// TODO: add into the abyss
+	// TODO: into the abyss
 	// openToast(toastErrorScanQRCodeRef)
 }
 
@@ -88,7 +88,7 @@ function _initEvents(): void {
 			for (const file of files) {
 				if (!file.type.startsWith('image')) {continue}
 
-				ScanStore.update(v => ({...v, imgUrl: URL.createObjectURL(file)}))
+				ScanStore.update(v => v.imgUrl = URL.createObjectURL(file))
 				break
 			}
 		})

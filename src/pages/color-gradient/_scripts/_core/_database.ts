@@ -64,29 +64,24 @@ function _readStorageAll(store: IDBObjectStore): void {
 		const isNumber = typeof value === 'number'
 		switch (key as _StorageKeys) {
 		case 'settings:color-space':
-			if (isString && isValidEnumValue(value, ColorSpace)) {
-				SettingsStore.update(v => ({...v, colorSpace: value as ColorSpace}))
-			}
+			isValidEnumValue(value, ColorSpace)
+			&& SettingsStore.update(v => v.colorSpace = value)
 			break
 		case "properties:border-radius":
-			if (isNumber) {
-				PreviewStore.update(v => ({...v, borderRadius: Math.max(0, value)}))
-			}
+			isNumber
+			&& PreviewStore.update(v => v.borderRadius = Math.max(0, value))
 			break
 		case "properties:width":
-			if (isNumber) {
-				PreviewStore.update(v => ({...v, width: Math.max(0, value)}))
-			}
+			isNumber
+			&& PreviewStore.update(v => v.width = Math.max(0, value))
 			break
 		case "properties:height":
-			if (isNumber) {
-				PreviewStore.update(v => ({...v, height: Math.max(0, value)}))
-			}
+			isNumber
+			&& PreviewStore.update(v => v.height = Math.max(0, value))
 			break
 		case "properties:clip-path":
-			if (isString) {
-				PreviewStore.update(v => ({...v, clipPath: value}))
-			}
+			isString
+			&& PreviewStore.update(v => v.clipPath = value)
 			break
 		}
 
@@ -158,9 +153,11 @@ function _readGradients(): void {
 			})
 		}
 
-		SavedGradients.update(v => ({...v,
-			gradients: gradients.sort((a, b) => a.id.localeCompare(b.id)).reverse()
-		}))
+		SavedGradients.update(v => v.gradients = (
+			gradients
+			.sort((a, b) => a.id.localeCompare(b.id))
+			.reverse()
+		))
 	})
 }
 

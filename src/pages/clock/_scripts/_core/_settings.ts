@@ -7,7 +7,7 @@ import { isValidEnumValue } from "@/utils/object"
 import { RootAttributes } from "@/enums/attributes"
 import { RadioNames } from "../_shared/_input-names"
 import { DEFAULT_ANIMATION, DEFAULT_KEEP_AWAKE, DEFAULT_THEME } from "../_shared/_constant"
-import type { DialogElement } from "@/native-components/Dialog"
+import type { DialogElement } from "@/components/Dialog"
 import { saveStorageItem } from "./_database"
 
 export type SettingsStoreType = Readonly<{
@@ -42,7 +42,7 @@ function _subscribeKeepAwakeChanges(v: SettingsStoreType, o: SettingsStoreType):
 		.catch(() => {
 			_keepAwakeErrorRef.showModal()
 			_wakeLock = null
-			SettingsStore.update(v => ({...v, keepAwake: false}))
+			SettingsStore.update(v => v.keepAwake = false)
 		})
 		return
 	}
@@ -124,7 +124,7 @@ function _initSubscriber(): void {
 
 function _initEvents(): void {
 	_keepAwakeBtnRef.addEventListener('change', () => {
-		SettingsStore.update(v => ({...v, keepAwake: _keepAwakeBtnRef.checked}))
+		SettingsStore.update(v => v.keepAwake = _keepAwakeBtnRef.checked)
 		_settingsMenuRef.hidePopover()
 	})
 
@@ -134,7 +134,7 @@ function _initEvents(): void {
 		if (!value || !isValidEnumValue(value, PlatformThemeMode)) {return}
 
 		_settingsMenuRef.hidePopover()
-		SettingsStore.update(v => ({...v, theme: value as PlatformThemeMode}))
+		SettingsStore.update(v => v.theme = value as PlatformThemeMode)
 	})
 
 	_animationRef.addEventListener('change', ev => {
@@ -143,7 +143,7 @@ function _initEvents(): void {
 		if (!value || !isValidEnumValue(value, PlatformAnimationMode)) {return}
 
 		_settingsMenuRef.hidePopover()
-		SettingsStore.update(v => ({...v, animation: value}))
+		SettingsStore.update(v => v.animation = value as PlatformAnimationMode)
 	})
 }
 
@@ -151,14 +151,14 @@ function _initTheme(): void {
 	const theme = localStorage.getItem(LocalStorageKeys.platformTheme) as PlatformThemeMode
 	if (!theme || !isValidEnumValue(theme, PlatformThemeMode) || theme === DEFAULT_THEME) return
 
-	SettingsStore.update(v => ({...v, theme}))
+	SettingsStore.update(v => v.theme = theme)
 }
 
 function _initAnimation(): void {
 	const animation = localStorage.getItem(LocalStorageKeys.platformAnimation) as PlatformAnimationMode
 	if (!animation || !isValidEnumValue(animation, PlatformAnimationMode)) return
 
-	SettingsStore.update(v => ({...v, animation}))
+	SettingsStore.update(v => v.animation = animation)
 }
 
 export default () => {

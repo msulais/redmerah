@@ -1,0 +1,72 @@
+---
+import { joinClassList } from '@/utils/attributes'
+
+import { ButtonClasses } from '@/components/Button'
+import Icon from '@/components/Icon/index.astro'
+import {
+	type SelectProps,
+	SelectClasses,
+	SelectVariant as SSelectVariant
+} from '.'
+import './index.scss'
+import { IconCodes } from '@/enums/icons'
+
+type Props = SelectProps
+const {
+	SelectContentAttr     = {},
+	SelectPopoverAttr     = {},
+	SelectPlaceholderAttr = {},
+	SelectIconAttr        = {},
+	SelectVariant         = SSelectVariant.tonal,
+	SelectUseIcon         = true,
+	'class': className,
+	role,
+	...other
+} = Astro.props
+
+const {'class': iconClass       , ...iconOther   } = SelectIconAttr
+const {'class': contentClass    , ...contentOther} = SelectContentAttr
+const {'class': popoverClass    , ...popoverOther} = SelectPopoverAttr
+const {'class': placeholderClass, tabindex, ...placeholderOther} = SelectPlaceholderAttr
+---
+
+<div
+	class={joinClassList(SelectClasses.select, className)}
+	data-c-select-variant={SelectVariant}
+	data-c-select-use-icon={SelectUseIcon? '' : undefined}
+	role={role ?? 'listbox'}
+	{...other}>
+	<div
+		class={joinClassList(SelectClasses.popover, popoverClass)}
+		{...popoverOther}>
+		<div
+			class={joinClassList(SelectClasses.content, contentClass)}
+			{...contentOther}>
+			<slot/>
+			<div
+				class={joinClassList(
+					ButtonClasses.button,
+					SelectClasses.placeholder,
+					placeholderClass
+				)}
+				tabindex={tabindex ?? 0}
+				{...placeholderOther}>
+				<slot name="placeholder">
+					Choose item
+				</slot>
+			</div>
+		</div>
+	</div>
+	<Icon
+		class={joinClassList(
+			SelectClasses.icon,
+			iconClass
+		)}
+		IconCode={IconCodes.chevronDown}
+		{...iconOther}
+	/>
+</div>
+<script>
+	import { registerSelectRef } from '.'
+	registerSelectRef()
+</script>

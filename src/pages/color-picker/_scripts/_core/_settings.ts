@@ -8,7 +8,7 @@ import { RadioNames } from "../_shared/_input-names"
 import { DEFAULT_ANIMATION, DEFAULT_PICKER_MODE, DEFAULT_THEME } from "../_shared/_constant"
 import { $, $$, $$$ } from "./_dom-utils"
 import { ColorPickerMode } from "../_shared/_enums"
-import type { ComboBoxElement } from "@/native-components/ComboBox"
+import type { ComboBoxElement } from "@/components/ComboBox"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { saveStorageItem } from "./_database"
@@ -126,7 +126,7 @@ function _initEvents(): void {
 		if (!value || !isValidEnumValue(value, PlatformThemeMode)) {return}
 
 		_settingsMenuRef.hidePopover()
-		SettingsStore.update(v => ({...v, theme: value as PlatformThemeMode}))
+		SettingsStore.update(v => v.theme = value)
 	})
 
 	_animationRef.addEventListener('change', ev => {
@@ -135,14 +135,14 @@ function _initEvents(): void {
 		if (!value || !isValidEnumValue(value, PlatformAnimationMode)) {return}
 
 		_settingsMenuRef.hidePopover()
-		SettingsStore.update(v => ({...v, animation: value}))
+		SettingsStore.update(v => v.animation = value)
 	})
 
 	_pickerModeRef.addEventListener('change', () => {
-		const value = _pickerModeRef.value
+		const value = _pickerModeRef.value as ColorPickerMode
 		if (!isValidEnumValue(value, ColorPickerMode)) {return}
 
-		SettingsStore.update(v => ({...v, pickerMode: value as ColorPickerMode}))
+		SettingsStore.update(v => v.pickerMode = value)
 	})
 }
 
@@ -150,14 +150,14 @@ function _initTheme(): void {
 	const theme = localStorage.getItem(LocalStorageKeys.platformTheme) as PlatformThemeMode
 	if (!theme || !isValidEnumValue(theme, PlatformThemeMode) || theme === DEFAULT_THEME) return
 
-	SettingsStore.update(v => ({...v, theme}))
+	SettingsStore.update(v => v.theme = theme)
 }
 
 function _initAnimation(): void {
 	const animation = localStorage.getItem(LocalStorageKeys.platformAnimation) as PlatformAnimationMode
 	if (!animation || !isValidEnumValue(animation, PlatformAnimationMode)) return
 
-	SettingsStore.update(v => ({...v, animation}))
+	SettingsStore.update(v => v.animation = animation)
 }
 
 export default () => {

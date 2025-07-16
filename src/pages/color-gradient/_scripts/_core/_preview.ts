@@ -139,21 +139,21 @@ function _subscribeClipPathRefView(v: PreviewStoreType, o: PreviewStoreType): vo
 function _initEvents(): void {
 	_propertyBorderRadiusRef.addEventListener('input', () => {
 		const value = safeNumber(_propertyBorderRadiusRef.valueAsNumber)
-		PreviewStore.update(v => ({...v, borderRadius: value}))
+		PreviewStore.update(v => v.borderRadius = value)
 	})
 
 	_propertyWidthRef.addEventListener('input', () => {
 		const value = safeNumber(_propertyWidthRef.valueAsNumber)
-		PreviewStore.update(v => ({...v, width: value}))
+		PreviewStore.update(v => v.width = value)
 	})
 
 	_propertyHeightRef.addEventListener('input', () => {
 		const value = safeNumber(_propertyHeightRef.valueAsNumber)
-		PreviewStore.update(v => ({...v, height: value}))
+		PreviewStore.update(v => v.height = value)
 	})
 
 	_propertyClipPathRef.addEventListener('input', () => {
-		PreviewStore.update(v => ({...v, clipPath: _propertyClipPathRef.value}))
+		PreviewStore.update(v => v.clipPath = _propertyClipPathRef.value)
 	})
 }
 

@@ -2,7 +2,7 @@ import { ObservableStore } from "@/utils/store"
 import { updateEmojiList } from "./_body"
 import { $ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
-import type { PopoverElement } from "@/native-components/Popover"
+import type { PopoverElement } from "@/components/Popover"
 
 export type SearchStoreType = Readonly<{
 	isSearching: boolean
@@ -48,15 +48,15 @@ function _initSubscriber(): void {
 function _initEvents(): void {
 	_searchPopoverRef.addEventListener('beforetoggle', ev => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
-		SearchStore.update(v => ({...v, isSearching: isOpen}))
+		SearchStore.update(v => v.isSearching = isOpen)
 	})
 
 	_searchTextFieldRef.addEventListener('input', () => {
-		SearchStore.update(v => ({...v, searchText: _searchTextFieldRef.value}))
+		SearchStore.update(v => v.searchText = _searchTextFieldRef.value)
 	})
 
 	_searchTextFieldRef.addEventListener('focus', () => {
-		SearchStore.update(v => ({...v, searchText: _searchTextFieldRef.value}))
+		SearchStore.update(v => v.searchText = _searchTextFieldRef.value)
 	})
 }
 

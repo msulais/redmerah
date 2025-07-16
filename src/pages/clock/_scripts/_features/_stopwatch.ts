@@ -1,18 +1,18 @@
 import { ObservableStore } from "@/utils/store"
 import { $, $$, $$$ } from "../_core/_dom-utils"
 import { ElementIds } from "../_shared/_ids"
-import { IconClasses, updateIconRef, type IconElement } from "@/native-components/Icon"
+import { IconClasses, updateIconRef, type IconElement } from "@/components/Icon"
 import { isTargetValidElement } from "@/utils/element"
 import { IconCodes } from "@/enums/icons"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEffectTiming } from "@/enums/animation"
-import { SideBarClasses } from "@/native-components/SideBar"
-import { DrawerClasses } from "@/native-components/Drawer"
+import { SideBarClasses } from "@/components/SideBar"
+import { DrawerClasses } from "@/components/Drawer"
 import { Pages } from "../_shared/_enums"
 import { AppCSSColors } from "@/enums/app-data"
-import { updateButtonRef, updateIconButtonRef } from "@/native-components/Button"
+import { updateButtonRef, updateIconButtonRef } from "@/components/Button"
 import { Commands } from "../_shared/_commands"
-import { openToastRef, type ToastElement } from "@/native-components/Toast"
+import { openToastRef, type ToastElement } from "@/components/Toast"
 import { DEFAULT_STOPWATCH_MS, DEFAULT_STOPWATCH_RUNNING, DEFAULT_STOPWATCH_LAPS } from "../_shared/_constant"
 
 type _StopwatchStoreType = {
@@ -84,7 +84,7 @@ function _subscribeRunningChanges(v: _StopwatchStoreType, o: _StopwatchStoreType
 	if (!running) {return}
 
 	_intervalId = setInterval(() => {
-		StopwatchStore.update(v => ({...v, ms: v.ms + 10}))
+		StopwatchStore.update(v => v.ms += 10)
 	}, 10)
 }
 
@@ -308,18 +308,17 @@ function _initEvents(): void {
 		const value = StopwatchStore.value
 		switch (buttonRef) {
 		case _playOrPauseButtonRef:
-			StopwatchStore.update(v => ({...v, running: !v.running}))
+			StopwatchStore.update(v => v.running = !v.running)
 			break
 		case _resetOrLapButtonRef:
 			if (value.running) {
-				StopwatchStore.update(v => ({...v, laps: [v.ms, ...v.laps]}))
+				StopwatchStore.update(v => v.laps = [v.ms, ...v.laps])
 			}
 			else {
-				StopwatchStore.update(v => ({
-					...v,
-					ms: 0,
-					laps: []
-				}))
+				StopwatchStore.update(v => {
+					v.ms = 0
+					v.laps = []
+				})
 			}
 		}
 	})

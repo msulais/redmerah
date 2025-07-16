@@ -1,28 +1,38 @@
 .c-popover {
-	background-color: rgb(var(--g-color-surface));
+	--c-popover-left: 0;
+	--c-popover-top: 0;
+	position: fixed;
+	background-color: rgba(var(--g-color-surface), var(--g-opacity-glass));
+	backdrop-filter: blur(var(--g-blur-glass));
 	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity3));
-	box-sizing: content-box;
-	border-radius: 12px;
-	left: 0;
+	border-radius: 8px;
+	left: var(--c-popover-left);
 	max-height: calc(100dvh - 16px);
 	max-width: calc(100% - 16px);
-	position: fixed;
+	width: max-content;
 	outline: none;
 	overflow: hidden;
-	top: 0;
+	top: var(--c-popover-top);
+	opacity: 0;
 	box-shadow: var(--g-elevation3);
+	transition-timing-function: var(--g-transition-spring-bounce-inverse);
+	transition-property: display, overlay, opacity;
+	transition-duration: var(--g-duration-transition);
+	transition-behavior: allow-discrete;
 
-	:root[data-corner=sharp] & {border-radius: 0}
-	:root[data-corner=semi-round] & {border-radius: 8px}
-	:root[data-corner=full-round] & {border-radius: 20px}
-	:root[data-theme=dark] & {
-		background-color: rgb(46, 46, 46);
-		border: 1px solid rgba(0, 0, 0, var(--g-opacity-inv5));
+	&:popover-open {
+		opacity: 1;
+		transition-timing-function: var(--g-transition-spring-bounce);
 	}
-	:root[data-theme=system] & {
+
+	:root[data-theme=dark] & {
+		border: 1px solid rgba(0, 0, 0, var(--g-opacity-inv5));
+		background-color: rgba(46, 46, 46, var(--g-opacity-glass));
+	}
+	:root[data-theme=auto] & {
 		@media (prefers-color-scheme: dark) {
-			background-color: rgb(46, 46, 46);
 			border: 1px solid rgba(0, 0, 0, var(--g-opacity-inv5));
+			background-color: rgba(46, 46, 46, var(--g-opacity-glass));
 		}
 	}
 
@@ -30,25 +40,39 @@
 		background-color: transparent;
 	}
 
-	&[data-c-drag] {
-		will-change: top, left;
+	&:not([data-c-popover-draggable]) > .c-popover-draghandle {
+		display: none;
 	}
 
-	> div {
-		max-height: inherit;
-		max-width: 100%;
-		overflow: auto;
-		width: 100%;
-		border-radius: inherit;
+	&[data-c-popover-dragging] {
+		will-change: top, left;
 	}
 }
 
-.c-popover-drag-handle {
-	--c-popover-drag-handle-border-radius: 16px;
-	--c-popover-drag-handle-width: calc(100% - var(--c-popover-drag-handle-border-radius) * 2 + 32px);
-	--c-popover-drag-handle-width-hover: calc(100% - var(--c-popover-drag-handle-border-radius) * 2 + 8px);
+@starting-style {
+	.c-popover {
+		&:popover-open {
+			opacity: 0;
+		}
+	}
+}
 
-	width: min(64px, var(--c-popover-drag-handle-width));
+.c-popover-content {
+	position: relative;
+	max-height: inherit;
+	max-width: 100%;
+	width: 100%;
+	overflow: auto;
+	border-radius: inherit;
+}
+
+.c-popover-draghandle {
+	--c-popover-draghandle-border-radius: 16px;
+	--c-popover-draghandle-width-base: calc(100% - (var(--c-popover-draghandle-border-radius) * 2));
+	--c-popover-draghandle-width: calc(var(--c-popover-draghandle-width-base) + 32px);
+	--c-popover-draghandle-width-hover: calc(var(--c-popover-draghandle-width-base) + 8px);
+
+	width: min(64px, var(--c-popover-draghandle-width));
 	height: 4px;
 	position: absolute;
 	top: 4px;
@@ -59,28 +83,13 @@
 	z-index: 5;
 	border-radius: 999px;
 	background-color: rgb(var(--g-color-accent));
-
-	:root[data-animation=on] & {
-		transition-duration: .2s;
-	}
-
-	:root[data-corner=sharp] & {
-		--c-popover-drag-handle-border-radius: 0px;
-		border-radius: 0px;
-	}
-
-	:root[data-corner=semi-round] & {
-		--c-popover-drag-handle-border-radius: 8px;
-	}
-
-	:root[data-corner=full-round] & {
-		--c-popover-drag-handle-border-radius: 20px;
-	}
+	cursor: grab;
+	transition-property: width, height;
+	transition-duration: var(--g-duration-transition);
 
 	@media (hover: hover) {
 		&:hover {
-			cursor: grab;
-			width: min(88px, var(--c-popover-drag-handle-width-hover));
+			width: min(88px, var(--c-popover-draghandle-width-hover));
 			height: 8px;
 		}
 	}
@@ -88,15 +97,6 @@
 	&:active {
 		cursor: grabbing;
 		height: 8px;
-		width: min(80px, calc(var(--c-popover-drag-handle-width-hover) - 16px));
-	}
-}
-
-.c-popover-portal-placeholder {
-	display: contents;
-
-	// extra div of <Portal> by SolidJS
-	> div {
-		display: inherit;
+		width: min(80px, calc(var(--c-popover-draghandle-width-hover) - 16px));
 	}
 }

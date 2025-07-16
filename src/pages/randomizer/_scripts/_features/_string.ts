@@ -59,7 +59,7 @@ export function updateOutput(): void {
 		}
 	}
 
-	StringStore.update(v => ({...v, output: output.join('')}))
+	StringStore.update(v => v.output = output.join(''))
 }
 
 function _subsStorage(v: StringStoreType): void {
@@ -100,7 +100,7 @@ function _initSubscriber(): void {
 function _initEvents(): void {
 	_lengthRef.addEventListener('input', () => {
 		const value = Math_clamp(safeNumber(_lengthRef.valueAsNumber), 1, Number.MAX_VALUE)
-		StringStore.update(v => ({...v, length: value}))
+		StringStore.update(v => v.length = value)
 	})
 
 	_lengthRef.addEventListener('blur', () => {
@@ -108,23 +108,23 @@ function _initEvents(): void {
 	})
 
 	_customRef.addEventListener('input', () => {
-		StringStore.update(v => ({...v, custom: _customRef.value}))
+		StringStore.update(v => v.custom = _customRef.value)
 	})
 
 	_upperRef.addEventListener('change', () => {
-		StringStore.update(v => ({...v, uppercase: _upperRef.checked}))
+		StringStore.update(v => v.uppercase = _upperRef.checked)
 	})
 
 	_lowerRef.addEventListener('change', () => {
-		StringStore.update(v => ({...v, lowercase: _lowerRef.checked}))
+		StringStore.update(v => v.lowercase = _lowerRef.checked)
 	})
 
 	_numbersRef.addEventListener('change', () => {
-		StringStore.update(v => ({...v, numbers: _numbersRef.checked}))
+		StringStore.update(v => v.numbers = _numbersRef.checked)
 	})
 
 	_symbolsRef.addEventListener('change', () => {
-		StringStore.update(v => ({...v, symbols: _symbolsRef.checked}))
+		StringStore.update(v => v.symbols = _symbolsRef.checked)
 	})
 }
 

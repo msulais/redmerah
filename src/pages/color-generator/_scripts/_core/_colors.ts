@@ -3,15 +3,15 @@ import { ObservableStore } from "@/utils/store"
 import { DEFAULT_COLOR, DEFAULT_PALETTE } from "../_shared/_constant"
 import { $, $$, $$$ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
-import { ColorPickerEvents, getColorPickerRefValue, updateColorPickerRef, type ColorPickerElement } from "@/native-components/ColorPicker"
+import { ColorPickerEvents, getColorPickerRefValue, updateColorPickerRef, type ColorPickerElement } from "@/components/ColorPicker"
 import { GlobalElementIds } from "@/enums/ids"
 import { generateColorPalette, hexToRgb, isColorValid } from "@/utils/color"
-import type { ToastElement } from "@/native-components/Toast"
+import type { ToastElement } from "@/components/Toast"
 import { CSSClasses } from "../../_styles/_css"
 import { isTargetValidElement } from "@/utils/element"
 import { Commands } from "../_shared/_commands"
-import { createIconButtonRef, type IconButtonElement } from "@/native-components/Button"
-import { createIconRef } from "@/native-components/Icon"
+import { createIconButtonRef, type IconButtonElement } from "@/components/Button"
+import { createIconRef } from "@/components/Icon"
 import { IconCodes } from "@/enums/icons"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEffectTiming } from "@/enums/animation"
@@ -218,7 +218,7 @@ function _initSubscriber(): void {
 
 function _initEvents(): void {
 	_colorPickerRef.addEventListener(ColorPickerEvents.input, () => {
-		ColorsStore.update(v => ({...v, seed: getColorPickerRefValue(_colorPickerRef)}))
+		ColorsStore.update(v => v.seed = getColorPickerRefValue(_colorPickerRef))
 	})
 
 	_paletteListRef.addEventListener('click', () => {
@@ -244,9 +244,7 @@ function _initEvents(): void {
 		case Commands.pal_delete: {
 			const seed = getSeedColor()
 			if (seed) {
-				ColorsStore.update(v => ({...v,
-					palette: v.palette.filter(v => v !== seed)
-				}))
+				ColorsStore.update(v => v.palette = v.palette.filter(v => v !== seed))
 			}
 		}	break
 		}
@@ -257,7 +255,7 @@ function _initEvents(): void {
 		const color = value.seed
 		if (value.palette.includes(color)) {return}
 
-		ColorsStore.update(v => ({...v, palette: [color, ...v.palette]}))
+		ColorsStore.update(v => v.palette = [color, ...v.palette])
 	})
 }
 

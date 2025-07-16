@@ -4,16 +4,16 @@ import { ObservableStore } from "@/utils/store"
 import { DEFAULT_COLOR, DEFAULT_COLOR_IN_CMYK, DEFAULT_COLOR_IN_HSL, DEFAULT_COLOR_IN_HSV, DEFAULT_COLOR_IN_HWB, DEFAULT_COLOR_IN_RGB } from "../_shared/_constant"
 import { cmykToRgb, colorContrastRatio, colorToRgb, hslToHsv, hslToRgb, hsvToHex, hsvToHsl, hsvToHwb, hsvToRgb, hwbToHsv, hwbToRgb, rgbToCmyk, rgbToColor, rgbToHex, rgbToHsl, rgbToHsv } from "@/utils/color"
 import { safeNumber } from "@/utils/number"
-import type { TooltipElement } from "@/native-components/Tooltip"
+import type { TooltipElement } from "@/components/Tooltip"
 import { CSSClasses } from "../../_styles/_css"
 import { Math_clamp } from "@/utils/math"
 import type { CMYKColor, HEXColor, HSLColor, HSVColor, HWBColor, RGBColor } from "@/types/color"
-import type { ButtonElement } from "@/native-components/Button"
+import type { ButtonElement } from "@/components/Button"
 import { pickFile } from "@/utils/file"
 import { isTargetValidElement } from "@/utils/element"
 import { Commands } from "../_shared/_commands"
 import { ColorSpace } from "../_shared/_enums"
-import type { ToastElement } from "@/native-components/Toast"
+import type { ToastElement } from "@/components/Toast"
 import { saveStorageItem } from "./_database"
 
 export type PickerStoreType = Readonly<{
@@ -399,7 +399,9 @@ function _initEvents(): void {
 			const hsl = hsvToHsl(hsv)
 			const cmyk = rgbToCmyk(rgb)
 			const hwb = hsvToHwb(hsv)
-			PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+			PickerStore.update(v =>{
+				v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+			})
 		})
 
 		_inp_rgbRef.addEventListener('input', () => {
@@ -418,7 +420,9 @@ function _initEvents(): void {
 			const hsv = hslToHsv(hsl)
 			const cmyk = rgbToCmyk(rgb)
 			const hwb = hsvToHwb(hsv)
-			PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+			PickerStore.update(v =>{
+				v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+			})
 		})
 
 		_inp_hslRef.addEventListener('input', () => {
@@ -437,7 +441,9 @@ function _initEvents(): void {
 			const hsv = hslToHsv(hsl)
 			const cmyk = rgbToCmyk(rgb)
 			const hwb = hsvToHwb(hsv)
-			PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+			PickerStore.update(v =>{
+				v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+			})
 		})
 
 		_inp_hsvRef.addEventListener('input', () => {
@@ -456,7 +462,9 @@ function _initEvents(): void {
 			const cmyk = rgbToCmyk(rgb)
 			const hwb = hsvToHwb(hsv)
 			const hsl = hsvToHsl(hsv)
-			PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+			PickerStore.update(v =>{
+				v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+			})
 		})
 
 		_inp_hwbRef.addEventListener('input', () => {
@@ -475,7 +483,9 @@ function _initEvents(): void {
 			const cmyk = rgbToCmyk(rgb)
 			const hsv = hwbToHsv(hwb)
 			const hsl = hsvToHsl(hsv)
-			PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+			PickerStore.update(v =>{
+				v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+			})
 		})
 
 		_inp_cmykRef.addEventListener('input', () => {
@@ -494,7 +504,9 @@ function _initEvents(): void {
 			const hsv = rgbToHsv(rgb)
 			const hsl = rgbToHsl(rgb)
 			const hwb = hsvToHwb(hsv)
-			PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+			PickerStore.update(v =>{
+				v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+			})
 		})
 	}
 
@@ -511,7 +523,9 @@ function _initEvents(): void {
 				const cmyk = rgbToCmyk(rgb)
 				const hwb = hsvToHwb(hsv)
 				const hsl = hsvToHsl(hsv)
-				PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+				PickerStore.update(v =>{
+					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+				})
 				requestAnimationFrame(() => {
 					_pic_rectangleRectRef.style.setProperty('--position-x', x + '%')
 					_pic_rectangleRectRef.style.setProperty('--position-y', y + '%')
@@ -544,7 +558,9 @@ function _initEvents(): void {
 				const cmyk = rgbToCmyk(rgb)
 				const hwb = hsvToHwb(hsv)
 				const hsl = hsvToHsl(hsv)
-				PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+				PickerStore.update(v =>{
+					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+				})
 			})
 		}
 
@@ -560,7 +576,9 @@ function _initEvents(): void {
 				const hsv = hslToHsv(hsl)
 				const cmyk = rgbToCmyk(rgb)
 				const hwb = hsvToHwb(hsv)
-				PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+				PickerStore.update(v =>{
+					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+				})
 				requestAnimationFrame(() => {
 					_pic_rectangleHslRectRef.style.setProperty('--position-x', x + '%')
 					_pic_rectangleHslRectRef.style.setProperty('--position-y', y + '%')
@@ -594,7 +612,9 @@ function _initEvents(): void {
 				const cmyk = rgbToCmyk(rgb)
 				const hsv = hslToHsv(hsl)
 				const hwb = hsvToHwb(hsv)
-				PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+				PickerStore.update(v =>{
+					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+				})
 			})
 		}
 
@@ -610,7 +630,9 @@ function _initEvents(): void {
 				const cmyk = rgbToCmyk(rgb)
 				const hwb = hsvToHwb(hsv)
 				const hsl = hsvToHsl(hsv)
-				PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+				PickerStore.update(v =>{
+					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+				})
 				requestAnimationFrame(() => {
 					_pic_spectrumRectRef.style.setProperty('--position-x', x + '%')
 					_pic_spectrumRectRef.style.setProperty('--position-y', y + '%')
@@ -644,7 +666,9 @@ function _initEvents(): void {
 				const cmyk = rgbToCmyk(rgb)
 				const hwb = hsvToHwb(hsv)
 				const hsl = hsvToHsl(hsv)
-				PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+				PickerStore.update(v =>{
+					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+				})
 			})
 		}
 
@@ -657,7 +681,9 @@ function _initEvents(): void {
 				const hsv = hslToHsv(hsl)
 				const cmyk = rgbToCmyk(rgb)
 				const hwb = hsvToHwb(hsv)
-				PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+				PickerStore.update(v =>{
+					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+				})
 			})
 
 			_pic_rgbGreenRef.addEventListener('input', () => {
@@ -668,7 +694,9 @@ function _initEvents(): void {
 				const hsv = hslToHsv(hsl)
 				const cmyk = rgbToCmyk(rgb)
 				const hwb = hsvToHwb(hsv)
-				PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+				PickerStore.update(v =>{
+					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+				})
 			})
 
 			_pic_rgbBlueRef.addEventListener('input', () => {
@@ -679,7 +707,9 @@ function _initEvents(): void {
 				const hsv = hslToHsv(hsl)
 				const cmyk = rgbToCmyk(rgb)
 				const hwb = hsvToHwb(hsv)
-				PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+				PickerStore.update(v =>{
+					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+				})
 			})
 		}
 
@@ -692,7 +722,9 @@ function _initEvents(): void {
 				const hsv = hslToHsv(hsl)
 				const cmyk = rgbToCmyk(rgb)
 				const hwb = hsvToHwb(hsv)
-				PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+				PickerStore.update(v =>{
+					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+				})
 			})
 			_pic_hslSaturationRef.addEventListener('input', () => {
 				const value = Math_clamp(_pic_hslSaturationRef.valueAsNumber, 0, 100)
@@ -702,7 +734,9 @@ function _initEvents(): void {
 				const hsv = hslToHsv(hsl)
 				const cmyk = rgbToCmyk(rgb)
 				const hwb = hsvToHwb(hsv)
-				PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+				PickerStore.update(v =>{
+					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+				})
 			})
 			_pic_hslLightnessRef.addEventListener('input', () => {
 				const value = Math_clamp(_pic_hslLightnessRef.valueAsNumber, 0, 100)
@@ -712,7 +746,9 @@ function _initEvents(): void {
 				const hsv = hslToHsv(hsl)
 				const cmyk = rgbToCmyk(rgb)
 				const hwb = hsvToHwb(hsv)
-				PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+				PickerStore.update(v =>{
+					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+				})
 			})
 		}
 
@@ -725,7 +761,9 @@ function _initEvents(): void {
 				const hsv = rgbToHsv(rgb)
 				const hsl = rgbToHsl(rgb)
 				const hwb = hsvToHwb(hsv)
-				PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+				PickerStore.update(v =>{
+					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+				})
 			})
 			_pic_cmykMagentaRef.addEventListener('input', () => {
 				const value = Math_clamp(_pic_cmykMagentaRef.valueAsNumber, 0, 100)
@@ -735,7 +773,9 @@ function _initEvents(): void {
 				const hsv = rgbToHsv(rgb)
 				const hsl = rgbToHsl(rgb)
 				const hwb = hsvToHwb(hsv)
-				PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+				PickerStore.update(v =>{
+					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+				})
 			})
 			_pic_cmykYellowRef.addEventListener('input', () => {
 				const value = Math_clamp(_pic_cmykYellowRef.valueAsNumber, 0, 100)
@@ -745,7 +785,9 @@ function _initEvents(): void {
 				const hsv = rgbToHsv(rgb)
 				const hsl = rgbToHsl(rgb)
 				const hwb = hsvToHwb(hsv)
-				PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+				PickerStore.update(v =>{
+					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+				})
 			})
 			_pic_cmykKeyRef.addEventListener('input', () => {
 				const value = Math_clamp(_pic_cmykKeyRef.valueAsNumber, 0, 100)
@@ -755,7 +797,9 @@ function _initEvents(): void {
 				const hsv = rgbToHsv(rgb)
 				const hsl = rgbToHsl(rgb)
 				const hwb = hsvToHwb(hsv)
-				PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+				PickerStore.update(v =>{
+					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+				})
 			})
 		}
 
@@ -768,7 +812,9 @@ function _initEvents(): void {
 				const hsl = hsvToHsl(hsv)
 				const cmyk = rgbToCmyk(rgb)
 				const hwb = hsvToHwb(hsv)
-				PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+				PickerStore.update(v =>{
+					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+				})
 			})
 		}
 
@@ -781,7 +827,9 @@ function _initEvents(): void {
 				const cmyk = rgbToCmyk(rgb)
 				const hwb = hsvToHwb(hsv)
 				const hsl = hsvToHsl(hsv)
-				PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+				PickerStore.update(v =>{
+					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+				})
 			})
 
 			_pic_hsvSaturationRef.addEventListener('input', () => {
@@ -792,7 +840,9 @@ function _initEvents(): void {
 				const cmyk = rgbToCmyk(rgb)
 				const hwb = hsvToHwb(hsv)
 				const hsl = hsvToHsl(hsv)
-				PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+				PickerStore.update(v =>{
+					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+				})
 			})
 
 			_pic_hsvValueRef.addEventListener('input', () => {
@@ -803,7 +853,9 @@ function _initEvents(): void {
 				const cmyk = rgbToCmyk(rgb)
 				const hwb = hsvToHwb(hsv)
 				const hsl = hsvToHsl(hsv)
-				PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+				PickerStore.update(v =>{
+					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+				})
 			})
 		}
 
@@ -816,7 +868,9 @@ function _initEvents(): void {
 				const cmyk = rgbToCmyk(rgb)
 				const hsv = hwbToHsv(hwb)
 				const hsl = hsvToHsl(hsv)
-				PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+				PickerStore.update(v =>{
+					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+				})
 			})
 
 			_pic_hwbWhitenessRef.addEventListener('input', () => {
@@ -828,7 +882,9 @@ function _initEvents(): void {
 				const cmyk = rgbToCmyk(rgb)
 				const hsv = hwbToHsv(hwb)
 				const hsl = hsvToHsl(hsv)
-				PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+				PickerStore.update(v =>{
+					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+				})
 			})
 
 			_pic_hwbBlacknessRef.addEventListener('input', () => {
@@ -840,7 +896,9 @@ function _initEvents(): void {
 				const cmyk = rgbToCmyk(rgb)
 				const hsv = hwbToHsv(hwb)
 				const hsl = hsvToHsl(hsv)
-				PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+				PickerStore.update(v =>{
+					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+				})
 			})
 		}
 
@@ -968,7 +1026,9 @@ function _initImageColorPicker(): void {
 		const hsv = hslToHsv(hsl)
 		const cmyk = rgbToCmyk(rgb)
 		const hwb = hsvToHwb(hsv)
-		PickerStore.update(() => ({rgb, hex, hsv, hsl, cmyk, hwb}))
+		PickerStore.update(v =>{
+			v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
+		})
 		requestAnimationFrame(() => {
 			_pic_imageWrapperRef.style.setProperty('--color', rgbToHex(rgb))
 			_pic_imageWrapperRef.style.setProperty('--border-color', contrast(rgb))

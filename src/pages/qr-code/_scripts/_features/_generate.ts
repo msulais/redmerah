@@ -1,12 +1,12 @@
 import { ObservableStore } from "@/utils/store"
 import { $ } from "../_core/_dom-utils"
 import { ElementIds } from "../_shared/_ids"
-import type { TextAreaFieldElement } from "@/native-components/TextAreaField"
+import type { TextAreaFieldElement } from "@/components/TextAreaField"
 import { SettingsStore } from "../_core/_settings"
 import { EncodingMode, QRVersion } from "../_shared/_enums"
 import { toCanvas as dataToQRCanvas, toString as dataToQRString } from "qrcode"
-import type { ToastElement } from "@/native-components/Toast"
-import type { ButtonElement } from "@/native-components/Button"
+import type { ToastElement } from "@/components/Toast"
+import type { ButtonElement } from "@/components/Button"
 import { downloadFileByUrl } from "@/utils/url"
 import { DEFAULT_DATA } from "../_shared/_constant"
 
@@ -87,7 +87,7 @@ function _initEvents(): void {
 
 		_timeInputId = setTimeout(() => {
 			_timeInputId = null
-			GenerateStore.update(v => ({...v, data: _inputRef.value}))
+			GenerateStore.update(v => v.data = _inputRef.value)
 		}, 100)
 	})
 

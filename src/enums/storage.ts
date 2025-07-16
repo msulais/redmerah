@@ -3,10 +3,6 @@ export enum LocalStorageKeys {
 	platformColor = 'platform:color',
 	platformAnimation = 'platform:animation',
 	platformAccentColor = 'platform:accent-color',
-
-	// TODO: remove when SolidJS removed
-	corner = 'corner',
-	pinnedApps = 'pinned-apps'
 }
 
 export enum DatabaseNames {

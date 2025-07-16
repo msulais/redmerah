@@ -7,14 +7,14 @@ import { isNumberDefined } from "@/utils/number"
 import { formatOutput } from "../_core/_string-utils"
 import { isValidEnumValue } from "@/utils/object"
 import { DEFAULT_SCIENTIFIC_ANGLE, DEFAULT_SCIENTIFIC_INPUT, DEFAULT_SCIENTIFIC_OUTPUT } from "../_shared/_constant"
-import { ButtonVariant, updateButtonRef } from "@/native-components/Button"
+import { ButtonVariant, updateButtonRef } from "@/components/Button"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { isAnimationAllowed } from "@/utils/animation"
 import { CSSClasses } from "../../_styles/_css"
 import { animateUpdateTextElement } from "@/utils/element"
-import { IconClasses } from "@/native-components/Icon"
+import { IconClasses } from "@/components/Icon"
 import { saveStorageItem } from "../_core/_database"
-import type { ComboBoxElement } from "@/native-components/ComboBox"
+import type { ComboBoxElement } from "@/components/ComboBox"
 
 export type ScientificStoreType = Readonly<{
 	input: string
@@ -49,10 +49,7 @@ function _calculate(): void {
 		_timeCalculateId = null
 		const output = calculate(ScientificStore.value.input)
 		const parsedOutput = Number.parseFloat(output)
-		ScientificStore.update(v => ({
-			...v,
-			output: isNumberDefined(parsedOutput)? parsedOutput : null
-		}))
+		ScientificStore.update(v => v.output = isNumberDefined(parsedOutput)? parsedOutput : null)
 	}, 50)
 }
 
@@ -122,10 +119,7 @@ function _initEvents(): void {
 		const value = _angleRef.value as ScientificAngleType
 		if (!isValidEnumValue(value, ScientificAngleType)) return
 
-		ScientificStore.update(v => ({
-			...v,
-			angle: value
-		}))
+		ScientificStore.update(v => v.angle = value)
 	})
 
 	_fn_MenuRef.addEventListener('toggle', ev => {

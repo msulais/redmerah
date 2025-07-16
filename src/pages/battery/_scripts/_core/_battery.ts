@@ -1,7 +1,7 @@
 import type { BatteryManager } from "@/interfaces/battery"
 import { ElementIds } from "../_shared/_ids"
 import { $ } from "./_dom-utils"
-import { updateIconRef } from "@/native-components/Icon"
+import { updateIconRef } from "@/components/Icon"
 import { IconCodes } from "@/enums/icons"
 
 const _textLevelRef = $(ElementIds.bd_levelText) as HTMLHeadingElement

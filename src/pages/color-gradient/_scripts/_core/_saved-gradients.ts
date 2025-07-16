@@ -5,15 +5,15 @@ import { CSSClasses } from "../../_styles/_css"
 import { isTargetValidElement } from "@/utils/element"
 import { Commands } from "../_shared/_commands"
 import { createElementId } from "@/utils/ids"
-import { updateMenuRef, type MenuElement, type MenuItemElement } from "@/native-components/Menu"
+import { updateMenuRef, type MenuElement, type MenuItemElement } from "@/components/Menu"
 import { ElementIds } from "../_shared/_ids"
-import { isPopoverRefOpen } from "@/native-components/Popover"
-import { repositionPopoverRef } from "@/native-components/Popover"
-import { createButtonRef, updateButtonRef } from "@/native-components/Button"
+import { isPopoverRefOpen } from "@/components/Popover"
+import { repositionPopoverRef } from "@/components/Popover"
+import { createButtonRef, updateButtonRef } from "@/components/Button"
 import { gradientToCSSText } from "./_gradient-utils"
 import { ColorSpace } from "../_shared/_enums"
 import { SettingsStore } from "./_settings"
-import type { ToastElement } from "@/native-components/Toast"
+import type { ToastElement } from "@/components/Toast"
 import { removeGradientDB } from "./_database"
 
 export type SavedGradientsType = {
@@ -167,7 +167,7 @@ function _initEvents(): void {
 			arr.push(newGradient)
 		}
 
-		GradientStore.update(v => ({...v, gradients: arr}))
+		GradientStore.update(v => v.gradients = arr)
 	})
 
 	_actionCopyRef.addEventListener('click', () => {
@@ -193,7 +193,7 @@ function _initEvents(): void {
 		removeGradientDB(gradientId)
 		const gradients = [...SavedGradients.value.gradients]
 		gradients.splice(_selectedGradientIndex, 1)
-		SavedGradients.update(v => ({...v, gradients: gradients}))
+		SavedGradients.update(v => v.gradients = gradients)
 	})
 }
 

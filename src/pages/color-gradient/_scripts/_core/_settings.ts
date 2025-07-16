@@ -7,7 +7,7 @@ import { RootAttributes } from "@/enums/attributes"
 import { RadioNames } from "../_shared/_input-names"
 import { DEFAULT_ANIMATION, DEFAULT_COLOR_SPACE, DEFAULT_THEME } from "../_shared/_constant"
 import { $, $$ } from "./_dom-utils"
-import type { SubMenuElement } from "@/native-components/Menu"
+import type { SubMenuElement } from "@/components/Menu"
 import { ColorSpace } from "../_shared/_enums"
 import { saveStorageItem } from "./_database"
 
@@ -115,7 +115,7 @@ function _initEvents(): void {
 		if (!value || !isValidEnumValue(value, PlatformThemeMode)) {return}
 
 		_settingsMenuRef.hidePopover()
-		SettingsStore.update(v => ({...v, theme: value as PlatformThemeMode}))
+		SettingsStore.update(v => v.theme = value)
 	})
 
 	_animationRef.addEventListener('change', ev => {
@@ -124,7 +124,7 @@ function _initEvents(): void {
 		if (!value || !isValidEnumValue(value, PlatformAnimationMode)) {return}
 
 		_settingsMenuRef.hidePopover()
-		SettingsStore.update(v => ({...v, animation: value}))
+		SettingsStore.update(v => v.animation = value)
 	})
 
 	_colorSpaceRef.addEventListener('change', (ev) => {
@@ -133,7 +133,7 @@ function _initEvents(): void {
 		if (!value || !isValidEnumValue(value, ColorSpace)) {return}
 
 		_settingsMenuRef.hidePopover()
-		SettingsStore.update(v => ({...v, colorSpace: value}))
+		SettingsStore.update(v => v.colorSpace = value)
 	})
 }
 
@@ -141,14 +141,14 @@ function _initTheme(): void {
 	const theme = localStorage.getItem(LocalStorageKeys.platformTheme) as PlatformThemeMode
 	if (!theme || !isValidEnumValue(theme, PlatformThemeMode) || theme === DEFAULT_THEME) return
 
-	SettingsStore.update(v => ({...v, theme}))
+	SettingsStore.update(v => v.theme = theme)
 }
 
 function _initAnimation(): void {
 	const animation = localStorage.getItem(LocalStorageKeys.platformAnimation) as PlatformAnimationMode
 	if (!animation || !isValidEnumValue(animation, PlatformAnimationMode)) return
 
-	SettingsStore.update(v => ({...v, animation}))
+	SettingsStore.update(v => v.animation = animation)
 }
 
 export default () => {

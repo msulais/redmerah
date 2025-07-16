@@ -1,9 +1,9 @@
-import { updateIconButtonRef } from "@/native-components/Button"
+import { updateIconButtonRef } from "@/components/Button"
 import { APP_CLOCK as app } from "@/constants/apps"
 import { $ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
 import { SCREEN_WIDTH_SMALL } from "../_shared/_constant"
-import { SideBarAttributes, updateSideBarRef } from "@/native-components/SideBar"
+import { SideBarAttributes, updateSideBarRef } from "@/components/SideBar"
 
 const _infoMenuRef = $(ElementIds.apInf_menu) as HTMLDivElement
 const _infoButtonRef = $(ElementIds.apInf_btn) as HTMLButtonElement

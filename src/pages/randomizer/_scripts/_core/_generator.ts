@@ -3,10 +3,10 @@ import { NavigationStore } from "./_navigation"
 import { Pages } from "../_shared/_enums"
 import { StringStore, updateOutput as updateStringOutput } from "../_features/_string"
 import { SettingsStore } from "./_settings"
-import type { ButtonElement, IconButtonElement } from "@/native-components/Button"
+import type { ButtonElement, IconButtonElement } from "@/components/Button"
 import { ElementIds } from "../_shared/_ids"
 import { $, $$ } from "./_dom-utils"
-import { IconClasses, type IconElement } from "@/native-components/Icon"
+import { IconClasses, type IconElement } from "@/components/Icon"
 import { BodyAttributes, GlobalAttributes } from "@/enums/attributes"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { isAnimationAllowed } from "@/utils/animation"
@@ -15,8 +15,8 @@ import { ColorsStore, updateOutput as updateColorsOutput } from "../_features/_c
 import { updateOutput as updateWordsOutput, WordsStore } from "../_features/_words"
 import { SelectionStore, updateOutput as updateSelectionOutput } from "../_features/_selection"
 import { TeamsStore, updateOutput as updateTeamsOutput } from "../_features/_teams"
-import type { ToastElement } from "@/native-components/Toast"
-import type { DialogElement } from "@/native-components/Dialog"
+import type { ToastElement } from "@/components/Toast"
+import type { DialogElement } from "@/components/Dialog"
 import { hexToRgb, rgbToHsl } from "@/utils/color"
 
 export type GeneratorStoreType = Readonly<{
@@ -102,7 +102,7 @@ function _subsIsGeneratingChanges(v: GeneratorStoreType, o: GeneratorStoreType):
 	}
 	if (SettingsStore.value.instantResult) {
 		generate()
-		GeneratorStore.update(v => ({...v, isGenerating: false}))
+		GeneratorStore.update(v => v.isGenerating = true)
 		return
 	}
 
@@ -111,7 +111,7 @@ function _subsIsGeneratingChanges(v: GeneratorStoreType, o: GeneratorStoreType):
 	let i = 0
 	_intervalId = setInterval(() => {
 		if (i >= duration / step) {
-			GeneratorStore.update(v => ({...v, isGenerating: false}))
+			GeneratorStore.update(v => v.isGenerating = false)
 			return
 		}
 
@@ -127,7 +127,7 @@ function _initSubscriber(): void {
 
 function _initEvents(): void {
 	_generatorBtnRef.addEventListener('click', () => {
-		GeneratorStore.update(v => ({...v, isGenerating: !v.isGenerating}))
+		GeneratorStore.update(v => v.isGenerating = !v.isGenerating)
 	})
 
 	_copyBtnRef.addEventListener('click', () => {

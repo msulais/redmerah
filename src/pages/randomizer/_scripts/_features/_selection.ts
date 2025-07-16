@@ -2,7 +2,7 @@ import { ObservableStore } from "@/utils/store"
 import { DEFAULT_SELECTION_COUNT, DEFAULT_SELECTION_LIST, DEFAULT_SELECTION_LIST_ID, DEFAULT_SELECTION_OUTPUT } from "../_shared/_constant"
 import { ElementIds } from "../_shared/_ids"
 import { $, $$$ } from "../_core/_dom-utils"
-import type { ComboBoxElement } from "@/native-components/ComboBox"
+import type { ComboBoxElement } from "@/components/ComboBox"
 import { Math_clamp } from "@/utils/math"
 import { safeNumber } from "@/utils/number"
 import { ListsStore } from "../_core/_lists"
@@ -48,7 +48,7 @@ export function updateOutput(): void {
 		shuffleArray(output)
 	}
 
-	SelectionStore.update(v => ({...v, output: output}))
+	SelectionStore.update(v => v.output = output)
 }
 
 function _subsStorage(v: SelectionStoreType): void {
@@ -100,7 +100,7 @@ function _subsView(v: SelectionStoreType, o: SelectionStoreType): void {
 	if (v.listId !== o.listId) {
 		const list = ListsStore.value.list.find(a => a.id ===  v.listId)
 		if (list) {
-			SelectionStore.update(v => ({...v, listItems: list.items}))
+			SelectionStore.update(v => v.listItems = [...list.items])
 		}
 	}
 }
@@ -118,10 +118,10 @@ function _initEvents(): void {
 		if (!list.some(v => v.id === id)) {return}
 
 		const items = list.find(v => v.id === id)!.items
-		SelectionStore.update(v => ({...v,
-			listId: id,
-			count: Math_clamp(v.count, 1, items.length-1)
-		}))
+		SelectionStore.update(v => {
+			v.listId = id
+			v.count = Math_clamp(v.count, 1, items.length-1)
+		})
 	})
 
 	// the only place to dynamically set HTMLInputElement.max
@@ -134,7 +134,7 @@ function _initEvents(): void {
 
 	_countRef.addEventListener("input", () => {
 		const value = Math_clamp(safeNumber(_countRef.valueAsNumber), 1, Number.MAX_VALUE)
-		SelectionStore.update(v => ({...v, count: value}))
+		SelectionStore.update(v => v.count = value)
 	})
 
 	_countRef.addEventListener("blur", () => {

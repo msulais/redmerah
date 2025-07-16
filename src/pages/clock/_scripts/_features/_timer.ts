@@ -1,17 +1,17 @@
 import { ObservableStore } from "@/utils/store"
 import { $, $$, $$$ } from "../_core/_dom-utils"
 import { ElementIds } from "../_shared/_ids"
-import { type ButtonElement, type IconButtonElement } from "@/native-components/Button"
-import { IconClasses, updateIconRef, type IconElement } from "@/native-components/Icon"
+import { type ButtonElement, type IconButtonElement } from "@/components/Button"
+import { IconClasses, updateIconRef, type IconElement } from "@/components/Icon"
 import { isTargetValidElement } from "@/utils/element"
 import { AppCSSColors } from "@/enums/app-data"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { isAnimationAllowed } from "@/utils/animation"
 import { IconCodes } from "@/enums/icons"
-import { SideBarClasses } from "@/native-components/SideBar"
+import { SideBarClasses } from "@/components/SideBar"
 import { Pages } from "../_shared/_enums"
-import { DrawerClasses } from "@/native-components/Drawer"
-import type { DialogElement } from "@/native-components/Dialog"
+import { DrawerClasses } from "@/components/Drawer"
+import type { DialogElement } from "@/components/Dialog"
 import { safeNumber } from "@/utils/number"
 import { saveStorageItem } from "../_core/_database"
 import { DEFAULT_TIMER_RUNNING, DEFAULT_TIMER_SECONDS } from "../_shared/_constant"
@@ -111,23 +111,21 @@ function _subscribeRunningRefView(v: TimerStoreType, o: TimerStoreType): void {
 		_timerViewRef.style.setProperty('color', `rgb(${AppCSSColors.accent})`)
 		const cancel = () => {
 			_doneAlert()
-			TimerStore.update(v => ({
-				...v,
-				running: false,
-				currentSeconds: v.timerInSeconds
-			}))
+			TimerStore.update(v => {
+				v.running = false
+				v.currentSeconds = v.timerInSeconds
+			})
 			if (intervalRunningId !== null) {
 				clearInterval(intervalRunningId)
 			}
 		}
 		intervalRunningId = setInterval(() => {
 			const oldseconds = TimerStore.value.currentSeconds
-			console.log(oldseconds)
 			if (oldseconds <= 0) {
 				return cancel()
 			}
 
-			TimerStore.update(v => ({...v, currentSeconds: Math.max(v.currentSeconds - 1, 0)}))
+			TimerStore.update(v => v.currentSeconds = Math.max(v.currentSeconds - 1, 0))
 			const seconds = TimerStore.value.currentSeconds
 			if (seconds <= 0) {
 				return cancel()
@@ -216,17 +214,17 @@ function _initEvents(): void {
 		const value = TimerStore.value
 		switch (buttonRef) {
 		case _playPauseButtonRef:
-			TimerStore.update(v => ({
-				...v,
-				running: !v.running,
-				currentSeconds: v.running? v.currentSeconds : (v.currentSeconds - 1)
-			}))
+			TimerStore.update(v => {
+				const running = v.running
+				v.currentSeconds = running? v.currentSeconds : (v.currentSeconds - 1)
+				v.running = !running
+			})
 			break
 		case _editResetButtonRef:
 			if (value.currentSeconds === value.timerInSeconds) {
 				_showEditModal()
 			} else {
-				TimerStore.update(v => ({...v, currentSeconds: v.timerInSeconds}))
+				TimerStore.update(v => v.currentSeconds = v.timerInSeconds)
 				_editResetButtonRef.setAttribute('data-tooltip', 'Edit timer')
 				updateIconRef(_editResetIconRef, {
 					IconCode: IconCodes.edit
@@ -249,11 +247,7 @@ function _initEvents(): void {
 			+ _editSecondsRef.valueAsNumber
 		))
 
-		TimerStore.update(v => ({
-			...v,
-			currentSeconds: seconds,
-			timerInSeconds: seconds
-		}))
+		TimerStore.update(v => v.timerInSeconds = v.currentSeconds = seconds)
 	})
 
 	_doneDialogRef.addEventListener('close', () => {
