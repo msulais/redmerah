@@ -2,22 +2,22 @@
 'use strict';
 
 const root = document.documentElement
+const get = (key) => localStorage.getItem(key)
+const setAttr = (name, value) => root.setAttribute(name, value)
+const includes = (target, values) => values.includes(target)
+const checkAnimation = () => {
+	const animation = get('platform:animation')
+	if (!animation || !includes(animation, ['auto', 'on', 'off'])) {return}
 
-function checkAnimation() {
-	const animation = localStorage.getItem('platform:animation')
-	if (!animation || !['auto', 'on', 'off'].includes(animation)) return
-
-	root.setAttribute('data-animation', animation)
+	setAttr('data-animation', animation)
 }
+const checkTheme = () => {
+	const theme = get('platform:theme')
+	if (!theme || !includes(theme, ['auto', 'light', 'dark'])) {return}
 
-function checkTheme() {
-	const theme = localStorage.getItem('platform:theme')
-	if (!theme || !['auto', 'light', 'dark'].includes(theme)) return
-
-	root.setAttribute('data-theme', theme)
+	setAttr('data-theme', theme)
 }
 
 checkAnimation()
 checkTheme()
-
 })()
