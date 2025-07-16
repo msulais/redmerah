@@ -54,62 +54,50 @@ export function colorToRgb(value: number): RGBColor {
 }
 
 export function hexToColor(hex: HEXColor): number {
-	console.warn('use', rgbToColor, 'instead')
 	return rgbToColor(hexToRgb(hex))
 }
 
 export function colorToHex(value: number): HEXColor {
-	console.warn('use', rgbToHex, 'instead')
 	return rgbToHex(colorToRgb(value))
 }
 
 export function hslToColor(hsl: HSLColor): number {
-	console.warn('use', rgbToColor, 'instead')
 	return rgbToColor(hslToRgb(hsl))
 }
 
 export function colorToHsl(value: number): HSLColor {
-	console.warn('use', rgbToHsl, 'instead')
 	return rgbToHsl(colorToRgb(value))
 }
 
 export function hsvToColor(hsv: HSVColor): number {
-	console.warn('use', rgbToColor, 'instead')
 	return rgbToColor(hsvToRgb(hsv))
 }
 
 export function colorToHsv(value: number): HSVColor {
-	console.warn('use', rgbToHsv, 'instead')
 	return rgbToHsv(colorToRgb(value))
 }
 
 export function cmykToColor(cmyk: CMYKColor): number {
-	console.warn('use', rgbToColor, 'instead')
 	return rgbToColor(cmykToRgb(cmyk))
 }
 
 export function colorToCmyk(value: number): CMYKColor {
-	console.warn('use', rgbToCmyk, 'instead')
 	return rgbToCmyk(colorToRgb(value))
 }
 
 export function hwbToColor(hwb: HWBColor): number {
-	console.warn('use', rgbToColor, 'instead')
 	return rgbToColor(hwbToRgb(hwb))
 }
 
 export function colorToHwb(value: number): HWBColor {
-	console.warn('use', rgbToHwb, 'instead')
 	return rgbToHwb(colorToRgb(value))
 }
 
 export function hexToHwb(hex: HEXColor): HWBColor {
-	console.warn('use', rgbToHwb, 'instead')
 	return rgbToHwb(hexToRgb(hex))
 }
 
 export function hwbToHex(hwb: HWBColor): HEXColor {
-	console.warn('use', rgbToHex, 'instead')
 	return rgbToHex(hwbToRgb(hwb))
 }
 
@@ -171,32 +159,26 @@ export function hwbToHsv(hwb: HWBColor): HSVColor {
 }
 
 export function hslToHwb(hsl: HSLColor): HWBColor {
-	console.warn('use', hsvToHwb, 'instead')
 	return {...hsvToHwb(hslToHsv(hsl)), h: hsl.h}
 }
 
 export function hwbToHsl(hwb: HWBColor): HSLColor {
-	console.warn('use', hsvToHsl, 'instead')
 	return {...hsvToHsl(hwbToHsv(hwb)), h: hwb.h}
 }
 
 export function hslToCmyk(hsl: HSLColor): CMYKColor {
-	console.warn('use', rgbToCmyk, 'instead')
 	return rgbToCmyk(hslToRgb(hsl))
 }
 
 export function cmykToHsl(cmyk: CMYKColor): HSLColor {
-	console.warn('use', rgbToHsl, 'instead')
 	return rgbToHsl(cmykToRgb(cmyk))
 }
 
 export function hexToCmyk(hex: HEXColor): CMYKColor {
-	console.warn('use', rgbToCmyk, 'instead')
 	return rgbToCmyk(hexToRgb(hex))
 }
 
 export function cmykToHex(cmyk: CMYKColor): HEXColor {
-	console.warn('use', rgbToHex, 'instead')
 	return rgbToHex(cmykToRgb(cmyk))
 }
 
@@ -230,7 +212,6 @@ export function rgbToCmyk(rgb: RGBColor): CMYKColor {
 }
 
 export function hexToHsl(hex: HEXColor): HSLColor {
-	console.warn('use', rgbToHsl, 'instead')
 	return rgbToHsl(hexToRgb(hex))
 }
 
@@ -304,7 +285,6 @@ export function hslToRgb(hsl: HSLColor): RGBColor {
 }
 
 export function hslToHex(hsl: HSLColor): HEXColor {
-	console.warn('use', rgbToHex, 'instead')
 	return rgbToHex(hslToRgb(hsl))
 }
 
@@ -318,12 +298,10 @@ export function rgbToHex(rgb: RGBColor): HEXColor {
 }
 
 export function hsvToHex(hsv: HSVColor): HEXColor {
-	console.warn('use', rgbToHex, 'instead')
 	return rgbToHex(hsvToRgb(hsv))
 }
 
 export function hexToHsv(hex: HEXColor): HSVColor {
-	console.warn('use', rgbToHsv, 'instead')
 	return rgbToHsv(hexToRgb(hex))
 }
 
