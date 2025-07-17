@@ -13,6 +13,7 @@
 	--border-color: #fff;
 	--position-x: 0%;
 	--position-y: 0%;
+	touch-action: none;
 	margin-top: 8px;
 	outline: 1px solid rgba(var(--g-color-on-surface),var(--g-opacity-border));
 	border-radius: 4px;
@@ -139,6 +140,7 @@
 	position: relative;
 	cursor: crosshair;
 	outline: none;
+	touch-action: none;
 
 	&:focus-visible {
 		&::after {

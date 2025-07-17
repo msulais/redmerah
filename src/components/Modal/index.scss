@@ -71,6 +71,7 @@
 	--c-modal-draghandle-width: calc(var(--c-modal-draghandle-width-base) + 32px);
 	--c-modal-draghandle-width-hover: calc(var(--c-modal-draghandle-width-base) + 8px);
 
+	touch-action: none;
 	width: min(64px, var(--c-modal-draghandle-width));
 	height: 4px;
 	position: absolute;

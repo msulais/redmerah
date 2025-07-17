@@ -72,6 +72,7 @@
 	--c-popover-draghandle-width: calc(var(--c-popover-draghandle-width-base) + 32px);
 	--c-popover-draghandle-width-hover: calc(var(--c-popover-draghandle-width-base) + 8px);
 
+	touch-action: none;
 	width: min(64px, var(--c-popover-draghandle-width));
 	height: 4px;
 	position: absolute;

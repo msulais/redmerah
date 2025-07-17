@@ -62,6 +62,7 @@
 }
 
 .c-colorpicker-rect {
+	touch-action: none;
 	box-shadow: var(--g-elevation2);
 	background:
 		linear-gradient(to top,#000,transparent),
