@@ -2,7 +2,7 @@ let _ID_INDEX = 0
 
 function _createId(): string {
 	++_ID_INDEX
-	return 'markdown-converter-' + _ID_INDEX
+	return 'sass-converter-' + _ID_INDEX
 }
 
 export class ElementIds {

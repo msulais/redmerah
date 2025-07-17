@@ -540,9 +540,10 @@ function _initModalRef(modalRef: ModalElement): void {
 	function dragHandleRefOnPointerMove(ev: PointerEvent): void {
 		if (!isDragging) return
 
-		// TODO -- use requestAnimationFrame()
-		modalRef.style.setProperty(ModalCSSVariables.left, ev.clientX - diffPositionX + 'px')
-		modalRef.style.setProperty(ModalCSSVariables.top, ev.clientY - diffPositionY + 'px')
+		requestAnimationFrame(() => {
+			modalRef.style.setProperty(ModalCSSVariables.left, ev.clientX - diffPositionX + 'px')
+			modalRef.style.setProperty(ModalCSSVariables.top, ev.clientY - diffPositionY + 'px')
+		})
 	}
 
 	function dragHandleRefOnPointerUp(ev: PointerEvent): void {

@@ -1,0 +1,34 @@
+---
+import Icon from '@/components/Icon/index.astro'
+import Toast from '@/components/Toast/index.astro'
+import { CSSClasses } from '../_styles/_css'
+import { IconCodes } from '@/enums/icons'
+import { ElementIds } from '../_scripts/_shared/_ids'
+import { DEFAULT_UNESCAPE_XML_TEXT, DEFAULT_ESCAPE_XML_TEXT, DEFAULT_TEXT_WRAP } from '../_scripts/_shared/_constant'
+---
+
+<main class={CSSClasses.body}>
+	<div id={ElementIds.bd_inputContainer}>
+		<label for={ElementIds.bd_unescape}>Unescape:</label>
+		<textarea
+			id={ElementIds.bd_unescape}
+			placeholder="Type your unescape xml here ..."
+			data-text-wrap={DEFAULT_TEXT_WRAP? '' : undefined}>{
+			DEFAULT_UNESCAPE_XML_TEXT
+		}</textarea>
+	</div>
+	<div id={ElementIds.bd_slider} class={CSSClasses.bodySlider}/>
+	<div>
+		<label for={ElementIds.bd_escape}>Escape:</label>
+		<textarea
+			id={ElementIds.bd_escape}
+			placeholder="Type your escaped xml here ..."
+			data-text-wrap={DEFAULT_TEXT_WRAP? '' : undefined}>{
+			DEFAULT_ESCAPE_XML_TEXT
+		}</textarea>
+	</div>
+</main>
+<Toast id={ElementIds.toa_copied} ToastCloseDelay={1500}>
+	<Icon IconCode={IconCodes.copy} slot="leading"/>
+	Copied
+</Toast>
