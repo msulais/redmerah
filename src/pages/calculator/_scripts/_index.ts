@@ -10,6 +10,7 @@ import commands from "./_core/_commands"
 import memory from "./_core/_memory"
 import date from "./_features/_date"
 import database from "./_core/_database"
+import { removeSplashScreen } from "@/utils/splash"
 
 function _main(): void {
 	appbar()
@@ -24,6 +25,7 @@ function _main(): void {
 	memory()
 	date()
 	database()
+	removeSplashScreen()
 }
 
 _main()

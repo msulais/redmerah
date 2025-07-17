@@ -168,7 +168,6 @@ $SMALL_SCREEN: 600px;
 
 		> :global(.c-checkbox) {
 			margin-top: 12px;
-			translate: -4px 0;
 		}
 	}
 
@@ -234,7 +233,7 @@ $SMALL_SCREEN: 600px;
 		}
 	}
 
-	& [data-command="grad:edit"] {
+	& [data-command="gradient-edit"] {
 		> div {
 			width: 100%;
 			height: 20px;

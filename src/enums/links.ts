@@ -18,14 +18,14 @@ export enum RoutesLinks {
 	colorGradient = '/color-gradient',
 	emojiPicker = '/emoji-picker',
 	latexViewer = '/latex-viewer',
-	usbChecker = '/usb-checker',
 	colorPicker = '/color-picker',
 	clock = '/clock',
 	xmlEscape = '/xml-escape',
-	cubicBezier = '/cubic-bezier',
 	javascriptMinifier = '/javascript-minifier',
 
 	// TODO: create these apps
+	mediaViewer = '/media-viewer',
+	urlEscape = '/url-escape',
 	notes = '/notes',
 	codeFormatter = '/code-formatter',
 	whiteboard = '/whiteboard',

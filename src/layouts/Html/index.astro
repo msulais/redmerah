@@ -45,6 +45,7 @@ const colorToCSS = (hex: HEXColor) => {
 		<meta name="theme-color" content={ accentColor } />
 		<meta name="description" content={ description }>
 		<title>{ title }</title>
+		<script is:inline src='/scripts/root-settings.min.js'/>
 		<style id={GlobalElementIds.colorAccent} set:html={`:root{--g-color-accent-light: ${colorToCSS(colors.color)};--g-color-accent-dark: ${colorToCSS(colors.colorDark)};--g-color-on-accent-light: ${colorToCSS(colors.onColor)};--g-color-on-accent-dark: ${colorToCSS(colors.onColorDark)};}`}/>
 		<slot name="favicon">
 			<link rel="shortcut icon" type="image/ico" href="/favicon/favicon.ico" />
