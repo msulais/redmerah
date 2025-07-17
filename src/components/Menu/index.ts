@@ -35,7 +35,6 @@ import { IconCodes } from "@/enums/icons"
 
 type MenuProps = PopoverProps & {
 	MenuContentAttr ?: astroHTML.JSX.HTMLAttributes
-	MenuSubMenusAttr?: astroHTML.JSX.HTMLAttributes
 }
 
 type SubMenuProps = MenuProps
@@ -123,12 +122,10 @@ type MenuHeaderUpdateOptions = {
 
 type MenuUpdateOptions = Omit<PopoverUpdateOptions, 'PopoverChildren'> & {
 	MenuChildren?: (string | Node)[] | boolean
-	MenuSubMenus?: (string | Node)[] | boolean
 	MenuRole    ?: astroHTML.JSX.AriaRole | boolean
 	MenuRefs    ?: {
 		menu    ?(ref: MenuElement   ): unknown
 		content ?(ref: HTMLDivElement): unknown
-		submenus?(ref: HTMLDivElement): unknown
 	}
 }
 
@@ -164,7 +161,6 @@ enum MenuClasses {
 	radioItem        = menu + '-radio-item',
 	submenu          = menu + '-submenu',
 	checkItem        = menu + '-check-item',
-	submenus         = menu + '-submenus',
 	submenuItem      = submenu + '-item',
 	radioItemLeading = radioItem + '-leading',
 	radioItemIcon    = radioItem + '-icon',
@@ -187,177 +183,54 @@ function _initSubMenuItemRef(subMenuItemRef: SubMenuItemElement): void {
 		get parent() {
 			return subMenuItemRef.closest('.' + MenuClasses.menu) as MenuElement | null
 		},
-		get parentContent() {
-			return subMenuItemRef.closest('.' + MenuClasses.content) as HTMLDivElement | null
-		},
 		get target() {
 			return subMenuItemRef.popoverTargetElement as SubMenuElement | null
-		}
-	}
-	let isParentHovered = false
-	let isTargetHovered = false
-	let timeId: number | NodeJS.Timeout | null = null
-
-	function isDisabled(): boolean {
-		return subMenuItemRef.disabled || subMenuItemRef.getAttribute('aria-disabled') === 'true'
-	}
-
-	function getAllSubMenuRefs(from: HTMLElement): SubMenuElement[] {
-		const menus = new Set<SubMenuElement>()
-		const traverseDown = (popover: HTMLElement) => {
-			const submenuItems = popover.querySelectorAll<SubMenuItemElement>(`.${MenuClasses.submenuItem}`)
-			for (const item of submenuItems) {
-
-				// handle nested <Menu>
-				const m = item.closest(`.${MenuClasses.menu}`)
-				if (m !== popover) continue
-
-				const menu = item.popoverTargetElement as SubMenuElement | null
-				if (
-					!menu
-					|| !menu.classList.contains(MenuClasses.menu)
-					|| menus.has(menu)
-				) {
-					continue
-				}
-
-				menus.add(menu)
-				traverseDown(menu)
-			}
-		}
-
-		traverseDown(from)
-		return [...menus.values()]
-	}
-
-	function openSubMenuRef(instant: boolean = false): void {
-		if (timeId !== null) clearTimeout(timeId)
-
-		if (isDisabled()) {return}
-
-		timeId = setTimeout(() => {
-			timeId = null
-			const parentRef = elements.parent
-			const targetRef = elements.target
-			if (!targetRef || !parentRef || isPopoverRefOpen(targetRef)) return
-
-			for (const menuRef of getAllSubMenuRefs(parentRef)) {
-				if (menuRef === targetRef) continue
-
-				menuRef.hidePopover()
-			}
-
-			let id = subMenuItemRef.id
-			if (!id) {
-				id = createElementId()
-				subMenuItemRef.id = id
-			}
-
-			updateSubMenuRef(targetRef, {
-				PopoverAnchorBy: id
-			})
-			targetRef.showPopover()
-		}, instant? 0 : 300)
-	}
-
-	function closeSubMenuRef(instant: boolean = false): void {
-		if (timeId !== null) clearTimeout(timeId)
-		timeId = setTimeout(() => {
-			timeId = null
-			const targetRef = elements.target
-			if (!targetRef) return
-
-			for (const menuRef of getAllSubMenuRefs(targetRef)) {
-				if (menuRef === targetRef) continue
-
-				menuRef.hidePopover()
-			}
-
-			targetRef.hidePopover()
-		}, instant? 0 : 300)
-	}
-
-	function menuContentRefOnPointerEnter(): void {
-		isParentHovered = true
-		if (!isTargetHovered) {
-			closeSubMenuRef()
-		}
-	}
-
-	function menuContentRefOnPointerLeave(): void {
-		isParentHovered = false
-	}
-
-	function subMenuRefOnPointerEnter(): void {
-		isTargetHovered = true
-		if (timeId !== null) clearTimeout(timeId)
-
-		timeId = null
-	}
-
-	function subMenuItemRefOnPointerEnter(): void {
-		isTargetHovered = true
-		openSubMenuRef()
-	}
-
-	function subMenuRefOnPointerLeave(): void {
-		isTargetHovered = false
-		if (isParentHovered) {
-			closeSubMenuRef()
-		}
-	}
-
-	function subMenuRefOnToggleOpen(ev: Event): void {
-		const open = (ev as ToggleEvent).newState === 'open'
-		if (subMenuItemRef.classList.contains(ButtonClasses.button)) {
-			updateMenuItemRef(subMenuItemRef as SubMenuItemElement, {
-				ButtonFocused: open
-			})
-		}
-	}
-
-	function parentRefOnBeforeClose(ev: Event): void {
-		if (timeId !== null) clearTimeout(timeId)
-
-		timeId = null
-		for (const menuRef of getAllSubMenuRefs(ev.target as HTMLElement)) {
-			menuRef.hidePopover()
 		}
 	}
 
 	function initEvents(): void {
 		const parentRef = elements.parent
-		parentRef?.addEventListener('toggle', ev => {
+		parentRef?.addEventListener('beforetoggle', ev => {
 			const isOpen = (ev as ToggleEvent).newState === 'open'
-			const targetRef = elements.target
-			const contentRef = elements.parentContent
-			if (isOpen) {
-				parentRef.addEventListener('beforetoggle', parentRefOnBeforeClose)
-				contentRef?.addEventListener('pointerenter', menuContentRefOnPointerEnter)
-				contentRef?.addEventListener('pointerleave', menuContentRefOnPointerLeave)
-				subMenuItemRef.addEventListener('pointerenter', subMenuItemRefOnPointerEnter)
-				subMenuItemRef.addEventListener('pointerleave', subMenuRefOnPointerLeave)
-				targetRef?.addEventListener('pointerenter', subMenuRefOnPointerEnter)
-				targetRef?.addEventListener('pointerleave', subMenuRefOnPointerLeave)
-				targetRef?.addEventListener('toggle', subMenuRefOnToggleOpen)
+			if (isOpen) {return}
+
+			for (const ref of parentRef.querySelectorAll<SubMenuElement>(`.${MenuClasses.submenu}`)) {
+				ref.hidePopover()
 			}
-			else {
-				// !important: without this, `PopoverEvents.toggleOpen` event for `target` will
-				// remove before running for the last time
-				setTimeout(() => {
-					parentRef.removeEventListener('beforetoggle', parentRefOnBeforeClose)
-					contentRef?.removeEventListener('pointerenter', menuContentRefOnPointerEnter)
-					contentRef?.removeEventListener('pointerleave', menuContentRefOnPointerLeave)
-					subMenuItemRef.removeEventListener('pointerenter', subMenuItemRefOnPointerEnter)
-					subMenuItemRef.removeEventListener('pointerleave', subMenuRefOnPointerLeave)
-					targetRef?.removeEventListener('pointerenter', subMenuRefOnPointerEnter)
-					targetRef?.removeEventListener('pointerleave', subMenuRefOnPointerLeave)
-					targetRef?.removeEventListener('toggle', subMenuRefOnToggleOpen)
-				})
+		})
+
+		const targetRef = elements.target
+		targetRef?.addEventListener('beforetoggle', ev => {
+			const isOpen = (ev as ToggleEvent).newState === 'open'
+			updateSubMenuItemRef(subMenuItemRef, {
+				ButtonFocused: isOpen
+			})
+
+			if (!isOpen || !parentRef) {return}
+
+			for (const ref of parentRef.querySelectorAll<SubMenuElement>(`.${MenuClasses.submenu}`)) {
+				if (ref === targetRef) {continue}
+				ref.hidePopover()
 			}
 		})
 	}
 
+	function initSubMenuItemId(): void {
+		let id = subMenuItemRef.id
+		if (!id) {
+			id = createElementId()
+			subMenuItemRef.id = id
+		}
+
+		const target = elements.target
+		if (!target) {return}
+
+		updateSubMenuRef(target, {
+			PopoverAnchorBy: id
+		})
+	}
+
+	initSubMenuItemId()
 	initEvents()
 }
 
@@ -405,26 +278,10 @@ function updateMenuRef(menuRef: MenuElement, options?: MenuUpdateOptions): MenuE
 		contentRef.replaceChildren(...childrenOption)
 	}
 
-	// submenus
-	const submenusOption = options?.MenuSubMenus
-	let submenusRef = popoverContentRef!.querySelector<HTMLDivElement>(`.${MenuClasses.submenus}`)
-	if (!submenusRef) {
-		submenusRef = document.createElement('div')
-		submenusRef.classList.add(MenuClasses.submenus)
-	}
-	if (submenusOption === false) {
-		submenusRef.replaceChildren()
-	}
-	else if (submenusOption !== undefined && submenusOption !== true) {
-		submenusRef.replaceChildren(...submenusOption)
-	}
-
-	popoverContentRef!.replaceChildren(contentRef, submenusRef)
-
+	popoverContentRef!.replaceChildren(contentRef)
 	const refs = options?.MenuRefs
 	refs?.menu?.(menuRef)
 	refs?.content?.(contentRef)
-	refs?.submenus?.(submenusRef)
 	return menuRef
 }
 
