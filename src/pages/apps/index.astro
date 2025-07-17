@@ -5,10 +5,14 @@ import Html from '@/layouts/Html/index.astro'
 import Appbar from '@/layouts/Appbar/index.astro'
 import BottomBar from '@/layouts/BottomBar/index.astro'
 import Tooltip from '@/components/Tooltip/index.astro'
+import TextField from '@/components/TextField/index.astro'
+import Icon from '@/components/Icon/index.astro'
 import LinkButton from '@/components/Button/LinkButton.astro'
 import Splash from '@/layouts/Splash/index.astro'
 import { APPS } from "@/constants/apps"
 import { ButtonVariant } from '@/components/Button'
+import { IconCodes } from '@/enums/icons'
+import { ElementIds } from './_scripts/_shared/_ids'
 
 export const prerender = true
 ---
@@ -39,17 +43,28 @@ export const prerender = true
 	</Splash>
 	<Appbar route={RoutesLinks.apps}/>
 	<main class={CSSClasses.main}>
-		<h1>Select app</h1>
-		<div class={CSSClasses.content}>
-			<Tooltip>
+		<h1>Apps</h1>
+		<TextField
+			style="width:min(100%,360px);margin:16px 0;padding-left:8px"
+			TextFieldInputAttr={{
+				style: 'padding-left:0',
+				placeholder: 'Search app',
+				id: ElementIds.searchInput
+			}}>
+			<Icon IconCode={IconCodes.search} slot="leading"/>
+		</TextField>
+		<Tooltip>
+			<ul class={CSSClasses.content} id={ElementIds.appList}>
 				{[...APPS].sort((a,b) => a.name.localeCompare(b.name)).map(app =>
-					<LinkButton href={app.link} LinkButtonVariant={ButtonVariant.tonal}>
-						<img loading="eager" src={app.logoUrl} width="48" height="48" alt={app.name + ' logo'}/>
-						<span data-tooltip={app.name} >{app.name}</span>
-					</LinkButton>
+					<li>
+						<LinkButton href={app.link} LinkButtonVariant={ButtonVariant.tonal}>
+							<img loading="eager" src={app.logoUrl} width="48" height="48" alt={app.name + ' logo'}/>
+							<span data-tooltip={app.name} >{app.name}</span>
+						</LinkButton>
+					</li>
 				)}
-			</Tooltip>
-		</div>
+			</ul>
+		</Tooltip>
 	</main>
 	<BottomBar/>
 	<script src="./_scripts/_index.ts"/>

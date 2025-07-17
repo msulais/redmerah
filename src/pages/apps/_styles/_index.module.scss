@@ -1,7 +1,7 @@
 .content {
 	display: grid;
-	margin-top: 32px;
 	gap: 8px;
+	list-style: none;
 	grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
 
 	& img {
@@ -16,6 +16,42 @@
 		text-transform: capitalize;
 		position: relative;
 		width: 100%;
+		transition-property: background-color, scale;
+
+		&::after {
+			content: '';
+			width: 25%;
+			height: 4px;
+			background-color: rgb(var(--g-color-accent));
+			position: absolute;
+			border-radius: 99px;
+			bottom: 2px;
+			opacity: 0;
+			left: 50%;
+			translate: -50% 0;
+			transition-duration: var(--g-duration-transition);
+		}
+
+		@media (hover:hover) {
+			&:hover {
+				background-color: rgba(var(--g-color-on-surface), var(--g-opacity2)) !important;
+
+				&::after {
+					opacity: 1;
+					width: 50%;
+				}
+			}
+		}
+
+		&:active {
+			background-color: rgba(var(--g-color-on-surface), var(--g-opacity2)) !important;
+			scale: .9;
+
+			&::after {
+				opacity: 1;
+				width: 50%;
+			}
+		}
 
 		> span {
 			text-overflow: ellipsis;
@@ -41,6 +77,7 @@
 	max-width: 100%;
 
 	> h1 {
-		font-size: var(--g-font-size-d)
+		font-size: var(--g-font-size-d);
+		font-weight: normal;
 	}
 }
