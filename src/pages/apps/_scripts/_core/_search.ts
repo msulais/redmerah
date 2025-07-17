@@ -28,12 +28,10 @@ function _subsView(v: SearchStoreType, o: SearchStoreType): void {
 			return
 		}
 
-		const re = new RegExp(text.replace(/\W/gs, '|'), 'gsi')
 		for (const ref of _listRefs) {
-
-			// TODO: need test in production. for unknown reason,
-			// chrome hide it when it shouldn't. SHIT
-			ref.hidden = !re.test(ref.textContent?.toLowerCase() ?? '')
+			const content = ref.textContent?.toLowerCase().trim() ?? ''
+			const match = new RegExp(text.replace(/\W/gs, '|'), 'gsi').test(content)
+			ref.hidden = !match
 		}
 	}, 100)
 }
