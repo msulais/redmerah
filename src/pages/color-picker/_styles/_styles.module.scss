@@ -1,3 +1,5 @@
+$DEVICE_SMALL_SCREEN: 800px;
+
 .body {
 	display: flex;
 	width: 100%;
@@ -6,6 +8,12 @@
 	padding: 0 16px 16px 16px;
 	justify-content: center;
 	overflow: auto;
+
+	@media (max-width: $DEVICE_SMALL_SCREEN) {
+		flex-direction: column;
+		align-items: center;
+		justify-content: flex-start;
+	}
 }
 
 .pickerImageRect {
@@ -73,6 +81,10 @@
 	position: sticky;
 	top: 0;
 
+	@media (max-width: $DEVICE_SMALL_SCREEN) {
+		width: 100%;
+	}
+
 	> [data-css-preview] {
 		width: calc(100% - 44px - 8px);
 		border-radius: 4px;
@@ -116,6 +128,10 @@
 
 .bodyPicker {
 	width: 512px;
+
+	@media (max-width: $DEVICE_SMALL_SCREEN) {
+		width: 100%;
+	}
 
 	& label {
 		display: block;
