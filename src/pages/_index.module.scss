@@ -5,9 +5,7 @@
 
 	> div {
 		--border-angle: 0deg;
-		--color-accent-light: rgb(var(--g-color-accent));
-		--color-accent-dark: rgb(var(--g-color-accent));
-		--color-accent: var(--color-accent-light);
+		--hue: 0;
 		flex: 1 1 240px;
 		border-radius: 8px;
 		padding: 20px;
@@ -16,16 +14,8 @@
 		position: relative;
 		overflow: hidden;
 		background-color: rgb(var(--g-color-surface));
-		border: 4px solid var(--color-accent-dark);
+		border: 4px solid hsl(var(--hue), 100%, 50%);
 		transition-duration: var(--g-duration-transition);
-
-		:root[data-theme=dark] & { --color-accent: var(--color-accent-dark) }
-
-		@media (prefers-color-scheme: dark) {
-			:root[data-theme=auto] & {
-				--color-accent: var(--color-accent-dark)
-			}
-		}
 
 		@media (hover: hover) {
 			&:hover {
@@ -113,7 +103,7 @@
 
 	& h3 {
 		font-size: var(--g-font-size-m);
-		margin-bottom: 4px;
+		margin-bottom: 8px;
 		color: rgb(var(--g-color-accent));
 		border: 2px solid rgb(var(--g-color-accent));
 		border-radius: 4px;
@@ -136,8 +126,8 @@
 		}
 
 		> span {
-			--color-gradient1: #026E00;
-			--color-gradient2: #a9db1e;
+			--color-gradient1: hsl(119, 100%, 50%);
+			--color-gradient2: hsl(76, 100%, 50%);
 			font-weight: bold;
 			background: linear-gradient(to right, var(--color-gradient1), var(--color-gradient2));
 			-webkit-background-clip: text;
@@ -158,18 +148,18 @@
 			}
 
 			&[data-color=green] {
-				--color-gradient1: #15E811;
-				--color-gradient2: #1CC296;
+				--color-gradient1: hsl(120, 100%, 50%);
+				--color-gradient2: hsl(200, 100%, 50%);
 			}
 
 			&[data-color=blue] {
-				--color-gradient1: #343DFF;
-				--color-gradient2: #AE00F1;
+				--color-gradient1: hsl(240, 100%, 50%);
+				--color-gradient2: hsl(280, 100%, 50%);
 			}
 
 			&[data-color=red] {
-				--color-gradient1: #FB1716;
-				--color-gradient2: #FFE100;
+				--color-gradient1: hsl(0, 100%, 50%);
+				--color-gradient2: hsl(60, 100%, 50%);
 			}
 		}
 	}
