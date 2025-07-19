@@ -15,6 +15,7 @@ import logoColorPicker from '@/assets/images/apps/color-picker.svg'
 import logoClock from '@/assets/images/apps/clock.svg'
 import logoXmlEscape from '@/assets/images/apps/xml-escape.svg'
 import logoJavaScriptMinifer from '@/assets/images/apps/javascript-minifier.svg'
+import logoMediaPlayer from '@/assets/images/apps/media-player.svg'
 
 export const APP_JAVASCRIPT_MINIFIER: AppItem = {
 	logoUrl: logoJavaScriptMinifer.src,
@@ -166,7 +167,18 @@ export const APP_COLOR_PICKER: AppItem = {
 	buildVersion: '0.0.5',
 }
 
+export const APP_MEDIA_PLAYER: AppItem = {
+	logoUrl: logoMediaPlayer.src,
+	name: 'Media Player',
+	description: 'Play any media format from images to audio/video files. Load from your device or stream via URL directly in browser.',
+	link: RoutesLinks.mediaPlayer,
+	color: '#0195FF',
+	buildNumber: 1,
+	buildVersion: '0.0.1',
+}
+
 export const APPS: AppItem[] = [
+	APP_MEDIA_PLAYER,
 	APP_QR_CODE,
 	APP_EMOJI_PICKER,
 	APP_RANDOMIZER,

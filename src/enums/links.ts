@@ -22,9 +22,9 @@ export enum RoutesLinks {
 	clock = '/clock',
 	xmlEscape = '/xml-escape',
 	javascriptMinifier = '/javascript-minifier',
+	mediaPlayer = '/media-player',
 
 	// TODO: create these apps
-	mediaViewer = '/media-viewer',
 	urlEscape = '/url-escape',
 	notes = '/notes',
 	codeFormatter = '/code-formatter',
