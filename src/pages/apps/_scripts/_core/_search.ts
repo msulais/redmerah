@@ -20,7 +20,7 @@ function _subsView(v: SearchStoreType, o: SearchStoreType): void {
 
 	clearTimeout(_timeUpdateId)
 	_timeUpdateId = setTimeout(() => {
-		text = text.replace(/\s/gs, ' ').toLowerCase().trim()
+		text = text.replace(/\s|\W/gs, ' ').toLowerCase().trim()
 		if (text.length <= 0) {
 			for (const ref of _listRefs) {
 				ref.hidden = false
@@ -28,9 +28,10 @@ function _subsView(v: SearchStoreType, o: SearchStoreType): void {
 			return
 		}
 
+		text = text.replace(/ +/gs, '|')
 		for (const ref of _listRefs) {
 			const content = ref.textContent?.toLowerCase().trim() ?? ''
-			const match = new RegExp(text.replace(/\W/gs, '|'), 'gsi').test(content)
+			const match = new RegExp(text, 'gsi').test(content)
 			ref.hidden = !match
 		}
 	}, 100)
