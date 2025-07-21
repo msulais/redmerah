@@ -16,6 +16,7 @@ import Icon from '@/components/Icon/index.astro'
 import Button from '@/components/Button/index.astro'
 import LinkMenuItem from '@/components/Menu/LinkMenuItem.astro'
 import Divider from '@/components/Divider/index.astro'
+import { CSSClasses } from '../_styles/_css'
 import { PlatformAnimationMode, PlatformThemeMode } from '@/enums/platforms'
 import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
 import { RoutesLinks, ExternalLinks } from '@/enums/links'
@@ -84,7 +85,8 @@ const themes: {
 		<Button
 			ButtonVariant={ButtonVariant.filled}
 			id={ElementIds.apOpen_btn}
-			popovertarget={ElementIds.apOpen_menu}>
+			popovertarget={ElementIds.apOpen_menu}
+			class={CSSClasses.pickBtn}>
 			<Icon IconCode={IconCodes.documentArrowRight}/>
 			Open media
 		</Button>
