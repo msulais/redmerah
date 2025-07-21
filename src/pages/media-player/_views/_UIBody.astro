@@ -6,6 +6,7 @@ import { ElementIds } from '../_scripts/_shared/_ids'
 import { CSSClasses } from '../_styles/_css'
 import { IconCodes } from '@/enums/icons'
 import { ButtonVariant } from '@/components/Button'
+import videoFile from '@/assets/video/271161_small.mp4'
 ---
 
 <main class={CSSClasses.body}>
@@ -14,7 +15,7 @@ import { ButtonVariant } from '@/components/Button'
 	<video
 		id={ElementIds.bd_video}
 		controls
-		src="https://cdn.pixabay.com/video/2025/06/03/283533_large.mp4"/>
+		src={videoFile}/>
 </main>
 <Toast id={ElementIds.toa_invalid} ToastCloseDelay={5000}>
 	<Icon IconCode={IconCodes.documentError} slot="leading"/>
