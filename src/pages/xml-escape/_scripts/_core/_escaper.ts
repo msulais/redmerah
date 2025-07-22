@@ -26,7 +26,7 @@ const _copyUnescapeRef = $(ElementIds.apMore_copyUnescape) as MenuItemElement
 const _copyEscapeRef = $(ElementIds.apMore_copyEscape) as MenuItemElement
 const _toastCopiedRef = $(ElementIds.toa_copied) as ToastElement
 let _timeStorageId: NodeJS.Timeout | number | undefined
-let _inputSource: 'escape' | 'unescape' = 'escape'
+let _inputSource: 'escape' | 'unescape' = 'unescape'
 
 function _subscribeInputChanges(v: EscaperStoreType, o: EscaperStoreType): void {
 	const input = v.unescape
