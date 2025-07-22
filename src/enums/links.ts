@@ -23,9 +23,9 @@ export enum RoutesLinks {
 	xmlEscape = '/xml-escape',
 	javascriptMinifier = '/javascript-minifier',
 	mediaPlayer = '/media-player',
+	urlEncoder = '/url-encoder',
 
 	// TODO: create these apps
-	urlEscape = '/url-escape',
 	notes = '/notes',
 	codeFormatter = '/code-formatter',
 	whiteboard = '/whiteboard',

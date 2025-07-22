@@ -1,0 +1,32 @@
+{
+	"name": "URL Encoder",
+	"short_name": "URL Encoder",
+	"id": "/url-encoder",
+	"description": "Encode URLs for web safety or decode them to readable text. Our free tool handles special characters, spaces, and UTF-8 encoding/decoding instantly. Perfect for developers and SEO.",
+	"start_url": "/url-encoder",
+	"icons": [
+		{
+			"src": "/favicon/url-encoder/favicon-16x16.png",
+			"sizes": "16x16",
+			"type": "image/png"
+		},
+		{
+			"src": "/favicon/url-encoder/favicon-32x32.png",
+			"sizes": "32x32",
+			"type": "image/png"
+		},
+		{
+			"src": "/favicon/url-encoder/android-chrome-192x192.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		},
+		{
+			"src": "/favicon/url-encoder/android-chrome-512x512.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		}
+	],
+	"theme_color": "#00AAFF",
+	"background_color": "#ffffff",
+	"display": "standalone"
+}

@@ -21,5 +21,6 @@ export enum DatabaseNames {
 	clock = 'clock',
 	xmlEscape = 'xml-escape',
 	javascriptMinifier = 'javascript-minifier',
-	cubicBezier = 'cubic-bezier'
+	cubicBezier = 'cubic-bezier',
+	urlEncoder = 'url-encoder'
 }
