@@ -1,5 +1,5 @@
 import { ButtonVariant, updateIconButtonRef, type IconButtonElement } from "@/components/Button"
-import { APP_CLOCK as app } from "@/constants/apps"
+import { APP_EMOJI_PICKER as app } from "@/constants/apps"
 import { ElementIds } from "../_shared/_ids"
 import { $ } from "./_dom-utils"
 import { SideBarAttributes, updateSideBarRef } from "@/components/SideBar"

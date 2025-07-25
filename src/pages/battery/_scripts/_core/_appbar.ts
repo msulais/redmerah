@@ -1,5 +1,5 @@
 import { updateIconButtonRef } from "@/components/Button"
-import { APP_CLOCK as app } from "@/constants/apps"
+import { APP_BATTERY as app } from "@/constants/apps"
 import { ElementIds } from "../_shared/_ids"
 import { $ } from "./_dom-utils"
 
