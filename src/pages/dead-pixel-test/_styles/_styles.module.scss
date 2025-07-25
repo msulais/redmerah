@@ -1,0 +1,37 @@
+.body {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	height: 100%;
+
+	& ul {
+		list-style: none;
+		padding: 16px;
+		gap: 8px;
+		width: 100%;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+
+	}
+
+	& li {
+		border-radius: 4px;
+		box-shadow: var(--g-elevation2);
+		height: 128px;
+		width: 128px;
+	}
+
+	& [data-css-view] {
+		display: none;
+		width: 100%;
+		left: 0;
+		top: 0;
+		position: fixed;
+		height: 100dvh;
+		background-color: #000;
+		transition-duration: var(--g-duration-transition);
+		transition-property: background-color;
+	}
+}
