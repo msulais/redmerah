@@ -1,0 +1,29 @@
+---
+import Button from "@/components/Button/index.astro"
+import Icon from "@/components/Icon/index.astro"
+import Tooltip from "@/components/Tooltip/index.astro"
+import { CSSClasses } from '../_styles/_css'
+import { ButtonVariant } from "@/components/Button"
+import { IconCodes } from "@/enums/icons"
+import { ElementIds } from "../_scripts/_shared/_ids"
+---
+
+<main class={CSSClasses.body}>
+	<Tooltip>
+		<ul>
+			<li data-tooltip="Black: #000000" style="background-color:#000"/>
+			<li data-tooltip="White: #FFFFFF" style="background-color:#FFF"/>
+			<li data-tooltip="Red: #FF0000" style="background-color:#FF0000"/>
+			<li data-tooltip="Yellow: #FFFF00" style="background-color:#FFFF00"/>
+			<li data-tooltip="Green: #00FF00" style="background-color:#00FF00"/>
+			<li data-tooltip="Cyan: #00FFFF" style="background-color:#00FFFF"/>
+			<li data-tooltip="Blue: #0000FF" style="background-color:#0000FF"/>
+			<li data-tooltip="Purple: #FF00FF" style="background-color:#FF00FF"/>
+		</ul>
+	</Tooltip>
+	<Button ButtonVariant={ButtonVariant.filled} id={ElementIds.bd_start}>
+		<Icon IconCode={IconCodes.play} IconFilled/>
+		Start test
+	</Button>
+	<div id={ElementIds.bd_view} data-css-view/>
+</main>

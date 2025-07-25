@@ -1,14 +1,12 @@
 import { updateIconButtonRef } from "@/components/Button"
-import { APP_MARKDOWN_CONVERTER as app } from "@/constants/apps"
+import { APP_DEAD_PIXEL_TEST as app } from "@/constants/apps"
 import { ElementIds } from "../_shared/_ids"
 import { $ } from "./_dom-utils"
 
 const _infoMenuRef = $(ElementIds.apInf_menu) as HTMLDivElement
 const _infoButtonRef = $(ElementIds.apInf_btn) as HTMLButtonElement
-const _moreMenuRef = $(ElementIds.apMore_menu) as HTMLDivElement
-const _moreButtonRef = $(ElementIds.apMore_btn) as HTMLButtonElement
 const _settingsMenuRef = $(ElementIds.apSett_menu) as HTMLDivElement
-const _settingsButtonRef = $(ElementIds.apSett_btn) as HTMLButtonElement
+const _settingsButtonRef = $(ElementIds.apSett_button) as HTMLButtonElement
 const _shareButtonRef = $(ElementIds.apInf_shareBtn) as HTMLButtonElement
 
 function _initEvents(): void {
@@ -23,13 +21,6 @@ function _initEvents(): void {
 	_infoMenuRef.addEventListener('beforetoggle', ev => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
 		updateIconButtonRef(_infoButtonRef, {
-			ButtonFocused: isOpen
-		})
-	})
-
-	_moreMenuRef.addEventListener('beforetoggle', ev => {
-		const isOpen = (ev as ToggleEvent).newState === 'open'
-		updateIconButtonRef(_moreButtonRef, {
 			ButtonFocused: isOpen
 		})
 	})

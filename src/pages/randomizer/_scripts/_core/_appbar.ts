@@ -1,5 +1,5 @@
 import { updateIconButtonRef } from "@/components/Button"
-import { APP_CALCULATOR as app } from "@/constants/apps"
+import { APP_RANDOMIZER as app } from "@/constants/apps"
 import { $ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
 import { HIDE_NAVIGATION } from "../_shared/_constant"

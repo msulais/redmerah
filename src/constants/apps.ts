@@ -17,6 +17,7 @@ import logoXmlEscape from '@/assets/images/apps/xml-escape.svg'
 import logoJavaScriptMinifer from '@/assets/images/apps/javascript-minifier.svg'
 import logoMediaPlayer from '@/assets/images/apps/media-player.svg'
 import logoUrlEncoder from '@/assets/images/apps/url-encoder.svg'
+import logoDeadPixelTest from '@/assets/images/apps/dead-pixel-test.svg'
 
 export const APP_JAVASCRIPT_MINIFIER: AppItem = {
 	logoUrl: logoJavaScriptMinifer.src,
@@ -188,12 +189,23 @@ export const APP_URL_ENCODER: AppItem = {
 	buildVersion: '0.0.1',
 }
 
+export const APP_DEAD_PIXEL_TEST: AppItem = {
+	logoUrl: logoDeadPixelTest.src,
+	name: 'Dead Pixel Test',
+	description: 'Test your screen for dead pixels, stuck pixels, and other display anomalies with our comprehensive web app. Get a crystal-clear view of your monitor\'s health.',
+	link: RoutesLinks.deadPixelTest,
+	color: '#FF0000',
+	buildNumber: 1,
+	buildVersion: '0.0.1',
+}
+
 export const APPS: AppItem[] = [
+	APP_DEAD_PIXEL_TEST,
+	APP_RANDOMIZER,
 	APP_URL_ENCODER,
 	APP_QR_CODE,
 	APP_EMOJI_PICKER,
 	APP_MEDIA_PLAYER,
-	APP_RANDOMIZER,
 	APP_JAVASCRIPT_MINIFIER,
 	APP_COLOR_PICKER,
 	APP_CLOCK,
