@@ -83,6 +83,7 @@ function _subscribePickerModeRefView(v: SettingsStoreType, o: SettingsStoreType)
 	if (pickerMode === o.pickerMode) {return}
 
 	let hasMode = false
+	_pickerModeRef.value = pickerMode
 	for (const ref of $$$<HTMLDivElement>('[data-picker-mode]')) {
 		if (!hasMode && ref.dataset.pickerMode === pickerMode) {
 			ref.hidden = false
