@@ -19,16 +19,17 @@ import { GlobalElementIds } from '@/enums/ids'
 		width: 128px !important;
 		height: 128px !important;
 		animation: img-splash-start 1s var(--g-transition-spring);
-
 	}
 
 	:root[data-animation=off] .splash > :global(svg) {
 		animation: none;
+		will-change: opacity, scale;
 	}
 
 	@media (prefers-reduced-motion: reduce) {
 		:root[data-animation=off] .splash > :global(svg) {
 			animation: none;
+			will-change: opacity, scale;
 		}
 	}
 
