@@ -1,6 +1,6 @@
 .article {
 	padding: 64px 16px;
-	width: 840px;
+	width: 1080px;
 	max-width: 100%;
 
 	& :is(p, li) {
@@ -83,10 +83,13 @@
 	}
 
 	> h1 {
-		font-size: var(--g-font-size-xxl);
-		margin-bottom: 1em;
-		font-weight: 500;
+		font-size: min(10dvw, 72px);
+		margin-bottom: 64px;
+		font-weight: 100;
 		color: rgb(var(--g-color-accent));
+		width: fit-content;
+		border-bottom: .05em solid;
+		padding-bottom: .1em;
 	}
 
 	> :not(h1) {
