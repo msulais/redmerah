@@ -7,51 +7,24 @@
 .header {
 	display: flex;
 	align-items: center;
-	gap: 4px;
-	padding: 8px;
-	width: 1080px;
-	max-width: calc(100% - 16px);
+	justify-content: center;
+	width: 100%;
 	position: sticky;
-	top: 8px;
 	z-index: 100;
+	top: 0;
 	background-color: rgba(var(--g-color-background), var(--g-opacity-glass));
-	box-shadow: var(--g-elevation3);
 	backdrop-filter: blur(var(--g-blur-glass));
-	border-radius: 8px;
-	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity3));
 
-	:root[data-animation=on] & {
-		transition-duration: .2s;
-		transition-property: border-color, background-color, box-shadow, transform, max-width;
-	}
-
-	@media (prefers-reduced-motion: no-preference) {
-		:root[data-animation=auto] & {
-			transition-duration: .2s;
-			transition-property: border-color, background-color, box-shadow, transform, max-width;
-		}
-	}
-
-	&[data-top] {
-		border-color: transparent !important;
-		background-color: transparent !important;
-		box-shadow: none;
-		transform: translateY(-8px);
+	> div {
+		display: flex !important;
+		gap: 4px;
+		align-items: center;
+		width: 1080px;
 		max-width: 100%;
+		padding: 8px;
 	}
 
-	:root[data-theme=dark] & {
-		border: 1px solid rgba(0, 0, 0, var(--g-opacity-inv5));
-		background-color: rgba(46, 46, 46, var(--g-opacity-glass));
-	}
-	:root[data-theme=auto] & {
-		@media (prefers-color-scheme: dark) {
-			border: 1px solid rgba(0, 0, 0, var(--g-opacity-inv5));
-			background-color: rgba(46, 46, 46, var(--g-opacity-glass));
-		}
-	}
-
-	> nav {
+	& nav {
 		display: flex;
 		align-items: center;
 		gap: 4px;

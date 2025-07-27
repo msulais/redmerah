@@ -1,7 +1,6 @@
 export const ID = 'APPBAR-'
 
 export enum ElementIds {
-	appbar,
 	appbarSettingsButton,
 	appbarSettingsMenu,
 	appbarSettingsAnimationMenu,
