@@ -52,7 +52,7 @@
 				background-color: rgba(var(--g-color-on-surface), var(--g-opacity1));
 			}
 
-			&:not([data-c-combobox-variant=filled],[data-c-combobox-variant=outlined]) {
+			&:not([data-c-combobox-variant=filled]) {
 				border-color: rgb(var(--g-color-accent));
 			}
 		}

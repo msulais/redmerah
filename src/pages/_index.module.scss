@@ -104,11 +104,13 @@
 
 	& h3 {
 		font-size: var(--g-font-size-xm);
-		font-weight: normal;
+		font-weight: bold;
 		margin-bottom: 12px;
 		color: rgb(var(--g-color-accent));
-		border-bottom: 2px solid rgb(var(--g-color-accent));
-		padding-bottom: 4px;
+		// border-bottom: 2px solid rgb(var(--g-color-accent));
+		// text-decoration: underline;
+		// text-underline-offset: 0.1em;
+		// text-decoration-thickness: 1px;
 		width: fit-content;
 	}
 }
@@ -116,12 +118,12 @@
 .header {
 	width: 1032px;
 	max-width: 100%;
-	padding: 32px 16px 64px 16px;
+	padding: 64px 16px 64px 16px;
 
 	> h1 {
-		font-size: min(64px, 10dvw);
+		font-size: min(56px, 10dvw);
 		margin-bottom: 32px;
-		font-weight: 200;
+		font-weight: bolder;
 
 		> span {
 			--color-gradient1: hsl(119, 100%, 50%);

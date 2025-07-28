@@ -16,24 +16,12 @@
 		text-transform: capitalize;
 		position: relative;
 		width: 100%;
-		transition-property: background-color, scale;
-
-		&::after {
-			content: '';
-			width: 25%;
-			height: 4px;
-			background-color: rgb(var(--g-color-accent));
-			position: absolute;
-			border-radius: 99px;
-			bottom: 2px;
-			opacity: 0;
-			left: 50%;
-			translate: -50% 0;
-			transition-duration: var(--g-duration-transition);
-		}
+		transition-property: scale;
+		border: 2px solid transparent;
 
 		@media (hover:hover) {
 			&:hover {
+				border-color: rgb(var(--g-color-accent));
 				background-color: rgba(var(--g-color-on-surface), var(--g-opacity2)) !important;
 
 				&::after {
@@ -44,6 +32,7 @@
 		}
 
 		&:active {
+			border-color: rgb(var(--g-color-accent));
 			background-color: rgba(var(--g-color-on-surface), var(--g-opacity2)) !important;
 			scale: .9;
 
@@ -77,7 +66,7 @@
 	max-width: 100%;
 
 	> h1 {
-		font-size: min(64px, 10dvw);
+		font-size: min(56px, 10dvw);
 		font-weight: normal;
 	}
 }

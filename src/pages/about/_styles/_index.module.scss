@@ -83,12 +83,10 @@
 	}
 
 	> h1 {
-		font-size: min(10dvw, 72px);
+		font-size: min(10dvw, 56px);
 		margin-bottom: 64px;
-		font-weight: 100;
 		color: rgb(var(--g-color-accent));
 		width: fit-content;
-		border-bottom: .05em solid;
 		padding-bottom: .1em;
 	}
 
