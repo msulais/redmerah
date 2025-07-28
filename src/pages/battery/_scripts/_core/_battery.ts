@@ -20,7 +20,7 @@ function _initEvents(): void {
 	;((navigator as any).getBattery() as Promise<BatteryManager>).then((battery) => {
 		const update = () => {
 			const charging = battery.charging
-			_textLevelRef.textContent = (battery.level * 100) + '%'
+			_textLevelRef.textContent = Math.round(battery.level * 100) + '%'
 			_statusTextRef.textContent = charging? 'Charging' : 'Discharging'
 			updateIconRef(_statusIconRef, {
 				IconCode: charging? IconCodes.batteryCharge : IconCodes.battery5
