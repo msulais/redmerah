@@ -11,7 +11,6 @@ import { ButtonVariant, updateButtonRef } from "@/components/Button"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { isAnimationAllowed } from "@/utils/animation"
 import { CSSClasses } from "../../_styles/_css"
-import { animateUpdateTextElement } from "@/utils/element"
 import { IconClasses } from "@/components/Icon"
 import { saveStorageItem } from "../_core/_database"
 import type { ComboBoxElement } from "@/components/ComboBox"
@@ -153,18 +152,13 @@ function _initEvents(): void {
 				(inv? 'a' : '') + 'sec' + (hyp? 'h' : ''),
 				(inv? 'a' : '') + 'cot' + (hyp? 'h' : '')
 			]
-			const animation = isAnimationAllowed()
 			for (let i = 0; i < Math.min(trigonometry.length, refs.length); i++) {
 				const ref = refs.item(i)
 				const char = trigonometry[i]
 				if (!ref || !char) continue
 
 				ref.setAttribute('data-char', char + '(')
-				if (animation) {
-					animateUpdateTextElement(ref, char + '(x)')
-				} else {
-					ref.textContent = char + '(x)'
-				}
+				ref.textContent = char + '(x)'
 			}
 		}
 	})
