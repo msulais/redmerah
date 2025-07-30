@@ -12,6 +12,7 @@ import { CSSClasses } from '../_styles/_css'
 import { Pages } from '../_scripts/_shared/_enums'
 import { ElementIds } from '../_scripts/_shared/_ids'
 import { DEFAULT_PAGE } from '../_scripts/_shared/_constant'
+import { pxToRem } from '@/utils/css'
 
 const items: {
 	icon: number
@@ -60,7 +61,9 @@ const items: {
 	<Tooltip>
 		{items.map(v => <SideBarButton
 			role="tab"
-			style="padding-left: 10px"
+			style={{
+				'padding-left': pxToRem(10) + 'rem'
+			}}
 			data-page={v.page}
 			aria-selected={DEFAULT_PAGE === v.page}
 			aria-controls={v.controls}

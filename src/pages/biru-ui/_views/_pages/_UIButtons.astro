@@ -10,6 +10,7 @@ import { ButtonVariant } from '@/components/Button'
 import { ElementIds } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 import { IconCodes } from '@/enums/icons'
+import { pxToRem } from '@/utils/css'
 ---
 <div
 	class={CSS.bodyPage}
@@ -39,7 +40,10 @@ import { IconCodes } from '@/enums/icons'
 			<label for={ElementIds.panelButtonsOptionsVariant}>Variant:</label>
 			<ComboBox
 				id={ElementIds.panelButtonsOptionsVariant}
-				style="min-width:140px;margin-right:12px">
+				style={{
+					'min-width': pxToRem(140) + 'rem',
+					'margin-right': pxToRem(12) + 'rem'
+				}}>
 				<ComboBoxOption value={ButtonVariant.filled}>Filled</ComboBoxOption>
 				<ComboBoxOption value={ButtonVariant.tonal}>Tonal</ComboBoxOption>
 				<ComboBoxOption value={ButtonVariant.transparent} selected>Transparent</ComboBoxOption>

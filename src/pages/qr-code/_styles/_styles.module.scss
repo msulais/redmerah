@@ -1,4 +1,6 @@
-$SCREEN_WIDTH_SMALL: 700px;
+@use '../../../styles/units.scss' as u;
+
+$SCREEN_WIDTH_SMALL: u.Rem(700px);
 
 .body {
 	display: flex;
@@ -8,8 +10,8 @@ $SCREEN_WIDTH_SMALL: 700px;
 	max-height: 100%;
 	overflow: auto;
 	background-color: rgb(var(--g-color-surface));
-	border-radius: 8px 0 0 0;
-	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity3));
+	border-radius: u.Rem(8px) 0 0 0;
+	border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity3));
 	border-bottom: none;
 	border-right: none;
 
@@ -36,10 +38,10 @@ $SCREEN_WIDTH_SMALL: 700px;
 }
 
 .pageGenerate {
-	padding: 16px;
+	padding: u.Rem(16px);
 
 	@media (max-width: $SCREEN_WIDTH_SMALL) {
-		padding-top: 8px;
+		padding-top: u.Rem(8px);
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -56,7 +58,7 @@ $SCREEN_WIDTH_SMALL: 700px;
 
 				> p {
 					position: absolute;
-					right: calc(100% + 8px);
+					right: calc(100% + u.Rem(8px));
 				}
 			}
 		}
@@ -72,35 +74,35 @@ $SCREEN_WIDTH_SMALL: 700px;
 	}
 
 	& canvas {
-		min-width: 280px;
-		min-height: 280px;
-		max-width: 280px;
-		max-height: 280px;
-		border-radius: 4px;
+		min-width: u.Rem(280px);
+		min-height: u.Rem(280px);
+		max-width: u.Rem(280px);
+		max-height: u.Rem(280px);
+		border-radius: u.Rem(4px);
 		box-shadow: var(--g-elevation2);
 	}
 }
 
 .pageScan {
-	padding: 16px;
+	padding: u.Rem(16px);
 
 	@media (max-width: $SCREEN_WIDTH_SMALL) {
-		padding-top: 8px
+		padding-top: u.Rem(8px)
 	}
 
 	& img {
-		width: min(280px, 100%);
-		border-radius: 4px;
-		margin-top: 16px;
+		width: min(u.Rem(280px), 100%);
+		border-radius: u.Rem(4px);
+		margin-top: u.Rem(16px);
 	}
 
 	& label {
-		margin-top: 8px;
+		margin-top: u.Rem(8px);
 	}
 
 	& textarea {
-		margin-top: 2px;
-		max-width: min(100%, 720px);
+		margin-top: u.Rem(2px);
+		max-width: min(100%, u.Rem(720px));
 		field-sizing: content;
 		resize: none;
 

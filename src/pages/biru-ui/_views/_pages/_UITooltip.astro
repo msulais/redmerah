@@ -12,6 +12,7 @@ import { ButtonVariant } from '@/components/Button'
 import { FlyoutPosition } from '@/enums/position'
 import { TooltipPosition } from '@/components/Tooltip'
 import { IconCodes } from '@/enums/icons'
+import { pxToRem } from '@/utils/css'
 ---
 <div
 	class={CSS.bodyPage}
@@ -39,7 +40,9 @@ import { IconCodes } from '@/enums/icons'
 	<div class={CSS.bodyOptions} id={ElementIds.panelTooltipOptions}>
 		<label for={ElementIds.panelTooltipOptionsPosition}>Position:</label>
 		<ComboBox
-			style="margin-right:12px"
+			style={{
+				'margin-right': pxToRem(12) + 'rem'
+			}}
 			id={ElementIds.panelTooltipOptionsPosition}>
 			{[
 				[FlyoutPosition.centerBottom, 'Center bottom'],
@@ -77,12 +80,16 @@ import { IconCodes } from '@/enums/icons'
 				Gap:
 			</label>
 			<TextField
-				style={"margin-right:12px"}
+				style={{
+					'margin-right': pxToRem(12) + 'rem'
+				}}
 				TextFieldInputAttr={{
 					value: '40',
 					type: 'number',
 					min: 0,
-					style: 'width:100px',
+					style: {
+						width: pxToRem(100) + 'rem'
+					},
 					id: ElementIds.panelTooltipOptionsGap
 				}}
 			/>
@@ -93,13 +100,17 @@ import { IconCodes } from '@/enums/icons'
 				Start delay (ms):
 			</label>
 			<TextField
-				style={"margin-right:12px"}
+				style={{
+					'margin-right': pxToRem(12) + 'rem'
+				}}
 				TextFieldInputAttr={{
 					value: '1000',
 					type: 'number',
 					min: 0,
 					step: 50,
-					style: 'width:100px',
+					style: {
+						width: pxToRem(100) + 'rem'
+					},
 					id: ElementIds.panelTooltipOptionsStartDelay
 				}}
 			/>
@@ -110,13 +121,17 @@ import { IconCodes } from '@/enums/icons'
 				End delay (ms):
 			</label>
 			<TextField
-				style={"margin-right:12px"}
+				style={{
+					'margin-right': pxToRem(12) + 'rem'
+				}}
 				TextFieldInputAttr={{
 					value: '200',
 					type: 'number',
 					min: 0,
 					step: 50,
-					style: 'width:100px',
+					style: {
+						width: pxToRem(100) + 'rem'
+					},
 					id: ElementIds.panelTooltipOptionsEndDelay
 				}}
 			/>

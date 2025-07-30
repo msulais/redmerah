@@ -16,6 +16,7 @@ import { IconCodes } from "@/enums/icons"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { saveStorageItem } from "./_database"
+import { pxToRem } from "@/utils/css"
 
 export type ColorsStoreType = {
 	seed: HEXColor
@@ -117,7 +118,7 @@ function _subscribePaletteRefView(v: ColorsStoreType, o: ColorsStoreType): void 
 				const r2 = childrenRects2[i]
 				const item = children[i]
 				item.animate({
-					translate: [`${r1.x - r2.x}px ${r1.y - r2.y}px`, '0 0']
+					translate: [`${pxToRem(r1.x - r2.x)}rem ${pxToRem(r1.y - r2.y)}rem`, '0 0']
 				}, _animationOption)
 			}
 		}
@@ -157,7 +158,7 @@ function _subscribePaletteRefView(v: ColorsStoreType, o: ColorsStoreType): void 
 				const r1 = keepedRects[i]
 				const r2 = keepedRects2[i]
 				ref.animate({
-					translate: [`${r1.x - r2.x}px ${r1.y - r2.y}px`, '0 0']
+					translate: [`${pxToRem(r1.x - r2.x)}rem ${pxToRem(r1.y - r2.y)}rem`, '0 0'],
 				}, _animationOption)
 			})
 		}

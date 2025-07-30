@@ -9,6 +9,7 @@ import { ElementIds } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 import { ButtonVariant } from '@/components/Button'
 import { FlyoutPosition } from '@/enums/position'
+import { pxToRem } from '@/utils/css'
 ---
 <div
 	class={CSS.bodyPage}
@@ -30,7 +31,10 @@ import { FlyoutPosition } from '@/enums/position'
 			id={ElementIds.panelModalPreviewModal}
 			ModalAnchorBy={ElementIds.panelModalPreviewButtonOpen}
 			ModalContentAttr={{
-				style: "padding: 16px;width: 280px"
+				style: {
+					padding: pxToRem(16) + 'rem',
+					width: pxToRem(280) + 'rem'
+				}
 			}}
 			ModalPadding={16}
 			ModalGap={8}>
@@ -40,7 +44,9 @@ import { FlyoutPosition } from '@/enums/position'
 					style: 'width: 100%'
 				}}
 			/>
-			<p style="padding:8px 0 16px 0">Consequat commodo sint incididunt nulla duis commodo elit enim aliquip ex occaecat eiusmod.</p>
+			<p style={{
+				padding: `${pxToRem(8)}rem 0 ${pxToRem(16)}rem 0`
+			}}>Consequat commodo sint incididunt nulla duis commodo elit enim aliquip ex occaecat eiusmod.</p>
 			<Button
 				id={ElementIds.panelModalPreviewButtonClose}
 				aria-controls={ElementIds.panelModalPreviewModal}
@@ -54,7 +60,9 @@ import { FlyoutPosition } from '@/enums/position'
 			<label for={ElementIds.panelModalOptionsPosition}>Position:</label>
 			<ComboBox
 				id={ElementIds.panelModalOptionsPosition}
-				style="margin-right:12px">
+				style={{
+					'margin-right': pxToRem(12) + 'rem'
+				}}>
 				{[
 					[FlyoutPosition.centerBottom, 'Center bottom'],
 					[FlyoutPosition.centerBottomToLeft, 'Center bottom to left'],
@@ -86,7 +94,11 @@ import { FlyoutPosition } from '@/enums/position'
 				)}
 			</ComboBox>
 		</div>
-		<div class={CSS.bodyOptionsGroup} style="margin-right:12px">
+		<div
+			class={CSS.bodyOptionsGroup}
+			style={{
+				'margin-right': pxToRem(12) + 'rem'
+			}}>
 			<label
 				for={ElementIds.panelModalOptionsPadding}>
 				Padding:
@@ -96,12 +108,18 @@ import { FlyoutPosition } from '@/enums/position'
 					value: '16',
 					type: 'number',
 					min: 0,
-					style: 'width:100px',
+					style: {
+						width: pxToRem(100) + 'rem'
+					},
 					id: ElementIds.panelModalOptionsPadding
 				}}
 			/>
 		</div>
-		<div class={CSS.bodyOptionsGroup} style="margin-right:12px">
+		<div
+			class={CSS.bodyOptionsGroup}
+			style={{
+				'margin-right': pxToRem(12) + 'rem'
+			}}>
 			<label
 				for={ElementIds.panelModalOptionsGap}>
 				Gap:
@@ -111,7 +129,9 @@ import { FlyoutPosition } from '@/enums/position'
 					value: '8',
 					type: 'number',
 					min: 0,
-					style: 'width:100px;',
+					style: {
+						width: pxToRem(100) + 'rem'
+					},
 					id: ElementIds.panelModalOptionsGap
 				}}
 			/>

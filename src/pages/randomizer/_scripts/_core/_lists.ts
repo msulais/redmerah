@@ -20,6 +20,7 @@ import { WordsStore } from "../_features/_words"
 import { CSSClasses } from "../../_styles/_css"
 import { deleteListItem, saveListItem } from "./_database"
 import { deepCopy } from "@/utils/object"
+import { pxToRem } from "@/utils/css"
 
 export type ListItem = {
 	id: number
@@ -238,14 +239,14 @@ function _subsListView(v: ListsStoreType, o: ListsStoreType): void {
 			],
 			ListRefs: {
 				list(ref) {
-					ref.style.setProperty('padding-right', '4px')
+					ref.style.setProperty('padding-right', pxToRem(4) + 'rem')
 					ref.setAttribute('data-list-id', list.id.toString())
 					ref.classList.add(CSSClasses.listItem)
 				},
 				trailing(ref) {
 					ref.style.setProperty('display', 'flex')
 					ref.style.setProperty('align-items', 'center')
-					ref.style.setProperty('gap', '1px')
+					ref.style.setProperty('gap', pxToRem(1) + 'rem')
 				},
 			}
 		}))

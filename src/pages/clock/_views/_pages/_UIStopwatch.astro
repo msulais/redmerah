@@ -15,6 +15,7 @@ import { ButtonVariant } from '@/components/Button'
 import { IconCodes } from '@/enums/icons'
 import { Commands } from '../../_scripts/_shared/_commands'
 import { Pages } from '../../_scripts/_shared/_enums'
+import { pxToRem } from '@/utils/css'
 import { DEFAULT_PAGE, DEFAULT_STOPWATCH_LAPS, DEFAULT_STOPWATCH_MS, DEFAULT_STOPWATCH_RUNNING } from '../../_scripts/_shared/_constant'
 
 function textHHMMSS(ms: number): string {
@@ -95,9 +96,17 @@ function msText(ms: number): string {
 			id={ElementIds.pgSw_hhmmss}>{textHHMMSS(DEFAULT_STOPWATCH_MS)}</span
 		>,<small id={ElementIds.pgSw_ms}>{textMS(DEFAULT_STOPWATCH_MS)}</small>
 	</h2>
-	<Tooltip style="display:flex;justify-content:center;gap:8px;padding-bottom:16px">
+	<Tooltip
+		style={{
+			display: 'flex',
+			'justify-content': 'center',
+			gap: pxToRem(8) + 'rem',
+			'padding-bottom': pxToRem(16) + 'rem'
+		}}>
 		<Button
-			style="width:92px"
+			style={{
+				width: pxToRem(92) + 'rem'
+			}}
 			id={ElementIds.pgSw_playPause}
 			ButtonVariant={ButtonVariant.filled}>
 			<Icon IconCode={DEFAULT_STOPWATCH_RUNNING? IconCodes.pause : IconCodes.play} IconFilled/>

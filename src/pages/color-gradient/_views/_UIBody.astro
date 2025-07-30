@@ -14,6 +14,7 @@ import { AppCSSColors } from '@/enums/app-data'
 import { ElementIds } from '../_scripts/_shared/_ids'
 import { DEFAULT_PREVIEW_BORDER_RADIUS, DEFAULT_PREVIEW_HEIGHT, DEFAULT_PREVIEW_WIDTH, DEFAULT_STOP_COLOR_1, DEFAULT_STOP_COLOR_2 } from '../_scripts/_shared/_constant'
 import { FlyoutPosition } from '@/enums/position'
+import { pxToRem } from '@/utils/css'
 ---
 
 <main class={CSSClasses.body}>
@@ -22,9 +23,9 @@ import { FlyoutPosition } from '@/enums/position'
 			class={CSSClasses.bodyPreview}
 			id={ElementIds.bd_preview}
 			style={{
-				borderRadius: DEFAULT_PREVIEW_BORDER_RADIUS + 'px',
-				minWidth: DEFAULT_PREVIEW_WIDTH + 'px',
-				minHeight: DEFAULT_PREVIEW_HEIGHT + 'px',
+				borderRadius: pxToRem(DEFAULT_PREVIEW_BORDER_RADIUS) + 'rem',
+				minWidth: pxToRem(DEFAULT_PREVIEW_WIDTH) + 'rem',
+				minHeight: pxToRem(DEFAULT_PREVIEW_HEIGHT) + 'rem',
 				background: `linear-gradient(0deg,${DEFAULT_STOP_COLOR_1} 0%, ${DEFAULT_STOP_COLOR_2} 100%)`
 			}}
 		/>
@@ -36,7 +37,12 @@ import { FlyoutPosition } from '@/enums/position'
 				Saved gradient
 				<Icon IconCode={IconCodes.chevronDown}/>
 			</summary>
-			<ul style="padding:12px" data-css-content class={CSSClasses.bodySavedGradient}>{/*
+			<ul
+				style={{
+					padding: pxToRem(12) + 'rem'
+				}}
+				data-css-content
+				class={CSSClasses.bodySavedGradient}>{/*
 				<li>
 					<Button
 						data-command={Commands.grad_use}
@@ -47,7 +53,9 @@ import { FlyoutPosition } from '@/enums/position'
 				</li>
 			*/}</ul>
 			<Menu
-				style="width:128px"
+				style={{
+					width: pxToRem(128) + 'rem'
+				}}
 				id={ElementIds.bdSv_menu}
 				PopoverPosition={FlyoutPosition.centerBottomToRight}>
 				<MenuItem id={ElementIds.bdSv_view}><Icon IconCode={IconCodes.eye}/>View</MenuItem>
@@ -75,8 +83,8 @@ import { FlyoutPosition } from '@/enums/position'
 				<div style={{
 					display: 'grid',
 					gridTemplateColumns: '1fr 1fr',
-					gap: '8px',
-					marginTop: '8px'
+					gap: pxToRem(8) + 'rem',
+					marginTop: pxToRem(8) + 'rem'
 				}}>
 					<div>
 						<label for={ElementIds.bdProp_width}>Width (px):</label>
@@ -103,11 +111,11 @@ import { FlyoutPosition } from '@/enums/position'
 				}}/>
 				<LinkButton
 					style={{
-						minHeight: '24px',
+						minHeight: pxToRem(24) + 'rem',
 						width: 'fit-content',
-						marginTop: '2px',
-						translate: '-8px 0',
-						padding: '2px 8px',
+						marginTop: pxToRem(2) + 'rem',
+						translate: `${pxToRem(-8)}rem 0`,
+						padding: `${pxToRem(2)}rem ${pxToRem(8)}rem`,
 						color: `rgb(${AppCSSColors.accent})`
 					}}
 					href="https://developer.mozilla.org/en-US/docs/Web/CSS/clip-path"
@@ -125,7 +133,12 @@ import { FlyoutPosition } from '@/enums/position'
 				Gradient
 				<Icon IconCode={IconCodes.chevronDown}/>
 			</summary>
-			<div style="padding:4px 0 0 0" data-css-content class={CSSClasses.bodyGradients}>
+			<div
+				style={{
+					padding: `${pxToRem(4)}rem 0 0 0`
+				}}
+				data-css-content
+				class={CSSClasses.bodyGradients}>
 				<UIGradient />
 			</div>
 		</details>

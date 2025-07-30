@@ -17,6 +17,7 @@ import { updateDialogRef } from "@/components/Dialog"
 import { DatePickerAttributes, DatePickerEvents, updateDatePickerRef } from "@/components/DatePicker"
 import { ComboBoxVariant, updateComboBoxRef, type ComboBoxElement } from "@/components/ComboBox"
 import type { CheckBoxElement } from "@/components/CheckBox"
+import { pxToRem } from "@/utils/css"
 
 const animationOptions = {duration: 250, easing: AnimationEffectTiming.spring}
 const $ = (id: string) => document.getElementById(id)
@@ -112,14 +113,14 @@ function _textField(): void {
 		switch (target) {
 		case optionLeading:
 			leading.style.setProperty('display', checked? null : "none")
-			input.style.setProperty('padding-left', checked? '0px' : '12px')
+			input.style.setProperty('padding-left', checked? '0rem' : (pxToRem(12) + 'rem'))
 			if (isAnimationAllowed() && checked) leading.animate({
 				scale: [0, 1]
 			}, animationOptions)
 			break
 		case optionTrailing:
 			trailing.style.setProperty('display', checked? null : "none")
-			input.style.setProperty('padding-right', checked? '0px' : '12px')
+			input.style.setProperty('padding-right', checked? '0rem' : (pxToRem(12) + 'rem'))
 			if (isAnimationAllowed() && checked) trailing.animate({
 				scale: [0, 1]
 			}, animationOptions)
@@ -141,18 +142,18 @@ function _textField(): void {
 			const textFieldRect2 = textField.getBoundingClientRect()
 			const trailingRect2 = trailing.getBoundingClientRect()
 			textField.animate({
-				width: [textFieldRect.width + 'px', textFieldRect2.width + 'px'],
+				width: [pxToRem(textFieldRect.width) + 'rem', pxToRem(textFieldRect2.width) + 'rem'],
 			}, animationOptions)
 			input.animate({
-				transform: [`translateX(${inputRect.left - inputRect2.left}px)`, 'translateX(0)'],
+				transform: [`translateX(${pxToRem(inputRect.left - inputRect2.left)}rem)`, 'translateX(0)'],
 				paddingLeft: target === optionLeading? [
-					checked? '12px' : '0px',
-					checked? '0' : '12px'
+					checked? (pxToRem(12) + 'rem') : '0rem',
+					checked? '0rem' : (pxToRem(12) + 'rem')
 				] : [],
 			}, animationOptions)
 			if (trailing.checkVisibility() && target !== optionTrailing) {
 				trailing.animate({
-					transform: [`translateX(${(trailingRect.left + (checked? 0 : 12)) - (trailingRect2.left + (checked? 12 : 0))}px)`, 'translateX(0)']
+					transform: [`translateX(${pxToRem((trailingRect.left + (checked? 0 : 12)) - (trailingRect2.left + (checked? 12 : 0)))}rem)`, 'translateX(0)']
 				}, animationOptions)
 			}
 			break
@@ -240,7 +241,7 @@ function _list(): void {
 			break
 		case trailingOptionRef:
 			trailingPreview?.style.setProperty('display', checked? 'flex' : 'none')
-			listPreview?.style.setProperty('padding-right', checked? '4px' : null)
+			listPreview?.style.setProperty('padding-right', checked? (pxToRem(4) + 'em') : null)
 			if (isAnimationAllowed()) {
 				for (const child of trailingPreview!.children) {
 					child.animate({scale: [0, 1]}, animationOptions)
@@ -253,7 +254,7 @@ function _list(): void {
 				for (const child of subtitlePreview!.children) {
 					child.animate({
 						opacity: [0, 1],
-						transform: ['translateY(-8px)', 'translateY(0)']
+						transform: [`translateY(${pxToRem(-8)}rem)`, 'translateY(0)']
 					}, animationOptions)
 				}
 			}
@@ -263,7 +264,7 @@ function _list(): void {
 			if (isAnimationAllowed()) {
 				titlePreview?.animate({
 					opacity: [0, 1],
-					transform: ['translateY(8px)', 'translateY(0)']
+					transform: [`translateY(${pxToRem(8)}rem)`, 'translateY(0)']
 				}, animationOptions)
 			}
 			break
@@ -281,7 +282,7 @@ function _list(): void {
 
 				child.animate({
 					transform: [
-						`translate(${rect1.left - rect2.left}px,${rect1.top - rect2.top}px)`,
+						`translate(${pxToRem(rect1.left - rect2.left)}rem,${pxToRem(rect1.top - rect2.top)}rem)`,
 						`translate(0,0)`
 					]
 				}, animationOptions)
@@ -292,7 +293,7 @@ function _list(): void {
 			const titlePreviewRect2 = titlePreview.getBoundingClientRect()
 			titlePreview.animate({
 				transform: [
-					`translate(${titlePreviewRect.left - titlePreviewRect2.left}px,${titlePreviewRect.top - titlePreviewRect2.top}px)`,
+					`translate(${pxToRem(titlePreviewRect.left - titlePreviewRect2.left)}rem,${pxToRem(titlePreviewRect.top - titlePreviewRect2.top)}rem)`,
 					`translate(0,0)`
 				]
 			}, animationOptions)
@@ -301,7 +302,7 @@ function _list(): void {
 		if (target === subtitleOptionRef || target === titleOptionRef) {
 			const listPreviewRect2 = listPreview.getBoundingClientRect()
 			listPreview.animate({
-				height: [listPreviewRect.height + 'px', listPreviewRect2.height + 'px']
+				height: [pxToRem(listPreviewRect.height) + 'rem', pxToRem(listPreviewRect2.height) + 'rem']
 			}, animationOptions)
 		}
 	})

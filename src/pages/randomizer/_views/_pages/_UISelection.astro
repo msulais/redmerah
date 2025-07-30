@@ -6,6 +6,7 @@ import { DEFAULT_LISTS, DEFAULT_SELECTION_OUTPUT, DEFAULT_PAGE, DEFAULT_SELECTIO
 import { Pages } from "../../_scripts/_shared/_enums"
 import { ElementIds } from "../../_scripts/_shared/_ids"
 import { CSSClasses } from "../../_styles/_css"
+import { pxToRem } from '@/utils/css'
 ---
 
 <div
@@ -32,7 +33,7 @@ import { CSSClasses } from "../../_styles/_css"
 	<div class={CSSClasses.bodyOptions}>
 		<label for={ElementIds.pgSel_list}>List:</label>
 		<ComboBox
-			style="margin-top:2px"
+			style={{'margin-top': pxToRem(2) + 'rem'}}
 			id={ElementIds.pgSel_list}>
 			{DEFAULT_LISTS.map(v =>
 				<ComboBoxOption
@@ -42,10 +43,10 @@ import { CSSClasses } from "../../_styles/_css"
 		</ComboBox>
 
 		<label
-			style="margin-top:8px"
+			style={{'margin-top': pxToRem(8) + 'rem'}}
 			for={ElementIds.pgSel_count}>Count:</label>
 		<TextField
-			style="margin-top:2px"
+			style={{'margin-top': pxToRem(2) + 'rem'}}
 			TextFieldInputAttr={{
 				id: ElementIds.pgSel_count,
 				type: 'number',

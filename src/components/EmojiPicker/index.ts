@@ -63,6 +63,7 @@ import {
 	type TooltipProps
 } from "@/components/Tooltip"
 import { IconCodes } from "@/enums/icons"
+import { pxToRem } from "@/utils/css"
 
 type EmojiPickerProps = PopoverProps & {
 	EmojiPickerAutoClose           ?: boolean
@@ -240,7 +241,7 @@ function _initEmojiPickerRef(emojiPickerRef: EmojiPickerElement): void {
 
 		titleRef?.animate({
 			opacity: [0, 1],
-			transform: ['translateY(12px)', 'translateY(0)']
+			translate: [`0 ${pxToRem(12)}rem`, '0 0'],
 		}, animationOptions)
 	}
 
@@ -300,7 +301,7 @@ function _initEmojiPickerRef(emojiPickerRef: EmojiPickerElement): void {
 			tabRect.forEach((rect, element) => {
 				const rect2 = element.getBoundingClientRect()
 				element.animate({
-					'transform': [`translate(${rect.left - rect2.left}px,${rect.top - rect2.top}px)`, 'translate(0,0)']
+					translate: [`${pxToRem(rect.left - rect2.left)}rem ${pxToRem(rect.top - rect2.top)}rem`, '0 0']
 				}, animationOptions)
 			})
 		}
@@ -372,7 +373,7 @@ function _initEmojiPickerRef(emojiPickerRef: EmojiPickerElement): void {
 			if (!rect1 || !rect2) continue
 
 			item?.animate({
-				transform: [`translate(${rect1.left - rect2.left}px,${rect1.top - rect2.top}px)`, 'translate(0,0)']
+				translate: [`${pxToRem(rect1.left - rect2.left)}rem ${pxToRem(rect1.top - rect2.top)}rem`, '0 0']
 			}, animationOptions)
 		}
 	}

@@ -12,12 +12,13 @@ import { DEFAULT_COLOR, DEFAULT_PALETTE } from '../_scripts/_shared/_constant'
 import { ElementIds } from '../_scripts/_shared/_ids'
 import { generateColorPalette } from '@/utils/color'
 import { Commands } from '../_scripts/_shared/_commands'
+import { pxToRem } from '@/utils/css'
 ---
 <main class={CSSClasses.body}>
 	<div class={CSSClasses.bodyControl}>
 		<Tooltip style={{
 			display: 'flex',
-			gap: '4px'
+			gap: pxToRem(4) + 'rem'
 		}}>
 			<Button
 				ButtonVariant={ButtonVariant.filled}
@@ -121,8 +122,8 @@ import { Commands } from '../_scripts/_shared/_commands'
 	PopoverDraggable
 	ColorPickerDisabledOpacity
 	PopoverAnchorBy={ElementIds.bd_pickerBtn}
-	PopoverGap={8}
-	PopoverPadding={12}
+	PopoverGap={pxToRem(8)}
+	PopoverPadding={pxToRem(12)}
 />
 <Toast id={ElementIds.toa_copied} ToastCloseDelay={1500}>
 	<Icon IconCode={IconCodes.copy} slot="leading"/>

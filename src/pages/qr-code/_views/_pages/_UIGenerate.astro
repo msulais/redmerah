@@ -8,6 +8,7 @@ import Button from '@/components/Button/index.astro'
 import Toast from '@/components/Toast/index.astro'
 import Icon from '@/components/Icon/index.astro'
 import { IconCodes } from '@/enums/icons'
+import { pxToRem } from '@/utils/css'
 import { ButtonVariant } from '@/components/Button'
 ---
 
@@ -17,18 +18,25 @@ import { ButtonVariant } from '@/components/Button'
 	role="tabpanel"
 	hidden={DEFAULT_PAGE !== Pages.generate}>
 	<TextAreaField
-		style="max-width:min(100%,720px)"
+		style={{
+			'max-width': `min(100%,${pxToRem(720)}rem)`
+		}}
 		id={ElementIds.pgGen_input}
 		placeholder="Link, email, or any text"
 		value={DEFAULT_DATA}
 	/>
 	<div style={{
 		display: 'flex',
-		marginTop: '16px',
-		gap: '16px',
+		marginTop: pxToRem(16) + 'rem',
+		gap: pxToRem(16) + 'rem',
 	}}>
 		<canvas id={ElementIds.pgGen_output}/>
-		<div style="display:flex;gap:8px;flex-direction:column;width:192px">
+		<div style={{
+			display: 'flex',
+			gap: pxToRem(8) + 'rem',
+			'flex-direction': 'column',
+			width: pxToRem(192) + 'rem'
+		}}>
 			<p style="font-size:var(--g-font-size-xs);">Donwload:</p>
 			<Button id={ElementIds.pgGen_png} disabled ButtonVariant={ButtonVariant.tonal}>PNG</Button>
 			<Button id={ElementIds.pgGen_jpg} disabled ButtonVariant={ButtonVariant.tonal}>JPEG</Button>

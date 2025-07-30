@@ -17,6 +17,7 @@ import { Commands } from '../../_scripts/_shared/_commands'
 import { ScientificAngleType } from '../../_scripts/_shared/_enums'
 import { Pages } from '../../_scripts/_shared/_enums'
 import { DEFAULT_PAGE, DEFAULT_SCIENTIFIC_ANGLE, DEFAULT_SCIENTIFIC_INPUT, DEFAULT_SCIENTIFIC_OUTPUT } from '../../_scripts/_shared/_constant'
+import { pxToRem } from '@/utils/css'
 ---
 <div
 	class={CSSClasses.bd_page}
@@ -57,15 +58,18 @@ import { DEFAULT_PAGE, DEFAULT_SCIENTIFIC_ANGLE, DEFAULT_SCIENTIFIC_INPUT, DEFAU
 				popovertarget={ElementIds.pgSci_fnMenu}>
 				<Icon IconCode={IconCodes.mathFormula}/>
 				Functions
-				<div style="min-width:4px;max-width:4px;"/>
+				<div style={{
+					'min-width': pxToRem(4) + 'rem',
+					'max-width': pxToRem(4) + 'rem',
+				}}/>
 				<Icon IconCode={IconCodes.chevronDown}/>
 			</Button>
 			<Popover
 				popover="manual"
 				PopoverDraggable
-				PopoverGap={8}
+				PopoverGap={pxToRem(8)}
 				PopoverPosition={PopoverPosition.centerBottomToRight}
-				PopoverPadding={16}
+				PopoverPadding={pxToRem(16)}
 				id={ElementIds.pgSci_fnMenu}
 				PopoverAnchorBy={ElementIds.pgSci_fnBtn}>
 				<div class={CSSClasses.bdPageSci_menuGrid}>
@@ -77,11 +81,19 @@ import { DEFAULT_PAGE, DEFAULT_SCIENTIFIC_ANGLE, DEFAULT_SCIENTIFIC_INPUT, DEFAU
 					<Button data-command={Commands.key_char} data-char="floor(" ButtonVariant={ButtonVariant.tonal}>floor(x)</Button>
 				</div>
 				<Divider/>
-				<div style="padding: 16px 16px 0 18px;display:flex;gap:4px;">
+				<div style={{
+					padding: `${pxToRem(16)}rem ${pxToRem(16)}rem 0 ${pxToRem(18)}rem`,
+					display: 'flex',
+					gap: pxToRem(4) + 'rem'
+				}}>
 					<CheckBox CheckBoxInputAttr={{id: ElementIds.pgSci_fnInv}}>Invers</CheckBox>
 					<CheckBox CheckBoxInputAttr={{id: ElementIds.pgSci_fnHyper}}>Hyperbolic</CheckBox>
 				</div>
-				<div style="padding-top: 4px" class={CSSClasses.bdPageSci_menuGrid}>
+				<div
+					style={{
+						'padding-top': pxToRem(4) + 'rem'
+					}}
+					class={CSSClasses.bdPageSci_menuGrid}>
 					<Button data-command={Commands.key_char} data-char="sin(" class={CSSClasses.bdPageSci_trigonometry} ButtonVariant={ButtonVariant.tonal}>sin(x)</Button>
 					<Button data-command={Commands.key_char} data-char="cos(" class={CSSClasses.bdPageSci_trigonometry} ButtonVariant={ButtonVariant.tonal}>cos(x)</Button>
 					<Button data-command={Commands.key_char} data-char="tan(" class={CSSClasses.bdPageSci_trigonometry} ButtonVariant={ButtonVariant.tonal}>tan(x)</Button>

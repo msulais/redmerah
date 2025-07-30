@@ -6,21 +6,23 @@
 // - Active (pressed)
 // - Disabled
 
+@use '../../styles/units.scss' as u;
+
 .c-button {
 	--c-button-icon-animation: none;
-	padding: 4px 10px;
-	border: 1px solid transparent;
+	padding: u.Rem(4px) u.Rem(10px);
+	border: u.Rem(1px) solid transparent;
 	display: flex;
 	background-color: transparent;
 	align-items: center;
-	border-radius: 4px;
+	border-radius: u.Rem(4px);
 	color: rgb(var(--g-color-on-surface));
 	display: flex;
-	gap: 8px;
+	gap: u.Rem(8px);
 	font-size: var(--g-font-size-xs);
 	line-height: normal;
 	justify-content: center;
-	min-height: 32px;
+	min-height: u.Rem(32px);
 	scrollbar-width: none;
 	user-select: none;
 	-ms-overflow-style: none;
@@ -118,9 +120,9 @@
 }
 
 .c-button[data-c-button-variant=outlined] {
-	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
+	border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
 }
 
 .c-icon-button {
-	padding: 4px 10px;
+	padding: u.Rem(4px) u.Rem(10px);
 }

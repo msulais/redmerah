@@ -12,6 +12,7 @@ import { AnimationEffectTiming } from "@/enums/animation"
 import { saveStorageItem } from "./_database"
 import { AppCSSColors, AppCSSOpacity } from "@/enums/app-data"
 import { DEFAULT_PAGE } from "../_shared/_constant"
+import { pxToRem } from "@/utils/css"
 
 export type NavigationStoreType = Readonly<{
 	page: Pages
@@ -89,7 +90,7 @@ function _subsPageView(v: NavigationStoreType, o: NavigationStoreType): void {
 	const borderColor = `rgba(${AppCSSColors.onSurface},${AppCSSOpacity.o3})`
 	targetPanelRef.animate({
 		transform: ['scale(.9)', 'scale(1)'],
-		borderRadius: ['8px', '8px'],
+		borderRadius: [pxToRem(8) + 'rem', pxToRem(8) + 'rem'],
 		borderRightColor: page === Pages.date
 			? [borderColor, borderColor]
 			: [],

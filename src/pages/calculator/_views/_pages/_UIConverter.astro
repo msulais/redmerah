@@ -16,6 +16,7 @@ import { CONVERTER_TYPES, DEFAULT_CONVERTER_INPUT, DEFAULT_CONVERTER_INPUT_UNIT,
 import { LengthUnits } from '../../_scripts/_shared/_units'
 import { Pages } from '../../_scripts/_shared/_enums'
 import { DEFAULT_PAGE } from '../../_scripts/_shared/_constant'
+import { pxToRem } from '@/utils/css'
 ---
 <div
 	class={CSSClasses.bd_page}
@@ -47,8 +48,18 @@ import { DEFAULT_PAGE } from '../../_scripts/_shared/_constant'
 			</Tooltip>
 		</div>
 		<div class={CSSClasses.bdPage_optionGroup}>
-			<label style="margin:0 8px 0 12px" for={ElementIds.pgConv_type}>Type:</label>
-			<ComboBox id={ElementIds.pgConv_type} aria-label="Converter type" style="width:186px" ComboBoxVariant={ComboBoxVariant.outlined}>
+			<label
+				style={{
+					margin: `0 ${pxToRem(8)}rem 0 ${pxToRem(12)}rem`
+				}}
+				for={ElementIds.pgConv_type}>Type:</label>
+			<ComboBox
+				id={ElementIds.pgConv_type}
+				aria-label="Converter type"
+				style={{
+					width: pxToRem(186) + 'rem'
+				}}
+				ComboBoxVariant={ComboBoxVariant.outlined}>
 				{CONVERTER_TYPES.map(c =>
 					<ComboBoxOption value={c.type}
 						selected={c.type === DEFAULT_CONVERTER_TYPE}>
@@ -57,7 +68,13 @@ import { DEFAULT_PAGE } from '../../_scripts/_shared/_constant'
 				)}
 			</ComboBox>
 		</div>
-		<div class={CSSClasses.bdPage_optionGroup} style="display:grid;grid-template-columns:1fr 40px 1fr;gap:4px">
+		<div
+			class={CSSClasses.bdPage_optionGroup}
+			style={{
+				display: 'grid',
+				'grid-template-columns': `1fr ${pxToRem(40)}rem 1fr`,
+				gap: pxToRem(4) + 'rem'
+			}}>
 			<ComboBox id={ElementIds.pgConv_inputUnit} aria-label="Unit from">
 				{LengthUnits.all.map(c =>
 					<ComboBoxOption value={c.id} style="gap:0" selected={c.equals(DEFAULT_CONVERTER_INPUT_UNIT)}>

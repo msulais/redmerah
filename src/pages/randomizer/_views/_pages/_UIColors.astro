@@ -7,6 +7,7 @@ import { Pages, ColorsRandomizerSpace } from "../../_scripts/_shared/_enums"
 import { ElementIds } from "../../_scripts/_shared/_ids"
 import { CSSClasses } from "../../_styles/_css"
 import { colorContrastRatio, hexToRgb, rgbToHsl } from '@/utils/color'
+import { pxToRem } from '@/utils/css'
 
 const colorSpaces: {
 	text: string
@@ -17,21 +18,23 @@ const colorSpaces: {
 	{value: ColorsRandomizerSpace.hsl, text: 'HSL'},
 ]
 ---
-<style>
+<style lang="scss">
+	@use '../../../../styles/units.scss' as u;
+
 	.options p {
 		font-size: var(--g-font-size-xs);
-		margin-top: 8px;
+		margin-top: u.Rem(8px);
 		color: rgba(var(--g-color-on-surface), var(--g-opacity-inv2));
 	}
 
 	.minmax {
-		margin-top: 2px;
-		border: 1px solid rgba(var(--g-color-on-surface),var(--g-opacity-border));
-		border-radius: 4px;
-		padding: 4px 8px 8px 8px;
+		margin-top: u.Rem(2px);
+		border: u.Rem(1px) solid rgba(var(--g-color-on-surface),var(--g-opacity-border));
+		border-radius: u.Rem(4px);
+		padding: u.Rem(4px) u.Rem(8px) u.Rem(8px) u.Rem(8px);
 		display: grid;
 		grid-template-columns: 1fr 1fr;
-		gap: 8px;
+		gap: u.Rem(8px);
 	}
 </style>
 <div
@@ -79,7 +82,7 @@ const colorSpaces: {
 	<div class:list={[CSSClasses.bodyOptions, 'options']}>
 		<label for={ElementIds.pgCol_count}>Count:</label>
 		<TextField
-			style="margin-top:2px"
+			style={{'margin-top': pxToRem(2) + 'rem'}}
 			TextFieldInputAttr={{
 				id: ElementIds.pgCol_count,
 				value: DEFAULT_COLORS_COUNT,
@@ -89,10 +92,10 @@ const colorSpaces: {
 		/>
 
 		<label
-			style="margin-top:8px"
+			style={{'margin-top': pxToRem(8) + 'rem'}}
 			for={ElementIds.pgCol_space}>Color space:</label>
 		<ComboBox
-			style="margin-top:2px"
+			style={{'margin-top': pxToRem(2) + 'rem'}}
 			id={ElementIds.pgCol_space}>
 			{colorSpaces.map(v =>
 				<ComboBoxOption
@@ -108,7 +111,7 @@ const colorSpaces: {
 				<div>
 					<label for={ElementIds.pgCol_hexMin}>Min:</label>
 					<TextField
-						style="margin-top:2px"
+						style={{'margin-top': pxToRem(2) + 'rem'}}
 						TextFieldInputAttr={{
 							id: ElementIds.pgCol_hexMin,
 							value: DEFAULT_COLORS_HEX_MIN,
@@ -121,7 +124,7 @@ const colorSpaces: {
 				<div>
 					<label for={ElementIds.pgCol_hexMax}>Max:</label>
 					<TextField
-						style="margin-top:2px"
+						style={{'margin-top': pxToRem(2) + 'rem'}}
 						TextFieldInputAttr={{
 							id: ElementIds.pgCol_hexMax,
 							value: DEFAULT_COLORS_HEX_MAX,
@@ -141,7 +144,7 @@ const colorSpaces: {
 				<div>
 					<label for={ElementIds.pgCol_redMin}>Min:</label>
 					<TextField
-						style="margin-top:2px"
+						style={{'margin-top': pxToRem(2) + 'rem'}}
 						TextFieldInputAttr={{
 							id: ElementIds.pgCol_redMin,
 							value: DEFAULT_COLORS_RGB_R_MIN,
@@ -154,7 +157,7 @@ const colorSpaces: {
 				<div>
 					<label for={ElementIds.pgCol_redMax}>Max:</label>
 					<TextField
-						style="margin-top:2px"
+						style={{'margin-top': pxToRem(2) + 'rem'}}
 						TextFieldInputAttr={{
 							id: ElementIds.pgCol_redMax,
 							value: DEFAULT_COLORS_RGB_R_MAX,
@@ -170,7 +173,7 @@ const colorSpaces: {
 				<div>
 					<label for={ElementIds.pgCol_greenMin}>Min:</label>
 					<TextField
-						style="margin-top:2px"
+						style={{'margin-top': pxToRem(2) + 'rem'}}
 						TextFieldInputAttr={{
 							id: ElementIds.pgCol_greenMin,
 							value: DEFAULT_COLORS_RGB_G_MIN,
@@ -183,7 +186,7 @@ const colorSpaces: {
 				<div>
 					<label for={ElementIds.pgCol_greenMax}>Max:</label>
 					<TextField
-						style="margin-top:2px"
+						style={{'margin-top': pxToRem(2) + 'rem'}}
 						TextFieldInputAttr={{
 							id: ElementIds.pgCol_greenMax,
 							value: DEFAULT_COLORS_RGB_G_MAX,
@@ -199,7 +202,7 @@ const colorSpaces: {
 				<div>
 					<label for={ElementIds.pgCol_blueMin}>Min:</label>
 					<TextField
-						style="margin-top:2px"
+						style={{'margin-top': pxToRem(2) + 'rem'}}
 						TextFieldInputAttr={{
 							id: ElementIds.pgCol_blueMin,
 							value: DEFAULT_COLORS_RGB_B_MIN,
@@ -212,7 +215,7 @@ const colorSpaces: {
 				<div>
 					<label for={ElementIds.pgCol_blueMax}>Max:</label>
 					<TextField
-						style="margin-top:2px"
+						style={{'margin-top': pxToRem(2) + 'rem'}}
 						TextFieldInputAttr={{
 							id: ElementIds.pgCol_blueMax,
 							value: DEFAULT_COLORS_RGB_B_MAX,
@@ -232,7 +235,7 @@ const colorSpaces: {
 				<div>
 					<label for={ElementIds.pgCol_hueMin}>Min:</label>
 					<TextField
-						style="margin-top:2px"
+						style={{'margin-top': pxToRem(2) + 'rem'}}
 						TextFieldInputAttr={{
 							id: ElementIds.pgCol_hueMin,
 							value: DEFAULT_COLORS_HSL_H_MIN,
@@ -245,7 +248,7 @@ const colorSpaces: {
 				<div>
 					<label for={ElementIds.pgCol_hueMax}>Max:</label>
 					<TextField
-						style="margin-top:2px"
+						style={{'margin-top': pxToRem(2) + 'rem'}}
 						TextFieldInputAttr={{
 							id: ElementIds.pgCol_hueMax,
 							value: DEFAULT_COLORS_HSL_H_MAX,
@@ -261,7 +264,7 @@ const colorSpaces: {
 				<div>
 					<label for={ElementIds.pgCol_saturationMin}>Min:</label>
 					<TextField
-						style="margin-top:2px"
+						style={{'margin-top': pxToRem(2) + 'rem'}}
 						TextFieldInputAttr={{
 							id: ElementIds.pgCol_saturationMin,
 							value: DEFAULT_COLORS_HSL_S_MIN,
@@ -274,7 +277,7 @@ const colorSpaces: {
 				<div>
 					<label for={ElementIds.pgCol_saturationMax}>Max:</label>
 					<TextField
-						style="margin-top:2px"
+						style={{'margin-top': pxToRem(2) + 'rem'}}
 						TextFieldInputAttr={{
 							id: ElementIds.pgCol_saturationMax,
 							value: DEFAULT_COLORS_HSL_S_MAX,
@@ -290,7 +293,7 @@ const colorSpaces: {
 				<div>
 					<label for={ElementIds.pgCol_lightMin}>Min:</label>
 					<TextField
-						style="margin-top:2px"
+						style={{'margin-top': pxToRem(2) + 'rem'}}
 						TextFieldInputAttr={{
 							id: ElementIds.pgCol_lightMin,
 							value: DEFAULT_COLORS_HSL_L_MIN,
@@ -303,7 +306,7 @@ const colorSpaces: {
 				<div>
 					<label for={ElementIds.pgCol_lightMax}>Max:</label>
 					<TextField
-						style="margin-top:2px"
+						style={{'margin-top': pxToRem(2) + 'rem'}}
 						TextFieldInputAttr={{
 							id: ElementIds.pgCol_lightMax,
 							value: DEFAULT_COLORS_HSL_L_MAX,

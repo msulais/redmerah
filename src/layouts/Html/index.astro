@@ -12,6 +12,7 @@ import '@/styles/index.scss'
 import { IconCodes } from '@/enums/icons'
 import { AppCSSColors } from '@/enums/app-data'
 import { ButtonVariant } from '@/components/Button'
+import { pxToRem } from '@/utils/css'
 
 type Props = {
 	title?: string
@@ -60,13 +61,13 @@ const colorToCSS = (hex: HEXColor) => {
 		<slot />
 		<Dialog
 			id={GlobalElementIds.popoverWarningNotice}
-			style="width:512px"
+			style={`width:${pxToRem(512)}rem`}
 			DialogHeaderAttr={{style: 'opacity:var(--g-opacity-inv2)'}}>
 			<Fragment slot="header">
-				<Icon IconCode={IconCodes.warning} style="font-size:32px"/>
+				<Icon IconCode={IconCodes.warning} style={`font-size:${pxToRem(32)}rem`}/>
 				Browser Compatibility Notice
 			</Fragment>
-			<p>This web app heavily utilizes the <a style={`border-bottom:1px solid rgb(${AppCSSColors.accent})`} href="https://developer.mozilla.org/en-US/docs/Web/API/Popover_API">Popover API</a>, which may not be fully supported by your browser. Some features might not function as expected. Please consider using a modern browser for the best experience.</p>
+			<p>This web app heavily utilizes the <a style={`border-bottom:${pxToRem(1)}rem solid rgb(${AppCSSColors.accent})`} href="https://developer.mozilla.org/en-US/docs/Web/API/Popover_API">Popover API</a>, which may not be fully supported by your browser. Some features might not function as expected. Please consider using a modern browser for the best experience.</p>
 			<form slot="footer" style="display:contents" method="dialog">
 				<Button ButtonVariant={ButtonVariant.tonal}>Close</Button>
 				<LinkButton LinkButtonNewTab autofocus LinkButtonVariant={ButtonVariant.filled} href="https://developer.mozilla.org/en-US/docs/Web/API/Popover_API#browser_compatibility">Check browser</LinkButton>

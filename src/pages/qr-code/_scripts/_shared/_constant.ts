@@ -1,6 +1,7 @@
 import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
 import { EncodingMode, ErrorCorrectionLevel, Pages, QRVersion } from "./_enums"
 import type { HEXColor } from "@/types/color"
+import { pxToRem } from "@/utils/css"
 
 export const DEFAULT_PAGE: Pages = Pages.generate
 export const DEFAULT_DATA = 'https://www.redmerah.com/qr-code'
@@ -12,4 +13,4 @@ export const DEFAULT_ERROR_CORRECTION_LEVEL: ErrorCorrectionLevel = ErrorCorrect
 export const DEFAULT_MARGIN: number = 4
 export const DEFAULT_COLOR: HEXColor = '#000000'
 export const DEFAULT_BACKGROUND_COLOR: HEXColor = '#FFFFFF'
-export const SCREEN_WIDTH_SMALL = 650
+export const SCREEN_WIDTH_SMALL = pxToRem(650)

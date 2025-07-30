@@ -1,17 +1,19 @@
+@use '../../styles/units.scss' as u;
+
 .c-emojipicker {
-	width: 280px;
+	width: u.Rem(280px);
 }
 
 .c-emojipicker-content {}
 
 .c-emojipicker-divider {
-	margin-bottom: 8px;
+	margin-bottom: u.Rem(8px);
 }
 
 .c-emojipicker-emoji {
 	padding: 0;
 	height: min-content;
-	font-size: 20px;
+	font-size: u.Rem(20px);
 }
 
 .c-emojipicker-form {
@@ -20,12 +22,12 @@
 
 .c-emojipicker-group {
 	flex: 1;
-	min-height: 186px;
-	max-height: 186px;
+	min-height: u.Rem(186px);
+	max-height: u.Rem(186px);
 	overflow: auto;
-	gap: 4px;
-	padding: 0 10px 10px 10px;
-	grid-template-columns: repeat(auto-fill, minmax(32px, 1fr));
+	gap: u.Rem(4px);
+	padding: 0 u.Rem(10px) u.Rem(10px) u.Rem(10px);
+	grid-template-columns: repeat(auto-fill, minmax(u.Rem(32px), 1fr));
 	grid-template-rows: repeat(6, 1fr);
 
 	&:not([hidden]){
@@ -41,7 +43,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 4px 6px 8px 16px;
+	padding: u.Rem(4px) u.Rem(6px) u.Rem(8px) u.Rem(16px);
 }
 
 .c-emojipicker-header-button {}
@@ -49,8 +51,8 @@
 .c-emojipicker-header-text {}
 
 .c-emojipicker-search {
-	margin: 0 16px 8px 16px;
-	padding-right: 4px;
+	margin: 0 u.Rem(16px) u.Rem(8px) u.Rem(16px);
+	padding-right: u.Rem(4px);
 
 	> input {
 		width: 100%;
@@ -72,13 +74,13 @@
 		display: block;
 		background-color: rgb(var(--g-color-accent));
 		position: absolute;
-		bottom: 0px;
-		height: 3px;
+		bottom: u.Rem(0px);
+		height: u.Rem(3px);
 		left: 50%;
 		opacity: 0;
 		transform: translateX(-50%);
-		width: 3px;
-		border-radius: 999px;
+		width: u.Rem(3px);
+		border-radius: u.Rem(999px);
 		transition-property: width;
 		transition-duration: var(--g-duration-transition);
 	}
@@ -88,7 +90,7 @@
 
 		&::before {
 			opacity: 1;
-			width: max(50%, 3px);
+			width: max(50%, u.Rem(3px));
 		}
 	}
 }
@@ -97,13 +99,13 @@
 	display: flex;
 	align-items: center;
 	overflow: auto;
-	padding: 0 6px;
-	gap: 4px;
-	margin-bottom: 8px;
+	padding: 0 u.Rem(6px);
+	gap: u.Rem(4px);
+	margin-bottom: u.Rem(8px);
 }
 
 .c-emojipicker-title {
-	padding: 0 16px 8px 16px;
+	padding: 0 u.Rem(16px) u.Rem(8px) u.Rem(16px);
 	font-size: var(--g-font-size-xs);
 	font-weight: normal;
 }

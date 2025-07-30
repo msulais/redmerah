@@ -6,6 +6,7 @@ import { DEFAULT_PAGE, DEFAULT_STRING_LENGTH, DEFAULT_STRING_CUSTOM, DEFAULT_STR
 import { Pages } from "../../_scripts/_shared/_enums"
 import { ElementIds } from "../../_scripts/_shared/_ids"
 import { CSSClasses } from "../../_styles/_css"
+import { pxToRem } from '@/utils/css'
 const subColor = 'rgba(var(--g-color-on-surface),var(--g-opacity-inv2))'
 ---
 
@@ -28,7 +29,7 @@ const subColor = 'rgba(var(--g-color-on-surface),var(--g-opacity-inv2))'
 	<Tooltip class={CSSClasses.bodyOptions}>
 		<label for={ElementIds.pgStr_length}>Length:</label>
 		<TextField
-			style="margin-top:2px"
+			style={{'margin-top': pxToRem(2) + 'rem'}}
 			TextFieldInputAttr={{
 				id: ElementIds.pgStr_length,
 				value: DEFAULT_STRING_LENGTH,
@@ -38,12 +39,12 @@ const subColor = 'rgba(var(--g-color-on-surface),var(--g-opacity-inv2))'
 		/>
 
 		<label
-			style="margin-top:8px"
+			style={{'margin-top': pxToRem(8) + 'rem'}}
 			for={ElementIds.pgStr_custom}>
 			Custom character:
 		</label>
 		<TextField
-			style="margin-top:2px"
+			style={{'margin-top': pxToRem(2) + 'rem'}}
 			TextFieldInputAttr={{
 				id: ElementIds.pgStr_custom,
 				value: DEFAULT_STRING_CUSTOM
@@ -51,7 +52,10 @@ const subColor = 'rgba(var(--g-color-on-surface),var(--g-opacity-inv2))'
 		/>
 
 		<CheckBox
-			style="margin-top:8px;min-height:46px"
+			style={{
+				'margin-top': pxToRem(8) + 'rem',
+				'min-height': pxToRem(46) + 'rem'
+			}}
 			CheckBoxChecked={DEFAULT_STRING_UPPERCASE}
 			CheckBoxInputAttr={{id: ElementIds.pgStr_upper}}>
 			<div>
@@ -62,7 +66,7 @@ const subColor = 'rgba(var(--g-color-on-surface),var(--g-opacity-inv2))'
 			</div>
 		</CheckBox>
 		<CheckBox
-			style="min-height:46px"
+			style={{'min-height': pxToRem(46) + 'rem'}}
 			CheckBoxChecked={DEFAULT_STRING_LOWERCASE}
 			CheckBoxInputAttr={{id: ElementIds.pgStr_lower}}>
 			<div>
@@ -73,7 +77,7 @@ const subColor = 'rgba(var(--g-color-on-surface),var(--g-opacity-inv2))'
 			</div>
 		</CheckBox>
 		<CheckBox
-			style="min-height:46px"
+			style={{'min-height': pxToRem(46) + 'rem'}}
 			CheckBoxChecked={DEFAULT_STRING_NUMBERS}
 			CheckBoxInputAttr={{id: ElementIds.pgStr_number}}>
 			<div>
@@ -82,7 +86,7 @@ const subColor = 'rgba(var(--g-color-on-surface),var(--g-opacity-inv2))'
 			</div>
 		</CheckBox>
 		<CheckBox
-			style="min-height:46px"
+			style={{'min-height': pxToRem(46) + 'rem'}}
 			CheckBoxChecked={DEFAULT_STRING_SYMBOLS}
 			CheckBoxInputAttr={{id: ElementIds.pgStr_symbol}}>
 			<div>

@@ -9,6 +9,7 @@ import ComboBoxOption from '@/components/ComboBox/ComboBoxOption.astro'
 import { ElementIds } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 import { IconCodes } from '@/enums/icons'
+import { pxToRem } from '@/utils/css'
 
 const types = [
 	'button', 'checkbox', 'color', 'date', 'datetime-local',
@@ -35,7 +36,9 @@ const types = [
 				}}>
 				<Icon
 					data-tooltip="Icon"
-					style="margin-left:8px"
+					style={{
+						'margin-left': pxToRem(8) + 'rem'
+					}}
 					IconCode={IconCodes.attach}
 					slot="leading"
 					id={ElementIds.panelTextfieldPreviewLeading}
@@ -43,7 +46,9 @@ const types = [
 				<TextFieldButton
 					aria-label="Search"
 					data-tooltip="TextFieldButton"
-					style="margin-right:4px"
+					style={{
+						'margin-left': pxToRem(4) + 'rem'
+					}}
 					slot="trailing"
 					id={ElementIds.panelTextfieldPreviewTrailing}>
 					<Icon IconCode={IconCodes.search}/>
@@ -52,11 +57,17 @@ const types = [
 		</Tooltip>
 	</div>
 	<div class={CSS.bodyOptions} id={ElementIds.panelTextfieldOptions}>
-		<div class={CSS.bodyOptions} style="margin-right:12px">
+		<div
+			class={CSS.bodyOptions}
+			style={{
+				'margin-right': pxToRem(12) + 'rem'
+			}}>
 			<label for={ElementIds.panelTextfieldOptionsType}>Type:</label>
 			<ComboBox
 				id={ElementIds.panelTextfieldOptionsType}
-				style="min-width:150px">
+				style={{
+					'min-width': pxToRem(150) + 'rem'
+				}}>
 				{types.map(v =>
 					<ComboBoxOption value={v} selected={v === 'text'}>{v}</ComboBoxOption>
 				)}

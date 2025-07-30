@@ -25,6 +25,7 @@ import { ElementIds } from '../_scripts/_shared/_ids'
 import { RadioNames } from '../_scripts/_shared/_input-names'
 import { DEFAULT_ANIMATION, DEFAULT_PREFIX, DEFAULT_SUFFIX, DEFAULT_TEXT_WRAP, DEFAULT_THEME } from '../_scripts/_shared/_constant'
 import { ButtonVariant } from '@/components/Button'
+import { pxToRem } from '@/utils/css'
 
 const animations: {
 	value: PlatformAnimationMode
@@ -75,8 +76,10 @@ const themes: {
 		<img
 			src={APP.logoUrl}
 			alt={APP.name + ' logo'}
-			width={32}
-			style="margin:0 8px 0 12px"
+			style={{
+				width: pxToRem(32) + 'rem',
+				margin: `0 ${pxToRem(8)}rem 0 ${pxToRem(12)}rem`
+			}}
 		/>
 	</Fragment>
 	<Fragment slot="headline">{APP.name}</Fragment>
@@ -90,7 +93,7 @@ const themes: {
 		/>
 		<Menu id={ElementIds.apInf_menu} PopoverAnchorBy={ElementIds.apInf_btn}>
 			<LinkMenuItem href="/">
-				<img src={logoRedmerah.src} width="20"/>
+				<img src={logoRedmerah.src} style={{width: pxToRem(20) + 'rem'}}/>
 				Redmerah
 				<MenuIndent />
 			</LinkMenuItem>
@@ -149,7 +152,7 @@ const themes: {
 				<div style="flex:1"/>
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
-			<SubMenu style="width:150px" id={ElementIds.apSett_animationMenu}>
+			<SubMenu style={{width: pxToRem(150) + 'rem'}} id={ElementIds.apSett_animationMenu}>
 				{animations.map(v =>
 					<RadioMenuItem
 						RadioMenuItemName={RadioNames.animation}
@@ -168,7 +171,7 @@ const themes: {
 				<div style="flex:1"/>
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
-			<SubMenu style="width:150px" id={ElementIds.apSett_themeMenu}>
+			<SubMenu style={{width: pxToRem(150) + 'rem'}} id={ElementIds.apSett_themeMenu}>
 				{themes.map(v =>
 					<RadioMenuItem
 						RadioMenuItemName={RadioNames.theme}
@@ -202,27 +205,35 @@ const themes: {
 			aria-label="More actions"
 			popovertarget={ElementIds.apMore_menu}
 		/>
-		<Menu id={ElementIds.apMore_menu} style="width:140px" PopoverAnchorBy={ElementIds.apMore_btn}>
+		<Menu id={ElementIds.apMore_menu} style={{width: pxToRem(140) + 'rem'}} PopoverAnchorBy={ElementIds.apMore_btn}>
 			<MenuItem id={ElementIds.apMore_copy}><Icon IconCode={IconCodes.copy}/>Copy all</MenuItem>
 			<MenuItem id={ElementIds.apMore_reset}><Icon IconCode={IconCodes.arrowReset}/>Reset input</MenuItem>
 		</Menu>
 	</Tooltip>
 </AppBar>
 
-<Dialog id={ElementIds.apSett_preSufDialog} style="width:360px">
-	<label style="margin-bottom:2px" for={ElementIds.apSett_prefix}>Prefix:</label>
+<Dialog id={ElementIds.apSett_preSufDialog} style={{width: pxToRem(360) + 'rem'}}>
+	<label style={{'margin-bottom': pxToRem(2) + "rem"}} for={ElementIds.apSett_prefix}>Prefix:</label>
 	<TextField TextFieldInputAttr={{
 		id: ElementIds.apSett_prefix,
 		value: DEFAULT_PREFIX
 	}}/>
 
-	<label style="margin:8px 0 2px 0" for={ElementIds.apSett_suffix}>Suffix:</label>
+	<label
+		style={{
+			margin: `${pxToRem(8)}rem 0 ${pxToRem(2)}rem 0`
+		}}
+		for={ElementIds.apSett_suffix}>Suffix:</label>
 	<TextField TextFieldInputAttr={{
 		id: ElementIds.apSett_suffix,
 		value: DEFAULT_SUFFIX
 	}}/>
 
-	<p style="font-size:var(--g-font-size-xs);margin-top:8px">
+	<p
+		style={{
+			'font-size': 'var(--g-font-size-xs)',
+			'margin-top': pxToRem(8) + 'rem'
+		}}>
 		<Icon IconCode={IconCodes.info} IconInline/>
 		Prefix & suffix only applied when latex copied.
 	</p>

@@ -2,6 +2,8 @@
 // * data-theme=auto|light|dark (default: light)
 // * data-animation=auto|on|off (default: off)
 
+@use 'units.scss' as u;
+
 :root {
 	// background color
 	--g-color-background-light: 243, 243, 243;
@@ -44,7 +46,7 @@
 	--g-opacity-glass: .88;
 
 	// blur
-	--g-blur-glass: 16px;
+	--g-blur-glass: #{u.Rem(16px)};
 
 	// font family
 	--g-font-family-sans-serif: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
@@ -59,33 +61,33 @@
 	// font sizes
 
 	// s: small
-	--g-font-size-s: 12px;
-	--g-font-size-xs: 14px;
-	--g-font-size-xxs: 16px;
+	--g-font-size-s: #{u.Rem(12px)};
+	--g-font-size-xs: #{u.Rem(14px)};
+	--g-font-size-xxs: #{u.Rem(16px)};
 
 	// m: medium
-	--g-font-size-m: 20px;
-	--g-font-size-xm: 24px;
-	--g-font-size-xxm: 28px;
+	--g-font-size-m: #{u.Rem(20px)};
+	--g-font-size-xm: #{u.Rem(24px)};
+	--g-font-size-xxm: #{u.Rem(28px)};
 
 	// l: large
-	--g-font-size-l: 32px;
-	--g-font-size-xl: 36px;
-	--g-font-size-xxl: 40px;
+	--g-font-size-l: #{u.Rem(32px)};
+	--g-font-size-xl: #{u.Rem(36px)};
+	--g-font-size-xxl: #{u.Rem(40px)};
 
 	// d: display
-	--g-font-size-d: 44px;
-	--g-font-size-xd: 48px;
-	--g-font-size-xxd: 52px;
+	--g-font-size-d: #{u.Rem(44px)};
+	--g-font-size-xd: #{u.Rem(48px)};
+	--g-font-size-xxd: #{u.Rem(52px)};
 
 	// elevation
 	--g-elevation-color-1: rgba(0, 0, 0, 0.04);
 	--g-elevation-color-2: rgba(0, 0, 0, 0.16);
-	--g-elevation1: 0px 2px  4px var(--g-elevation-color-1);
-	--g-elevation2: 0px 4px  8px var(--g-elevation-color-2);
-	--g-elevation3: 0px 8px 16px var(--g-elevation-color-2);
-	--g-elevation4: 0px 16px 32px var(--g-elevation-color-2);
-	--g-elevation5: 0px 32px 64px var(--g-elevation-color-2);
+	--g-elevation1: #{u.Rem(0px)} #{u.Rem(2px)}  #{u.Rem(4px)} var(--g-elevation-color-1);
+	--g-elevation2: #{u.Rem(0px)} #{u.Rem(4px)}  #{u.Rem(8px)} var(--g-elevation-color-2);
+	--g-elevation3: #{u.Rem(0px)} #{u.Rem(8px)}  #{u.Rem(16px)} var(--g-elevation-color-2);
+	--g-elevation4: #{u.Rem(0px)} #{u.Rem(16px)} #{u.Rem(32px)} var(--g-elevation-color-2);
+	--g-elevation5: #{u.Rem(0px)} #{u.Rem(32px)} #{u.Rem(64px)} var(--g-elevation-color-2);
 
 	// z-index
 	--g-z-index-select-popover: 9;

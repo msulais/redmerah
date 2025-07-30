@@ -1,18 +1,20 @@
+@use '../../styles/units.scss' as u;
+
 .c-combobox {
 	accent-color: rgb(var(--g-color-accent));
 	appearance: base-select;
-	padding: 4px 10px;
-	border: 1px solid transparent;
+	padding: u.Rem(4px) u.Rem(10px);
+	border: u.Rem(1px) solid transparent;
 	display: flex;
 	background-color: transparent;
 	align-items: center;
-	border-radius: 4px;
+	border-radius: u.Rem(4px);
 	display: flex;
-	gap: 8px;
+	gap: u.Rem(8px);
 	font-size: var(--g-font-size-xs);
 	line-height: normal;
 	justify-content: center;
-	min-height: 32px;
+	min-height: u.Rem(32px);
 	scrollbar-width: none;
 	user-select: none;
 	-ms-overflow-style: none;
@@ -20,7 +22,7 @@
 	transition-duration: var(--g-duration-transition);
 
 	&[multiple] {
-		padding: 4px 0;
+		padding: u.Rem(4px) u.Rem(0px);
 	}
 
 	& * {
@@ -38,7 +40,7 @@
 
 	&:not(:disabled){
 		&:not([data-c-combobox-variant=filled],[data-c-combobox-variant=outlined]) {
-			border: 2px solid transparent;
+			border: u.Rem(2px) solid transparent;
 		}
 
 		&:open {
@@ -103,13 +105,13 @@
 	}
 
 	&[data-c-combobox-variant=outlined] {
-		border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
+		border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
 	}
 
 	&::picker-icon {
 		color: rgb(var(--g-color-accent));
-		width: 20px;
-		height: 20px;
+		width: u.Rem(20px);
+		height: u.Rem(20px);
 		text-align: center;
 		transition-property: rotate;
 		transition-duration: var(--g-duration-transition);
@@ -124,23 +126,23 @@
 	appearance: base-select;
 	background-color: rgba(var(--g-color-surface), var(--g-opacity-glass));
 	backdrop-filter: blur(var(--g-blur-glass));
-	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity3));
+	border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity3));
 	box-shadow: var(--g-elevation3);
-	border-radius: 8px;
-	padding: 4px 0;
+	border-radius: u.Rem(8px);
+	padding: u.Rem(4px) u.Rem(0px);
 	opacity: 0;
-	translate: 0 -12px;
-	margin: 8px 0;
+	translate: u.Rem(0px) u.Rem(-12px);
+	margin: u.Rem(8px) u.Rem(0px);
 	position-try: most-block-size flip-block;
 	transition-timing-function: var(--g-transition-spring-bounce-inverse);
 
 	:root[data-theme=dark] & {
-		border: 1px solid rgba(0, 0, 0, var(--g-opacity-inv5));
+		border: u.Rem(1px) solid rgba(0, 0, 0, var(--g-opacity-inv5));
 		background-color: rgba(46, 46, 46, var(--g-opacity-glass));
 	}
 	:root[data-theme=auto] & {
 		@media (prefers-color-scheme: dark) {
-			border: 1px solid rgba(0, 0, 0, var(--g-opacity-inv5));
+			border: u.Rem(1px) solid rgba(0, 0, 0, var(--g-opacity-inv5));
 			background-color: rgba(46, 46, 46, var(--g-opacity-glass));
 		}
 	}
@@ -170,17 +172,17 @@
 @starting-style {
 	.c-combobox::picker(select):popover-open {
 		opacity: 0;
-		translate: 0 -12px;
+		translate: u.Rem(0px) u.Rem(-12px);
 	}
 }
 
 .c-combobox-option {
 	accent-color: rgb(var(--g-color-accent));
-	padding: 0 8px;
+	padding: u.Rem(0px) u.Rem(8px);
 	justify-content: flex-start;
-	margin: 0 4px;
-	min-height: 28px;
-	width: calc(100% - 8px);
+	margin: u.Rem(0px) u.Rem(4px);
+	min-height: u.Rem(28px);
+	width: calc(100% - u.Rem(8px));
 	white-space: nowrap;
 	position: relative;
 
@@ -189,13 +191,13 @@
 		display: block;
 		background-color: rgb(var(--g-color-accent));
 		position: absolute;
-		left: 1px;
-		width: 3px;
+		left: u.Rem(1px);
+		width: u.Rem(3px);
 		top: 50%;
 		opacity: 0;
 		transform: translateY(-50%);
-		height: 3px;
-		border-radius: 999px;
+		height: u.Rem(3px);
+		border-radius: u.Rem(999px);
 		transition-property: height;
 		transition-duration: var(--g-duration-transition);
 	}
@@ -216,7 +218,7 @@
 		}
 
 		&::before {
-			height: max(50%, 3px);
+			height: max(50%, u.Rem(3px));
 			opacity: 1;
 		}
 	}
@@ -226,6 +228,6 @@
 	}
 
 	&:not(:first-of-type) {
-		margin-top: 4px;
+		margin-top: u.Rem(4px);
 	}
 }

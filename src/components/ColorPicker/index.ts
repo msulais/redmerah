@@ -58,6 +58,7 @@ import {
 } from "@/components/Icon"
 import { IconCodes } from "@/enums/icons"
 import { KeyboardValue } from "@/enums/keyboard"
+import { pxToRem } from "@/utils/css"
 
 type ColorPickerProps = PopoverProps & {
 	ColorPickerValue               ?: HEXColor
@@ -310,7 +311,7 @@ function _initColorPickerRef(colorPickerRef: ColorPickerElement): void {
 				if (isAnimationAllowed()) {
 					labelColorRef.animate({
 						opacity: [0, 1],
-						transform: ['translateY(8px)', 'translateY(0)'],
+						translate: [`0 ${pxToRem(8)}rem`, '0 0'],
 					}, {duration: 300, easing: AnimationEffectTiming.spring})
 				}
 			}

@@ -1,5 +1,7 @@
+@use '../../styles/units.scss' as u;
+
 .footer {
-	padding: 0 32px 64px 32px;
+	padding: 0 u.Rem(32px) u.Rem(64px) u.Rem(32px);
 
 	> p {
 		text-align: center;
@@ -12,15 +14,15 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		gap: 16px;
-		padding-top: 8px;
+		gap: u.Rem(16px);
+		padding-top: u.Rem(8px);
 		flex-wrap: wrap;
 	}
 
 	& a {
 		display: inline-block;
-		border-bottom: 2px solid rgb(var(--g-color-accent));
-		padding-top: 8px;
+		border-bottom: u.Rem(2px) solid rgb(var(--g-color-accent));
+		padding-top: u.Rem(8px);
 
 		:root[data-animation=on] & {
 			transition-duration: .2s;
@@ -36,16 +38,16 @@
 			&:hover {
 				color: rgb(var(--g-color-accent));
 				padding-top: 0;
-				padding-bottom: 8px;
+				padding-bottom: u.Rem(8px);
 			}
 		}
 
 		&:active {
 			color: rgb(var(--g-color-accent));
 			padding-top: 0;
-			padding-bottom: 8px;
+			padding-bottom: u.Rem(8px);
 			border-bottom-style: dashed;
-			letter-spacing: 1px;
+			letter-spacing: u.Rem(1px);
 		}
 	}
 }

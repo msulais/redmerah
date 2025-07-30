@@ -2,6 +2,7 @@ import { AnimationEffectTiming } from "@/enums/animation"
 import { KeyboardValue } from "@/enums/keyboard"
 import { FlyoutPosition as PopoverPosition } from "@/enums/position"
 import { isAnimationAllowed } from "@/utils/animation"
+import { pxToRem, remToPx } from "@/utils/css"
 import { getFlyoutPosition } from "@/utils/flyout"
 import { safeNumber } from "@/utils/number"
 import { isValidEnumValue } from "@/utils/object"
@@ -202,16 +203,16 @@ function _initPopoverRef(popoverRef: PopoverElement): void {
 		if (popoverRect.right > screenWidth) left = screenWidth - popoverRect.width - POPOVER_MARGIN
 		if (popoverRect.bottom > screenHeight) top = screenHeight - popoverRect.height - POPOVER_MARGIN
 
-		popoverRef.style.setProperty(PopoverCSSVariables.left, left + 'px')
-		popoverRef.style.setProperty(PopoverCSSVariables.top, top + 'px')
+		popoverRef.style.setProperty(PopoverCSSVariables.left, pxToRem(left) + 'rem')
+		popoverRef.style.setProperty(PopoverCSSVariables.top, pxToRem(top) + 'rem')
 		if (!isAnimationAllowed()) {
 			return options?.done()
 		}
 
 		popoverRef.animate({
-			transform: [
-				`translate(${x - left}px,${y - top}px)`,
-				`translate(0,0)`
+			translate: [
+				`${pxToRem(x - left)}rem ${pxToRem(y - top)}rem`,
+				`0 0`
 			]
 		}, {
 			duration: 300,
@@ -234,22 +235,22 @@ function _initPopoverRef(popoverRef: PopoverElement): void {
 		const flyoutPosition = getFlyoutPosition({
 			flyout: popoverRect,
 			anchor: anchorRect,
-			gap: attributes.gap,
+			gap: remToPx(attributes.gap),
 			position: attributes.position,
-			padding: attributes.padding
+			padding: remToPx(attributes.padding)
 		})
 
 		const [x, y] = [popoverRect.left, popoverRect.top]
-		popoverRef.style.setProperty(PopoverCSSVariables.left, flyoutPosition.left + 'px')
-		popoverRef.style.setProperty(PopoverCSSVariables.top, flyoutPosition.top + 'px')
+		popoverRef.style.setProperty(PopoverCSSVariables.left, pxToRem(flyoutPosition.left) + 'rem')
+		popoverRef.style.setProperty(PopoverCSSVariables.top, pxToRem(flyoutPosition.top) + 'rem')
 		if (!isAnimationAllowed()) {
 			return options?.done()
 		}
 
 		popoverRef.animate({
-			transform: [
-				`translate(${x - flyoutPosition.left}px,${y - flyoutPosition.top}px)`,
-				`translate(0,0)`
+			translate: [
+				`${pxToRem(x - flyoutPosition.left)}rem ${pxToRem(y - flyoutPosition.top)}rem`,
+				`0 0`
 			]
 		}, {
 			duration: 300,
@@ -267,9 +268,9 @@ function _initPopoverRef(popoverRef: PopoverElement): void {
 		const flyoutPosition = getFlyoutPosition({
 			flyout: popoverRect,
 			anchor: anchorRect,
-			gap: attributes.gap,
+			gap: remToPx(attributes.gap),
 			position: attributes.position,
-			padding: attributes.padding,
+			padding: remToPx(attributes.padding),
 			pointer: anchorRect? undefined : {x: POINTER_X, y: POINTER_Y}
 		})
 
@@ -289,7 +290,7 @@ function _initPopoverRef(popoverRef: PopoverElement): void {
 		}
 
 		popoverRef.animate({
-			transform: ['translate(0,0)', `translate(${translateX}px,${translateY}px)`],
+			translate: ['0 0', `${pxToRem(translateX)}rem ${pxToRem(translateY)}rem`],
 			opacity: [1, 0]
 		}, { duration: 250, easing: AnimationEffectTiming.springBounceInverse })
 	}
@@ -300,14 +301,14 @@ function _initPopoverRef(popoverRef: PopoverElement): void {
 		const flyoutPosition = getFlyoutPosition({
 			flyout: popoverRect,
 			anchor: anchorRect,
-			gap: attributes.gap,
+			gap: remToPx(attributes.gap),
 			position: attributes.position,
-			padding: attributes.padding,
+			padding: remToPx(attributes.padding),
 			pointer: anchorRect? undefined : {x: POINTER_X, y: POINTER_Y}
 		})
 
-		popoverRef.style.setProperty(PopoverCSSVariables.left, flyoutPosition.left + 'px')
-		popoverRef.style.setProperty(PopoverCSSVariables.top, flyoutPosition.top + 'px')
+		popoverRef.style.setProperty(PopoverCSSVariables.left, pxToRem(flyoutPosition.left) + 'rem')
+		popoverRef.style.setProperty(PopoverCSSVariables.top, pxToRem(flyoutPosition.top) + 'rem')
 
 		// `opacity` property set in 'beforetoggle' event
 		popoverRef.style.removeProperty('opacity')
@@ -329,7 +330,7 @@ function _initPopoverRef(popoverRef: PopoverElement): void {
 		}
 
 		popoverRef.animate({
-			transform: [`translate(${translateX}px,${translateY}px)`, 'translate(0,0)'],
+			translate: [`${pxToRem(translateX)}rem ${pxToRem(translateY)}rem`, '0 0'],
 			opacity: [0, 1]
 		}, { duration: 250, easing: AnimationEffectTiming.springBounce })
 	}
@@ -371,8 +372,8 @@ function _initPopoverRef(popoverRef: PopoverElement): void {
 			break
 		}
 
-		popoverRef.style.setProperty(PopoverCSSVariables.left, keyLeft + 'px')
-		popoverRef.style.setProperty(PopoverCSSVariables.top, keyTop + 'px')
+		popoverRef.style.setProperty(PopoverCSSVariables.left, pxToRem(keyLeft) + 'rem')
+		popoverRef.style.setProperty(PopoverCSSVariables.top, pxToRem(keyTop) + 'rem')
 		if (timeoutFixPositionId !== null) clearTimeout(timeoutFixPositionId)
 
 		timeoutFixPositionId = setTimeout(() => {
@@ -385,8 +386,8 @@ function _initPopoverRef(popoverRef: PopoverElement): void {
 		if (!isDragging) return
 
 		requestAnimationFrame(() => {
-			popoverRef.style.setProperty(PopoverCSSVariables.left, ev.clientX - diffPositionX + 'px')
-			popoverRef.style.setProperty(PopoverCSSVariables.top, ev.clientY - diffPositionY + 'px')
+			popoverRef.style.setProperty(PopoverCSSVariables.left, pxToRem(ev.clientX - diffPositionX) + 'rem')
+			popoverRef.style.setProperty(PopoverCSSVariables.top, pxToRem(ev.clientY - diffPositionY) + 'rem')
 		})
 	}
 
@@ -531,14 +532,14 @@ function repositionEdgePopoverRef(popoverRef: PopoverElement): void {
 	if (popoverRect.right > screenWidth) left = screenWidth - popoverRect.width - POPOVER_MARGIN
 	if (popoverRect.bottom > screenHeight) top = screenHeight - popoverRect.height - POPOVER_MARGIN
 
-	popoverRef.style.setProperty(PopoverCSSVariables.left, left + 'px')
-	popoverRef.style.setProperty(PopoverCSSVariables.top, top + 'px')
+	popoverRef.style.setProperty(PopoverCSSVariables.left, pxToRem(left) + 'rem')
+	popoverRef.style.setProperty(PopoverCSSVariables.top, pxToRem(top) + 'rem')
 	if (!isAnimationAllowed()) {return}
 
 	popoverRef.animate({
-		transform: [
-			`translate(${x - left}px,${y - top}px)`,
-			`translate(0,0)`
+		translate: [
+			`${pxToRem(x - left)}rem ${pxToRem(y - top)}rem`,
+			`0 0`
 		]
 	}, {
 		duration: 250,

@@ -11,6 +11,7 @@ import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { DEFAULT_PAGE, HIDE_NAVIGATION } from "../_shared/_constant"
 import { saveStorageItem } from "./_database"
+import { pxToRem } from "@/utils/css"
 
 export type NavigationStoreType = Readonly<{
 	page: Pages
@@ -84,11 +85,11 @@ function _subscribePageRefView(v: NavigationStoreType, o: NavigationStoreType): 
 		duration: 500,
 		easing: AnimationEffectTiming.spring
 	}
-	const isHideNavigation = window.matchMedia(`(max-width:${HIDE_NAVIGATION}px)`).matches
+	const isHideNavigation = window.matchMedia(`(max-width:${HIDE_NAVIGATION}rem)`).matches
 	optionsRef?.animate({
 		opacity: [0, 1],
 		scale: [isHideNavigation? 0.9 : 1, 1],
-		translate: [isHideNavigation? '0 0' : '-32px 0', '0 0'],
+		translate: [isHideNavigation? '0 0' : `${pxToRem(-32)}rem 0`, '0 0'],
 	}, animationOptions)
 	resultRef?.animate({
 		scale: [.9, 1],

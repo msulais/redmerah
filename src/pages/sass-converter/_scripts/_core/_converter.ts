@@ -12,6 +12,7 @@ import { SettingsStore } from "./_settings"
 import { InputMode } from "../_shared/_enums"
 import { compileStringAsync } from "sass"
 import { saveStorageItem } from "./_database"
+import { pxToRem } from "@/utils/css"
 
 export type ConverterStoreType = Readonly<{
 	scss: string
@@ -140,8 +141,8 @@ function _initEvents(): void {
 			screenWidth = document.body.clientWidth
 			requestAnimationFrame(() => {
 				x = Math_clamp(x!, 300, screenWidth - 300)
-				_inputContainerRef.style.setProperty('min-width', x + 'px')
-				_inputContainerRef.style.setProperty('max-width', x + 'px')
+				_inputContainerRef.style.setProperty('min-width', pxToRem(x) + 'rem')
+				_inputContainerRef.style.setProperty('max-width', pxToRem(x) + 'rem')
 			})
 		})
 
@@ -157,8 +158,8 @@ function _initEvents(): void {
 			requestAnimationFrame(() => {
 				const paddingLeft = 10
 				x = Math_clamp(ev.clientX - paddingLeft, 300, screenWidth - 300)
-				_inputContainerRef.style.setProperty('min-width', x + 'px')
-				_inputContainerRef.style.setProperty('max-width', x + 'px')
+				_inputContainerRef.style.setProperty('min-width', pxToRem(x) + 'rem')
+				_inputContainerRef.style.setProperty('max-width', pxToRem(x) + 'rem')
 			})
 		})
 

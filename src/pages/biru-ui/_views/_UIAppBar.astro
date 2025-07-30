@@ -6,6 +6,7 @@ import Tooltip from '@/components/Tooltip/index.astro'
 import { ElementIds } from '../_scripts/_enums'
 import CSS from '../_index.module.scss'
 import { IconCodes } from '@/enums/icons'
+import { pxToRem } from '@/utils/css'
 ---
 
 <Appbar id={ElementIds.appbar}>
@@ -15,7 +16,12 @@ import { IconCodes } from '@/enums/icons'
 			IconButtonCode={IconCodes.lineHorizontal3}
 			popovertarget={ElementIds.navigationDrawer}
 		/>
-		<img class={CSS.appbarLogo} src={logo.src} width="32" alt="BiruUI logo"/>
+		<img
+			class={CSS.appbarLogo}
+			src={logo.src}
+			style={{width: pxToRem(32) + 'rem'}}
+			alt="BiruUI logo"
+		/>
 	</Fragment>
 	<Fragment slot='headline'>BiruUI</Fragment>
 	<Fragment slot='trailing'>
@@ -23,7 +29,7 @@ import { IconCodes } from '@/enums/icons'
 			<IconButton
 				id={ElementIds.appbarInfoButton}
 				data-tooltip="Info"
-				style="padding:0 10px"
+				style={`padding:0 ${pxToRem(10)}rem`}
 				IconButtonCode={IconCodes.info}
 				aria-label="Info"
 				popovertarget={ElementIds.appbarInfoMenu}
@@ -31,7 +37,7 @@ import { IconCodes } from '@/enums/icons'
 			<IconButton
 				id={ElementIds.appbarSettingsButton}
 				data-tooltip="Settings"
-				style="padding:0 10px"
+				style={`padding:0 ${pxToRem(10)}rem`}
 				IconButtonCode={IconCodes.settings}
 				aria-label="Settings"
 				popovertarget={ElementIds.appbarSettingsMenu}

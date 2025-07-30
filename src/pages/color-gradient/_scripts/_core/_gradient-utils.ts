@@ -2,6 +2,7 @@ import type { HEXColor } from "@/types/color"
 import { hexToHsl, hexToRgb } from "@/utils/color"
 import { ColorSpace, GradientType, HueInterpolationMethod, PolarColorSpace, RadialGradientShape, RectangularColorSpace } from "../_shared/_enums"
 import type { GradientItem } from "./_gradients"
+import { pxToRem } from "@/utils/css"
 
 export function convertColorByColorSpace(
 	color: HEXColor,
@@ -80,7 +81,7 @@ export function gradientToCSSText(
 	case GradientType.radial: {
 		const shape = gradient.shape
 		const position = `${gradient.positionX}% ${gradient.positionY}%`
-		const size = shape == RadialGradientShape.circle ? `${gradient.size}px` : `${gradient.width}% ${gradient.height}%`
+		const size = shape == RadialGradientShape.circle ? `${pxToRem(gradient.size)}rem` : `${gradient.width}% ${gradient.height}%`
 		const colorStopList = [...gradient.stops]
 			.sort((a, b) => a.size - b.size)
 			.map(v => `${convertColorByColorSpace(v.color, model, false)} ${v.size}%`)

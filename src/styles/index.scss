@@ -43,7 +43,7 @@ kbd {
 
 label {
 	display: block;
-	font-size: 14px;
+	font-size: var(--g-font-size-xs);
 	user-select: none;
 	color: rgba(var(--g-color-on-surface), var(--g-opacity-inv2));
 }

@@ -1,14 +1,16 @@
+@use '../../styles/units.scss' as u;
+
 .c-modal {
 	--c-modal-left: 0;
 	--c-modal-top: 0;
 	position: fixed;
 	background-color: rgba(var(--g-color-surface), var(--g-opacity-glass));
 	backdrop-filter: blur(var(--g-blur-glass));
-	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity3));
-	border-radius: 8px;
+	border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity3));
+	border-radius: u.Rem(8px);
 	left: var(--c-modal-left);
-	max-height: calc(100dvh - 16px);
-	max-width: calc(100% - 16px);
+	max-height: calc(100dvh - u.Rem(16px));
+	max-width: calc(100% - u.Rem(16px));
 	width: max-content;
 	outline: none;
 	overflow: hidden;
@@ -16,12 +18,12 @@
 	box-shadow: var(--g-elevation3);
 
 	:root[data-theme=dark] & {
-		border: 1px solid rgba(0, 0, 0, var(--g-opacity-inv5));
+		border: u.Rem(1px) solid rgba(0, 0, 0, var(--g-opacity-inv5));
 		background-color: rgba(46, 46, 46, var(--g-opacity-glass));
 	}
 	:root[data-theme=auto] & {
 		@media (prefers-color-scheme: dark) {
-			border: 1px solid rgba(0, 0, 0, var(--g-opacity-inv5));
+			border: u.Rem(1px) solid rgba(0, 0, 0, var(--g-opacity-inv5));
 			background-color: rgba(46, 46, 46, var(--g-opacity-glass));
 		}
 	}
@@ -40,8 +42,8 @@
 
 	&[data-c-modal-focus] > .c-modal-content {
 		outline-color: rgb(var(--g-color-accent));
-		outline-width: 4px;
-		outline-offset: -4px;
+		outline-width: u.Rem(4px);
+		outline-offset: u.Rem(-4px);
 		outline-style: solid;
 
 		:root[data-animation=on] & {
@@ -66,37 +68,37 @@
 }
 
 .c-modal-draghandle {
-	--c-modal-draghandle-border-radius: 16px;
+	--c-modal-draghandle-border-radius: #{u.Rem(16px)};
 	--c-modal-draghandle-width-base: calc(100% - (var(--c-modal-draghandle-border-radius) * 2));
-	--c-modal-draghandle-width: calc(var(--c-modal-draghandle-width-base) + 32px);
-	--c-modal-draghandle-width-hover: calc(var(--c-modal-draghandle-width-base) + 8px);
+	--c-modal-draghandle-width: calc(var(--c-modal-draghandle-width-base) + #{u.Rem(32px)});
+	--c-modal-draghandle-width-hover: calc(var(--c-modal-draghandle-width-base) + #{u.Rem(8px)});
 
 	touch-action: none;
-	width: min(64px, var(--c-modal-draghandle-width));
-	height: 4px;
+	width: min(u.Rem(64px), var(--c-modal-draghandle-width));
+	height: u.Rem(4px);
 	position: absolute;
-	top: 4px;
+	top: u.Rem(4px);
 	left: 50%;
 	transform: translateX(-50%);
 	box-shadow: var(--g-elevation2);
 	touch-action: none !important;
 	z-index: 5;
-	border-radius: 999px;
+	border-radius: u.Rem(999px);
 	background-color: rgb(var(--g-color-accent));
 	transition-duration: var(--g-duration-transition);
 
 	@media (hover: hover) {
 		&:hover {
 			cursor: grab;
-			width: min(88px, var(--c-modal-draghandle-width-hover));
-			height: 8px;
+			width: min(u.Rem(88px), var(--c-modal-draghandle-width-hover));
+			height: u.Rem(8px);
 		}
 	}
 
 	&:active {
 		cursor: grabbing;
-		height: 8px;
-		width: min(80px, calc(var(--c-modal-draghandle-width-hover) - 16px));
+		height: u.Rem(8px);
+		width: min(u.Rem(80px), calc(var(--c-modal-draghandle-width-hover) - u.Rem(16px)));
 	}
 }
 

@@ -8,6 +8,7 @@ import { CSSClasses } from "../_styles/_css"
 import { ElementIds } from "../_scripts/_shared/_ids"
 import { IconCodes } from '@/enums/icons'
 import { ButtonVariant } from '@/components/Button'
+import { pxToRem } from '@/utils/css'
 ---
 
 <div
@@ -16,7 +17,9 @@ import { ButtonVariant } from '@/components/Button'
 	<Button
 		id={ElementIds.bdPick_imageButton}
 		ButtonVariant={ButtonVariant.filled}
-		style="margin-top:8px">
+		style={{
+			'margin-top': pxToRem(8) + 'rem'
+		}}>
 		<Icon IconCode={IconCodes.image}/>
 		Pick image
 	</Button>
@@ -36,7 +39,9 @@ import { ButtonVariant } from '@/components/Button'
 			style="width:100%;height:100%"
 		/>
 	</div>
-	<div style="min-height:16px"/>
+	<div style={{
+		'min-height': pxToRem(16) + 'rem'
+	}}/>
 </div>
 
 <div
@@ -61,7 +66,7 @@ import { ButtonVariant } from '@/components/Button'
 			'--color': `hsl(${Math.round(DEFAULT_COLOR_IN_HSL.h * 360)},100%,50%)`,
 			'--border-color': colorContrastRatio(hslToRgb({h: DEFAULT_COLOR_IN_HSL.h, s: 1, l: .5}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(90deg in hsl longer hue,#FF0000 0%,#FF0000 100%)',
-			marginTop: '12px'
+			marginTop: pxToRem(12) + 'rem'
 		}}
 		type="range"
 		min="0"
@@ -91,7 +96,7 @@ import { ButtonVariant } from '@/components/Button'
 			'--color': `hsl(${Math.round(DEFAULT_COLOR_IN_HSL.h * 360)},100%,50%)`,
 			'--border-color': colorContrastRatio(hslToRgb({h: DEFAULT_COLOR_IN_HSL.h, s: 1, l: .5}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(90deg in hsl longer hue,#FF0000 0%,#FF0000 100%)',
-			marginTop: '12px'
+			marginTop: pxToRem(12) + 'rem'
 		}}
 		type="range"
 		min="0"
@@ -121,7 +126,7 @@ import { ButtonVariant } from '@/components/Button'
 			'--color': DEFAULT_COLOR,
 			'--border-color': colorContrastRatio(DEFAULT_COLOR_IN_RGB, {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(to right,var(--max-value-color) 0%,#000 100%)',
-			marginTop: '12px'
+			marginTop: pxToRem(12) + 'rem'
 		}}
 		type="range"
 		min="0"
@@ -133,7 +138,7 @@ import { ButtonVariant } from '@/components/Button'
 <div
 	data-picker-mode={ColorPickerMode.sliderRgb}
 	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.sliderRgb}>
-	<label for={ElementIds.bdPick_rgbRed} style="margin-top:16px">Red: {Math.round(DEFAULT_COLOR_IN_RGB.r * 0xff)} ({Math.round(DEFAULT_COLOR_IN_RGB.r * 100)}%)</label>
+	<label for={ElementIds.bdPick_rgbRed} style={{'margin-top': pxToRem(16) + 'rem'}}>Red: {Math.round(DEFAULT_COLOR_IN_RGB.r * 0xff)} ({Math.round(DEFAULT_COLOR_IN_RGB.r * 100)}%)</label>
 	<input
 		id={ElementIds.bdPick_rgbRed}
 		class={CSSClasses.pickerSlider}
@@ -141,7 +146,7 @@ import { ButtonVariant } from '@/components/Button'
 			'--color': `rgb(${Math.round(DEFAULT_COLOR_IN_RGB.r * 0xff)},0,0)`,
 			'--border-color': colorContrastRatio({...DEFAULT_COLOR_IN_RGB, g: 0, b: 0}, {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(to right,#000 0%,#FF0000 100%)',
-			marginTop: '4px'
+			marginTop: pxToRem(4) + 'rem'
 		}}
 		type="range"
 		min="0"
@@ -149,7 +154,7 @@ import { ButtonVariant } from '@/components/Button'
 		value={Math.round(DEFAULT_COLOR_IN_RGB.r * 0xff) + ''}
 	/>
 
-	<label for={ElementIds.bdPick_rgbGreen} style="margin-top:12px">Green: {Math.round(DEFAULT_COLOR_IN_RGB.g * 0xff)} ({Math.round(DEFAULT_COLOR_IN_RGB.g * 100)}%)</label>
+	<label for={ElementIds.bdPick_rgbGreen} style={{'margin-top': pxToRem(12) + 'rem'}}>Green: {Math.round(DEFAULT_COLOR_IN_RGB.g * 0xff)} ({Math.round(DEFAULT_COLOR_IN_RGB.g * 100)}%)</label>
 	<input
 		id={ElementIds.bdPick_rgbGreen}
 		class={CSSClasses.pickerSlider}
@@ -157,7 +162,7 @@ import { ButtonVariant } from '@/components/Button'
 			'--color': `rgb(0,${Math.round(DEFAULT_COLOR_IN_RGB.g * 0xff)},0)`,
 			'--border-color': colorContrastRatio({...DEFAULT_COLOR_IN_RGB, r: 0, b: 0}, {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(to right,#000 0%,#00FF00 100%)',
-			marginTop: '4px'
+			marginTop: pxToRem(4) + 'rem'
 		}}
 		type="range"
 		min="0"
@@ -165,7 +170,7 @@ import { ButtonVariant } from '@/components/Button'
 		value={Math.round(DEFAULT_COLOR_IN_RGB.g * 0xff) + ''}
 	/>
 
-	<label for={ElementIds.bdPick_rgbBlue} style="margin-top:12px">Blue: {Math.round(DEFAULT_COLOR_IN_RGB.b * 0xff)} ({Math.round(DEFAULT_COLOR_IN_RGB.b * 100)}%)</label>
+	<label for={ElementIds.bdPick_rgbBlue} style={{'margin-top': pxToRem(12) + 'rem'}}>Blue: {Math.round(DEFAULT_COLOR_IN_RGB.b * 0xff)} ({Math.round(DEFAULT_COLOR_IN_RGB.b * 100)}%)</label>
 	<input
 		class={CSSClasses.pickerSlider}
 		id={ElementIds.bdPick_rgbBlue}
@@ -173,7 +178,7 @@ import { ButtonVariant } from '@/components/Button'
 			'--color': `rgb(0,0,${Math.round(DEFAULT_COLOR_IN_RGB.b * 0xff)})`,
 			'--border-color': colorContrastRatio({...DEFAULT_COLOR_IN_RGB, g: 0, r: 0}, {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(to right,#000 0%,#0000FF 100%)',
-			marginTop: '4px'
+			marginTop: pxToRem(4) + 'rem'
 		}}
 		type="range"
 		min="0"
@@ -185,7 +190,7 @@ import { ButtonVariant } from '@/components/Button'
 <div
 	data-picker-mode={ColorPickerMode.sliderHsl}
 	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.sliderHsl}>
-	<label for={ElementIds.bdPick_hslHue} style="margin-top:16px">Hue: {Math.round(DEFAULT_COLOR_IN_HSL.h * 360)}° ({Math.round(DEFAULT_COLOR_IN_HSL.h * 100)}%)</label>
+	<label for={ElementIds.bdPick_hslHue} style={{'margin-top': pxToRem(16) + 'rem'}}>Hue: {Math.round(DEFAULT_COLOR_IN_HSL.h * 360)}° ({Math.round(DEFAULT_COLOR_IN_HSL.h * 100)}%)</label>
 	<input
 		id={ElementIds.bdPick_hslHue}
 		class={CSSClasses.pickerSlider}
@@ -193,7 +198,7 @@ import { ButtonVariant } from '@/components/Button'
 			'--color': `hsl(${Math.round(DEFAULT_COLOR_IN_HSL.h * 360)},100%,50%)`,
 			'--border-color': colorContrastRatio(hslToRgb({...DEFAULT_COLOR_IN_HSL, s: 1, l: 0.5}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(90deg in hsl longer hue,#FF0000 0%,#FF0000 100%)',
-			marginTop: '4px'
+			marginTop: pxToRem(4) + 'rem'
 		}}
 		type="range"
 		min="0"
@@ -201,7 +206,7 @@ import { ButtonVariant } from '@/components/Button'
 		value={Math.round(DEFAULT_COLOR_IN_HSL.h * 360) + ''}
 	/>
 
-	<label for={ElementIds.bdPick_hslSaturation} style="margin-top:12px">Saturation: {Math.round(DEFAULT_COLOR_IN_HSL.s * 100)}%</label>
+	<label for={ElementIds.bdPick_hslSaturation} style={{'margin-top': pxToRem(12) + 'rem'}}>Saturation: {Math.round(DEFAULT_COLOR_IN_HSL.s * 100)}%</label>
 	<input
 		id={ElementIds.bdPick_hslSaturation}
 		class={CSSClasses.pickerSlider}
@@ -210,7 +215,7 @@ import { ButtonVariant } from '@/components/Button'
 			'--color': `hsl(${Math.round(DEFAULT_COLOR_IN_HSL.h * 360)},${Math.round(DEFAULT_COLOR_IN_HSL.s * 100)}%,50%)`,
 			'--border-color': colorContrastRatio(hslToRgb({...DEFAULT_COLOR_IN_HSL, l: 0.5}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(to right,hsl(var(--hue),0%,50%) 0%,hsl(var(--hue),100%,50%) 100%)',
-			marginTop: '4px'
+			marginTop: pxToRem(4) + 'rem'
 		}}
 		type="range"
 		min="0"
@@ -218,7 +223,7 @@ import { ButtonVariant } from '@/components/Button'
 		value={Math.round(DEFAULT_COLOR_IN_HSL.s * 100) + ''}
 	/>
 
-	<label for={ElementIds.bdPick_hslLightness} style="margin-top:12px">Lightness: {Math.round(DEFAULT_COLOR_IN_HSL.l * 100)}%</label>
+	<label for={ElementIds.bdPick_hslLightness} style={{'margin-top': pxToRem(12) + 'rem'}}>Lightness: {Math.round(DEFAULT_COLOR_IN_HSL.l * 100)}%</label>
 	<input
 		class={CSSClasses.pickerSlider}
 		id={ElementIds.bdPick_hslLightness}
@@ -226,7 +231,7 @@ import { ButtonVariant } from '@/components/Button'
 			'--color': `hsl(0,0%,${Math.round(DEFAULT_COLOR_IN_HSL.l * 100)}%)`,
 			'--border-color': colorContrastRatio(hslToRgb({...DEFAULT_COLOR_IN_HSL, h: 0, s: 0}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(to right,#000 0%,#fff 100%)',
-			marginTop: '4px'
+			marginTop: pxToRem(4) + 'rem'
 		}}
 		type="range"
 		min="0"
@@ -238,7 +243,7 @@ import { ButtonVariant } from '@/components/Button'
 <div
 	data-picker-mode={ColorPickerMode.sliderCmyk}
 	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.sliderCmyk}>
-	<label for={ElementIds.bdPick_cmykCyan} style="margin-top:16px">Cyan: {Math.round(DEFAULT_COLOR_IN_CMYK.c * 100)}%</label>
+	<label for={ElementIds.bdPick_cmykCyan} style={{'margin-top': pxToRem(16) + 'rem'}}>Cyan: {Math.round(DEFAULT_COLOR_IN_CMYK.c * 100)}%</label>
 	<input
 		id={ElementIds.bdPick_cmykCyan}
 		class={CSSClasses.pickerSlider}
@@ -246,7 +251,7 @@ import { ButtonVariant } from '@/components/Button'
 			'--color': `hsl(180,100%,${DEFAULT_COLOR_IN_CMYK.c * 50}%)`,
 			'--border-color': colorContrastRatio(hslToRgb({h: 180 / 360, s: 1, l: DEFAULT_COLOR_IN_CMYK.c * 0.5}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(90deg,#000 0%,#00FFFF 100%)',
-			marginTop: '4px'
+			marginTop: pxToRem(4) + 'rem'
 		}}
 		type="range"
 		min="0"
@@ -254,7 +259,7 @@ import { ButtonVariant } from '@/components/Button'
 		value={Math.round(DEFAULT_COLOR_IN_CMYK.c * 100) + ''}
 	/>
 
-	<label for={ElementIds.bdPick_cmykMagenta} style="margin-top:12px">Magenta: {Math.round(DEFAULT_COLOR_IN_CMYK.m * 100)}%</label>
+	<label for={ElementIds.bdPick_cmykMagenta} style={{'margin-top': pxToRem(12) + 'rem'}}>Magenta: {Math.round(DEFAULT_COLOR_IN_CMYK.m * 100)}%</label>
 	<input
 		id={ElementIds.bdPick_cmykMagenta}
 		class={CSSClasses.pickerSlider}
@@ -262,7 +267,7 @@ import { ButtonVariant } from '@/components/Button'
 			'--color': `hsl(300,100%,${DEFAULT_COLOR_IN_CMYK.m * 50}%)`,
 			'--border-color': colorContrastRatio(hslToRgb({h: 300 / 360, s: 1, l: DEFAULT_COLOR_IN_CMYK.m * 0.5}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(90deg,#000 0%,#FF00FF 100%)',
-			marginTop: '4px'
+			marginTop: pxToRem(4) + 'rem'
 		}}
 		type="range"
 		min="0"
@@ -270,7 +275,7 @@ import { ButtonVariant } from '@/components/Button'
 		value={Math.round(DEFAULT_COLOR_IN_CMYK.m * 100) + ''}
 	/>
 
-	<label for={ElementIds.bdPick_cmykYellow} style="margin-top:12px">Yellow: {Math.round(DEFAULT_COLOR_IN_CMYK.y * 100)}%</label>
+	<label for={ElementIds.bdPick_cmykYellow} style={{'margin-top': pxToRem(12) + 'rem'}}>Yellow: {Math.round(DEFAULT_COLOR_IN_CMYK.y * 100)}%</label>
 	<input
 		id={ElementIds.bdPick_cmykYellow}
 		class={CSSClasses.pickerSlider}
@@ -278,7 +283,7 @@ import { ButtonVariant } from '@/components/Button'
 			'--color': `hsl(60,100%,${DEFAULT_COLOR_IN_CMYK.y * 50}%)`,
 			'--border-color': colorContrastRatio(hslToRgb({h: 60 / 360, s: 1, l: DEFAULT_COLOR_IN_CMYK.y * 0.5}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(90deg,#000 0%,#FFFF00 100%)',
-			marginTop: '4px'
+			marginTop: pxToRem(4) + 'rem'
 		}}
 		type="range"
 		min="0"
@@ -286,7 +291,7 @@ import { ButtonVariant } from '@/components/Button'
 		value={Math.round(DEFAULT_COLOR_IN_CMYK.y * 100) + ''}
 	/>
 
-	<label for={ElementIds.bdPick_cmykKey} style="margin-top:12px">Key/Black: {Math.round(DEFAULT_COLOR_IN_CMYK.k * 100)}%</label>
+	<label for={ElementIds.bdPick_cmykKey} style={{'margin-top': pxToRem(12) + 'rem'}}>Key/Black: {Math.round(DEFAULT_COLOR_IN_CMYK.k * 100)}%</label>
 	<input
 		id={ElementIds.bdPick_cmykKey}
 		class={CSSClasses.pickerSlider}
@@ -294,7 +299,7 @@ import { ButtonVariant } from '@/components/Button'
 			'--color': `hsl(0,0%,${(1-DEFAULT_COLOR_IN_CMYK.k) * 100}%)`,
 			'--border-color': colorContrastRatio(hslToRgb({h: 0, s: 0, l: (1-DEFAULT_COLOR_IN_CMYK.k)}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(to right,#fff 0%,#000 100%)',
-			marginTop: '4px'
+			marginTop: pxToRem(4) + 'rem'
 		}}
 		type="range"
 		min="0"
@@ -306,7 +311,7 @@ import { ButtonVariant } from '@/components/Button'
 <div
 	data-picker-mode={ColorPickerMode.sliderHex}
 	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.sliderHex}>
-	<label for={ElementIds.bdPick_hex} style="margin-top:16px">Hex: {DEFAULT_COLOR} ({DEFAULT_COLOR_IN_VALUE})</label>
+	<label for={ElementIds.bdPick_hex} style={{'margin-top': pxToRem(16) + 'rem'}}>Hex: {DEFAULT_COLOR} ({DEFAULT_COLOR_IN_VALUE})</label>
 	<input
 		id={ElementIds.bdPick_hex}
 		class={CSSClasses.pickerSlider}
@@ -314,7 +319,7 @@ import { ButtonVariant } from '@/components/Button'
 			'--color': DEFAULT_COLOR,
 			'--border-color': colorContrastRatio(hexToRgb(DEFAULT_COLOR), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(90deg,#000 0%,#fff 100%)',
-			marginTop: '4px'
+			marginTop: pxToRem(4) + 'rem'
 		}}
 		type="range"
 		min="0"
@@ -326,7 +331,7 @@ import { ButtonVariant } from '@/components/Button'
 <div
 	data-picker-mode={ColorPickerMode.sliderHsv}
 	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.sliderHsv}>
-	<label for={ElementIds.bdPick_hsvHue} style="margin-top:16px">Hue: {Math.round(DEFAULT_COLOR_IN_HSV.h * 360)}° ({Math.round(DEFAULT_COLOR_IN_HSV.h * 100)}%)</label>
+	<label for={ElementIds.bdPick_hsvHue} style={{'margin-top': pxToRem(16) + 'rem'}}>Hue: {Math.round(DEFAULT_COLOR_IN_HSV.h * 360)}° ({Math.round(DEFAULT_COLOR_IN_HSV.h * 100)}%)</label>
 	<input
 		id={ElementIds.bdPick_hsvHue}
 		class={CSSClasses.pickerSlider}
@@ -334,7 +339,7 @@ import { ButtonVariant } from '@/components/Button'
 			'--color': hsvToHex({...DEFAULT_COLOR_IN_HSV, s: 1, v: 1}),
 			'--border-color': colorContrastRatio(hsvToRgb({...DEFAULT_COLOR_IN_HSV, s: 1, v: 1}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(90deg in hsl longer hue,#FF0000 0%,#FF0000 100%)',
-			marginTop: '4px'
+			marginTop: pxToRem(4) + 'rem'
 		}}
 		type="range"
 		min="0"
@@ -342,7 +347,7 @@ import { ButtonVariant } from '@/components/Button'
 		value={Math.round(DEFAULT_COLOR_IN_HSV.h * 360) + ''}
 	/>
 
-	<label for={ElementIds.bdPick_hsvSaturation} style="margin-top:12px">Saturation: {Math.round(DEFAULT_COLOR_IN_HSV.s * 100)}%</label>
+	<label for={ElementIds.bdPick_hsvSaturation} style={{'margin-top': pxToRem(12) + 'rem'}}>Saturation: {Math.round(DEFAULT_COLOR_IN_HSV.s * 100)}%</label>
 	<input
 		id={ElementIds.bdPick_hsvSaturation}
 		class={CSSClasses.pickerSlider}
@@ -351,7 +356,7 @@ import { ButtonVariant } from '@/components/Button'
 			'--color': hsvToHex({...DEFAULT_COLOR_IN_HSV, v: 1}),
 			'--border-color': colorContrastRatio(hsvToRgb({...DEFAULT_COLOR_IN_HSV, v: 1}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(to right,hsl(var(--hue),0%,50%) 0%,hsl(var(--hue),100%,50%) 100%)',
-			marginTop: '4px'
+			marginTop: pxToRem(4) + 'rem'
 		}}
 		type="range"
 		min="0"
@@ -359,7 +364,7 @@ import { ButtonVariant } from '@/components/Button'
 		value={Math.round(DEFAULT_COLOR_IN_HSV.s * 100) + ''}
 	/>
 
-	<label for={ElementIds.bdPick_hsvValue} style="margin-top:12px">Value: {Math.round(DEFAULT_COLOR_IN_HSV.v * 100)}%</label>
+	<label for={ElementIds.bdPick_hsvValue} style={{'margin-top': pxToRem(12) + 'rem'}}>Value: {Math.round(DEFAULT_COLOR_IN_HSV.v * 100)}%</label>
 	<input
 		id={ElementIds.bdPick_hsvValue}
 		class={CSSClasses.pickerSlider}
@@ -368,7 +373,7 @@ import { ButtonVariant } from '@/components/Button'
 			'--color': DEFAULT_COLOR,
 			'--border-color': colorContrastRatio(hexToRgb(DEFAULT_COLOR), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(to right,#000 0%,var(--max-value-color) 100%)',
-			marginTop: '4px'
+			marginTop: pxToRem(4) + 'rem'
 		}}
 		type="range"
 		min="0"
@@ -380,7 +385,7 @@ import { ButtonVariant } from '@/components/Button'
 <div
 	data-picker-mode={ColorPickerMode.sliderHwb}
 	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.sliderHwb}>
-	<label for={ElementIds.bdPick_hwbHue} style="margin-top:16px">Hue: {Math.round(DEFAULT_COLOR_IN_HWB.h * 360)}° ({Math.round(DEFAULT_COLOR_IN_HWB.h * 100)}%)</label>
+	<label for={ElementIds.bdPick_hwbHue} style={{'margin-top': pxToRem(16) + 'rem'}}>Hue: {Math.round(DEFAULT_COLOR_IN_HWB.h * 360)}° ({Math.round(DEFAULT_COLOR_IN_HWB.h * 100)}%)</label>
 	<input
 		id={ElementIds.bdPick_hwbHue}
 		class={CSSClasses.pickerSlider}
@@ -388,7 +393,7 @@ import { ButtonVariant } from '@/components/Button'
 			'--color': `hwb(${Math.round(DEFAULT_COLOR_IN_HWB.h * 360)} 0% 0%)`,
 			'--border-color': colorContrastRatio(hwbToRgb({...DEFAULT_COLOR_IN_HWB, w: 0, b: 0}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(90deg in hsl longer hue,#FF0000 0%,#FF0000 100%)',
-			marginTop: '4px'
+			marginTop: pxToRem(4) + 'rem'
 		}}
 		type="range"
 		min="0"
@@ -396,7 +401,7 @@ import { ButtonVariant } from '@/components/Button'
 		value={Math.round(DEFAULT_COLOR_IN_HWB.h * 360) + ''}
 	/>
 
-	<label for={ElementIds.bdPick_hwbWhiteness} style="margin-top:12px">Whiteness: {Math.round(DEFAULT_COLOR_IN_HWB.w * 100)}%</label>
+	<label for={ElementIds.bdPick_hwbWhiteness} style={{'margin-top': pxToRem(12) + 'rem'}}>Whiteness: {Math.round(DEFAULT_COLOR_IN_HWB.w * 100)}%</label>
 	<input
 		id={ElementIds.bdPick_hwbWhiteness}
 		class={CSSClasses.pickerSlider}
@@ -405,7 +410,7 @@ import { ButtonVariant } from '@/components/Button'
 			'--color': `hwb(${Math.round(DEFAULT_COLOR_IN_HWB.h * 360)} ${Math.round(DEFAULT_COLOR_IN_HWB.w * 100)}% 0%)`,
 			'--border-color': colorContrastRatio(hwbToRgb({...DEFAULT_COLOR_IN_HWB, b: 0}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(to right,hwb(var(--hue) 0% 0%) 0%,#fff 100%)',
-			marginTop: '4px'
+			marginTop: pxToRem(4) + 'rem'
 		}}
 		type="range"
 		min="0"
@@ -413,7 +418,7 @@ import { ButtonVariant } from '@/components/Button'
 		value={Math.round(DEFAULT_COLOR_IN_HWB.w * 100) + ''}
 	/>
 
-	<label for={ElementIds.bdPick_hwbBlackness} style="margin-top:12px">Blackness: {Math.round(DEFAULT_COLOR_IN_HWB.b * 100)}%</label>
+	<label for={ElementIds.bdPick_hwbBlackness} style={{'margin-top': pxToRem(12) + 'rem'}}>Blackness: {Math.round(DEFAULT_COLOR_IN_HWB.b * 100)}%</label>
 	<input
 		id={ElementIds.bdPick_hwbBlackness}
 		class={CSSClasses.pickerSlider}
@@ -422,7 +427,7 @@ import { ButtonVariant } from '@/components/Button'
 			'--color': `hwb(${Math.round(DEFAULT_COLOR_IN_HWB.h * 360)} 0% ${Math.round(DEFAULT_COLOR_IN_HWB.b * 100)}%)`,
 			'--border-color': colorContrastRatio(hwbToRgb({...DEFAULT_COLOR_IN_HWB, w: 0}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(to right,hwb(var(--hue) 0% 0%) 0%,#000 100%)',
-			marginTop: '4px'
+			marginTop: pxToRem(4) + 'rem'
 		}}
 		type="range"
 		min="0"

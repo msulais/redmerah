@@ -1,4 +1,6 @@
-$SMALL_SCREEN: 600px;
+@use '../../../styles/units.scss' as u;
+
+$SMALL_SCREEN: u.Rem(600px);
 
 .body {
 	display: flex;
@@ -10,9 +12,9 @@ $SMALL_SCREEN: 600px;
 }
 
 .bodyEditor {
-	width: 280px;
-	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity3));
-	border-radius: 8px 0 0 0;
+	width: u.Rem(280px);
+	border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity3));
+	border-radius: u.Rem(8px) 0 0 0;
 	background-color: rgb(var(--g-color-surface));
 	border-right: none;
 	border-bottom: none;
@@ -28,10 +30,10 @@ $SMALL_SCREEN: 600px;
 	}
 
 	> details {
-		padding: 4px;
+		padding: u.Rem(4px);
 
 		&::details-content {
-			height: 0px;
+			height: u.Rem(0px);
 			overflow: clip;
 
 			:root[data-animation=on] & {
@@ -81,7 +83,7 @@ $SMALL_SCREEN: 600px;
 		}
 
 		& [data-css-content] {
-			padding: 12px;
+			padding: u.Rem(12px);
 
 			&:empty {
 				display: none;
@@ -91,13 +93,13 @@ $SMALL_SCREEN: 600px;
 }
 
 .bodyGradientControl {
-	padding-top: 12px;
+	padding-top: u.Rem(12px);
 
 	& details {
-		padding: 0 12px 12px 12px;
+		padding: 0 u.Rem(12px) u.Rem(12px) u.Rem(12px);
 
 		&::details-content {
-			height: 0px;
+			height: u.Rem(0px);
 			overflow: clip;
 
 			:root[data-animation=on] & {
@@ -116,7 +118,7 @@ $SMALL_SCREEN: 600px;
 		}
 
 		&:last-child {
-			padding-top: 12px;
+			padding-top: u.Rem(12px);
 		}
 
 		&[open] {
@@ -151,7 +153,7 @@ $SMALL_SCREEN: 600px;
 
 	& [data-css-properties] {
 		> label {
-			margin-top: 8px;
+			margin-top: u.Rem(8px);
 
 			&:not(:global(.c-checkbox)) {
 				display: block;
@@ -159,31 +161,31 @@ $SMALL_SCREEN: 600px;
 		}
 
 		> select {
-			margin-top: 2px;
+			margin-top: u.Rem(2px);
 		}
 
 		> :global(.c-textfield) {
-			margin-top: 2px;
+			margin-top: u.Rem(2px);
 		}
 
 		> :global(.c-checkbox) {
-			margin-top: 12px;
+			margin-top: u.Rem(12px);
 		}
 	}
 
 	& [data-css-stops] {
 		> button {
-			margin-top: 12px;
+			margin-top: u.Rem(12px);
 		}
 
 		& li {
-			margin-top: 12px;
+			margin-top: u.Rem(12px);
 
 			> div {
 				display: grid;
 				grid-template-columns: 1fr 3fr;
-				gap: 4px;
-				margin-bottom: 4px;
+				gap: u.Rem(4px);
+				margin-bottom: u.Rem(4px);
 			}
 
 			> input {
@@ -200,8 +202,8 @@ $SMALL_SCREEN: 600px;
 				> :global(.c-textfield-trailing) {
 					display: flex;
 					align-items: center;
-					gap: 1px;
-					padding-right: 2px;
+					gap: u.Rem(1px);
+					padding-right: u.Rem(2px);
 				}
 			}
 		}
@@ -215,15 +217,15 @@ $SMALL_SCREEN: 600px;
 		list-style: none;
 		display: grid;
 		grid-template-columns: 1fr;
-		gap: 4px;
+		gap: u.Rem(4px);
 
 		> li {
 			display: flex;
-			gap: 1px;
+			gap: u.Rem(1px);
 
 			&:not(:last-child) {
-				padding-bottom: 4px;
-				border-bottom: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity3));
+				padding-bottom: u.Rem(4px);
+				border-bottom: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity3));
 			}
 
 			> :first-child {
@@ -236,15 +238,15 @@ $SMALL_SCREEN: 600px;
 	& [data-command="gradient-edit"] {
 		> div {
 			width: 100%;
-			height: 20px;
-			border-radius: 4px;
-			outline: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
+			height: u.Rem(20px);
+			border-radius: u.Rem(4px);
+			outline: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
 		}
 	}
 }
 
 .bodyPreview {
-	outline: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
+	outline: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
 	outline-offset: 0;
 }
 
@@ -257,20 +259,20 @@ $SMALL_SCREEN: 600px;
 	overflow: auto;
 
 	@media (max-width: $SMALL_SCREEN) {
-		min-height: 360px;
+		min-height: u.Rem(360px);
 	}
 }
 
 .bodyProperties {
 	& :global(.c-textfield) {
-		margin-top: 2px
+		margin-top: u.Rem(2px)
 	}
 
 	> label {
 		display: block;
 
 		&:not(:first-child) {
-			margin-top: 8px;
+			margin-top: u.Rem(8px);
 		}
 	}
 }
@@ -278,18 +280,18 @@ $SMALL_SCREEN: 600px;
 .bodySavedGradient {
 	display: flex;
 	align-items: center;
-	gap: 1px;
+	gap: u.Rem(1px);
 	flex-wrap: wrap;
 	list-style: none;
 
 	& button {
-		padding: 4px;
+		padding: u.Rem(4px);
 		min-height: fit-content;
 		border-radius: 50%;
 
 		> span {
-			width: 24px;
-			height: 24px;
+			width: u.Rem(24px);
+			height: u.Rem(24px);
 			border-radius: 50%;
 		}
 	}

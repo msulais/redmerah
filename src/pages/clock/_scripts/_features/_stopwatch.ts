@@ -14,6 +14,7 @@ import { updateButtonRef, updateIconButtonRef } from "@/components/Button"
 import { Commands } from "../_shared/_commands"
 import { openToastRef, type ToastElement } from "@/components/Toast"
 import { DEFAULT_STOPWATCH_MS, DEFAULT_STOPWATCH_RUNNING, DEFAULT_STOPWATCH_LAPS } from "../_shared/_constant"
+import { pxToRem } from "@/utils/css"
 
 type _StopwatchStoreType = {
 	ms: number
@@ -113,11 +114,11 @@ function _subscribeRunningRefView(v: _StopwatchStoreType, o: _StopwatchStoreType
 	}, _animationOption)
 	_playOrPauseSpanRef.animate({
 		opacity: [0, 1],
-		translate: ['-8px 0', '0 0']
+		translate: [`${pxToRem(-8)}rem 0`, '0 0']
 	}, _animationOption)
 	_playOrPauseIconRef.animate({
 		opacity: [0, 1],
-		translate: ['8px 0', '0 0']
+		translate: [`${pxToRem(8)}rem 0`, '0 0']
 	}, _animationOption)
 
 	for (const ref of _navigationButtonIconRefs) {
@@ -170,7 +171,7 @@ function _subscribeMSRefView(v: _StopwatchStoreType, o: _StopwatchStoreType): vo
 
 	const btnRect2 = _playOrPauseButtonRef.getBoundingClientRect()
 	_playOrPauseButtonRef.animate({
-		translate: [`${btnRect.x - btnRect2.x}px ${btnRect.y - btnRect2.y}px`, '0 0']
+		translate: [`${pxToRem(btnRect.x - btnRect2.x)}rem ${pxToRem(btnRect.y - btnRect2.y)}rem`, '0 0']
 	}, _animationOption)
 }
 
@@ -190,10 +191,10 @@ function _subscribeLapsRefView(v: _StopwatchStoreType, o: _StopwatchStoreType): 
 		const _timeRect2 = _timeRef.getBoundingClientRect()
 		const _playBtnRect2 = _playOrPauseButtonRef.getBoundingClientRect()
 		_playOrPauseButtonRef.animate({
-			translate: [`${_playBtnRect.x - _playBtnRect2.x}px ${_playBtnRect.y - _playBtnRect2.y}px`, '0 0']
+			translate: [`${pxToRem(_playBtnRect.x - _playBtnRect2.x)}rem ${pxToRem(_playBtnRect.y - _playBtnRect2.y)}rem`, '0 0']
 		}, _animationOption)
 		_timeRef.animate({
-			translate: [`${_timeRect.x - _timeRect2.x}px ${_timeRect.y - _timeRect2.y}px`, '0 0']
+			translate: [`${pxToRem(_timeRect.x - _timeRect2.x)}rem ${pxToRem(_timeRect.y - _timeRect2.y)}rem`, '0 0']
 		}, _animationOption)
 		return
 	}
@@ -243,13 +244,13 @@ function _subscribeLapsRefView(v: _StopwatchStoreType, o: _StopwatchStoreType): 
 		opacity: [0, 1]
 	}, _animationOption)
 	_timeRef.animate({
-		translate: [`${_timeRect.x - _timeRect2.x}px ${_timeRect.y - _timeRect2.y}px`, '0 0']
+		translate: [`${pxToRem(_timeRect.x - _timeRect2.x)}rem ${pxToRem(_timeRect.y - _timeRect2.y)}rem`, '0 0']
 	}, _animationOption)
 	_playOrPauseButtonRef.animate({
-		translate: [`${_playBtnRect.x - _playBtnRect2.x}px ${_playBtnRect.y - _playBtnRect2.y}px`, '0 0']
+		translate: [`${pxToRem(_playBtnRect.x - _playBtnRect2.x)}rem ${pxToRem(_playBtnRect.y - _playBtnRect2.y)}rem`, '0 0']
 	}, _animationOption)
 	_resetOrLapButtonRef.animate({
-		translate: [`${_resetBtnRect.x - _resetBtnRect2.x}px ${_resetBtnRect.y - _resetBtnRect2.y}px`, '0 0']
+		translate: [`${pxToRem(_resetBtnRect.x - _resetBtnRect2.x)}rem ${pxToRem(_resetBtnRect.y - _resetBtnRect2.y)}rem`, '0 0']
 	}, _animationOption)
 }
 

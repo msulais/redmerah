@@ -25,6 +25,7 @@ import { Commands } from '../../_scripts/_shared/_commands'
 import { ElementIds } from '../../_scripts/_shared/_ids'
 import { GradientType, HueInterpolationMethod, PolarColorSpace, RadialGradientShape, RectangularColorSpace } from '../../_scripts/_shared/_enums'
 import { DEFAULT_STOP_COLOR_1, DEFAULT_STOP_COLOR_2 } from '../../_scripts/_shared/_constant'
+import { pxToRem } from '@/utils/css'
 
 const gradientTypes: [type: GradientType, text: string, selected: boolean][] = [
 	[GradientType.linear, 'Linear', true],
@@ -63,9 +64,9 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 ---
 <Tooltip
 	style={{
-		margin: '4px 12px',
+		margin: `${pxToRem(4)}rem ${pxToRem(12)}rem`,
 		display: 'flex',
-		gap: '2px'
+		gap: pxToRem(2) + 'rem'
 	}}>
 	<Button id={ElementIds.bdGrad_add} ButtonVariant={ButtonVariant.outlined}>
 		<Icon IconCode={IconCodes.add}/>
@@ -73,7 +74,9 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 	</Button>
 	<IconButton
 		id={ElementIds.bdGrad_copy}
-		style="margin-left:8px"
+		style={{
+			'margin-left': pxToRem(8) + 'rem'
+		}}
 		IconButtonCode={IconCodes.copy}
 		data-tooltip="Copy"
 		aria-label="Copy"
@@ -107,10 +110,12 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 </Tooltip>
 <Popover
 	id={ElementIds.bdGrad_controlPopover}
-	PopoverGap={8}
-	style="width: 280px"
+	PopoverGap={pxToRem(8)}
+	style={{
+		width: pxToRem(280) + 'rem'
+	}}
 	PopoverDraggable
-	PopoverPadding={12}
+	PopoverPadding={pxToRem(12)}
 	PopoverContentAttr={{
 		class: CSSClasses.bodyGradientControl
 	}}
@@ -127,12 +132,17 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 				<div style={{
 					display: 'grid',
 					gridTemplateColumns: '1fr 1fr',
-					gap: '8px',
-					marginTop: '8px'
+					gap: pxToRem(8) + 'rem',
+					marginTop: pxToRem(8) + 'rem'
 				}}>
 					<div>
 						<label for={ElementIds.bdGradCtrl_type}>Type:</label>
-						<ComboBox id={ElementIds.bdGradCtrl_type} style="width:100%;margin-top:2px">
+						<ComboBox
+							id={ElementIds.bdGradCtrl_type}
+							style={{
+								width: '100%',
+								'margin-top': pxToRem(2) + 'rem'
+							}}>
 							{gradientTypes.map(v =>
 								<ComboBoxOption value={v[0]} selected={v[2]}>{v[1]}</ComboBoxOption>
 							)}
@@ -140,7 +150,12 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 					</div>
 					<div>
 						<label for={ElementIds.bdGradCtrl_colorSpace}>Color space:</label>
-						<ComboBox id={ElementIds.bdGradCtrl_colorSpace} style="width:100%;margin-top:2px">
+						<ComboBox
+							id={ElementIds.bdGradCtrl_colorSpace}
+							style={{
+								width: '100%',
+								'margin-top': pxToRem(2) + 'rem'
+							}}>
 							{colorSpaces.map(v =>
 								<ComboBoxOption value={v[0]} selected={v[2]}>{v[1]}</ComboBoxOption>
 							)}
@@ -162,49 +177,69 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 				<div style={{
 					display: 'grid',
 					gridTemplateColumns: '1fr 1fr',
-					gap: '8px',
-					marginTop: '8px'
+					gap: pxToRem(8) + 'rem',
+					marginTop: pxToRem(8) + 'rem'
 				}} id={ElementIds.bdGradCtrl_positionXY}>
 					<div>
 						<label for={ElementIds.bdGradCtrl_positionX}>Position X (%):</label>
-						<TextField style="margin-top:2px" TextFieldInputAttr={{
-							id: ElementIds.bdGradCtrl_positionX,
-							type: 'number',
-							value: '0',
-						}}/>
+						<TextField
+							style={{
+								'margin-top': pxToRem(2) + 'rem'
+							}}
+							TextFieldInputAttr={{
+								id: ElementIds.bdGradCtrl_positionX,
+								type: 'number',
+								value: '0',
+							}}
+						/>
 					</div>
 					<div>
 						<label for={ElementIds.bdGradCtrl_positionY}>Position Y (%):</label>
-						<TextField style="margin-top:2px" TextFieldInputAttr={{
-							id: ElementIds.bdGradCtrl_positionY,
-							type: 'number',
-							value: '0',
-						}}/>
+						<TextField
+							style={{
+								'margin-top': pxToRem(2) + 'rem'
+							}}
+							TextFieldInputAttr={{
+								id: ElementIds.bdGradCtrl_positionY,
+								type: 'number',
+								value: '0',
+							}}
+						/>
 					</div>
 				</div>
 				<div style={{
 					display: 'grid',
 					gridTemplateColumns: '1fr 1fr',
-					gap: '8px',
-					marginTop: '8px'
+					gap: pxToRem(8) + 'rem',
+					marginTop: pxToRem(8) + 'rem'
 				}} id={ElementIds.bdGradCtrl_widthHeight}>
 					<div>
 						<label for={ElementIds.bdGradCtrl_width}>Width (%):</label>
-						<TextField style="margin-top:2px" TextFieldInputAttr={{
-							id: ElementIds.bdGradCtrl_width,
-							type: 'number',
-							value: '0',
-							min: '0'
-						}}/>
+						<TextField
+							style={{
+								'margin-top': pxToRem(2) + 'rem'
+							}}
+							TextFieldInputAttr={{
+								id: ElementIds.bdGradCtrl_width,
+								type: 'number',
+								value: '0',
+								min: '0'
+							}}
+						/>
 					</div>
 					<div>
 						<label for={ElementIds.bdGradCtrl_height}>Height (%):</label>
-						<TextField style="margin-top:2px" TextFieldInputAttr={{
-							id: ElementIds.bdGradCtrl_height,
-							type: 'number',
-							value: '0',
-							min: '0'
-						}}/>
+						<TextField
+							style={{
+								'margin-top': pxToRem(2) + 'rem'
+							}}
+							TextFieldInputAttr={{
+								id: ElementIds.bdGradCtrl_height,
+								type: 'number',
+								value: '0',
+								min: '0'
+							}}
+						/>
 					</div>
 				</div>
 				<label for={ElementIds.bdGradCtrl_size}>Size (px):</label>
@@ -233,7 +268,11 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 				<Icon IconCode={IconCodes.chevronDown}/>
 			</summary>
 			<div data-css-stops>
-				<div style={{display: 'flex', gap: '8px', marginTop: '8px'}}>
+				<div style={{
+					display: 'flex',
+					gap: pxToRem(8) + 'rem',
+					marginTop: pxToRem(8) + 'rem'
+				}}>
 					<Button id={ElementIds.bdGradStop_add} ButtonVariant={ButtonVariant.outlined}>
 						<Icon IconCode={IconCodes.add}/>
 						Add color stop
@@ -302,7 +341,7 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 </Popover>
 <Menu
 	id={ElementIds.bdGrad_actionsMenu}
-	PopoverGap={8}
+	PopoverGap={pxToRem(8)}
 	PopoverPosition={FlyoutPosition.leftCenterToBottom}>
 	<MenuItem id={ElementIds.bdGradAct_copy}>
 		<Icon IconCode={IconCodes.copy}/>
@@ -355,7 +394,7 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 </Menu>
 <Menu
 	id={ElementIds.bdGradStop_actions}
-	PopoverGap={8}
+	PopoverGap={pxToRem(8)}
 	PopoverPosition={FlyoutPosition.rightCenterToBottom}>
 	<MenuItem id={ElementIds.bdGradStopAct_delete}>
 		<Icon IconCode={IconCodes.delete}/>
@@ -399,7 +438,7 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 </Menu>
 <ColorPicker
 	id={ElementIds.bdGradStop_colorPicker}
-	PopoverGap={8}
+	PopoverGap={pxToRem(8)}
 	PopoverDraggable
 	PopoverPosition={FlyoutPosition.rightCenterToBottom}
 />

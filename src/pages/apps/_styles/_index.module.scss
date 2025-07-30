@@ -1,15 +1,17 @@
+@use '../../../styles/units.scss' as u;
+
 .content {
 	display: grid;
-	gap: 8px;
+	gap: u.Rem(8px);
 	list-style: none;
-	grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(u.Rem(124px), 1fr));
 
 	& img {
-		width: 48px;
+		width: u.Rem(48px);
 	}
 
 	& :global(.c-button){
-		padding: 12px;
+		padding: u.Rem(12px);
 		flex-direction: column;
 		text-align: center;
 		justify-content: center;
@@ -17,7 +19,7 @@
 		position: relative;
 		width: 100%;
 		transition-property: scale;
-		border: 2px solid transparent;
+		border: u.Rem(2px) solid transparent;
 
 		@media (hover:hover) {
 			&:hover {
@@ -54,19 +56,19 @@
 		position: absolute;
 		top: 0;
 		left: 50%;
-		transform: translateX(calc(-50% + 40px));
+		transform: translateX(calc(-50% + u.Rem(40px)));
 	}
 }
 
 .main {
-	min-height: calc(100dvh - 180px);
-	width: 1080px;
-	padding: 32px 16px;
-	padding-bottom: 64px;
+	min-height: calc(100dvh - u.Rem(180px));
+	width: u.Rem(1080px);
+	padding: u.Rem(32px) u.Rem(16px);
+	padding-bottom: u.Rem(64px);
 	max-width: 100%;
 
 	> h1 {
-		font-size: min(56px, 10dvw);
+		font-size: min(u.Rem(56px), 10dvw);
 		font-weight: normal;
 	}
 }

@@ -1,15 +1,17 @@
-$SMALL_SCREEN: 650px;
+@use '../../../styles/units.scss' as u;
+
+$SMALL_SCREEN: u.Rem(650px);
 
 .body {
 	display: flex;
 	overflow: auto;
 	height: 100%;
-	gap: 8px;
-	padding: 4px 16px 16px 16px;
+	gap: u.Rem(8px);
+	padding: u.Rem(4px) u.Rem(16px) u.Rem(16px) u.Rem(16px);
 
 	@media (max-width: $SMALL_SCREEN) {
 		flex-direction: column;
-		gap: 16px;
+		gap: u.Rem(16px);
 	}
 
 	> div:not(.bodySlider) {
@@ -17,11 +19,11 @@ $SMALL_SCREEN: 650px;
 		padding-top: 0;
 		display: flex;
 		flex-direction: column;
-		gap: 4px;
+		gap: u.Rem(4px);
 
 		> div {
 			display: flex;
-			gap: 8px;
+			gap: u.Rem(8px);
 			align-items: center;
 		}
 
@@ -39,10 +41,10 @@ $SMALL_SCREEN: 650px;
 		flex: 1;
 		font-size: var(--g-font-size-xs);
 		resize: none;
-		padding: 8px 10px;
-		border-radius: 4px;
+		padding: u.Rem(8px) u.Rem(10px);
+		border-radius: u.Rem(4px);
 		background-color: rgba(var(--g-color-on-surface), var(--g-opacity2));
-		border: 2px solid transparent;
+		border: u.Rem(2px) solid transparent;
 		border-bottom-color: rgb(var(--g-color-accent));
 		outline: none;
 
@@ -63,7 +65,7 @@ $SMALL_SCREEN: 650px;
 		}
 
 		@media (max-width: $SMALL_SCREEN) {
-			min-height: calc(100dvh - 164px);
+			min-height: calc(100dvh - u.Rem(164px));
 		}
 
 		&:hover:not(:focus) {
@@ -75,33 +77,33 @@ $SMALL_SCREEN: 650px;
 
 		&:not([data-text-wrap]) {
 			white-space: pre;
-			scroll-padding-left: 8px;
-			scroll-padding-right: 8px;
+			scroll-padding-left: u.Rem(8px);
+			scroll-padding-right: u.Rem(8px);
 		}
 	}
 
 	& iframe {
 		flex: 1;
 		height: 100%;
-		border: 2px solid transparent;
-		border-radius: 4px;
+		border: u.Rem(2px) solid transparent;
+		border-radius: u.Rem(4px);
 		background-color: rgba(var(--g-color-on-surface), var(--g-opacity2));
 
 		@media (max-width: $SMALL_SCREEN) {
-			min-height: calc(100dvh - 164px);
+			min-height: calc(100dvh - u.Rem(164px));
 		}
 	}
 }
 
 .bodySlider {
-	min-width: 4px;
-	max-width: 4px;
-	margin-top: 40px;
-	height: calc(100% - 40px);
+	min-width: u.Rem(4px);
+	max-width: u.Rem(4px);
+	margin-top: u.Rem(40px);
+	height: calc(100% - u.Rem(40px));
 	opacity: 0;
 	cursor: ew-resize;
 	background-color: rgb(var(--g-color-accent));
-	border-radius: 999px;
+	border-radius: u.Rem(999px);
 
 	:root[data-animation=on] & {
 		transition-property: opacity;

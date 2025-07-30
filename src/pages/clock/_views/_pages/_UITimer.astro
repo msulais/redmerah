@@ -11,6 +11,7 @@ import TextField from '@/components/TextField/index.astro'
 import { IconCodes } from '@/enums/icons'
 import ringtone from '@/assets/audio/simple-ringtone-84595.mp3'
 import { Pages } from '../../_scripts/_shared/_enums'
+import { pxToRem } from '@/utils/css'
 import { DEFAULT_PAGE, DEFAULT_TIMER_RUNNING, DEFAULT_TIMER_SECONDS } from '../../_scripts/_shared/_constant'
 
 const hours = Math.floor(DEFAULT_TIMER_SECONDS / 3600)
@@ -28,9 +29,16 @@ const seconds = Math.floor(Math.floor(DEFAULT_TIMER_SECONDS % 3600) % 60)
 		.join(':')
 	}</h2>
 	<audio id={ElementIds.pgTm_audio} loop src={ringtone}></audio>
-	<Tooltip style="display:flex;justify-content:center;gap:8px">
+	<Tooltip
+		style={{
+			display: 'flex',
+			'justify-content': 'center',
+			gap: pxToRem(8) + 'rem'
+		}}>
 		<Button
-			style="width:92px"
+			style={{
+				width: pxToRem(92) + 'rem'
+			}}
 			ButtonVariant={ButtonVariant.filled}
 			id={ElementIds.pgTm_playPause}>
 			<Icon IconCode={DEFAULT_TIMER_RUNNING? IconCodes.pause : IconCodes.play} IconFilled/>
@@ -47,14 +55,25 @@ const seconds = Math.floor(Math.floor(DEFAULT_TIMER_SECONDS % 3600) % 60)
 	</Tooltip>
 	<Dialog
 		id={ElementIds.pgTm_editDialog}
-		style="width:360px">
+		style={{
+			width: pxToRem(360) + 'rem'
+		}}>
 		<Fragment slot="header">Edit Timer</Fragment>
-		<div style={{display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginBottom: '8px'}}>
+		<div style={{
+			display: 'grid',
+			gridTemplateColumns: 'repeat(3,1fr)',
+			gap: pxToRem(8) + 'rem',
+			marginBottom: pxToRem(8) + 'rem'
+		}}>
 			<label for={ElementIds.pgTm_hours}>Hours:</label>
 			<label for={ElementIds.pgTm_minutes}>Minutes:</label>
 			<label for={ElementIds.pgTm_seconds}>Seconds:</label>
 		</div>
-		<div style={{display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px'}}>
+		<div style={{
+			display: 'grid',
+			gridTemplateColumns: 'repeat(3,1fr)',
+			gap: pxToRem(8) + 'rem'
+		}}>
 			<TextField TextFieldInputAttr={{
 				type: 'number', value: hours, min: 0, max: 99, placeholder: 'Hours',
 				id: ElementIds.pgTm_hours
@@ -73,7 +92,11 @@ const seconds = Math.floor(Math.floor(DEFAULT_TIMER_SECONDS % 3600) % 60)
 			<Button id={ElementIds.pgTm_save} ButtonVariant={ButtonVariant.filled}>Save</Button>
 		</form>
 	</Dialog>
-	<Dialog style="width:360px" id={ElementIds.pgTm_doneDialog}>
+	<Dialog
+		style={{
+			width: pxToRem(360) + 'rem'
+		}}
+		id={ElementIds.pgTm_doneDialog}>
 		<Fragment slot="header">Timer Done</Fragment>
 		<p id={ElementIds.pgTm_doneTime}></p>
 		<p id={ElementIds.pgTm_doneDate}></p>

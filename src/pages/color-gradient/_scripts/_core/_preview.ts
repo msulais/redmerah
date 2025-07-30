@@ -4,6 +4,7 @@ import { $ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
 import { safeNumber } from "@/utils/number"
 import { saveStorageItem } from "./_database"
+import { pxToRem } from "@/utils/css"
 
 export type PreviewStoreType = Readonly<{
 	borderRadius: number
@@ -51,7 +52,7 @@ function _subscribeBorderRadiusRefView(v: PreviewStoreType, o: PreviewStoreType)
 	if (borderRadius === o.borderRadius) {return}
 
 	requestAnimationFrame(() => {
-		_previewBoxRef.style.setProperty('border-radius', borderRadius + 'px')
+		_previewBoxRef.style.setProperty('border-radius', pxToRem(borderRadius) + 'rem')
 	})
 }
 
@@ -78,7 +79,7 @@ function _subscribeWidthRefView(v: PreviewStoreType, o: PreviewStoreType): void 
 	if (width === o.width) {return}
 
 	requestAnimationFrame(() => {
-		_previewBoxRef.style.setProperty('min-width', width + 'px')
+		_previewBoxRef.style.setProperty('min-width', pxToRem(width) + 'rem')
 	})
 }
 
@@ -105,7 +106,7 @@ function _subscribeHeightRefView(v: PreviewStoreType, o: PreviewStoreType): void
 	if (height === o.height) {return}
 
 	requestAnimationFrame(() => {
-		_previewBoxRef.style.setProperty('min-height', height + 'px')
+		_previewBoxRef.style.setProperty('min-height', pxToRem(height) + 'rem')
 	})
 }
 

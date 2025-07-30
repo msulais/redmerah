@@ -21,6 +21,7 @@ import logoSCSS from '@/assets/images/logos/scss-logo.svg'
 import logoSASS from '@/assets/images/logos/sass-logo.svg'
 import { RoutesLinks, ExternalLinks } from '@/enums/links'
 import { IconCodes } from '@/enums/icons'
+import { pxToRem } from '@/utils/css'
 import { ElementIds } from '../_scripts/_shared/_ids'
 import { RadioNames } from '../_scripts/_shared/_input-names'
 import { DEFAULT_ANIMATION, DEFAULT_TEXT_WRAP, DEFAULT_THEME, DEFAULT_MINIFY_CSS } from '../_scripts/_shared/_constant'
@@ -74,8 +75,10 @@ const themes: {
 		<img
 			src={APP.logoUrl}
 			alt={APP.name + ' logo'}
-			width={32}
-			style="margin:0 8px 0 12px"
+			style={{
+				width: pxToRem(32) + 'rem',
+				margin: `0 ${pxToRem(8)}rem 0 ${pxToRem(12)}rem`
+			}}
 		/>
 	</Fragment>
 	<Fragment slot="headline">{APP.name}</Fragment>
@@ -89,7 +92,7 @@ const themes: {
 		/>
 		<Menu id={ElementIds.apInf_menu} PopoverAnchorBy={ElementIds.apInf_btn}>
 			<LinkMenuItem href="/">
-				<img src={logoRedmerah.src} width="20"/>
+				<img src={logoRedmerah.src} style={{width: pxToRem(20) + 'rem'}}/>
 				Redmerah
 				<MenuIndent />
 			</LinkMenuItem>
@@ -148,7 +151,7 @@ const themes: {
 				<div style="flex:1"/>
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
-			<SubMenu style="width:150px" id={ElementIds.apSett_animationMenu}>
+			<SubMenu style={{width: pxToRem(150) + 'rem'}} id={ElementIds.apSett_animationMenu}>
 				{animations.map(v =>
 					<RadioMenuItem
 						RadioMenuItemName={RadioNames.animation}
@@ -167,7 +170,7 @@ const themes: {
 				<div style="flex:1"/>
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
-			<SubMenu style="width:150px" id={ElementIds.apSett_themeMenu}>
+			<SubMenu style={{width: pxToRem(150) + 'rem'}} id={ElementIds.apSett_themeMenu}>
 				{themes.map(v =>
 					<RadioMenuItem
 						RadioMenuItemName={RadioNames.theme}
@@ -215,17 +218,17 @@ const themes: {
 				<div style="flex:1"/>
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
-			<SubMenu style="width:150px" id={ElementIds.apMore_copyMenu}>
+			<SubMenu style={{width: pxToRem(150) + 'rem'}} id={ElementIds.apMore_copyMenu}>
 				<MenuItem id={ElementIds.apMore_copySCSS}>
-					<img width={20} src={logoSCSS.src} alt="SCSS logo"/>
+					<img style={{width: pxToRem(24) + 'rem'}} src={logoSCSS.src} alt="SCSS logo"/>
 					SCSS
 				</MenuItem>
 				<MenuItem id={ElementIds.apMore_copySASS}>
-					<img width={20} src={logoSASS.src} alt="SASS logo"/>
+					<img style={{width: pxToRem(24) + 'rem'}} src={logoSASS.src} alt="SASS logo"/>
 					SASS
 				</MenuItem>
 				<MenuItem id={ElementIds.apMore_copyCSS}>
-					<img width={20} src={logoCSS.src} alt="CSS logo"/>
+					<img style={{width: pxToRem(24) + 'rem'}} src={logoCSS.src} alt="CSS logo"/>
 					CSS
 				</MenuItem>
 			</SubMenu>
@@ -237,29 +240,29 @@ const themes: {
 				<div style="flex:1"/>
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
-			<SubMenu style="width:150px" id={ElementIds.apMore_downloadMenu}>
+			<SubMenu style={{width: pxToRem(150) + 'rem'}} id={ElementIds.apMore_downloadMenu}>
 				<MenuItem id={ElementIds.apMore_downloadSCSS}>
-					<img width={20} src={logoSCSS.src} alt="SCSS logo"/>
+					<img style={{width: pxToRem(24) + 'rem'}} src={logoSCSS.src} alt="SCSS logo"/>
 					SCSS
 				</MenuItem>
 				<MenuItem id={ElementIds.apMore_downloadSASS}>
-					<img width={20} src={logoSASS.src} alt="SASS logo"/>
+					<img style={{width: pxToRem(24) + 'rem'}} src={logoSASS.src} alt="SASS logo"/>
 					SASS
 				</MenuItem>
 				<MenuItem id={ElementIds.apMore_downloadCSS}>
-					<img width={20} src={logoCSS.src} alt="CSS logo"/>
+					<img style={{width: pxToRem(24) + 'rem'}} src={logoCSS.src} alt="CSS logo"/>
 					CSS
 				</MenuItem>
 			</SubMenu>
 
 			<Divider/>
 			<MenuItem id={ElementIds.apMore_resetSCSS}>
-				<img width={20} src={logoSCSS.src} alt="SCSS logo"/>
+				<img style={{width: pxToRem(24) + 'rem'}} src={logoSCSS.src} alt="SCSS logo"/>
 				Reset SCSS
 				<MenuIndent />
 			</MenuItem>
 			<MenuItem id={ElementIds.apMore_resetSASS}>
-				<img width={20} src={logoSASS.src} alt="SASS logo"/>
+				<img style={{width: pxToRem(24) + 'rem'}} src={logoSASS.src} alt="SASS logo"/>
 				Reset SASS
 				<MenuIndent />
 			</MenuItem>

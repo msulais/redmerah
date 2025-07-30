@@ -7,6 +7,7 @@ import { DEFAULT_LISTS, DEFAULT_PAGE, DEFAULT_WORDS_OUTPUT, DEFAULT_WORDS_CASE, 
 import { Pages, WordsRandomizerCase } from "../../_scripts/_shared/_enums"
 import { ElementIds } from "../../_scripts/_shared/_ids"
 import { CSSClasses } from "../../_styles/_css"
+import { pxToRem } from '@/utils/css'
 
 const wordCases: {
 	value: WordsRandomizerCase
@@ -42,7 +43,7 @@ const wordCases: {
 	<div class={CSSClasses.bodyOptions}>
 		<label for={ElementIds.pgWrd_list}>List:</label>
 		<ComboBox
-			style="margin-top:2px"
+			style={{'margin-top': pxToRem(2) + 'rem'}}
 			id={ElementIds.pgWrd_list}>
 			{DEFAULT_LISTS.map(v =>
 				<ComboBoxOption
@@ -52,10 +53,10 @@ const wordCases: {
 		</ComboBox>
 
 		<label
-			style="margin-top:8px"
+			style={{'margin-top': pxToRem(8) + 'rem'}}
 			for={ElementIds.pgWrd_count}>Count:</label>
 		<TextField
-			style="margin-top:2px"
+			style={{'margin-top': pxToRem(2) + 'rem'}}
 			TextFieldInputAttr={{
 				id: ElementIds.pgWrd_count,
 				value: DEFAULT_WORDS_COUNT,
@@ -65,10 +66,10 @@ const wordCases: {
 		/>
 
 		<label
-			style="margin-top:8px"
+			style={{'margin-top': pxToRem(8) + 'rem'}}
 			for={ElementIds.pgWrd_case}>Word case:</label>
 		<ComboBox
-			style="margin-top:2px"
+			style={{'margin-top': pxToRem(2) + 'rem'}}
 			id={ElementIds.pgWrd_case}>
 			{wordCases.map(v =>
 				<ComboBoxOption
@@ -78,10 +79,10 @@ const wordCases: {
 		</ComboBox>
 
 		<label
-			style="margin-top:8px"
+			style={{'margin-top': pxToRem(8) + 'rem'}}
 			for={ElementIds.pgWrd_separator}>Separator:</label>
 		<TextField
-			style="margin-top:2px"
+			style={{'margin-top': pxToRem(2) + 'rem'}}
 			TextFieldInputAttr={{
 				id: ElementIds.pgWrd_separator,
 				value: DEFAULT_WORDS_SEPARATOR
@@ -91,13 +92,13 @@ const wordCases: {
 		<div style={{
 			display: 'grid',
 			gridTemplateColumns: '1fr 1fr',
-			gap: '8px',
-			marginTop: '8px'
+			gap: pxToRem(8) + 'rem',
+			marginTop: pxToRem(8) + 'rem'
 		}}>
 			<div>
 				<label for={ElementIds.pgWrd_prefix}>Prefix:</label>
 				<TextField
-					style="margin-top:2px"
+					style={{'margin-top': pxToRem(2) + 'rem'}}
 					TextFieldInputAttr={{
 						id: ElementIds.pgWrd_prefix,
 						value: DEFAULT_WORDS_PREFIX
@@ -107,7 +108,7 @@ const wordCases: {
 			<div>
 				<label for={ElementIds.pgWrd_suffix}>Suffix:</label>
 				<TextField
-					style="margin-top:2px"
+					style={{'margin-top': pxToRem(2) + 'rem'}}
 					TextFieldInputAttr={{
 						id: ElementIds.pgWrd_suffix,
 						value: DEFAULT_WORDS_SUFFIX
@@ -116,7 +117,7 @@ const wordCases: {
 			</div>
 		</div>
 		<CheckBox
-			style="margin-top:8px"
+			style={{'margin-top': pxToRem(8) + 'rem'}}
 			CheckBoxChecked={DEFAULT_WORDS_REPEAT}
 			CheckBoxInputAttr={{id: ElementIds.pgWrd_repeat}}>Repeat</CheckBox>
 	</div>

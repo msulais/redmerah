@@ -1,26 +1,28 @@
+@use '../../../styles/units.scss' as u;
+
 .body {
-	padding: 12px 16px 16px 16px;
+	padding: u.Rem(12px) u.Rem(16px) u.Rem(16px) u.Rem(16px);
 	display: flex;
-	gap: 32px;
+	gap: u.Rem(32px);
 	flex-wrap: wrap;
 }
 
 .bodyControl {
-	width: 512px;
+	width: u.Rem(512px);
 	> p {
 		font-size: var(--g-font-size-xs);
-		margin-top: 16px;
+		margin-top: u.Rem(16px);
 	}
 
 	> [data-css-color] {
-		padding: 12px;
-		width: min(100%, 512px);
-		border-radius: 4px;
-		height: 128px;
-		margin-top: 8px;
+		padding: u.Rem(12px);
+		width: min(100%, u.Rem(512px));
+		border-radius: u.Rem(4px);
+		height: u.Rem(128px);
+		margin-top: u.Rem(8px);
 		display: grid;
 		grid-template-columns: 1fr 1fr;
-		gap: 12px;
+		gap: u.Rem(12px);
 
 		:root[data-animation=on] & {
 			transition-property: background-color;
@@ -34,14 +36,14 @@
 			}
 		}
 
-		@media (max-width: 360px) {
+		@media (max-width: u.Rem(360px)) {
 			grid-template-columns: 1fr;
-			height: 192px;
+			height: u.Rem(192px);
 		}
 
 		> span {
 			padding: inherit;
-			border-radius: 4px;
+			border-radius: u.Rem(4px);
 			font-weight: bold;
 
 			:root[data-animation=on] & {
@@ -63,9 +65,9 @@
 	flex: 1;
 	height: fit-content;
 	display: grid;
-	gap: 16px;
+	gap: u.Rem(16px);
 	list-style: none;
-	grid-template-columns: repeat(auto-fill, minmax(192px, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(u.Rem(192px), 1fr));
 
 	&:empty {
 		display: none;
@@ -75,24 +77,24 @@
 		display: flex;
 		align-items: center;
 		justify-content: flex-start;
-		gap: 1px;
-		font-size: 14px;
+		gap: u.Rem(1px);
+		font-size: u.Rem(14px);
 
 		> :first-child {
-			margin-right: 7px;
+			margin-right: u.Rem(7px);
 		}
 	}
 
 	& div {
-		margin-top: 4px;
-		padding: 4px;
-		border-radius: 4px;
+		margin-top: u.Rem(4px);
+		padding: u.Rem(4px);
+		border-radius: u.Rem(4px);
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 
 		& span {
-			padding: 4px;
-			border-radius: 2px;
+			padding: u.Rem(4px);
+			border-radius: u.Rem(2px);
 			text-align: center;
 			font-size: var(--g-font-size-xs);
 			font-weight: bold;

@@ -41,7 +41,7 @@ function _initEvents(): void {
 	})
 
 	_sideBarButtonRef.addEventListener('click', () => {
-		if (window.matchMedia(`(max-width: ${SCREEN_WIDTH_SMALL}px)`).matches) {
+		if (window.matchMedia(`(max-width: ${SCREEN_WIDTH_SMALL}rem)`).matches) {
 			_drawerRef.togglePopover()
 			return
 		}

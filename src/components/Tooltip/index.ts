@@ -2,6 +2,7 @@ import { AnimationEffectTiming } from "@/enums/animation"
 import { GlobalElementIds } from "@/enums/ids"
 import { FlyoutPosition as TooltipPosition } from "@/enums/position"
 import { isAnimationAllowed } from "@/utils/animation"
+import { pxToRem, remToPx } from "@/utils/css"
 import { getFlyoutPosition } from "@/utils/flyout"
 import { createElementId } from "@/utils/ids"
 import { safeNumber } from "@/utils/number"
@@ -147,7 +148,7 @@ function _initTooltipRefListener(): void {
 			// keep if 'rangeX === rangeY'
 
 			tooltipTextRef.animate({
-				transform: ['translate(0,0)', `translate(${translateX}px,${translateY}px)`],
+				translate: ['0 0', `${pxToRem(translateX)}rem ${pxToRem(translateY)}rem`],
 				opacity: [1, 0],
 				scale: [1, .75]
 			}, { duration: 250, easing: AnimationEffectTiming.springBounceInverse })
@@ -198,11 +199,11 @@ function _initTooltipRefListener(): void {
 			timeId = null
 			isOpen = true
 			anchorRef = $anchor
-			gap = safeNumber(Number.parseFloat(
+			gap = remToPx(safeNumber(Number.parseFloat(
 				anchorRef.getAttribute(TooltipTargetAttributes.gap)
 				?? tooltip.getAttribute(TooltipAttributes.gap)
-				?? '40'
-			), 40)
+				?? `${pxToRem(40)}`
+			), pxToRem(40)))
 			endDelayDuration = safeNumber(Number.parseFloat(
 				anchorRef.getAttribute(TooltipTargetAttributes.endDelayDuration)
 				?? tooltip.getAttribute(TooltipAttributes.endDelayDuration)
@@ -240,8 +241,8 @@ function _initTooltipRefListener(): void {
 			pointerOpenX = POINTER_X
 			pointerOpenY = POINTER_Y
 
-			tooltipTextRef.style.setProperty('left', flyoutPosition.left + 'px')
-			tooltipTextRef.style.setProperty('top', flyoutPosition.top + 'px')
+			tooltipTextRef.style.setProperty('left', pxToRem(flyoutPosition.left) + 'rem')
+			tooltipTextRef.style.setProperty('top', pxToRem(flyoutPosition.top) + 'rem')
 			if (!isAnimationAllowed()) return
 
 			const popoverMidX = flyoutPosition.left + (tooltipRect.width / 2)
@@ -261,7 +262,7 @@ function _initTooltipRefListener(): void {
 			// keep if 'rangeX === rangeY'
 
 			tooltipTextRef.animate({
-				transform: [`translate(${translateX}px,${translateY}px)`, 'translate(0,0)'],
+				translate: [`${pxToRem(translateX)}rem ${pxToRem(translateY)}rem`, '0 0'],
 				opacity: [0, 1],
 				scale: [.75, 1],
 			}, { duration: 250, easing: AnimationEffectTiming.springBounce })

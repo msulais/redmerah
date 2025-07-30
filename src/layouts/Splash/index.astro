@@ -1,7 +1,9 @@
 ---
 import { GlobalElementIds } from '@/enums/ids'
 ---
-<style>
+<style lang="scss">
+	@use '../../styles/units.scss' as u;
+
 	.splash {
 		z-index: 999;
 		width: 100%;
@@ -16,8 +18,8 @@ import { GlobalElementIds } from '@/enums/ids'
 	}
 
 	.splash > :global(svg) {
-		width: 128px !important;
-		height: 128px !important;
+		width: u.Rem(128px) !important;
+		height: u.Rem(128px) !important;
 		animation: img-splash-start 1s var(--g-transition-spring);
 	}
 

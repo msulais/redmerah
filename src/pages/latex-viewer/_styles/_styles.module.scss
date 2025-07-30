@@ -1,5 +1,7 @@
+@use '../../../styles/units.scss' as u;
+
 .body {
-	padding: 8px 0 0 0;
+	padding: u.Rem(8px) 0 0 0;
 }
 
 .bodyList {
@@ -9,35 +11,35 @@
 
 	&:not([data-text-wrap]) textarea {
 		white-space: pre;
-		scroll-padding-left: 8px;
-		scroll-padding-right: 8px;
+		scroll-padding-left: u.Rem(8px);
+		scroll-padding-right: u.Rem(8px);
 	}
 
 	> li {
 		overflow: auto;
-		padding: 16px;
+		padding: u.Rem(16px);
 
 		&:not(:first-child) {
-			border-top: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
+			border-top: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
 		}
 
 		> textarea {
 			width: 100%;
-			min-height: 32px;
+			min-height: u.Rem(32px);
 			font-family: var(--g-font-family-monospace);
 			font-size: var(--g-font-size-xs);
 			resize: none;
 			field-sizing: content;
-			padding: 6px 10px;
-			border-radius: 4px;
+			padding: u.Rem(6px) u.Rem(10px);
+			border-radius: u.Rem(4px);
 			background-color: rgba(var(--g-color-on-surface), var(--g-opacity2));
-			border: 2px solid transparent;
+			border: u.Rem(2px) solid transparent;
 			border-bottom-color: rgb(var(--g-color-accent));
 			outline: none;
 
 			@supports not (field-sizing: content) {
 				resize: vertical;
-				height: calc(5lh + calc(6px * 2) + calc(2px * 2));
+				height: calc(5lh + calc(u.Rem(6px) * 2) + calc(u.Rem(2px) * 2));
 			}
 
 			&:focus {
@@ -66,17 +68,17 @@
 
 		> output {
 			display: flex;
-			margin-top: 16px;
+			margin-top: u.Rem(16px);
 			width: 100%;
 			overflow-x: auto;
 			overflow-y: hidden;
-			padding: 0 10px
+			padding: 0 u.Rem(10px)
 		}
 
 		> div {
-			margin-top: 16px;
+			margin-top: u.Rem(16px);
 			display: flex;
-			gap: 4px;
+			gap: u.Rem(4px);
 		}
 
 		& math {

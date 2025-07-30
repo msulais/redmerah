@@ -7,13 +7,14 @@ import {
 } from '.'
 import Popover from '@/components/Popover/index.astro'
 import './index.scss'
+import { pxToRem } from '@/utils/css'
 
 type Props = MenuProps
 const {
 	'class': className,
 	MenuContentAttr,
-	PopoverGap = 8,
-	PopoverPadding = 5, // +1px border
+	PopoverGap = pxToRem(8),
+	PopoverPadding = pxToRem(5), // +1px border
 	role,
 	...other
 } = Astro.props

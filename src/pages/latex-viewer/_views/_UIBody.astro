@@ -12,11 +12,12 @@ import { ElementIds } from '../_scripts/_shared/_ids'
 import { ButtonVariant } from '@/components/Button'
 import { DEFAULT_LATEX_TEXT } from '../_scripts/_shared/_constant'
 import { Commands } from '../_scripts/_shared/_commands'
+import { pxToRem } from '@/utils/css'
 ---
 
 <main class={CSSClasses.body}>
 	<Button id={ElementIds.bd_add}
-		style="margin-left:16px"
+		style={{'margin-left': pxToRem(16) + 'rem'}}
 		ButtonVariant={ButtonVariant.filled}>
 		<Icon IconCode={IconCodes.add}/>
 		New equation
@@ -65,7 +66,10 @@ import { Commands } from '../_scripts/_shared/_commands'
 	<Icon IconCode={IconCodes.copy} slot="leading"/>
 	Copied
 </Toast>
-<Dialog id={ElementIds.bd_dialogMathML} style="width:512px" autofocus>
+<Dialog
+	id={ElementIds.bd_dialogMathML}
+	style={{width: pxToRem(512) + 'rem'}}
+	autofocus>
 	<Fragment slot="header">MathML</Fragment>
 	<TextAreaField
 		aria-label="MathML"

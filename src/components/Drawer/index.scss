@@ -1,21 +1,23 @@
+@use '../../styles/units.scss' as u;
+
 .c-drawer {
-	max-width: 280px;
-	max-height: calc(100dvh - 16px);
-	height: calc(100dvh - 16px);
-	width: 280px;
-	min-width: 280px;
+	max-width: u.Rem(280px);
+	max-height: calc(100dvh - u.Rem(16px));
+	height: calc(100dvh - u.Rem(16px));
+	width: u.Rem(280px);
+	min-width: u.Rem(280px);
 	position: fixed;
 	background-color: rgba(var(--g-color-surface), var(--g-opacity-glass));
 	backdrop-filter: blur(var(--g-blur-glass));
-	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity3));
-	border-radius: 8px;
-	left: 8px;
+	border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity3));
+	border-radius: u.Rem(8px);
+	left: u.Rem(8px);
 	box-shadow: var(--g-elevation3);
 	width: max-content;
 	outline: none;
 	overflow: hidden;
-	top: 8px;
-	translate: calc(-100% - 8px) 0;
+	top: u.Rem(8px);
+	translate: calc(-100% - u.Rem(8px)) 0;
 	transition-timing-function: var(--g-transition-spring-inverse);
 	transition-property: display, overlay, translate;
 	transition-duration: var(--g-duration-transition);
@@ -31,12 +33,12 @@
 	}
 
 	:root[data-theme=dark] & {
-		border: 1px solid rgba(0, 0, 0, var(--g-opacity-inv5));
+		border: u.Rem(1px) solid rgba(0, 0, 0, var(--g-opacity-inv5));
 		background-color: rgba(46, 46, 46, var(--g-opacity-glass));
 	}
 	:root[data-theme=auto] & {
 		@media (prefers-color-scheme: dark) {
-			border: 1px solid rgba(0, 0, 0, var(--g-opacity-inv5));
+			border: u.Rem(1px) solid rgba(0, 0, 0, var(--g-opacity-inv5));
 			background-color: rgba(46, 46, 46, var(--g-opacity-glass));
 		}
 	}
@@ -45,7 +47,7 @@
 @starting-style {
 	.c-drawer{
 		&:popover-open {
-			translate: calc(-100% - 8px) 0;
+			translate: calc(-100% - u.Rem(8px)) 0;
 		}
 
 	}
@@ -60,20 +62,20 @@
 		display: block;
 		background-color: rgb(var(--g-color-accent));
 		position: absolute;
-		left: 1px;
-		width: 3px;
+		left: u.Rem(1px);
+		width: u.Rem(3px);
 		top: 50%;
 		opacity: 0;
 		transform: translateY(-50%);
-		height: 3px;
-		border-radius: 999px;
+		height: u.Rem(3px);
+		border-radius: u.Rem(999px);
 		transition-property: height;
 		transition-duration: var(--g-duration-transition);
 	}
 
 	&[data-c-drawer-button-selected]::before {
 		opacity: 1;
-		height: max(50%, 3px);
+		height: max(50%, u.Rem(3px));
 	}
 }
 
@@ -85,9 +87,9 @@
 	max-height: inherit;
 	max-width: 100%;
 	overflow: auto;
-	gap: 4px;
+	gap: u.Rem(4px);
 	border-radius: inherit;
-	padding: 4px;
+	padding: u.Rem(4px);
 	width: 100%;
 	height: 100%;
 }

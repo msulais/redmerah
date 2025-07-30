@@ -1,15 +1,17 @@
+@use '../../styles/units.scss' as u;
+
 .c-appbar {
 	width: 100%;
-	padding: 8px 4px;
+	padding: u.Rem(8px) u.Rem(4px);
 	display: flex;
 	align-items: center;
-	gap: 4px;
+	gap: u.Rem(4px);
 }
 
 .c-appbar-content {
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: u.Rem(8px);
 	flex: 1;
 	overflow: hidden;
 }

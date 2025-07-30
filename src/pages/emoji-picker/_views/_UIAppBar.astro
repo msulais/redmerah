@@ -22,6 +22,7 @@ import { IconCodes } from '@/enums/icons'
 import { ElementIds } from '../_scripts/_shared/_ids'
 import { RadioNames } from '../_scripts/_shared/_input-names'
 import { DEFAULT_ANIMATION, DEFAULT_THEME } from '../_scripts/_shared/_constant'
+import { pxToRem } from '@/utils/css'
 
 const animations: {
 	value: PlatformAnimationMode
@@ -76,8 +77,10 @@ const themes: {
 		<img
 			src={APP.logoUrl}
 			alt={APP.name + ' logo'}
-			width={32}
-			style="margin: 0 8px 0 0"
+			style={{
+				width: pxToRem(32) + 'rem',
+				margin: `0 ${pxToRem(8)}rem 0 0`
+			}}
 		/>
 	</Fragment>
 	<Fragment slot="headline">{APP.name}</Fragment>
@@ -94,24 +97,24 @@ const themes: {
 			id={ElementIds.apSrc_popover}
 			PopoverAnchorBy={ElementIds.apSrc_btn}
 			PopoverDraggable
-			PopoverGap={8}
-			PopoverPadding={12}
-			style="width:280px"
+			PopoverGap={pxToRem(8)}
+			PopoverPadding={pxToRem(12)}
+			style={{width: pxToRem(280) + 'rem'}}
 			PopoverContentAttr={{
-				style: 'padding: 12px'
+				style: {padding: pxToRem(12) + 'rem'}
 			}}>
 			<TextField
 				style="gap:0"
 				TextFieldInputAttr={{
 					placeholder: 'Search emoji',
 					autofocus: true,
-					style: "padding-left:8px",
+					style: {'padding-left': pxToRem(8) + 'rem'},
 					id: ElementIds.apSrc_input
 				}}>
 				<Icon
 					IconCode={IconCodes.search}
 					slot="leading"
-					style="margin-left:8px"
+					style={{'margin-left': pxToRem(8) + 'rem'}}
 				/>
 			</TextField>
 		</Popover>
@@ -125,7 +128,7 @@ const themes: {
 		/>
 		<Menu id={ElementIds.apInf_menu} PopoverAnchorBy={ElementIds.apInf_btn}>
 			<LinkMenuItem href="/">
-				<img src={logoRedmerah.src} width="20"/>
+				<img src={logoRedmerah.src} style={{width: pxToRem(20) + 'rem'}}/>
 				Redmerah
 				<MenuIndent />
 			</LinkMenuItem>
@@ -184,7 +187,7 @@ const themes: {
 				<div style="flex:1"/>
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
-			<SubMenu style="width:150px" id={ElementIds.apSett_animationMenu}>
+			<SubMenu style={{width: pxToRem(150) + 'rem'}} id={ElementIds.apSett_animationMenu}>
 				{animations.map(v =>
 					<RadioMenuItem
 						RadioMenuItemName={RadioNames.animation}
@@ -203,7 +206,7 @@ const themes: {
 				<div style="flex:1"/>
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
-			<SubMenu style="width:150px" id={ElementIds.apSett_themeMenu}>
+			<SubMenu style={{width: pxToRem(150) + 'rem'}} id={ElementIds.apSett_themeMenu}>
 				{themes.map(v =>
 					<RadioMenuItem
 						RadioMenuItemName={RadioNames.theme}

@@ -1,12 +1,14 @@
+@use '../../styles/units.scss' as u;
+
 .c-checkbox {
-	font-size: 14px;
+	font-size: var(--g-font-size-xs);
 	display: flex;
 	align-items: center;
 	color: rgb(var(--g-color-on-surface));
-	gap: 8px;
-	min-height: 32px;
-	padding: 4px 12px 4px 0;
-	border-radius: 4px;
+	gap: u.Rem(8px);
+	min-height: u.Rem(32px);
+	padding: u.Rem(4px) u.Rem(12px) u.Rem(4px) u.Rem(0px);
+	border-radius: u.Rem(4px);
 	position: relative;
 	user-select: none;
 
@@ -29,7 +31,7 @@
 				cursor: pointer;
 
 				> .c-checkbox-input {
-					border-width: 1px;
+					border-width: u.Rem(1px);
 
 					&:checked {
 						opacity: var(--g-opacity-inv3);
@@ -53,8 +55,8 @@
 .c-checkbox-icon {
 	position: absolute;
 	scale: 0;
-	height: 20px;
-	width: 20px;
+	height: u.Rem(20px);
+	width: u.Rem(20px);
 	fill: rgb(var(--g-color-on-accent));
 
 	:root[data-animation=on] & {
@@ -72,12 +74,12 @@
 
 .c-checkbox-input {
 	appearance: none;
-	border: 2px solid rgb(var(--g-color-accent));
-	min-width: 20px;
-	max-width: 20px;
-	min-height: 20px;
-	max-height: 20px;
-	border-radius: 4px;
+	border: u.Rem(2px) solid rgb(var(--g-color-accent));
+	min-width: u.Rem(20px);
+	max-width: u.Rem(20px);
+	min-height: u.Rem(20px);
+	max-height: u.Rem(20px);
+	border-radius: u.Rem(4px);
 	transition-property: background-color;
 	transition-duration: var(--g-duration-transition);
 

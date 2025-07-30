@@ -1,7 +1,9 @@
+@use '../../../styles/units.scss' as u;
+
 .body {
 	width: 100%;
 	height: 100%;
-	padding: 24px;
+	padding: u.Rem(24px);
 	max-height: 100%;
 	overflow: auto;
 	display: flex;
@@ -10,7 +12,7 @@
 	flex-direction: column;
 
 	> h1 {
-		font-size: min(256px, 32dvw);
+		font-size: min(u.Rem(256px), 32dvw);
 		background: linear-gradient(
 			to right,
 			#ff7a00 20%,
@@ -37,22 +39,22 @@
 	}
 
 	> p {
-		margin-top: 16px;
+		margin-top: u.Rem(16px);
 		text-align: center;
 	}
 }
 
 .bodyStatus {
-	margin-top: 16px;
+	margin-top: u.Rem(16px);
 	background-color: rgba(var(--g-color-accent), var(--g-opacity3));
-	padding: 4px 12px;
-	min-height: 32px;
-	border-radius: 4px;
+	padding: u.Rem(4px) u.Rem(12px);
+	min-height: u.Rem(32px);
+	border-radius: u.Rem(4px);
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: u.Rem(8px);
 	font-size: var(--g-font-size-xs);
-	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity1));
+	border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity1));
 
 	:root[data-animation=on] & {
 		transition-duration: .2s;

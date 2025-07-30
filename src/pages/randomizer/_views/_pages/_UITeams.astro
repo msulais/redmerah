@@ -6,6 +6,7 @@ import { DEFAULT_LISTS, DEFAULT_PAGE, DEFAULT_TEAMS_COUNT, DEFAULT_TEAMS_OUTPUT,
 import { Pages } from "../../_scripts/_shared/_enums"
 import { ElementIds } from "../../_scripts/_shared/_ids"
 import { CSSClasses } from "../../_styles/_css"
+import { pxToRem } from '@/utils/css'
 ---
 
 <div
@@ -36,7 +37,7 @@ import { CSSClasses } from "../../_styles/_css"
 	<div class={CSSClasses.bodyOptions}>
 		<label for={ElementIds.pgTm_names}>Names:</label>
 		<ComboBox
-			style="margin-top:2px"
+			style={{'margin-top': pxToRem(2) + 'rem'}}
 			id={ElementIds.pgTm_names}>
 			{DEFAULT_LISTS.map(v =>
 				<ComboBoxOption
@@ -46,10 +47,10 @@ import { CSSClasses } from "../../_styles/_css"
 		</ComboBox>
 
 		<label
-			style="margin-top:8px"
+			style={{'margin-top': pxToRem(8) + 'rem'}}
 			for={ElementIds.pgTm_members}>Members:</label>
 		<ComboBox
-			style="margin-top:2px"
+			style={{'margin-top': pxToRem(2) + 'rem'}}
 			id={ElementIds.pgTm_members}>
 			{DEFAULT_LISTS.map(v =>
 				<ComboBoxOption
@@ -59,10 +60,10 @@ import { CSSClasses } from "../../_styles/_css"
 		</ComboBox>
 
 		<label
-			style="margin-top:8px"
+			style={{'margin-top': pxToRem(8) + 'rem'}}
 			for={ElementIds.pgTm_count}>Count:</label>
 		<TextField
-			style="margin-top:2px"
+			style={{'margin-top': pxToRem(2) + 'rem'}}
 			TextFieldInputAttr={{
 				id: ElementIds.pgTm_count,
 				value: DEFAULT_TEAMS_COUNT,

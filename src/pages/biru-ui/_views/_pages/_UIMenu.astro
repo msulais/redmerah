@@ -20,6 +20,7 @@ import { ButtonVariant } from '@/components/Button'
 import { FlyoutPosition } from '@/enums/position'
 import { MenuPosition } from '@/components/Menu'
 import { IconCodes } from '@/enums/icons'
+import { pxToRem } from '@/utils/css'
 ---
 <div
 	class={CSS.bodyPage}
@@ -249,7 +250,7 @@ import { IconCodes } from '@/enums/icons'
 		</Menu>
 	</div>
 	<div class={CSS.bodyOptions} id={ElementIds.panelMenuOptions}>
-		<div class={CSS.bodyOptionsGroup} style="margin-right:12px">
+		<div class={CSS.bodyOptionsGroup} style={{'margin-right': pxToRem(12) + 'rem'}}>
 			<label for={ElementIds.panelMenuOptionsPosition}>Position:</label>
 			<ComboBox
 				id={ElementIds.panelMenuOptionsPosition}>
@@ -284,7 +285,11 @@ import { IconCodes } from '@/enums/icons'
 				)}
 			</ComboBox>
 		</div>
-		<div class={CSS.bodyOptionsGroup} style="margin-right:12px">
+		<div
+			class={CSS.bodyOptionsGroup}
+			style={{
+				'margin-right': pxToRem(12) + 'rem'
+			}}>
 			<label
 				for={ElementIds.panelMenuOptionsGap}>
 				Gap:
@@ -294,7 +299,9 @@ import { IconCodes } from '@/enums/icons'
 					value: '8',
 					type: 'number',
 					min: 0,
-					style: 'width:100px',
+					style: {
+						width: pxToRem(100) + 'rem'
+					},
 					id: ElementIds.panelMenuOptionsGap
 				}}
 			/>

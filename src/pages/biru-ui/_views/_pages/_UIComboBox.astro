@@ -4,6 +4,7 @@ import ComboBoxOption from '@/components/ComboBox/ComboBoxOption.astro'
 import { ElementIds } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 import { ComboBoxVariant } from '@/components/ComboBox'
+import { pxToRem } from '@/utils/css'
 ---
 <div
 	class={CSS.bodyPage}
@@ -15,7 +16,7 @@ import { ComboBoxVariant } from '@/components/ComboBox'
 	<div class={CSS.bodyPlayground}>
 		<ComboBox
 			id={ElementIds.panelComboBoxPreview}
-			style="min-width:120px">
+			style={{'min-width': pxToRem(120) + 'rem'}}>
 			{[
 				['a', 'Bird'],
 				['b', 'Monkey'],
@@ -38,7 +39,7 @@ import { ComboBoxVariant } from '@/components/ComboBox'
 			<label for={ElementIds.panelComboBoxOptionsVariant}>Variant:</label>
 			<ComboBox
 				id={ElementIds.panelComboBoxOptionsVariant}
-				style="min-width: 140px">
+				style={{'min-width': pxToRem(140) + 'rem'}}>
 				<ComboBoxOption value={ComboBoxVariant.filled}>Filled</ComboBoxOption>
 				<ComboBoxOption value={ComboBoxVariant.tonal} selected>Tonal</ComboBoxOption>
 				<ComboBoxOption value={ComboBoxVariant.transparent}>Transparent</ComboBoxOption>

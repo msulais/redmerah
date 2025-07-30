@@ -16,6 +16,7 @@ import { PlatformAnimationMode, PlatformThemeMode } from '@/enums/platforms'
 import { AppCSSColors } from '@/enums/app-data'
 import { PopoverPosition } from '@/components/Popover'
 import { IconCodes } from '@/enums/icons'
+import { pxToRem } from '@/utils/css'
 ---
 
 <Menu id={ElementIds.appbarSettingsMenu} PopoverAnchorBy={ElementIds.appbarSettingsButton}>
@@ -109,7 +110,7 @@ import { IconCodes } from '@/enums/icons'
 />
 <Menu id={ElementIds.appbarInfoMenu} PopoverAnchorBy={ElementIds.appbarInfoButton}>
 	<LinkMenuItem href="/">
-		<img src={logoRedmerah.src} width="20"/>
+		<img src={logoRedmerah.src} style={{width: pxToRem(20) + 'rem'}}/>
 		Redmerah
 	</LinkMenuItem>
 	<LinkMenuItem href={RoutesLinks.apps}>

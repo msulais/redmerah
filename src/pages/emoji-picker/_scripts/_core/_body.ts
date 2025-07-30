@@ -15,6 +15,7 @@ import { SearchStore } from "./_search"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEffectTiming } from "@/enums/animation"
 import { saveStorageItem } from "./_database"
+import { pxToRem } from "@/utils/css"
 
 const _animationOptions = {
 	duration: 250,
@@ -211,7 +212,7 @@ export function updateEmojiList(page: Pages = NavigationStore.value.page): void 
 		if (!isSamePage) {
 			_titleRef.animate({
 				opacity: [0, 1],
-				translate: ['0 12px', '0 0']
+				translate: [`0 ${pxToRem(12)}rem`, '0 0']
 			}, _animationOptions)
 		}
 

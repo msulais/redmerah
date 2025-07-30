@@ -12,6 +12,7 @@ import CSS from '../../_index.module.scss'
 import { ButtonVariant } from '@/components/Button'
 import { ListVariant } from '@/components/List'
 import { IconCodes } from '@/enums/icons'
+import { pxToRem } from '@/utils/css'
 ---
 <div
 	class={CSS.bodyPage}
@@ -24,11 +25,17 @@ import { IconCodes } from '@/enums/icons'
 		<Tooltip>
 			<List
 				id={ElementIds.panelListPreviewList}
-				style="padding-right:4px"
+				style={{
+					'padding-right': pxToRem(4) + 'rem'
+				}}
 				ListVariant={ListVariant.tonal}
 				ListTrailingAttr={{
 					id: ElementIds.panelListPreviewTrailing,
-					style: 'display:flex;align-items:center;gap:4px;'
+					style: {
+						display: 'flex',
+						'align-items': 'center',
+						gap: pxToRem(4) + 'rem'
+					}
 				}}
 				ListLeadingAttr={{
 					id: ElementIds.panelListPreviewLeading
@@ -51,7 +58,10 @@ import { IconCodes } from '@/enums/icons'
 			<label for={ElementIds.panelListOptionsVariant}>Variant:</label>
 			<ComboBox
 				id={ElementIds.panelListOptionsVariant}
-				style="min-width: 140px; margin-right: 12px">
+				style={{
+					'min-width': pxToRem(140) + 'rem',
+					'margin-right': pxToRem(12) + 'rem'
+				}}>
 				<ComboBoxOption value={ListVariant.filled}>Filled</ComboBoxOption>
 				<ComboBoxOption value={ListVariant.tonal} selected>Tonal</ComboBoxOption>
 				<ComboBoxOption value={ListVariant.transparent}>Transparent</ComboBoxOption>

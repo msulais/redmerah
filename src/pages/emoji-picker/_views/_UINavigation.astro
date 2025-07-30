@@ -11,6 +11,7 @@ import { CSSClasses } from '../_styles/_css'
 import { Pages } from '../_scripts/_shared/_enums'
 import { ElementIds } from '../_scripts/_shared/_ids'
 import { DEFAULT_PAGE } from '../_scripts/_shared/_constant'
+import { pxToRem } from '@/utils/css'
 
 const items: {
 	emoji: string
@@ -73,13 +74,19 @@ const items: {
 	<Tooltip>
 		{items.map(v => <SideBarButton
 			role="tab"
-			style="padding-left:6px;white-space:nowrap"
+			style={{
+				'padding-left': pxToRem(6) + 'rem',
+				'white-space': 'nowrap'
+			}}
 			data-page={v.page}
 			aria-selected={DEFAULT_PAGE === v.page}
 			aria-controls={ElementIds.body}
 			data-tooltip={v.name}
 			SideBarButtonSelected={DEFAULT_PAGE === v.page}
-			SideBarButtonLeadingAttr={{style: 'font-size:20px;line-height:20px'}}
+			SideBarButtonLeadingAttr={{style: {
+				'font-size': pxToRem(20) + 'rem',
+				'line-height': pxToRem(20) + 'rem'
+			}}}
 			ButtonVariant={DEFAULT_PAGE === v.page ? ButtonVariant.tonal : undefined}>
 			<Fragment slot="leading">{v.emoji}</Fragment>
 			{v.name}
@@ -99,10 +106,16 @@ const items: {
 	{items.map(v => <DrawerButton
 		aria-selected={DEFAULT_PAGE === v.page}
 		aria-controls={ElementIds.body}
-		style="padding-left:6px"
+		style={{
+			'padding-left': pxToRem(6) + 'rem'
+		}}
 		data-page={v.page}
 		DrawerButtonSelected={DEFAULT_PAGE === v.page}
 		ButtonVariant={DEFAULT_PAGE === v.page ? ButtonVariant.tonal : undefined}>
-		<span style='font-size:20px;line-height:20px'>{v.emoji}</span>{v.name}
+		<span
+			style={{
+				'font-size': pxToRem(20) + 'rem',
+				'line-height': pxToRem(20) + 'rem',
+			}}>{v.emoji}</span>{v.name}
 	</DrawerButton>)}
 </Drawer>

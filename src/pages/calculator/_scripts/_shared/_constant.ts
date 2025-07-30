@@ -2,8 +2,9 @@ import { IconCodes } from "@/enums/icons"
 import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
 import { ConverterType, DateOperation, DecimalNumberFormat, GroupingNumberFormat, NumberType, Pages, ScientificAngleType } from "./_enums"
 import { LengthUnits } from "./_units"
+import { pxToRem } from "@/utils/css"
 
-export const SCREEN_WIDTH_SMALL = 650
+export const SCREEN_WIDTH_SMALL = pxToRem(650)
 export const DEFAULT_MEMORY = 0
 export const DEFAULT_PAGE: Pages = Pages.basic
 export const DEFAULT_THEME = PlatformThemeMode.auto

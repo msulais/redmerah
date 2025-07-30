@@ -5,9 +5,10 @@ import LinkButton from '@/components/Button/LinkButton.astro'
 import { ButtonVariant } from '@/components/Button/'
 import { Links } from '../_scripts/_shared/_enums'
 import { ElementIds } from '../_scripts/_shared/_ids'
+import { pxToRem } from '@/utils/css'
 ---
 
-<Dialog id={ElementIds.dlg_browseNotSupported} style="width:500px">
+<Dialog id={ElementIds.dlg_browseNotSupported} style={`width:${pxToRem(500)}rem`}>
 	<Fragment slot="header">Browser not supported</Fragment>
 	<p>Battery API not fully supported in your browser. Some features may not function correctly.</p>
 	<form method="dialog" slot="footer" style="display:contents">

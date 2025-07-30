@@ -1,13 +1,15 @@
-$SCREEN_WIDTH_SMALL: 650px;
+@use '../../../styles/units.scss' as u;
+
+$SCREEN_WIDTH_SMALL: u.Rem(650px);
 
 .body {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	padding: 0 16px 16px 16px;
+	padding: 0 u.Rem(16px) u.Rem(16px) u.Rem(16px);
 
 	& section {
-		max-width: 1440px;
+		max-width: u.Rem(1440px);
 		width: 100%;
 	}
 
@@ -15,18 +17,18 @@ $SCREEN_WIDTH_SMALL: 650px;
 		list-style: none;
 		font-weight: normal;
 		font-size: var(--g-font-size-m);
-		padding-bottom: 8px;
+		padding-bottom: u.Rem(8px);
 	}
 
 	& ul {
 		list-style: none;
 		max-width: 100%;
 		display: grid;
-		gap: 4px;
-		grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+		gap: u.Rem(4px);
+		grid-template-columns: repeat(auto-fill, minmax(u.Rem(60px), 1fr));
 
 		& button {
-			padding: 4px;
+			padding: u.Rem(4px);
 			width: 100%;
 			font-size: var(--g-font-size-xm);
 		}
@@ -37,14 +39,14 @@ $SCREEN_WIDTH_SMALL: 650px;
 .bodySkinTone {
 	> label {
 		gap: 0;
-		border-width: 2px;
+		border-width: u.Rem(2px);
 
 		&:has( > input:focus-visible) {
 			outline: auto;
 		}
 
 		&:has( > input:checked) {
-			border: 2px solid rgb(var(--g-color-accent));
+			border: u.Rem(2px) solid rgb(var(--g-color-accent));
 		}
 	}
 

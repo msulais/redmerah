@@ -7,6 +7,7 @@ import TextField from '@/components/TextField/index.astro'
 import { ElementIds } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 import { ButtonVariant } from '@/components/Button'
+import { pxToRem } from '@/utils/css'
 ---
 <div
 	class={CSS.bodyPage}
@@ -25,9 +26,15 @@ import { ButtonVariant } from '@/components/Button'
 				Open dialog
 			</Button>
 		</Tooltip>
-		<Dialog style="width:500px" id={ElementIds.panelDialogPreviewDialog} aria-label="Dialog title">
+		<Dialog
+			style={{width: pxToRem(500) + 'rem'}}
+			id={ElementIds.panelDialogPreviewDialog}
+			aria-label="Dialog title">
 			<Fragment slot="header">Do You Like Cookies?</Fragment>
-			<TextField style="margin-bottom:8px" TextFieldInputAttr={{placeholder: 'Type something ...', autofocus: true}}/>
+			<TextField
+				style={{'margin-bottom': pxToRem(8) + 'rem'}}
+				TextFieldInputAttr={{placeholder: 'Type something ...', autofocus: true}}
+			/>
 			<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis repellat aliquid iste vel laudantium iusto quos qui debitis quod libero veniam nobis repudiandae aperiam nulla earum, est porro suscipit delectus!</p>
 			<form style="display:contents" method="dialog" slot="footer">
 				<Button ButtonVariant={ButtonVariant.tonal}>Close</Button>

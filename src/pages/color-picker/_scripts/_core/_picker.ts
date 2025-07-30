@@ -15,6 +15,7 @@ import { Commands } from "../_shared/_commands"
 import { ColorSpace } from "../_shared/_enums"
 import type { ToastElement } from "@/components/Toast"
 import { saveStorageItem } from "./_database"
+import { pxToRem } from "@/utils/css"
 
 export type PickerStoreType = Readonly<{
 	hex: HEXColor
@@ -971,7 +972,7 @@ function _initImageColorPicker(): void {
 		const observer = new ResizeObserver(() => {
 			_pic_imageWrapperRef.style.setProperty(
 				'max-height',
-				_pic_imageCanvasRef.getBoundingClientRect().height + 'px'
+				pxToRem(_pic_imageCanvasRef.getBoundingClientRect().height) + 'rem'
 			)
 		})
 
@@ -1058,7 +1059,10 @@ function _initImageColorPicker(): void {
 			ctx.drawImage(image, 0, 0)
 			_pic_imageWrapperRef.removeAttribute('data-no-image')
 			updateColor(pickColor())
-			_pic_imageWrapperRef.style.setProperty('max-height', _pic_imageCanvasRef.getBoundingClientRect().height + 'px')
+			_pic_imageWrapperRef.style.setProperty(
+				'max-height',
+				pxToRem(_pic_imageCanvasRef.getBoundingClientRect().height) + 'rem'
+			)
 		}
 	}
 

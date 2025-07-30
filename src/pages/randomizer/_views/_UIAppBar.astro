@@ -29,6 +29,7 @@ import { RadioNames } from '../_scripts/_shared/_input-names'
 import { DEFAULT_ANIMATION, DEFAULT_LISTS, DEFAULT_THEME, DEFAULT_INSTANT_RESULT } from '../_scripts/_shared/_constant'
 import { ButtonVariant } from '@/components/Button'
 import { ListVariant } from '@/components/List'
+import { pxToRem } from '@/utils/css'
 import { CSSClasses } from '../_styles/_css'
 import { Commands } from '../_scripts/_shared/_commands'
 import { AppCSSFontSizes, AppCSSColors } from '@/enums/app-data'
@@ -86,8 +87,10 @@ const themes: {
 		<img
 			src={APP.logoUrl}
 			alt={APP.name + ' logo'}
-			width={32}
-			style="margin: 0 8px 0 0"
+			style={{
+				width: pxToRem(32) + 'rem',
+				margin: `0 ${pxToRem(8)}rem 0 0`
+			}}
 		/>
 	</Fragment>
 	<Fragment slot="headline">{APP.name}</Fragment>
@@ -111,7 +114,7 @@ const themes: {
 		/>
 		<Menu id={ElementIds.apInf_menu} PopoverAnchorBy={ElementIds.apInf_btn}>
 			<LinkMenuItem href="/">
-				<img src={logoRedmerah.src} width="20"/>
+				<img src={logoRedmerah.src} style={{width: pxToRem(20) + 'rem'}}/>
 				Redmerah
 				<MenuIndent />
 			</LinkMenuItem>
@@ -173,7 +176,7 @@ const themes: {
 				<div style="flex:1"/>
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
-			<SubMenu style="width:150px" id={ElementIds.apSett_animationMenu}>
+			<SubMenu style={{width: pxToRem(150) + 'rem'}} id={ElementIds.apSett_animationMenu}>
 				{animations.map(v =>
 					<RadioMenuItem
 						RadioMenuItemName={RadioNames.animation}
@@ -192,7 +195,7 @@ const themes: {
 				<div style="flex:1"/>
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
-			<SubMenu style="width:150px" id={ElementIds.apSett_themeMenu}>
+			<SubMenu style={{width: pxToRem(150) + 'rem'}} id={ElementIds.apSett_themeMenu}>
 				{themes.map(v =>
 					<RadioMenuItem
 						RadioMenuItemName={RadioNames.theme}
@@ -227,7 +230,7 @@ const themes: {
 		/>
 	</Tooltip>
 </AppBar>
-<Dialog id={ElementIds.apSett_listDialog} style="width:512px">
+<Dialog id={ElementIds.apSett_listDialog} style={{width: pxToRem(512) + 'rem'}}>
 	<Fragment slot="header">Lists</Fragment>
 	<Tooltip>
 		<ul
@@ -235,7 +238,7 @@ const themes: {
 			style={{
 				display: 'flex',
 				flexDirection: 'column',
-				gap: '4px'
+				gap: pxToRem(4) + 'rem'
 			}}>
 			{[...DEFAULT_LISTS].sort((a,b) => a.name.localeCompare(b.name)).map(v =>
 				<List
@@ -245,9 +248,9 @@ const themes: {
 					ListTrailingAttr={{style: {
 						display: 'flex',
 						alignItems: 'center',
-						gap: '1px'
+						gap: pxToRem(1) + 'rem'
 					}}}
-					style={{paddingRight: '4px'}}
+					style={{paddingRight: pxToRem(4) + 'rem'}}
 					data-list-id={v.id}>
 					{v.name}
 					<Icon
@@ -282,28 +285,31 @@ const themes: {
 			id={ElementIds.apSett_listNew}>New</Button>
 	</form>
 </Dialog>
-<Dialog id={ElementIds.apSett_listNewDialog} style="width:512px">
+<Dialog id={ElementIds.apSett_listNewDialog} style={{width: pxToRem(512) + "rem"}}>
 	<Fragment slot="header">New list</Fragment>
 	<label for={ElementIds.apSett_listNewName}>Name:</label>
 	<TextField
 		TextFieldInputAttr={{
 			id: ElementIds.apSett_listNewName,
 		}}
-		style="margin-top:2px"
+		style={{'margin-top': pxToRem(2) + 'rem'}}
 	/>
 
 	<label
-		style="margin-top:8px"
+		style={{'margin-top': pxToRem(8) + 'rem'}}
 		for={ElementIds.apSett_listNewItems}>Items:</label>
 	<TextAreaField
 		required
 		id={ElementIds.apSett_listNewItems}
-		style="resize:none;margin-top:2px"
+		style={{
+			resize: 'none',
+			'margin-top': pxToRem(2) + 'rem'
+		}}
 		rows="5"
 	/>
 	<p style={{
 		fontSize: AppCSSFontSizes.xs,
-		marginTop: '8px'
+		marginTop: pxToRem(8) + 'rem'
 	}}>Each item separated by semicolon (;), tab or new line.</p>
 	<form slot="footer" method="dialog" style="display:contents">
 		<Button ButtonVariant={ButtonVariant.tonal}>Cancel</Button>
@@ -312,13 +318,13 @@ const themes: {
 			id={ElementIds.apSett_listSave}>Save</Button>
 	</form>
 </Dialog>
-<Dialog id={ElementIds.apSett_listDeleteDialog} style="width:360px">
+<Dialog id={ElementIds.apSett_listDeleteDialog} style={{width: pxToRem(360) + 'rem'}}>
 	<Fragment slot="header">Delete list</Fragment>
 	<p>Are you sure want to delete this list?</p>
 	<List
 		style={{
-			marginTop: '8px',
-			borderWidth: '2px',
+			marginTop: pxToRem(8) + 'rem',
+			borderWidth: pxToRem(2) + 'rem',
 			borderColor: `rgb(${AppCSSColors.accent})`
 		}}
 		id={ElementIds.apSett_listDeleteItem}
@@ -337,17 +343,17 @@ const themes: {
 			id={ElementIds.apSett_listDelete}>Delete</Button>
 	</form>
 </Dialog>
-<Dialog id={ElementIds.ap_copyColorsDialog} style="width:360px">
+<Dialog id={ElementIds.ap_copyColorsDialog} style={{width: pxToRem(360) + 'rem'}}>
 	<Fragment slot="header">Copy colors</Fragment>
 	<CheckBox
 		CheckBoxChecked
 		CheckBoxInputAttr={{id: ElementIds.ap_copyColorsHex}}>Hex</CheckBox>
 	<CheckBox
-		style="margin-top:4px"
+		style={{'margin-top': pxToRem(4) + 'rem'}}
 		CheckBoxChecked
 		CheckBoxInputAttr={{id: ElementIds.ap_copyColorsRgb}}>RGB</CheckBox>
 	<CheckBox
-		style="margin-top:4px"
+		style={{'margin-top': pxToRem(4) + 'rem'}}
 		CheckBoxChecked
 		CheckBoxInputAttr={{id: ElementIds.ap_copyColorsHsl}}>HSL</CheckBox>
 	<form slot="footer" method="dialog" style="display:contents">

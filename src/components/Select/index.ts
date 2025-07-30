@@ -12,6 +12,7 @@ import {
 } from "@/components/Button"
 import { IconCodes } from "@/enums/icons"
 import { KeyboardValue } from "@/enums/keyboard"
+import { pxToRem } from "@/utils/css"
 
 type SelectProps = astroHTML.JSX.HTMLAttributes & {
 	SelectVariant        ?: SelectVariant
@@ -186,7 +187,7 @@ function openSelectRef(selectRef: SelectElement): void {
 		SELECTED_OPTION_COPY.setAttribute(item.name, item.value)
 	}
 	if (selectRef.hasAttribute(SelectAttributes.useIcon)) {
-		SELECTED_OPTION_COPY.style.setProperty('padding-right', '48px')
+		SELECTED_OPTION_COPY.style.setProperty('padding-right', pxToRem(48) + 'rem')
 	}
 	SELECTED_OPTION_COPY.classList.replace(SelectClasses.placeholder, SelectClasses.option)
 	selectRef.appendChild(SELECTED_OPTION_COPY)
@@ -197,7 +198,7 @@ function openSelectRef(selectRef: SelectElement): void {
 	const screenWidth = document.body.clientWidth
 	const screenHeight = window.innerHeight
 	const selectRect = selectRef.getBoundingClientRect()
-	popoverRef.style.setProperty('min-width', selectRect.width + (popoverPadding * 2) + 'px')
+	popoverRef.style.setProperty('min-width', pxToRem(selectRect.width + (popoverPadding * 2)) + 'rem')
 
 	const popoverRect = popoverRef.getBoundingClientRect()
 	if (selectedOptionRef.classList.contains(SelectClasses.option)){
@@ -246,8 +247,8 @@ function openSelectRef(selectRef: SelectElement): void {
 	if (bottom > screenHeight) top = screenHeight - popoverRect.height - popoverMargin
 
 	OPENED_SELECT = selectRef
-	popoverRef.style.setProperty('left', left + 'px')
-	popoverRef.style.setProperty('top', top + 'px')
+	popoverRef.style.setProperty('left', pxToRem(left) + 'rem')
+	popoverRef.style.setProperty('top', pxToRem(top) + 'rem')
 	if (isAnimationAllowed()) {
 		popoverRef.animate({opacity: [0, 1]}, {duration: 300, easing: AnimationEffectTiming.spring})
 	}

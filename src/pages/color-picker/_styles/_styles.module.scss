@@ -1,11 +1,13 @@
-$DEVICE_SMALL_SCREEN: 800px;
+@use '../../../styles/units.scss' as u;
+
+$DEVICE_SMALL_SCREEN: u.Rem(800px);
 
 .body {
 	display: flex;
 	width: 100%;
 	height: 100%;
-	gap: 16px;
-	padding: 0 16px 16px 16px;
+	gap: u.Rem(16px);
+	padding: 0 u.Rem(16px) u.Rem(16px) u.Rem(16px);
 	justify-content: center;
 	overflow: auto;
 
@@ -22,9 +24,9 @@ $DEVICE_SMALL_SCREEN: 800px;
 	--position-x: 0%;
 	--position-y: 0%;
 	touch-action: none;
-	margin-top: 8px;
-	outline: 1px solid rgba(var(--g-color-on-surface),var(--g-opacity-border));
-	border-radius: 4px;
+	margin-top: u.Rem(8px);
+	outline: u.Rem(1px) solid rgba(var(--g-color-on-surface),var(--g-opacity-border));
+	border-radius: u.Rem(4px);
 	box-shadow: var(--g-elevation2);
 	position: relative;
 
@@ -48,11 +50,11 @@ $DEVICE_SMALL_SCREEN: 800px;
 		top: var(--position-y);
 		translate: -50% -50%;
 		background-color: var(--color);
-		width: 20px;
-		height: 20px;
+		width: u.Rem(20px);
+		height: u.Rem(20px);
 		box-shadow: var(--g-elevation2);
 		border-radius: 50%;
-		border: 2px solid var(--border-color);
+		border: u.Rem(2px) solid var(--border-color);
 		position: absolute;
 
 		:root[data-animation=on] & {
@@ -69,15 +71,15 @@ $DEVICE_SMALL_SCREEN: 800px;
 	}
 
 	> canvas {
-		border-radius: 4px;
+		border-radius: u.Rem(4px);
 	}
 }
 
 .bodyInputs {
-	width: 280px;
+	width: u.Rem(280px);
 	display: flex !important; // override 'contents' in <Tooltip>
 	flex-direction: column;
-	gap: 8px;
+	gap: u.Rem(8px);
 	position: sticky;
 	top: 0;
 
@@ -86,10 +88,10 @@ $DEVICE_SMALL_SCREEN: 800px;
 	}
 
 	> [data-css-preview] {
-		width: calc(100% - 44px - 8px);
-		border-radius: 4px;
-		height: 32px;
-		margin-top: 21px;
+		width: calc(100% - u.Rem(44px) - u.Rem(8px));
+		border-radius: u.Rem(4px);
+		height: u.Rem(32px);
+		margin-top: u.Rem(21px);
 
 		:root[data-animation=on] & {
 			transition-property: background-color;
@@ -107,17 +109,17 @@ $DEVICE_SMALL_SCREEN: 800px;
 	> [data-css-group] {
 		display: flex;
 		align-items: center;
-		gap: 8px;
+		gap: u.Rem(8px);
 
 		> label {
-			width: 44px;
+			width: u.Rem(44px);
 			display: block;
-			margin-bottom: 2px;
+			margin-bottom: u.Rem(2px);
 		}
 
 		> :global(.c-textfield) {
 			flex: 1;
-			padding-right: 2px;
+			padding-right: u.Rem(2px);
 		}
 
 		& input {
@@ -127,7 +129,7 @@ $DEVICE_SMALL_SCREEN: 800px;
 }
 
 .bodyPicker {
-	width: 512px;
+	width: u.Rem(512px);
 
 	@media (max-width: $DEVICE_SMALL_SCREEN) {
 		width: 100%;
@@ -135,7 +137,7 @@ $DEVICE_SMALL_SCREEN: 800px;
 
 	& label {
 		display: block;
-		margin-bottom: 2px;
+		margin-bottom: u.Rem(2px);
 	}
 
 	& select {
@@ -149,9 +151,9 @@ $DEVICE_SMALL_SCREEN: 800px;
 	--position-x: 0%;
 	--position-y: 0%;
 	width: 100%;
-	height: 280px;
-	margin-top: 8px;
-	border-radius: 4px;
+	height: u.Rem(280px);
+	margin-top: u.Rem(8px);
+	border-radius: u.Rem(4px);
 	box-shadow: var(--g-elevation2);
 	position: relative;
 	cursor: crosshair;
@@ -172,11 +174,11 @@ $DEVICE_SMALL_SCREEN: 800px;
 		top: var(--position-y);
 		translate: -50% -50%;
 		background-color: var(--color);
-		width: 20px;
-		height: 20px;
+		width: u.Rem(20px);
+		height: u.Rem(20px);
 		box-shadow: var(--g-elevation2);
 		border-radius: 50%;
-		border: 2px solid var(--border-color);
+		border: u.Rem(2px) solid var(--border-color);
 		position: absolute;
 
 		:root[data-animation=on] & {
@@ -201,24 +203,24 @@ $DEVICE_SMALL_SCREEN: 800px;
 	appearance: none;
 	width: 100%;
 	background-color: transparent;
-	border-radius: 999px;
+	border-radius: u.Rem(999px);
 
 	&::-webkit-slider-runnable-track {
 		-webkit-appearance: none;
 		appearance: none;
 		cursor: pointer;
-		height: 12px;
+		height: u.Rem(12px);
 		box-shadow: var(--g-elevation1);
-		border-radius: 9999px;
+		border-radius: u.Rem(9999px);
 		background: var(--gradient);
 	}
 
 	&::-moz-range-track {
 		appearance: none;
-		height: 12px;
+		height: u.Rem(12px);
 		cursor: pointer;
 		box-shadow: var(--g-elevation1);
-		border-radius: 9999px;
+		border-radius: u.Rem(9999px);
 		background: var(--gradient);
 	}
 
@@ -226,12 +228,12 @@ $DEVICE_SMALL_SCREEN: 800px;
 		-webkit-appearance: none;
 		position: relative;
 		cursor: pointer;
-		top: -4px;
-		width: 20px;
+		top: u.Rem(-4px);
+		width: u.Rem(20px);
 		box-shadow: var(--g-elevation2);
-		height: 20px;
+		height: u.Rem(20px);
 		border-radius: 50%;
-		border: 2px solid var(--border-color);
+		border: u.Rem(2px) solid var(--border-color);
 		background: var(--color);
 
 		:root[data-animation=on] & {
@@ -254,12 +256,12 @@ $DEVICE_SMALL_SCREEN: 800px;
 	&::-moz-range-thumb {
 		position: relative;
 		cursor: pointer;
-		top: -4px;
+		top: u.Rem(-4px);
 		box-shadow: var(--g-elevation2);
-		width: 20px;
-		height: 20px;
+		width: u.Rem(20px);
+		height: u.Rem(20px);
 		border-radius: 50%;
-		border: 2px solid var(--border-color);
+		border: u.Rem(2px) solid var(--border-color);
 		background: var(--color);
 
 		:root[data-animation=on] & {

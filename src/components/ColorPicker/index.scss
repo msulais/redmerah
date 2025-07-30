@@ -1,3 +1,5 @@
+@use '../../styles/units.scss' as u;
+
 .c-colorpicker {
 	--c-colorpicker-rect-x: 100%;
 	--c-colorpicker-rect-y: 0%;
@@ -6,10 +8,10 @@
 	--c-colorpicker-color-with-alpha: #ff0000ff;
 	--c-colorpicker-rect-border-color: #fff;
 	--c-colorpicker-slider-hue-border-color: #fff;
-	width: 280px;
+	width: u.Rem(280px);
 
 	> .c-popover-content {
-		padding: 16px;
+		padding: u.Rem(16px);
 	}
 }
 
@@ -27,8 +29,8 @@
 .c-colorpicker-label {
 	display: grid;
 	grid-template-columns: 2fr 1fr;
-	gap: 8px;
-	margin-bottom: 4px;
+	gap: u.Rem(8px);
+	margin-bottom: u.Rem(4px);
 
 	.c-colorpicker[data-c-colorpicker-disabled-opacity] & {
 		grid-template-columns: 1fr;
@@ -46,17 +48,17 @@
 .c-colorpicker-options {
 	display: flex;
 	align-items: center;
-	gap: 8px;
-	margin-bottom: 8px;
+	gap: u.Rem(8px);
+	margin-bottom: u.Rem(8px);
 }
 
 .c-colorpicker-preview {
-	min-width: 32px;
-	max-width: 32px;
-	min-height: 32px;
-	max-height: 32px;
-	border: 1px solid transparent;
-	border-radius: 999px;
+	min-width: u.Rem(32px);
+	max-width: u.Rem(32px);
+	min-height: u.Rem(32px);
+	max-height: u.Rem(32px);
+	border: u.Rem(1px) solid transparent;
+	border-radius: u.Rem(999px);
 	background-color: var(--c-colorpicker-color-with-alpha);
 	position: relative;
 }
@@ -70,8 +72,8 @@
 		var(--c-colorpicker-hue-color);
 	width: 100%;
 	aspect-ratio: 3 / 2;
-	border-radius: 4px;
-	margin-bottom: 16px;
+	border-radius: u.Rem(4px);
+	margin-bottom: u.Rem(16px);
 	position: relative;
 	cursor: crosshair;
 
@@ -94,11 +96,11 @@
 		top: var(--c-colorpicker-rect-y);
 		translate: -50% -50%;
 		background-color: var(--c-colorpicker-color);
-		width: 20px;
-		height: 20px;
+		width: u.Rem(20px);
+		height: u.Rem(20px);
 		box-shadow: var(--g-elevation2);
 		border-radius: 50%;
-		border: 2px solid var(--c-colorpicker-rect-border-color);
+		border: u.Rem(2px) solid var(--c-colorpicker-rect-border-color);
 		position: absolute;
 	}
 }
@@ -108,7 +110,7 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	gap: 8px;
+	gap: u.Rem(8px);
 }
 
 .c-colorpicker-slider-hue {
@@ -116,15 +118,15 @@
 	appearance: none;
 	width: 100%;
 	background-color: transparent;
-	border-radius: 999px;
+	border-radius: u.Rem(999px);
 
 	&::-webkit-slider-runnable-track {
 		-webkit-appearance: none;
 		appearance: none;
 		cursor: pointer;
-		height: 12px;
+		height: u.Rem(12px);
 		box-shadow: var(--g-elevation1);
-		border-radius: 9999px;
+		border-radius: u.Rem(9999px);
 		background: linear-gradient(
 			90deg in hsl longer hue,
 			#FF0000 0%,
@@ -134,10 +136,10 @@
 
 	&::-moz-range-track {
 		appearance: none;
-		height: 12px;
+		height: u.Rem(12px);
 		cursor: pointer;
 		box-shadow: var(--g-elevation1);
-		border-radius: 9999px;
+		border-radius: u.Rem(9999px);
 		background: linear-gradient(
 			90deg in hsl longer hue,
 			#FF0000 0%,
@@ -149,12 +151,12 @@
 		-webkit-appearance: none;
 		position: relative;
 		cursor: pointer;
-		top: -4px;
-		width: 20px;
+		top: u.Rem(-4px);
+		width: u.Rem(20px);
 		box-shadow: var(--g-elevation2);
-		height: 20px;
+		height: u.Rem(20px);
 		border-radius: 50%;
-		border: 2px solid var(--c-colorpicker-slider-hue-border-color);
+		border: u.Rem(2px) solid var(--c-colorpicker-slider-hue-border-color);
 		background: var(--c-colorpicker-hue-color);
 
 		&:active {
@@ -165,12 +167,12 @@
 	&::-moz-range-thumb {
 		position: relative;
 		cursor: pointer;
-		top: -4px;
+		top: u.Rem(-4px);
 		box-shadow: var(--g-elevation2);
-		width: 20px;
-		height: 20px;
+		width: u.Rem(20px);
+		height: u.Rem(20px);
 		border-radius: 50%;
-		border: 2px solid var(--c-colorpicker-slider-hue-border-color);
+		border: u.Rem(2px) solid var(--c-colorpicker-slider-hue-border-color);
 		background: var(--c-colorpicker-hue-color);
 
 		&:active {
@@ -183,7 +185,7 @@
 	-webkit-appearance: none;
 	appearance: none;
 	width: 100%;
-	border-radius: 9999px;
+	border-radius: u.Rem(9999px);
 	background-color: transparent;
 
 	.c-colorpicker[data-c-colorpicker-disabled-opacity] & {
@@ -194,11 +196,11 @@
 		-webkit-appearance: none;
 		appearance: none;
 		cursor: pointer;
-		height: 12px;
-		outline: 1px solid rgb(var(--g-color-on-surface));
-		outline-offset: -1px;
+		height: u.Rem(12px);
+		outline: u.Rem(1px) solid rgb(var(--g-color-on-surface));
+		outline-offset: u.Rem(-1px);
 		box-shadow: var(--g-elevation1);
-		border-radius: 9999px;
+		border-radius: u.Rem(9999px);
 		background: linear-gradient(
 			90deg,
 			transparent 0%,
@@ -208,12 +210,12 @@
 
 	&::-moz-range-track {
 		appearance: none;
-		height: 12px;
+		height: u.Rem(12px);
 		cursor: pointer;
-		outline: 1px solid rgb(var(--g-color-on-surface));
-		outline-offset: -1px;
+		outline: u.Rem(1px) solid rgb(var(--g-color-on-surface));
+		outline-offset: u.Rem(-1px);
 		box-shadow: var(--g-elevation1);
-		border-radius: 9999px;
+		border-radius: u.Rem(9999px);
 		background: linear-gradient(
 			90deg,
 			transparent 0%,
@@ -225,12 +227,12 @@
 		-webkit-appearance: none;
 		position: relative;
 		cursor: pointer;
-		top: -4px;
-		width: 20px;
+		top: u.Rem(-4px);
+		width: u.Rem(20px);
 		box-shadow: var(--g-elevation2);
-		height: 20px;
+		height: u.Rem(20px);
 		border-radius: 50%;
-		border: 2px solid rgb(var(--g-color-on-surface));
+		border: u.Rem(2px) solid rgb(var(--g-color-on-surface));
 		background: rgb(var(--g-color-surface));
 
 		&:active {
@@ -241,12 +243,12 @@
 	&::-moz-range-thumb {
 		position: relative;
 		cursor: pointer;
-		top: -4px;
+		top: u.Rem(-4px);
 		box-shadow: var(--g-elevation2);
-		width: 20px;
-		height: 20px;
+		width: u.Rem(20px);
+		height: u.Rem(20px);
 		border-radius: 50%;
-		border: 2px solid rgb(var(--g-color-on-surface));
+		border: u.Rem(2px) solid rgb(var(--g-color-on-surface));
 		background: rgb(var(--g-color-surface));
 
 		&:active {
@@ -262,7 +264,7 @@
 .c-colorpicker-textfield {
 	display: grid;
 	grid-template-columns: 2fr 1fr;
-	gap: 8px;
+	gap: u.Rem(8px);
 
 	.c-colorpicker[data-c-colorpicker-disabled-opacity] & {
 		grid-template-columns: 1fr;
@@ -270,7 +272,7 @@
 }
 
 .c-colorpicker-textfield-color {
-	padding-right: 4px;
+	padding-right: u.Rem(4px);
 
 	> input {
 		width: 100%;

@@ -1,11 +1,13 @@
+@use '../../styles/units.scss' as u;
+
 .c-textfield {
 	display: flex;
 	align-items: center;
-	gap: 8px;
-	min-height: 32px;
-	border-radius: 4px;
+	gap: u.Rem(8px);
+	min-height: u.Rem(32px);
+	border-radius: u.Rem(4px);
 	background-color: rgba(var(--g-color-on-surface), var(--g-opacity2));
-	border: 2px solid transparent;
+	border: u.Rem(2px) solid transparent;
 	border-bottom-color: rgb(var(--g-color-accent));
 	transition-property: background-color, border-color;
 	transition-duration: var(--g-duration-transition);
@@ -36,8 +38,8 @@
 }
 
 .c-textfield-button {
-	padding: 0 4px;
-	min-height: 24px;
+	padding: 0 u.Rem(4px);
+	min-height: u.Rem(24px);
 }
 
 .c-textfield-input {
@@ -45,14 +47,14 @@
 	flex: 1;
 	font-size: var(--g-font-size-xs);
 	border: none;
-	padding: 0 10px;
+	padding: 0 u.Rem(10px);
 	outline: none;
 	background-color: transparent;
 	height: 100%;
-	min-height: 28px;
+	min-height: u.Rem(28px);
 
 	&[type=number] {
-		padding: 0 4px 0 10px;
+		padding: 0 u.Rem(4px) 0 u.Rem(10px);
 	}
 
 	&::placeholder {

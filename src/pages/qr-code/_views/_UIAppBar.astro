@@ -20,6 +20,7 @@ import Divider from '@/components/Divider/index.astro'
 import { PlatformAnimationMode, PlatformThemeMode } from '@/enums/platforms'
 import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
 import { RoutesLinks, ExternalLinks } from '@/enums/links'
+import { pxToRem } from '@/utils/css'
 import { IconCodes } from '@/enums/icons'
 import { ElementIds } from '../_scripts/_shared/_ids'
 import { RadioNames } from '../_scripts/_shared/_input-names'
@@ -81,8 +82,10 @@ const themes: {
 		<img
 			src={APP.logoUrl}
 			alt={APP.name + ' logo'}
-			width={32}
-			style="margin: 0 8px 0 0"
+			style={{
+				width: pxToRem(32) + 'rem',
+				margin: `0 ${pxToRem(8)}rem 0 0`
+			}}
 		/>
 	</Fragment>
 	<Fragment slot="headline">{APP.name}</Fragment>
@@ -96,7 +99,7 @@ const themes: {
 		/>
 		<Menu id={ElementIds.apInf_menu} PopoverAnchorBy={ElementIds.apInf_btn}>
 			<LinkMenuItem href="/">
-				<img src={logoRedmerah.src} width="20"/>
+				<img src={logoRedmerah.src} style={{width: pxToRem(20) + 'rem'}}/>
 				Redmerah
 				<MenuIndent />
 			</LinkMenuItem>
@@ -155,7 +158,7 @@ const themes: {
 				<div style="flex:1"/>
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
-			<SubMenu style="width:150px" id={ElementIds.apSett_animationMenu}>
+			<SubMenu style={{width: pxToRem(150) + 'rem'}} id={ElementIds.apSett_animationMenu}>
 				{animations.map(v =>
 					<RadioMenuItem
 						RadioMenuItemName={RadioNames.animation}
@@ -174,7 +177,7 @@ const themes: {
 				<div style="flex:1"/>
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
-			<SubMenu style="width:150px" id={ElementIds.apSett_themeMenu}>
+			<SubMenu style={{width: pxToRem(150) + 'rem'}} id={ElementIds.apSett_themeMenu}>
 				{themes.map(v =>
 					<RadioMenuItem
 						RadioMenuItemName={RadioNames.theme}
@@ -330,41 +333,47 @@ const themes: {
 		</Menu>
 	</Tooltip>
 </AppBar>
-<Dialog id={ElementIds.apSett_colorDialog} style="width:360px">
+<Dialog id={ElementIds.apSett_colorDialog} style={{width: pxToRem(360) + 'rem'}}>
 	<Fragment slot="header">Color</Fragment>
 	<div style={{
 		display: 'flex',
 		flexWrap: 'wrap',
-		gap: '16px',
+		gap: pxToRem(16) + 'rem',
 		alignItems: 'flex-start'
 	}}>
 		<div
 			id={ElementIds.apSett_colorPreviewBackground}
 			style={{
-				minWidth: '64px',
-				maxWidth: '64px',
-				minHeight: '64px',
-				maxHeight: '64px',
+				minWidth: pxToRem(64) + 'rem',
+				maxWidth: pxToRem(64) + 'rem',
+				minHeight: pxToRem(64) + 'rem',
+				maxHeight: pxToRem(64) + 'rem',
 				backgroundColor: DEFAULT_BACKGROUND_COLOR,
 				display: 'flex',
 				alignItems: 'center',
 				justifyContent: 'center',
-				borderRadius: '4px'
+				borderRadius: pxToRem(4) +  'rem'
 			}}>
 			<svg
 				id={ElementIds.apSett_colorPreviewForeground}
 				xmlns="http://www.w3.org/2000/svg"
 				viewBox="0 -960 960 960"
-				height="52px"
-				width="52px"
+				style={{width: pxToRem(52) + 'rem'}}
 				fill={DEFAULT_COLOR}>
 				<path d="M120-560v-240q0-17 11.5-28.5T160-840h240q17 0 28.5 11.5T440-800v240q0 17-11.5 28.5T400-520H160q-17 0-28.5-11.5T120-560Zm80-40h160v-160H200v160Zm-80 440v-240q0-17 11.5-28.5T160-440h240q17 0 28.5 11.5T440-400v240q0 17-11.5 28.5T400-120H160q-17 0-28.5-11.5T120-160Zm80-40h160v-160H200v160Zm320-360v-240q0-17 11.5-28.5T560-840h240q17 0 28.5 11.5T840-800v240q0 17-11.5 28.5T800-520H560q-17 0-28.5-11.5T520-560Zm80-40h160v-160H600v160Zm160 480v-80h80v80h-80ZM520-360v-80h80v80h-80Zm80 80v-80h80v80h-80Zm-80 80v-80h80v80h-80Zm80 80v-80h80v80h-80Zm80-80v-80h80v80h-80Zm0-160v-80h80v80h-80Zm80 80v-80h80v80h-80Z"/>
 			</svg>
 		</div>
 		<div style="flex:1">
-			<p style="font-size:14px;user-select:none;color:rgba(var(--g-color-on-surface),var(--g-opacity-inv2));">Color:</p>
+			<p style={{
+				'font-size': 'var(--g-font-size-xs)',
+				'user-select': 'none',
+				color: 'rgba(var(--g-color-on-surface),var(--g-opacity-inv2))'
+			}}>Color:</p>
 			<Button
-				style="margin-top:4px;width:100%"
+				style={{
+					'margin-top': pxToRem(4) + 'rem',
+					width: '100%'
+				}}
 				ButtonVariant={ButtonVariant.tonal}
 				id={ElementIds.apSett_colorForePickerBtn}
 				popovertarget={ElementIds.apSett_colorForePicker}
@@ -376,9 +385,17 @@ const themes: {
 				PopoverPosition={FlyoutPosition.centerCenterLeftTop}
 			/>
 
-			<p style="margin-top:8px;font-size:14px;user-select:none;color:rgba(var(--g-color-on-surface),var(--g-opacity-inv2));">Background color:</p>
+			<p style={{
+				'margin-top': pxToRem(8) + 'rem',
+				'font-size': 'var(--g-font-size-xs)',
+				'user-select': 'none',
+				color: 'rgba(var(--g-color-on-surface),var(--g-opacity-inv2))'
+			}}>Background color:</p>
 			<Button
-				style="margin-top:4px;width:100%"
+				style={{
+					'margin-top': pxToRem(4) + 'rem',
+					width: '100%'
+				}}
 				ButtonVariant={ButtonVariant.tonal}
 				id={ElementIds.apSett_colorBackPickerBtn2}
 				popovertarget={ElementIds.apSett_colorBackPicker}
@@ -396,7 +413,7 @@ const themes: {
 		<Button ButtonVariant={ButtonVariant.filled} id={ElementIds.apSett_colorSave}>Save</Button>
 	</form>
 </Dialog>
-<Dialog id={ElementIds.apSett_marginDialog} style="width:360px">
+<Dialog id={ElementIds.apSett_marginDialog} style={{width: pxToRem(360) + 'rem'}}>
 	<Fragment slot="header">Margin</Fragment>
 	<TextField TextFieldInputAttr={{
 		'aria-label': 'Margin',

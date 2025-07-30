@@ -14,6 +14,7 @@ import { ElementIds } from '../_scripts/_shared/_ids'
 import { SkinToneEmoji } from '../_scripts/_shared/_enums'
 import { RadioNames } from '../_scripts/_shared/_input-names'
 import { DEFAULT_SKIN_TONE } from '../_scripts/_shared/_constant'
+import { pxToRem } from '@/utils/css'
 
 const maxEmojiList = Math.max(
 	EMOJIS_SMILEY_AND_EMOTION.length,
@@ -72,9 +73,9 @@ const skinTones: {
 <main class={CSSClasses.body} id={ElementIds.body}>
 	<section>
 		<div style={{
-			padding: '4px 0 16px 0',
+			padding: `${pxToRem(4)}rem 0 ${pxToRem(16)}rem 0`,
 			position: 'sticky',
-			borderRadius: '0 0 1px 1px',
+			borderRadius: `0 0 ${pxToRem(1)}rem ${pxToRem(1)}rem`,
 			top: '0',
 			backgroundColor: `rgb(${AppCSSColors.background})`
 		}}>
@@ -82,10 +83,21 @@ const skinTones: {
 			<TextField
 				TextFieldInputAttr={{
 					placeholder: '😃😗😪💤',
-					style: 'padding-left:6px;padding-right:4px;font-size:var(--g-font-size-xm);min-height:36px',
+					style: {
+						'padding-left': pxToRem(6) + 'rem',
+						'padding-right': pxToRem(4) + 'rem',
+						'font-size': 'var(--g-font-size-xm)',
+						'min-height': pxToRem(36) + 'rem'
+					},
 					id: ElementIds.bd_input
 				}}>
-				<Tooltip slot='trailing' style="display:flex;align-items:center;gap:4px">
+				<Tooltip
+					slot='trailing'
+					style={{
+						display: 'flex',
+						'align-items': 'center',
+						gap: pxToRem(4) + 'rem'
+					}}>
 					<TextFieldButton
 						id={ElementIds.bd_dismissInput}
 						data-tooltip="Clear"
@@ -96,7 +108,7 @@ const skinTones: {
 						id={ElementIds.bd_copyInput}
 						data-tooltip="Copy"
 						aria-label="Copy text"
-						style="margin-right:4px">
+						style={{'margin-right': pxToRem(4) + 'rem'}}>
 						<Icon IconCode={IconCodes.copy}/>
 					</TextFieldButton>
 				</Tooltip>
@@ -107,8 +119,8 @@ const skinTones: {
 				style={{
 					display: 'none',
 					alignItems: 'center',
-					gap: '4px',
-					marginTop: '4px'
+					gap: pxToRem(4) + 'rem',
+					marginTop: pxToRem(4) + 'rem'
 				}}>
 				{skinTones.map(v =>
 					<label

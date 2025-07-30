@@ -8,6 +8,7 @@ import CSS from '../../_index.module.scss'
 import { ButtonVariant } from '@/components/Button'
 import { IconCodes } from '@/enums/icons'
 import { FlyoutPosition } from '@/enums/position'
+import { pxToRem } from '@/utils/css'
 ---
 <div
 	class={CSS.bodyPage}
@@ -29,16 +30,16 @@ import { FlyoutPosition } from '@/enums/position'
 			PopoverAnchorBy={ElementIds.panelDatePickerPreviewButton}
 			DatePickerEndDate={new Date(2100, 0, 1)}
 			PopoverPosition={FlyoutPosition.centerCenterLeftTop}
-			PopoverGap={8}
-			PopoverPadding={13}
+			PopoverGap={pxToRem(8)}
+			PopoverPadding={pxToRem(13)}
 		/>
 	</div>
 	<div class={CSS.bodyOptions} id={ElementIds.panelDatePickerOptions}>
-		<div class={CSS.bodyOptionsGroup} style="margin-right: 12px">
+		<div class={CSS.bodyOptionsGroup} style={`margin-right:${pxToRem(12)}rem`}>
 			<label for={ElementIds.panelDatePickerOptionsStartButton}>Start date:</label>
 			<Button
 				ButtonVariant={ButtonVariant.tonal}
-				style="padding-left:8px"
+				style={{'padding-left': pxToRem(8) + 'rem'}}
 				id={ElementIds.panelDatePickerOptionsStartButton}
 				popovertarget={ElementIds.panelDatePickerOptionsStartPicker}>
 				<Icon IconCode={IconCodes.calendar}/>
@@ -50,8 +51,8 @@ import { FlyoutPosition } from '@/enums/position'
 				id={ElementIds.panelDatePickerOptionsStartPicker}
 				PopoverAnchorBy={ElementIds.panelDatePickerOptionsStartButton}
 				DatePickerValue={new Date(0)}
-				PopoverGap={8}
-				PopoverPadding={13}
+				PopoverGap={pxToRem(8)}
+				PopoverPadding={pxToRem(13)}
 				PopoverPosition={FlyoutPosition.centerCenterLeftTop}
 			/>
 		</div>
@@ -59,7 +60,7 @@ import { FlyoutPosition } from '@/enums/position'
 			<label for={ElementIds.panelDatePickerOptionsEndButton}>End date:</label>
 			<Button
 				ButtonVariant={ButtonVariant.tonal}
-				style="padding-left:8px"
+				style={{'padding-left': pxToRem(8) + 'rem'}}
 				id={ElementIds.panelDatePickerOptionsEndButton}
 				popovertarget={ElementIds.panelDatePickerOptionsEndPicker}>
 				<Icon IconCode={IconCodes.calendar}/>
@@ -71,8 +72,8 @@ import { FlyoutPosition } from '@/enums/position'
 				id={ElementIds.panelDatePickerOptionsEndPicker}
 				PopoverAnchorBy={ElementIds.panelDatePickerOptionsEndButton}
 				DatePickerValue={new Date(2100, 0, 1)}
-				PopoverGap={8}
-				PopoverPadding={13}
+				PopoverGap={pxToRem(8)}
+				PopoverPadding={pxToRem(13)}
 				PopoverPosition={FlyoutPosition.centerCenterLeftTop}
 			/>
 		</div>

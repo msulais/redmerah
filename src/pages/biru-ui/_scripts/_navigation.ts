@@ -6,6 +6,7 @@ import { AnimationEffectTiming } from "@/enums/animation"
 import { isTargetValidElement } from "@/utils/element"
 import { closeDrawerRef, DrawerClasses, updateDrawerButtonRef } from "@/components/Drawer"
 import CSS from '../_index.module.scss'
+import { pxToRem } from "@/utils/css"
 
 const $ = (id: string) => document.getElementById(id)
 
@@ -83,7 +84,7 @@ function initNavigationEvents(): void {
 		if (!isAnimationAllowed()) return
 
 		targetPanel.animate({
-			transform: ['translateY(64px)', 'translateY(0)'],
+			transform: [`translateY(${pxToRem(64)}rem)`, 'translateY(0)'],
 			opacity: [0, 1]
 		}, {
 			duration: 500,

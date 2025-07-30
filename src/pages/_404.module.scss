@@ -1,12 +1,14 @@
+@use '../styles/units.scss' as u;
+
 .main {
-	padding-bottom: 64px;
+	padding-bottom: u.Rem(64px);
 
 	> h1 {
-		font-size: max(min(20vmin, 164px), 64px);
-		padding-bottom: 16px;
+		font-size: max(min(20vmin, u.Rem(164px)), u.Rem(64px));
+		padding-bottom: u.Rem(16px);
 
 		> span {
-			border-bottom: 1px solid;
+			border-bottom: u.Rem(1px) solid;
 		}
 	}
 }

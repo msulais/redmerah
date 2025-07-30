@@ -1,11 +1,13 @@
-$SMALL_SIZE: 450px;
+@use '../../../styles/units.scss' as u;
+
+$SMALL_SIZE: u.Rem(450px);
 
 .body {
-	padding: 8px 16px 16px 16px;
+	padding: u.Rem(8px) u.Rem(16px) u.Rem(16px) u.Rem(16px);
 
 	> :is(img, video, audio) {
-		border: 2px solid rgb(var(--g-color-accent));
-		border-radius: 8px;
+		border: u.Rem(2px) solid rgb(var(--g-color-accent));
+		border-radius: u.Rem(8px);
 		width: 100%;
 	}
 
@@ -14,26 +16,26 @@ $SMALL_SIZE: 450px;
 	}
 
 	> img {
-		height: calc(100dvh - 76px);
+		height: calc(100dvh - u.Rem(76px));
 		object-fit: contain;
 
 		@media (max-width: $SMALL_SIZE) {
-			height: calc(100dvh - 136px);
+			height: calc(100dvh - u.Rem(136px));
 		}
 	}
 
 	> audio {
-		height: calc(100dvh - 76px);
-		padding: 16px;
+		height: calc(100dvh - u.Rem(76px));
+		padding: u.Rem(16px);
 
 		@media (max-width: $SMALL_SIZE) {
-			height: calc(100dvh - 136px);
+			height: calc(100dvh - u.Rem(136px));
 		}
 	}
 
 	> video {
 		height: 100%;
-		max-height: calc(100dvh - 76px);
+		max-height: calc(100dvh - u.Rem(76px));
 
 		&:fullscreen {
 			border: none;
@@ -41,7 +43,7 @@ $SMALL_SIZE: 450px;
 		}
 
 		@media (max-width: $SMALL_SIZE) {
-			max-height: calc(100dvh - 136px);
+			max-height: calc(100dvh - u.Rem(136px));
 		}
 	}
 }
@@ -49,13 +51,13 @@ $SMALL_SIZE: 450px;
 .pickBtn {
 	@media (max-width: $SMALL_SIZE) {
 		position: fixed;
-		bottom: calc(env(safe-area-inset-bottom) + 16px);
-		right: 16px;
+		bottom: calc(env(safe-area-inset-bottom) + u.Rem(16px));
+		right: u.Rem(16px);
 		box-shadow: var(--g-elevation2);
-		min-height: 48px;
-		padding-left: 16px;
-		padding-right: 16px;
-		border-radius: 8px;
+		min-height: u.Rem(48px);
+		padding-left: u.Rem(16px);
+		padding-right: u.Rem(16px);
+		border-radius: u.Rem(8px);
 		z-index: 10;
 	}
 }

@@ -21,6 +21,7 @@ import logoHTML from '@/assets/images/logos/html-logo.svg'
 import { RoutesLinks, ExternalLinks } from '@/enums/links'
 import { IconCodes } from '@/enums/icons'
 import { ElementIds } from '../_scripts/_shared/_ids'
+import { pxToRem } from '@/utils/css'
 import { RadioNames } from '../_scripts/_shared/_input-names'
 import { DEFAULT_ANIMATION, DEFAULT_TEXT_WRAP, DEFAULT_THEME } from '../_scripts/_shared/_constant'
 
@@ -73,8 +74,10 @@ const themes: {
 		<img
 			src={APP.logoUrl}
 			alt={APP.name + ' logo'}
-			width={32}
-			style="margin:0 8px 0 12px"
+			style={{
+				width: pxToRem(32) + 'rem',
+				margin: `0 ${pxToRem(8)}rem 0 ${pxToRem(12)}rem`
+			}}
 		/>
 	</Fragment>
 	<Fragment slot="headline">{APP.name}</Fragment>
@@ -88,7 +91,7 @@ const themes: {
 		/>
 		<Menu id={ElementIds.apInf_menu} PopoverAnchorBy={ElementIds.apInf_btn}>
 			<LinkMenuItem href="/">
-				<img src={logoRedmerah.src} width="20"/>
+				<img src={logoRedmerah.src} style={{width: pxToRem(20) + 'rem'}}/>
 				Redmerah
 				<MenuIndent />
 			</LinkMenuItem>
@@ -147,7 +150,7 @@ const themes: {
 				<div style="flex:1"/>
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
-			<SubMenu style="width:150px" id={ElementIds.apSett_animationMenu}>
+			<SubMenu style={{width: pxToRem(150) + 'rem'}} id={ElementIds.apSett_animationMenu}>
 				{animations.map(v =>
 					<RadioMenuItem
 						RadioMenuItemName={RadioNames.animation}
@@ -166,7 +169,7 @@ const themes: {
 				<div style="flex:1"/>
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
-			<SubMenu style="width:150px" id={ElementIds.apSett_themeMenu}>
+			<SubMenu style={{width: pxToRem(150) + 'rem'}} id={ElementIds.apSett_themeMenu}>
 				{themes.map(v =>
 					<RadioMenuItem
 						RadioMenuItemName={RadioNames.theme}
@@ -213,19 +216,19 @@ const themes: {
 				<div style="flex:1"/>
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
-			<SubMenu style="width:150px" id={ElementIds.apMore_copyMenu}>
+			<SubMenu style={{width: pxToRem(150) + 'rem'}} id={ElementIds.apMore_copyMenu}>
 				<MenuItem id={ElementIds.apMore_copyMarkdown}>
-					<svg width={20} viewBox="0 0 2560 2560" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<svg style={{width: pxToRem(24) + 'rem'}} viewBox="0 0 2560 2560" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path d="M2375.4 2067.68H184.6C82.8 2067.68 0 1984.88 0 1883.08V676.92C0 575.12 82.8 492.32 184.6 492.32H2375.36C2477.16 492.32 2559.96 575.12 2559.96 676.92V1883.08C2560 1984.88 2477.2 2067.68 2375.4 2067.68ZM615.4 1698.48V1218.48L861.56 1526.16L1107.72 1218.48V1698.48H1353.88V861.52H1107.72L861.56 1169.2L615.4 861.52H369.24V1698.44H615.4V1698.48ZM2264.6 1280H2018.44V861.52H1772.28V1280H1526.12L1895.36 1710.76L2264.6 1280Z" fill="rgb(var(--g-color-on-surface))"/>
 					</svg>
 					Markdown
 				</MenuItem>
 				<MenuItem id={ElementIds.apMore_copyCSS}>
-					<img width={20} src={logoCSS.src} alt="CSS logo"/>
+					<img style={{width: pxToRem(24) + 'rem'}} src={logoCSS.src} alt="CSS logo"/>
 					CSS
 				</MenuItem>
 				<MenuItem id={ElementIds.apMore_copyHTML}>
-					<img width={20} src={logoHTML.src} alt="HTML logo"/>
+					<img style={{width: pxToRem(24) + 'rem'}} src={logoHTML.src} alt="HTML logo"/>
 					HTML
 				</MenuItem>
 			</SubMenu>
@@ -237,33 +240,33 @@ const themes: {
 				<div style="flex:1"/>
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
-			<SubMenu style="width:150px" id={ElementIds.apMore_downloadMenu}>
+			<SubMenu style={{width: pxToRem(150) + 'rem'}} id={ElementIds.apMore_downloadMenu}>
 				<MenuItem id={ElementIds.apMore_downloadMarkdown}>
-					<svg width={20} viewBox="0 0 2560 2560" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<svg style={{width: pxToRem(24) + 'rem'}} viewBox="0 0 2560 2560" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path d="M2375.4 2067.68H184.6C82.8 2067.68 0 1984.88 0 1883.08V676.92C0 575.12 82.8 492.32 184.6 492.32H2375.36C2477.16 492.32 2559.96 575.12 2559.96 676.92V1883.08C2560 1984.88 2477.2 2067.68 2375.4 2067.68ZM615.4 1698.48V1218.48L861.56 1526.16L1107.72 1218.48V1698.48H1353.88V861.52H1107.72L861.56 1169.2L615.4 861.52H369.24V1698.44H615.4V1698.48ZM2264.6 1280H2018.44V861.52H1772.28V1280H1526.12L1895.36 1710.76L2264.6 1280Z" fill="rgb(var(--g-color-on-surface))"/>
 					</svg>
 					Markdown
 				</MenuItem>
 				<MenuItem id={ElementIds.apMore_downloadCSS}>
-					<img width={20} src={logoCSS.src} alt="CSS logo"/>
+					<img style={{width: pxToRem(24) + 'rem'}} src={logoCSS.src} alt="CSS logo"/>
 					CSS
 				</MenuItem>
 				<MenuItem id={ElementIds.apMore_downloadHTML}>
-					<img width={20} src={logoHTML.src} alt="HTML logo"/>
+					<img style={{width: pxToRem(24) + 'rem'}} src={logoHTML.src} alt="HTML logo"/>
 					HTML
 				</MenuItem>
 			</SubMenu>
 
 			<Divider/>
 			<MenuItem id={ElementIds.apMore_resetMarkdown}>
-				<svg width={20} viewBox="0 0 2560 2560" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<svg style={{width: pxToRem(24) + 'rem'}} viewBox="0 0 2560 2560" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<path d="M2375.4 2067.68H184.6C82.8 2067.68 0 1984.88 0 1883.08V676.92C0 575.12 82.8 492.32 184.6 492.32H2375.36C2477.16 492.32 2559.96 575.12 2559.96 676.92V1883.08C2560 1984.88 2477.2 2067.68 2375.4 2067.68ZM615.4 1698.48V1218.48L861.56 1526.16L1107.72 1218.48V1698.48H1353.88V861.52H1107.72L861.56 1169.2L615.4 861.52H369.24V1698.44H615.4V1698.48ZM2264.6 1280H2018.44V861.52H1772.28V1280H1526.12L1895.36 1710.76L2264.6 1280Z" fill="rgb(var(--g-color-on-surface))"/>
 				</svg>
 				Reset markdown
 				<MenuIndent />
 			</MenuItem>
 			<MenuItem id={ElementIds.apMore_resetCSS}>
-				<img width={20} src={logoCSS.src} alt="CSS logo"/>
+				<img style={{width: pxToRem(24) + 'rem'}} src={logoCSS.src} alt="CSS logo"/>
 				Reset CSS
 				<MenuIndent />
 			</MenuItem>

@@ -1,13 +1,15 @@
+@use '../../styles/units.scss' as u;
+
 .c-menu.c-popover {
 	&[data-c-popover-draggable] > div {
-		padding-top: 12px;
+		padding-top: u.Rem(12px);
 	}
 
 	> .c-popover-content {
-		padding: 4px 0;
+		padding: u.Rem(4px) 0;
 		display: flex;
 		flex-direction: column;
-		gap: 4px;
+		gap: u.Rem(4px);
 		align-items: stretch;
 		justify-content: flex-start;
 	}
@@ -44,6 +46,8 @@
 }
 
 .c-menu-check-item-icon {
+	width: u.Rem(20px);
+	height: u.Rem(20px);
 	scale: 0;
 	transition-property: scale;
 	transition-duration: var(--g-duration-transition);
@@ -58,9 +62,9 @@
 }
 
 .c-menu-header {
-	padding: 0 8px;
-	margin: 0 4px;
-	min-height: 24px;
+	padding: 0 u.Rem(8px);
+	margin: 0 u.Rem(4px);
+	min-height: u.Rem(24px);
 	display: flex;
 	text-wrap: nowrap;
 	flex-direction: column;
@@ -71,17 +75,17 @@
 }
 
 .c-menu-indent {
-	min-width: 20px;
-	max-width: 20px;
+	min-width: u.Rem(20px);
+	max-width: u.Rem(20px);
 }
 
 .c-menu-item.c-button {
 	outline-offset: 0;
-	padding: 0 8px;
+	padding: 0 u.Rem(8px);
 	justify-content: flex-start;
-	margin: 0 4px;
-	min-height: 28px;
-	width: calc(100% - 8px);
+	margin: 0 u.Rem(4px);
+	min-height: u.Rem(28px);
+	width: calc(100% - u.Rem(8px));
 	white-space: nowrap;
 }
 

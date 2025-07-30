@@ -1,4 +1,5 @@
 import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
+import { pxToRem } from "@/utils/css"
 
 export const DEFAULT_THEME = PlatformThemeMode.auto
 export const DEFAULT_ANIMATION = PlatformAnimationMode.auto
@@ -65,7 +66,7 @@ a, button, :is(a, button) * {
 }
 
 body {
-    padding: 6px 8px;
+    padding: ${pxToRem(6)}rem ${pxToRem(8)}rem;
 }
 
 body > :not(:first-child) {
@@ -86,14 +87,14 @@ p, li {
 
 img, audio, iframe, video {
     width: 100%;
-    border-radius: 4px;
+    border-radius: ${pxToRem(4)}rem;
     border: none;
-    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, .3);
+    box-shadow: 0 ${pxToRem(2)}rem ${pxToRem(4)}rem -${pxToRem(1)}rem rgba(0, 0, 0, .3);
 }
 
 @media (prefers-color-scheme: dark) {
     img, audio, iframe, video {
-        box-shadow: 0 2px 4px -1px rgba(0, 0, 0, .6);
+        box-shadow: 0 ${pxToRem(2)}rem ${pxToRem(4)}rem -${pxToRem(1)}rem rgba(0, 0, 0, .6);
     }
 }
 
@@ -103,33 +104,33 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 {
     font-weight: 100;
-    font-size: 44px;
+    font-size: ${pxToRem(44)}rem;
 }
 
 h2 {
-    font-size: 36px;
+    font-size: ${pxToRem(36)}rem;
 }
 
 h3 {
-    font-size: 28px;
+    font-size: ${pxToRem(28)}rem;
 }
 
 h4 {
-    font-size: 20px;
+    font-size: ${pxToRem(20)}rem;
 }
 
 h5 {
-    font-size: 16px;
+    font-size: ${pxToRem(16)}rem;
 }
 
 h6 {
-    font-size: 14px;
+    font-size: ${pxToRem(14)}rem;
 }
 
 figcaption {
     text-align: center;
-    margin-top: 8px;
-    font-size: 14px;
+    margin-top: ${pxToRem(8)}rem;
+    font-size: ${pxToRem(14)}rem;
 }
 
 ul, ol {
@@ -140,14 +141,14 @@ code {
     padding: 0 .2em;
     border-radius: .2em;
     background-color: rgba(var(--g-color-on-surface), .04);
-    border: 1px solid rgba(var(--g-color-on-surface), .04);
+    border: ${pxToRem(1)}rem solid rgba(var(--g-color-on-surface), .04);
 }
 
 pre {
     background-color: rgba(var(--g-color-on-surface), .04);
-    border: 1px solid rgba(var(--g-color-on-surface), .04);
-    padding: 8px 12px;
-    border-radius: 4px;
+    border: ${pxToRem(1)}rem solid rgba(var(--g-color-on-surface), .04);
+    padding: ${pxToRem(8)}rem ${pxToRem(12)}rem;
+    border-radius: ${pxToRem(4)}rem;
     overflow: auto;
 }
 
@@ -161,7 +162,7 @@ a {
     --border-color: rgba(var(--g-color-accent), .08);
 
     text-decoration: underline;
-    border: 1px solid transparent;
+    border: ${pxToRem(1)}rem solid transparent;
     color: rgb(var(--g-color-accent));
     transition: all .2s;
     padding: 0 .2em;
@@ -181,21 +182,21 @@ a:active {
 }
 
 blockquote {
-    border: 1px solid rgb(var(--g-color-accent));
-    border-left-width: 4px;
-    padding: 8px;
-    border-radius: 4px;
+    border: ${pxToRem(1)}rem solid rgb(var(--g-color-accent));
+    border-left-width: ${pxToRem(4)}rem;
+    padding: ${pxToRem(8)}rem;
+    border-radius: ${pxToRem(4)}rem;
     position: relative;
 }
 
 blockquote > :not(blockquote) {
-    padding-right: 12px;
+    padding-right: ${pxToRem(12)}rem;
 }
 
 blockquote blockquote {
-    padding: 8px 8px 8px 12px;
-    margin-top: 8px;
-    border-radius: 4px;
+    padding: ${pxToRem(8)}rem ${pxToRem(8)}rem ${pxToRem(8)}rem ${pxToRem(12)}rem;
+    margin-top: ${pxToRem(8)}rem;
+    border-radius: ${pxToRem(4)}rem;
 }
 
 blockquote blockquote::after {
@@ -210,10 +211,10 @@ hr {
 table {
     --border-color: rgba(var(--g-color-on-surface), .32);
 
-    border: 1px solid var(--border-color);
+    border: ${pxToRem(1)}rem solid var(--border-color);
     border-collapse: separate;
     border-spacing: 0;
-    border-radius: 4px;
+    border-radius: ${pxToRem(4)}rem;
     width: 100%;
     vertical-align: top;
 }
@@ -221,37 +222,37 @@ table {
 th {
     background-color: rgba(var(--g-color-on-surface), .04);
     border: none;
-    padding: 8px 12px;
+    padding: ${pxToRem(8)}rem ${pxToRem(12)}rem;
     text-align: start;
 }
 
 th:first-child {
-    border-bottom: 1px solid var(--border-color);
-    border-radius: 4px 0 0 0;
-    border-right: 1px solid var(--border-color);
+    border-bottom: ${pxToRem(1)}rem solid var(--border-color);
+    border-radius: ${pxToRem(4)}rem 0 0 0;
+    border-right: ${pxToRem(1)}rem solid var(--border-color);
 }
 
 th:nth-child(n+1) {
-    border-bottom: 1px solid var(--border-color);
-    border-right: 1px solid var(--border-color);
+    border-bottom: ${pxToRem(1)}rem solid var(--border-color);
+    border-right: ${pxToRem(1)}rem solid var(--border-color);
 }
 
 th:last-child {
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: ${pxToRem(1)}rem solid var(--border-color);
     border-right: none;
-    border-radius: 0 4px 0 0;
+    border-radius: 0 ${pxToRem(4)}rem 0 0;
 }
 
 td {
     border: none;
-    border-bottom: 1px solid var(--border-color);
-    border-right: 1px solid var(--border-color);
-    padding: 8px 12px;
+    border-bottom: ${pxToRem(1)}rem solid var(--border-color);
+    border-right: ${pxToRem(1)}rem solid var(--border-color);
+    padding: ${pxToRem(8)}rem ${pxToRem(12)}rem;
     vertical-align: top;
 }
 
 td:last-child {
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: ${pxToRem(1)}rem solid var(--border-color);
     border-right: none;
 }
 

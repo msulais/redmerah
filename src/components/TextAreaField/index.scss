@@ -1,12 +1,14 @@
+@use '../../styles/units.scss' as u;
+
 .c-textareafield {
 	display: block;
 	width: 100%;
-	min-height: 32px;
+	min-height: u.Rem(32px);
 	font-size: var(--g-font-size-xs);
-	padding: 4.5px 10px;
-	border-radius: 4px;
+	padding: u.Rem(4.5px) u.Rem(10px);
+	border-radius: u.Rem(4px);
 	background-color: rgba(var(--g-color-on-surface), var(--g-opacity2));
-	border: 2px solid transparent;
+	border: u.Rem(2px) solid transparent;
 	border-bottom-color: rgb(var(--g-color-accent));
 	outline: none;
 	transition-property: border-color;

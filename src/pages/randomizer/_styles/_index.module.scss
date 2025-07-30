@@ -1,5 +1,7 @@
-$HIDE_NAVIGATION: 900px;
-$SCREEN_WIDTH_SMALL: 650px;
+@use '../../../styles/units.scss' as u;
+
+$HIDE_NAVIGATION: u.Rem(900px);
+$SCREEN_WIDTH_SMALL: u.Rem(650px);
 
 .body {
 	display: flex;
@@ -9,8 +11,8 @@ $SCREEN_WIDTH_SMALL: 650px;
 	max-height: 100%;
 	overflow: auto;
 	background-color: rgb(var(--g-color-surface));
-	border-radius: 8px 0 0 0;
-	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity3));
+	border-radius: u.Rem(8px) 0 0 0;
+	border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity3));
 	border-bottom: none;
 	border-right: none;
 
@@ -36,37 +38,37 @@ $SCREEN_WIDTH_SMALL: 650px;
 }
 
 .bodyResult {
-	padding: 16px;
+	padding: u.Rem(16px);
 	height: 100%;
 	width: 100%;
 	flex: 1;
 	overflow: auto;
 
 	@media (max-width: $HIDE_NAVIGATION) {
-		padding-top: 4px;
+		padding-top: u.Rem(4px);
 	}
 
 	@media (max-width: $SCREEN_WIDTH_SMALL) {
-		min-height: calc(100dvh - 192px);
-		max-height: calc(100dvh - 192px);
+		min-height: calc(100dvh - u.Rem(192px));
+		max-height: calc(100dvh - u.Rem(192px));
 	}
 }
 
 .bodyOptions {
 	display: flex !important;
 	flex-direction: column;
-	border-left: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity3));
-	padding: 16px;
-	min-width: 280px;
-	max-width: 280px;
+	border-left: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity3));
+	padding: u.Rem(16px);
+	min-width: u.Rem(280px);
+	max-width: u.Rem(280px);
 	height: 100%;
 	overflow: auto;
 
 	@media (max-width: $HIDE_NAVIGATION) {
-		border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity3));
+		border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity3));
 		border-right: none;
 		border-bottom: none;
-		border-radius: 8px 0 0 0;
+		border-radius: u.Rem(8px) 0 0 0;
 		background-color: rgb(var(--g-color-surface));
 	}
 
@@ -75,22 +77,22 @@ $SCREEN_WIDTH_SMALL: 650px;
 		max-width: 100%;
 		border-left: none;
 		border-radius: 0;
-		min-height: calc(100dvh - 192px);
-		max-height: calc(100dvh - 192px);
-		padding-bottom: 32px + 48px;
+		min-height: calc(100dvh - u.Rem(192px));
+		max-height: calc(100dvh - u.Rem(192px));
+		padding-bottom: u.Rem(32px) + u.Rem(48px);
 	}
 }
 
 .generateBtn {
 	@media (max-width: $SCREEN_WIDTH_SMALL) {
 		position: fixed;
-		bottom: calc(env(safe-area-inset-bottom) + 16px);
-		right: 16px;
+		bottom: calc(env(safe-area-inset-bottom) + u.Rem(16px));
+		right: u.Rem(16px);
 		box-shadow: var(--g-elevation2);
-		min-height: 48px;
-		padding-left: 16px;
-		padding-right: 16px;
-		border-radius: 8px;
+		min-height: u.Rem(48px);
+		padding-left: u.Rem(16px);
+		padding-right: u.Rem(16px);
+		border-radius: u.Rem(8px);
 		z-index: 10;
 	}
 }
@@ -123,10 +125,10 @@ $SCREEN_WIDTH_SMALL: 650px;
 .resultNumbers,
 .resultWords {
 	overflow-wrap: anywhere;
-	padding: 8px 16px;
+	padding: u.Rem(8px) u.Rem(16px);
 	font-size: var(--g-font-size-xxl);
 
-	@media (max-width: 500px) {
+	@media (max-width: u.Rem(500px)) {
 		font-size: var(--g-font-size-xm);
 	}
 }
@@ -135,13 +137,13 @@ $SCREEN_WIDTH_SMALL: 650px;
 	> ul {
 		list-style: none;
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(192px, 1fr));
-		gap: 8px;
+		grid-template-columns: repeat(auto-fill, minmax(u.Rem(192px), 1fr));
+		gap: u.Rem(8px);
 	}
 
 	& li {
-		padding: 16px;
-		border-radius: 4px;
+		padding: u.Rem(16px);
+		border-radius: u.Rem(4px);
 		font-size: var(--g-font-size-xs);
 		font-family: var(--g-font-family-monospace);
 		transition-property: background-color, color;
@@ -154,17 +156,17 @@ $SCREEN_WIDTH_SMALL: 650px;
 		list-style: none;
 		display: flex;
 		flex-wrap: wrap;
-		gap: 8px;
-		max-width: min(1080px, 100%);
+		gap: u.Rem(8px);
+		max-width: min(u.Rem(1080px), 100%);
 	}
 
 	& li {
-		border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
-		padding: 4px 12px;
-		border-radius: 999px;
+		border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
+		padding: u.Rem(4px) u.Rem(12px);
+		border-radius: u.Rem(999px);
 		overflow-wrap: anywhere;
 		font-size: var(--g-font-size-xs);
-		min-height: 32px;
+		min-height: u.Rem(32px);
 		display: flex;
 		align-items: center;
 		transition-property: border-color, background-color, color;
@@ -182,29 +184,29 @@ $SCREEN_WIDTH_SMALL: 650px;
 	> ul {
 		list-style: none;
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(192px, 1fr));
-		gap: 8px;
+		grid-template-columns: repeat(auto-fill, minmax(u.Rem(192px), 1fr));
+		gap: u.Rem(8px);
 
 		> li {
-			border: 2px solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
-			padding: 8px 10px;
+			border: u.Rem(2px) solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
+			padding: u.Rem(8px) u.Rem(10px);
 			font-size: var(--g-font-size-xxs);
-			border-radius: 4px;
+			border-radius: u.Rem(4px);
 			color: rgb(var(--g-color-accent));
 			font-weight: bold;
 
 			> ul {
-				margin-top: 8px;
-				padding-top: 8px;
+				margin-top: u.Rem(8px);
+				padding-top: u.Rem(8px);
 				position: relative;
 
 				&::after {
 					content: '';
 					position: absolute;
-					width: calc(100% + 20px);
-					height: 2px;
+					width: calc(100% + u.Rem(20px));
+					height: u.Rem(2px);
 					top: 0;
-					left: -10px;
+					left: u.Rem(-10px);
 					background-color: rgba(var(--g-color-on-surface), var(--g-opacity-border));
 				}
 
@@ -213,7 +215,7 @@ $SCREEN_WIDTH_SMALL: 650px;
 					color: rgb(var(--g-color-on-surface));
 					list-style-position: inside;
 					list-style-type: disc;
-					padding-left: 4px;
+					padding-left: u.Rem(4px);
 					font-weight: normal;
 				}
 			}

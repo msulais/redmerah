@@ -1,4 +1,6 @@
-$SCREEN_WIDTH_SMALL: 650px;
+@use '../../../styles/units.scss' as u;
+
+$SCREEN_WIDTH_SMALL: u.Rem(650px);
 
 .body {
 	display: flex;
@@ -26,7 +28,7 @@ $SCREEN_WIDTH_SMALL: 650px;
 	outline: none;
 	font-size: var(--g-font-size-xxl);
 	color: rgb(var(--g-color-accent));
-	margin-bottom: 4px;
+	margin-bottom: u.Rem(4px);
 	text-wrap: nowrap;
 	width: 100%;
 }
@@ -46,13 +48,13 @@ $SCREEN_WIDTH_SMALL: 650px;
 	display: grid;
 	flex: 1;
 	height: 100%;
-	gap: 4px;
+	gap: u.Rem(4px);
 	width: 100%;
-	padding: 4px 4px 4px 0;
-	border-radius: 16px;
+	padding: u.Rem(4px) u.Rem(4px) u.Rem(4px) 0;
+	border-radius: u.Rem(16px);
 
 	@media (max-width: $SCREEN_WIDTH_SMALL) {
-		padding: 4px;
+		padding: u.Rem(4px);
 	}
 
 	> :global(.c-button) {
@@ -77,12 +79,12 @@ $SCREEN_WIDTH_SMALL: 650px;
 	width: 100%;
 	height: 100%;
 	overflow: auto;
-	border-radius: 8px 0 0 0;
+	border-radius: u.Rem(8px) 0 0 0;
 	background-color: rgb(var(--g-color-surface));
-	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity3));
+	border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity3));
 	border-bottom-color: transparent;
 	border-right-color: transparent;
-	padding: 16px;
+	padding: u.Rem(16px);
 
 	@media (max-width: $SCREEN_WIDTH_SMALL) {
 		border-radius: 0;
@@ -103,14 +105,14 @@ $SCREEN_WIDTH_SMALL: 650px;
 .bodyPageProgrammerOutputGroup {
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: u.Rem(8px);
 
 	&:first-child {
-		margin-top: 4px;
+		margin-top: u.Rem(4px);
 	}
 
 	&:not(:last-child) {
-		margin-bottom: 4px;
+		margin-bottom: u.Rem(4px);
 	}
 
 	&[aria-selected=true] > input {
@@ -118,9 +120,9 @@ $SCREEN_WIDTH_SMALL: 650px;
 	}
 
 	> :global(.c-button) {
-		min-height: 24px;
+		min-height: u.Rem(24px);
 		padding: 0;
-		width: 40px;
+		width: u.Rem(40px);
 	}
 
 	> input {
@@ -141,8 +143,8 @@ $SCREEN_WIDTH_SMALL: 650px;
 .bodyPageScientificMenuGrid {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
-	gap: 4px;
-	padding: 16px;
+	gap: u.Rem(4px);
+	padding: u.Rem(16px);
 }
 
 .bodyPageScientificTrigonometry {
@@ -150,7 +152,7 @@ $SCREEN_WIDTH_SMALL: 650px;
 }
 
 .bodyPageInput {
-	padding: 0 12px;
+	padding: 0 u.Rem(12px);
 }
 
 .bodyPageMemoryPreview {
@@ -161,18 +163,18 @@ $SCREEN_WIDTH_SMALL: 650px;
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: 4px;
-	padding: 0 4px 0 0;
+	gap: u.Rem(4px);
+	padding: 0 u.Rem(4px) 0 0;
 
 	@media (max-width: $SCREEN_WIDTH_SMALL) {
-		padding: 0 4px;
+		padding: 0 u.Rem(4px);
 	}
 }
 
 .bodyPageOptionsGroup {
 	display: flex;
 	align-items: center;
-	gap: 4px;
+	gap: u.Rem(4px);
 }
 
 .navigationSideBar {

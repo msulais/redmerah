@@ -5,11 +5,12 @@ import { type SubMenuProps, MenuClasses } from '.'
 import Menu from './index.astro'
 import './index.scss'
 import { PopoverPosition } from '../Popover'
+import { pxToRem } from '@/utils/css'
 
 type Props = SubMenuProps
 const {
 	'class': className,
-	PopoverGap = -4,
+	PopoverGap = pxToRem(-4),
 	popover = 'manual',
 	PopoverPosition: position = PopoverPosition.rightCenterToBottom,
 	...other

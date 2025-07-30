@@ -1,23 +1,25 @@
+@use '../../styles/units.scss' as u;
+
 .c-tooltip {
 	display: contents;
 }
 
 #c-text-tooltip {
 	align-items: center;
-	border-radius: 4px;
+	border-radius: u.Rem(4px);
 	border: none;
 	box-shadow: var(--g-elevation2);
 	display: flex;
 	inset: unset;
 	color: rgb(var(--g-color-surface));
 	background-color: rgb(var(--g-color-on-surface));
-	max-height: calc(100dvh - 16px);
-	max-width: calc(100% - 16px);
-	padding: 6px 8px;
+	max-height: calc(100dvh - u.Rem(16px));
+	max-width: calc(100% - u.Rem(16px));
+	padding: u.Rem(6px) u.Rem(8px);
 	font-size: var(--g-font-size-s);
 	font-weight: 500;
-	outline: 1px solid rgba(var(--g-color-surface), var(--g-opacity2));
-	outline-offset: -1px;
+	outline: u.Rem(1px) solid rgba(var(--g-color-surface), var(--g-opacity2));
+	outline-offset: u.Rem(-1px);
 	overflow: hidden;
 	pointer-events: none;
 	width: fit-content;

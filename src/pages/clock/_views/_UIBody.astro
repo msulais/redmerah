@@ -10,15 +10,25 @@ import { CSSClasses } from "../_styles/_css"
 import { ElementIds } from '../_scripts/_shared/_ids'
 import { IconCodes } from '@/enums/icons'
 import { ButtonVariant } from '@/components/Button'
+import { pxToRem } from '@/utils/css'
 ---
 
 <main class={CSSClasses.body}>
 	<UIClock />
 	<UITimer />
 	<UIStopwatch />
-	<Dialog id={ElementIds.bdDlg_wakeLockError} style="width:360px">
+	<Dialog
+		id={ElementIds.bdDlg_wakeLockError}
+		style={{
+			width: pxToRem(360) + 'rem'
+		}}>
 		<Fragment slot="header">
-			<Icon IconCode={IconCodes.warning} style="font-size:32px"/>
+			<Icon
+				IconCode={IconCodes.warning}
+				style={{
+					'--c-icon-size': pxToRem(32) + 'rem'
+				}}
+			/>
 			Keep Awake Error
 		</Fragment>
 		<p>

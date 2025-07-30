@@ -1,10 +1,12 @@
+@use '../../styles/units.scss' as u;
+
 .c-dialog {
 	position: fixed;
 	background-color: rgb(var(--g-color-surface));
-	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity3));
-	border-radius: 8px;
-	max-height: calc(100dvh - 16px);
-	max-width: calc(100% - 16px);
+	border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity3));
+	border-radius: u.Rem(8px);
+	max-height: calc(100dvh - u.Rem(16px));
+	max-width: calc(100% - u.Rem(16px));
 	width: max-content;
 	outline: none;
 	overflow: hidden;
@@ -20,12 +22,12 @@
 	transition-behavior: allow-discrete;
 
 	:root[data-theme=dark] & {
-		border: 1px solid rgba(0, 0, 0, var(--g-opacity-inv5));
+		border: u.Rem(1px) solid rgba(0, 0, 0, var(--g-opacity-inv5));
 		background-color: rgb(46, 46, 46);
 	}
 	:root[data-theme=auto] & {
 		@media (prefers-color-scheme: dark) {
-			border: 1px solid rgba(0, 0, 0, var(--g-opacity-inv5));
+			border: u.Rem(1px) solid rgba(0, 0, 0, var(--g-opacity-inv5));
 			background-color: rgb(46, 46, 46);
 		}
 	}
@@ -49,8 +51,8 @@
 
 	&[data-c-dialog-focus] > .c-dialog-container {
 		outline-color: rgb(var(--g-color-accent));
-		outline-width: 4px;
-		outline-offset: -4px;
+		outline-width: u.Rem(4px);
+		outline-offset: u.Rem(-4px);
 		outline-style: solid;
 
 		:root[data-animation=on] & {
@@ -91,7 +93,7 @@
 }
 
 .c-dialog-content {
-	padding: 24px;
+	padding: u.Rem(24px);
 	flex: 1;
 	max-height: 100%;
 	width: 100%;
@@ -101,21 +103,21 @@
 .c-dialog-footer {
 	align-items: center;
 	background-color: rgb(var(--g-color-background));
-	border-top: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity2));
+	border-top: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity2));
 	width: 100%;
 	display: flex;
 	flex-wrap: wrap;
-	gap: 8px;
+	gap: u.Rem(8px);
 	justify-content: flex-end;
-	padding: 24px;
+	padding: u.Rem(24px);
 
 	&:empty {
 		display: none;
 	}
 
 	& .c-button {
-		flex: 1 1 100px;
-		max-width: 340px;
+		flex: 1 1 u.Rem(100px);
+		max-width: u.Rem(340px);
 
 		&:first-child:last-child {
 			max-width: 100%;
@@ -127,13 +129,13 @@
 	width: 100%;
 	font-size: var(--g-font-size-m);
 	font-weight: 500;
-	padding: 24px 24px 0 24px;
+	padding: u.Rem(24px) u.Rem(24px) u.Rem(0px) u.Rem(24px);
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: u.Rem(8px);
 
 	&:not(:empty) + .c-dialog-content {
-		padding-top: 16px !important;
+		padding-top: u.Rem(16px) !important;
 	}
 
 	&:empty {

@@ -6,6 +6,7 @@ import { safeNumber } from "@/utils/number"
 import { isValidEnumValue } from "@/utils/object"
 import { BodyAttributes, GlobalAttributes } from "@/enums/attributes"
 import { KeyboardValue } from "@/enums/keyboard"
+import { pxToRem, remToPx } from "@/utils/css"
 
 type ModalProps = astroHTML.JSX.DialogHTMLAttributes & {
 	ModalAnchorBy      ?: string
@@ -306,16 +307,16 @@ function _initModalRef(modalRef: ModalElement): void {
 		if (modalRefRect.right > screenWidth) left = screenWidth - modalRefRect.width - MODAL_MARGIN
 		if (modalRefRect.bottom > screenHeight) top = screenHeight - modalRefRect.height - MODAL_MARGIN
 
-		modalRef.style.setProperty(ModalCSSVariables.left, left + 'px')
-		modalRef.style.setProperty(ModalCSSVariables.top, top + 'px')
+		modalRef.style.setProperty(ModalCSSVariables.left, pxToRem(left) + 'rem')
+		modalRef.style.setProperty(ModalCSSVariables.top, pxToRem(top) + 'rem')
 		if (!isAnimationAllowed() || !animation) {
 			return options?.done()
 		}
 
 		modalRef.animate({
-			transform: [
-				`translate(${x - left}px,${y - top}px)`,
-				`translate(0,0)`
+			translate: [
+				`${pxToRem(x - left)}rem ${pxToRem(y - top)}rem`,
+				`0 0`
 			]
 		}, {
 			duration: 300,
@@ -336,13 +337,15 @@ function _initModalRef(modalRef: ModalElement): void {
 		anchorRef = options.anchor ?? attributes.anchor
 		important = options.important ?? attributes.important
 		position = options.position ?? attributes.position
-		gap = options.gap ?? attributes.gap
-		padding = options.padding ?? attributes.padding
-		pointerX = pointer?.x ?? POINTER_X
-		pointerY = pointer?.y ?? POINTER_Y
+		gap = remToPx(options.gap ?? attributes.gap)
+		padding = remToPx(options.padding ?? attributes.padding)
+		pointerX = typeof pointer?.x === 'number'? remToPx(pointer.x) : POINTER_X
+		pointerY = typeof pointer?.y === 'number'? remToPx(pointer.y) : POINTER_Y
 		modalRef.toggleAttribute(ModalAttributes.draggable, options.draggable ?? attributes.draggable)
 		modalRef.showModal()
-		if (!autofocus) modalRef.focus()
+		if (!autofocus) {
+			modalRef.focus()
+		}
 
 		const modalRect = modalRef.getBoundingClientRect()
 		const anchorRect = anchorRef?.getBoundingClientRect()
@@ -358,8 +361,8 @@ function _initModalRef(modalRef: ModalElement): void {
 			position
 		})
 
-		modalRef.style.setProperty(ModalCSSVariables.left, flyoutPosition.left + 'px')
-		modalRef.style.setProperty(ModalCSSVariables.top, flyoutPosition.top + 'px')
+		modalRef.style.setProperty(ModalCSSVariables.left, pxToRem(flyoutPosition.left) + 'rem')
+		modalRef.style.setProperty(ModalCSSVariables.top, pxToRem(flyoutPosition.top) + 'rem')
 		if (!animation || !isAnimationAllowed()) {
 			return options.done()
 		}
@@ -381,7 +384,7 @@ function _initModalRef(modalRef: ModalElement): void {
 		// keep if 'rangeX === rangeY'
 
 		modalRef.animate({
-			transform: [`translate(${translateX}px,${translateY}px)`, 'translate(0,0)'],
+			translate: [`${pxToRem(translateX)}rem ${pxToRem(translateY)}rem`, '0 0'],
 			opacity: [0, 1]
 		}, { duration: 300, easing: AnimationEffectTiming.springBounce })
 		.finished.then(() => {
@@ -433,7 +436,7 @@ function _initModalRef(modalRef: ModalElement): void {
 		// keep if 'rangeX === rangeY'
 
 		modalRef.animate({
-			transform: ['translate(0,0)', `translate(${translateX}px,${translateY}px)`],
+			translate: ['0 0', `${pxToRem(translateX)}rem ${pxToRem(translateY)}rem`],
 			opacity: [1, 0]
 		}, { duration: 300, easing: AnimationEffectTiming.springBounce })
 		.finished.then(() => {
@@ -459,16 +462,16 @@ function _initModalRef(modalRef: ModalElement): void {
 		})
 
 		const [x, y] = [modalRect.left, modalRect.top]
-		modalRef.style.setProperty(ModalCSSVariables.left, flyoutPosition.left + 'px')
-		modalRef.style.setProperty(ModalCSSVariables.top, flyoutPosition.top + 'px')
+		modalRef.style.setProperty(ModalCSSVariables.left, pxToRem(flyoutPosition.left) + 'rem')
+		modalRef.style.setProperty(ModalCSSVariables.top, pxToRem(flyoutPosition.top) + 'rem')
 		if (!isAnimationAllowed() || !animation) {
 			return options?.done()
 		}
 
 		modalRef.animate({
-			transform: [
-				`translate(${x - flyoutPosition.left}px,${y - flyoutPosition.top}px)`,
-				`translate(0,0)`
+			translate: [
+				`${pxToRem(x - flyoutPosition.left)}rem ${pxToRem(y - flyoutPosition.top)}rem`,
+				`0 0`
 			]
 		}, {
 			duration: 300,
@@ -527,8 +530,8 @@ function _initModalRef(modalRef: ModalElement): void {
 			break
 		}
 
-		modalRef.style.setProperty(ModalCSSVariables.left, keyLeft + 'px')
-		modalRef.style.setProperty(ModalCSSVariables.top, keyTop + 'px')
+		modalRef.style.setProperty(ModalCSSVariables.left, pxToRem(keyLeft) + 'rem')
+		modalRef.style.setProperty(ModalCSSVariables.top, pxToRem(keyTop) + 'rem')
 		if (timeoutFixPositionId !== null) clearTimeout(timeoutFixPositionId)
 
 		timeoutFixPositionId = setTimeout(() => {
@@ -541,8 +544,8 @@ function _initModalRef(modalRef: ModalElement): void {
 		if (!isDragging) return
 
 		requestAnimationFrame(() => {
-			modalRef.style.setProperty(ModalCSSVariables.left, ev.clientX - diffPositionX + 'px')
-			modalRef.style.setProperty(ModalCSSVariables.top, ev.clientY - diffPositionY + 'px')
+			modalRef.style.setProperty(ModalCSSVariables.left, pxToRem(ev.clientX - diffPositionX) + 'rem')
+			modalRef.style.setProperty(ModalCSSVariables.top, pxToRem(ev.clientY - diffPositionY) + 'rem')
 		})
 	}
 

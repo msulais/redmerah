@@ -1,5 +1,7 @@
+@use '../../styles/units.scss' as u;
+
 .desktop_only {
-	@media (max-width: 540px) {
+	@media (max-width: u.Rem(540px)) {
 		display: none !important;
 	}
 }
@@ -17,24 +19,24 @@
 
 	> div {
 		display: flex !important;
-		gap: 4px;
+		gap: u.Rem(4px);
 		align-items: center;
-		width: 1080px;
+		width: u.Rem(1080px);
 		max-width: 100%;
-		padding: 8px;
+		padding: u.Rem(8px);
 	}
 
 	& nav {
 		display: flex;
 		align-items: center;
-		gap: 4px;
+		gap: u.Rem(4px);
 		flex: 1;
 		justify-content: flex-end;
 	}
 }
 
 .mobile_only {
-	@media (min-width: 541px) {
+	@media (min-width: u.Rem(541px)) {
 		display: none !important;
 	}
 }

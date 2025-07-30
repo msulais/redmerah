@@ -26,6 +26,7 @@ import { RadioNames } from '../_scripts/_shared/_input-names'
 import { DEFAULT_ANIMATION, DEFAULT_THEME } from '../_scripts/_shared/_constant'
 import { ButtonVariant } from '@/components/Button'
 import { FlyoutPosition } from '@/enums/position'
+import { pxToRem } from '@/utils/css'
 
 const animations: {
 	value: PlatformAnimationMode
@@ -76,8 +77,10 @@ const themes: {
 		<img
 			src={APP.logoUrl}
 			alt={APP.name + ' logo'}
-			width={32}
-			style="margin:0 8px 0 12px"
+			style={{
+				width: pxToRem(32) + 'rem',
+				margin: `0 ${pxToRem(8)}rem 0 ${pxToRem(12)}rem`
+			}}
 		/>
 	</Fragment>
 	<Fragment slot="headline">{APP.name}</Fragment>
@@ -94,7 +97,7 @@ const themes: {
 			PopoverAnchorBy={ElementIds.apOpen_btn}
 			PopoverPosition={FlyoutPosition.centerBottomToRight}
 			id={ElementIds.apOpen_menu}
-			style="width:156px">
+			style={{width: pxToRem(156) + 'rem'}}>
 			<MenuHeader>Source:</MenuHeader>
 			<MenuItem id={ElementIds.apOpen_device}>
 				<Icon IconCode={IconCodes.phoneDesktop}/>
@@ -114,7 +117,7 @@ const themes: {
 		/>
 		<Menu id={ElementIds.apInf_menu} PopoverAnchorBy={ElementIds.apInf_btn}>
 			<LinkMenuItem href="/">
-				<img src={logoRedmerah.src} width="20"/>
+				<img src={logoRedmerah.src} style={{width: pxToRem(20) + 'rem'}}/>
 				Redmerah
 				<MenuIndent />
 			</LinkMenuItem>
@@ -173,7 +176,7 @@ const themes: {
 				<div style="flex:1"/>
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
-			<SubMenu style="width:150px" id={ElementIds.apSett_animationMenu}>
+			<SubMenu style={{width: pxToRem(150) + 'rem'}} id={ElementIds.apSett_animationMenu}>
 				{animations.map(v =>
 					<RadioMenuItem
 						RadioMenuItemName={RadioNames.animation}
@@ -192,7 +195,7 @@ const themes: {
 				<div style="flex:1"/>
 				<Icon IconCode={IconCodes.chevronRight}/>
 			</SubMenuItem>
-			<SubMenu style="width:150px" id={ElementIds.apSett_themeMenu}>
+			<SubMenu style={{width: pxToRem(150) + 'rem'}} id={ElementIds.apSett_themeMenu}>
 				{themes.map(v =>
 					<RadioMenuItem
 						RadioMenuItemName={RadioNames.theme}
@@ -205,7 +208,7 @@ const themes: {
 			</SubMenu>
 		</Menu>
 </AppBar>
-<Dialog id={ElementIds.apOpen_linkDialog} style="width:360px">
+<Dialog id={ElementIds.apOpen_linkDialog} style={{width: pxToRem(360) + 'rem'}}>
 	<Fragment slot="header">Insert Media Link</Fragment>
 	<TextField TextFieldInputAttr={{
 		id: ElementIds.apOpen_linkInput,

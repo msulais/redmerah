@@ -1,13 +1,15 @@
+@use '../../styles/units.scss' as u;
+
 .c-list {
-	min-height: 40px;
+	min-height: u.Rem(40px);
 	display: flex;
-	gap: 12px;
+	gap: u.Rem(12px);
 	align-items: center;
 	justify-content: space-between;
-	padding: 4px 10px;
+	padding: u.Rem(4px) u.Rem(10px);
 	width: 100%;
-	border-radius: 4px;
-	border: 1px solid transparent;
+	border-radius: u.Rem(4px);
+	border: u.Rem(1px) solid transparent;
 
 	&[data-c-list-variant=tonal] {
 		background-color: rgba(var(--g-color-on-surface), var(--g-opacity2));
@@ -19,7 +21,7 @@
 	}
 
 	&[data-c-list-variant=outlined] {
-		border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
+		border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
 	}
 }
 

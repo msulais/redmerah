@@ -10,6 +10,7 @@ import { ElementIds } from '../../_scripts/_enums'
 import CSS from '../../_index.module.scss'
 import { ButtonVariant } from '@/components/Button'
 import { IconCodes } from '@/enums/icons'
+import { pxToRem } from '@/utils/css'
 ---
 <div
 	class={CSS.bodyPage}
@@ -36,7 +37,11 @@ import { IconCodes } from '@/enums/icons'
 					<Icon IconCode={IconCodes.dismiss}/>
 				</Button>
 				<TextField
-					style="width:calc(100% - 24px);margin:8px 12px;padding-right: 4px"
+					style={{
+						width: `calc(100% - ${pxToRem(24)}rem)`,
+						margin: `${pxToRem(8)}rem ${pxToRem(12)}rem`,
+						'padding-right': pxToRem(4) + 'rem'
+					}}
 					TextFieldInputAttr={{
 						placeholder: 'Search',
 						style: 'width:100%',

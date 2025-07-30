@@ -1,19 +1,21 @@
+@use '../../styles/units.scss' as u;
+
 .c-sidebar {
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: u.Rem(4px);
 	height: 100%;
-	width: 280px;
-	padding: 4px;
-	max-width: 280px;
+	width: u.Rem(280px);
+	padding: u.Rem(4px);
+	max-width: u.Rem(280px);
 	max-height: 100%;
 	overflow-x: hidden;
 	transition-property: width, max-width;
 	transition-duration: var(--g-duration-transition);
 
 	&[data-c-sidebar-minimized] {
-		width: 50px;
-		max-width: 50px;
+		width: u.Rem(50px);
+		max-width: u.Rem(50px);
 	}
 }
 
@@ -39,20 +41,20 @@
 		display: block;
 		background-color: rgb(var(--g-color-accent));
 		position: absolute;
-		left: 1px;
-		width: 3px;
+		left: u.Rem(1px);
+		width: u.Rem(3px);
 		top: 50%;
 		opacity: 0;
 		transform: translateY(-50%);
-		height: 3px;
-		border-radius: 999px;
+		height: u.Rem(3px);
+		border-radius: u.Rem(999px);
 		transition-property: height;
 		transition-duration: var(--g-duration-transition);
 	}
 
 	&[data-c-sidebar-button-selected]::before {
 		opacity: 1;
-		height: max(50%, 3px);
+		height: max(50%, u.Rem(3px));
 	}
 }
 

@@ -7,6 +7,7 @@ import { DEFAULT_NUMBERS_COUNT, DEFAULT_NUMBERS_OUTPUT, DEFAULT_NUMBERS_DIGITS, 
 import { NumbersRandomizerSort, NumbersRandomizerType, Pages } from "../../_scripts/_shared/_enums"
 import { ElementIds } from "../../_scripts/_shared/_ids"
 import { CSSClasses } from "../../_styles/_css"
+import { pxToRem } from '@/utils/css'
 
 const sorts: {
 	text: string
@@ -52,12 +53,12 @@ const types: {
 		<div style={{
 			display: 'grid',
 			gridTemplateColumns: '1fr 1fr',
-			gap: '8px'
+			gap: pxToRem(8) + 'rem'
 		}}>
 			<div>
 				<label for={ElementIds.pgNum_min}>Min:</label>
 				<TextField
-					style="margin-top:2px"
+					style={{'margin-top': pxToRem(2) + 'rem'}}
 					TextFieldInputAttr={{
 						id: ElementIds.pgNum_min,
 						type: 'number',
@@ -70,7 +71,7 @@ const types: {
 			<div>
 				<label for={ElementIds.pgNum_max}>Max:</label>
 				<TextField
-					style="margin-top:2px"
+					style={{'margin-top': pxToRem(2) + 'rem'}}
 					TextFieldInputAttr={{
 						id: ElementIds.pgNum_max,
 						value: DEFAULT_NUMBERS_MAX,
@@ -82,10 +83,10 @@ const types: {
 		</div>
 
 		<label
-			style="margin-top:8px"
+			style={{'margin-top': pxToRem(8) + 'rem'}}
 			for={ElementIds.pgNum_count}>Count:</label>
 		<TextField
-			style="margin-top:2px"
+			style={{'margin-top': pxToRem(2) + 'rem'}}
 			TextFieldInputAttr={{
 				id: ElementIds.pgNum_count,
 				value: DEFAULT_NUMBERS_COUNT,
@@ -95,10 +96,10 @@ const types: {
 		/>
 
 		<label
-			style="margin-top:8px"
+			style={{'margin-top': pxToRem(8) + 'rem'}}
 			for={ElementIds.pgNum_sort}>Sort:</label>
 		<ComboBox
-			style="margin-top:2px"
+			style={{'margin-top': pxToRem(2) + 'rem'}}
 			id={ElementIds.pgNum_sort}>
 			{sorts.map(v =>
 				<ComboBoxOption
@@ -108,10 +109,10 @@ const types: {
 		</ComboBox>
 
 		<label
-			style="margin-top:8px"
+			style={{'margin-top': pxToRem(8) + 'rem'}}
 			for={ElementIds.pgNum_type}>Number type:</label>
 		<ComboBox
-			style="margin-top:2px"
+			style={{'margin-top': pxToRem(2) + 'rem'}}
 			id={ElementIds.pgNum_type}>
 			{types.map(v =>
 				<ComboBoxOption
@@ -121,10 +122,10 @@ const types: {
 		</ComboBox>
 
 		<label
-			style="margin-top:8px"
+			style={{'margin-top': pxToRem(8) + 'rem'}}
 			for={ElementIds.pgNum_digits}>Min digits:</label>
 		<TextField
-			style="margin-top:2px"
+			style={{'margin-top': pxToRem(2) + 'rem'}}
 			TextFieldInputAttr={{
 				id: ElementIds.pgNum_digits,
 				value: DEFAULT_NUMBERS_DIGITS,
@@ -134,10 +135,10 @@ const types: {
 		/>
 
 		<label
-			style="margin-top:8px"
+			style={{'margin-top': pxToRem(8) + 'rem'}}
 			for={ElementIds.pgNum_separator}>Separator:</label>
 		<TextField
-			style="margin-top:2px"
+			style={{'margin-top': pxToRem(2) + 'rem'}}
 			TextFieldInputAttr={{
 				id: ElementIds.pgNum_separator,
 				value: DEFAULT_NUMBERS_SEPARATOR
@@ -147,13 +148,13 @@ const types: {
 		<div style={{
 			display: 'grid',
 			gridTemplateColumns: '1fr 1fr',
-			gap: '8px',
-			marginTop: '8px'
+			gap: pxToRem(8) + 'rem',
+			marginTop: pxToRem(8) + 'rem'
 		}}>
 			<div>
 				<label for={ElementIds.pgNum_prefix}>Prefix:</label>
 				<TextField
-					style="margin-top:2px"
+					style={{'margin-top': pxToRem(2) + 'rem'}}
 					TextFieldInputAttr={{
 						id: ElementIds.pgNum_prefix,
 						value: DEFAULT_NUMBERS_PREFIX
@@ -163,7 +164,7 @@ const types: {
 			<div>
 				<label for={ElementIds.pgNum_suffix}>Suffix:</label>
 				<TextField
-					style="margin-top:2px"
+					style={{'margin-top': pxToRem(2) + 'rem'}}
 					TextFieldInputAttr={{
 						id: ElementIds.pgNum_suffix,
 						value: DEFAULT_NUMBERS_SUFFIX
@@ -172,7 +173,7 @@ const types: {
 			</div>
 		</div>
 		<CheckBox
-			style="margin-top:8px"
+			style={{'margin-top': pxToRem(8) + 'rem'}}
 			CheckBoxChecked={DEFAULT_NUMBERS_REPEAT}
 			CheckBoxInputAttr={{id: ElementIds.pgNum_repeat}}>Repeat</CheckBox>
 	</div>

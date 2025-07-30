@@ -15,6 +15,7 @@ import type { DialogElement } from "@/components/Dialog"
 import { safeNumber } from "@/utils/number"
 import { saveStorageItem } from "../_core/_database"
 import { DEFAULT_TIMER_RUNNING, DEFAULT_TIMER_SECONDS } from "../_shared/_constant"
+import { pxToRem } from "@/utils/css"
 
 export type TimerStoreType = Readonly<{
 	running: boolean
@@ -142,14 +143,14 @@ function _subscribeRunningRefView(v: TimerStoreType, o: TimerStoreType): void {
 		}, options)
 		_playPauseTextRef.animate({
 			opacity: [0, 1],
-			translate: ['-8px 0', '0 0']
+			translate: [`${pxToRem(-8)}rem 0`, '0 0']
 		}, options)
 		_playPauseIconRef.animate({
 			opacity: [0, 1],
-			translate: ['8px 0', '0 0']
+			translate: [`${pxToRem(8)}rem 0`, '0 0']
 		}, options)
 		_playPauseButtonRef.animate({
-			translate: [[btnRect.left - btnRect2.left + 'px', '0px'].join(' '), '0 0']
+			translate: [[pxToRem(btnRect.left - btnRect2.left) + 'rem', '0'].join(' '), '0 0']
 		}, options)
 		if (running) {
 			for (const ref of _navigationButtonIconRefs) {

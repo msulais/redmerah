@@ -1,4 +1,6 @@
-$SCREEN_WIDTH_SMALL: 650px;
+@use '../../../styles/units.scss' as u;
+
+$SCREEN_WIDTH_SMALL: u.Rem(650px);
 
 .body {
 	display: flex;
@@ -8,8 +10,8 @@ $SCREEN_WIDTH_SMALL: 650px;
 	max-height: 100%;
 	overflow: auto;
 	background-color: rgb(var(--g-color-surface));
-	border-radius: 8px 0 0 0;
-	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity3));
+	border-radius: u.Rem(8px) 0 0 0;
+	border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity3));
 	border-bottom: none;
 	border-right: none;
 
@@ -31,7 +33,7 @@ $SCREEN_WIDTH_SMALL: 650px;
 
 .bodyPageClock {
 	display: flex;
-	padding: 16px;
+	padding: u.Rem(16px);
 	flex-direction: column;
 	height: 100%;
 	justify-content: center;
@@ -48,7 +50,7 @@ $SCREEN_WIDTH_SMALL: 650px;
 
 	> p {
 		text-align: center;
-		font-size: max(16px, 2dvw);
+		font-size: max(u.Rem(16px), 2dvw);
 		color: rgb(var(--g-color-accent));
 	}
 }
@@ -60,7 +62,7 @@ $SCREEN_WIDTH_SMALL: 650px;
 	justify-content: center;
 
 	> h2 {
-		padding: 16px 16px 0 16px;
+		padding: u.Rem(16px) u.Rem(16px) 0 u.Rem(16px);
 		text-align: center;
 		font-size: 10dvw;
 		font-weight: normal;
@@ -74,7 +76,7 @@ $SCREEN_WIDTH_SMALL: 650px;
 .bodyPageStopwatchLaps {
 	flex: 1;
 	max-height: 100%;
-	padding: 0px 16px 16px 16px;
+	padding: u.Rem(0px) u.Rem(16px) u.Rem(16px) u.Rem(16px);
 	width: 100%;
 	display: none;
 	flex-direction: column;
@@ -82,35 +84,35 @@ $SCREEN_WIDTH_SMALL: 650px;
 	overflow: auto;
 
 	> div:first-child {
-		width: 720px;
+		width: u.Rem(720px);
 		max-width: 100%;
 		display: grid;
 		position: sticky;
-		top: 0px;
-		grid-template-columns: 64px 1fr 1fr;
-		border-radius: 4px;
-		border: 1px solid rgb(var(--g-color-on-surface), var(--g-opacity2));
+		top: u.Rem(0px);
+		grid-template-columns: u.Rem(64px) 1fr 1fr;
+		border-radius: u.Rem(4px);
+		border: u.Rem(1px) solid rgb(var(--g-color-on-surface), var(--g-opacity2));
 		background-color: rgb(var(--g-color-on-surface), var(--g-opacity2));
 		backdrop-filter: blur(var(--g-blur-glass));
 
 		> span {
 			display: block;
-			padding: 6.5px 12px;
+			padding: u.Rem(6.5px) u.Rem(12px);
 			font-size: var(--g-font-size-xs);
 		}
 	}
 
 	> div:last-child {
-		width: 720px;
+		width: u.Rem(720px);
 		max-width: 100%;
 
 		> div {
 			display: grid;
-			grid-template-columns: 64px 1fr 1fr;
-			border-radius: 4px;
+			grid-template-columns: u.Rem(64px) 1fr 1fr;
+			border-radius: u.Rem(4px);
 
 			&:first-child {
-				margin-top: 8px;
+				margin-top: u.Rem(8px);
 			}
 
 			@media (hover: hover) {
@@ -121,7 +123,7 @@ $SCREEN_WIDTH_SMALL: 650px;
 
 			> span {
 				display: block;
-				padding: 6.5px 12px;
+				padding: u.Rem(6.5px) u.Rem(12px);
 				font-size: var(--g-font-size-xs);
 			}
 		}
@@ -130,7 +132,7 @@ $SCREEN_WIDTH_SMALL: 650px;
 
 .bodyPageTimer {
 	display: flex;
-	padding: 16px;
+	padding: u.Rem(16px);
 	flex-direction: column;
 	height: 100%;
 	justify-content: center;

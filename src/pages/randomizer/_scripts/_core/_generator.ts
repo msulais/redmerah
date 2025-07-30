@@ -18,6 +18,7 @@ import { TeamsStore, updateOutput as updateTeamsOutput } from "../_features/_tea
 import type { ToastElement } from "@/components/Toast"
 import type { DialogElement } from "@/components/Dialog"
 import { hexToRgb, rgbToHsl } from "@/utils/color"
+import { pxToRem } from "@/utils/css"
 
 export type GeneratorStoreType = Readonly<{
 	isGenerating: boolean
@@ -52,7 +53,7 @@ function _subsIsGeneratingView(v: GeneratorStoreType): void {
 
 	const easing = AnimationEffectTiming.spring
 	_generatorTextRef.animate({
-		translate: [`0 ${isGenerating? -12 : 12}px`, '0 0'],
+		translate: [`0 ${pxToRem(isGenerating? -12 : 12)}rem`, '0 0'],
 		scale: [.9, 1],
 		opacity: [0, 1]
 	}, {duration: 250, easing})
