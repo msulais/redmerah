@@ -25,10 +25,8 @@
 	}
 
 	&:has( > .c-textfield-input:read-write) {
-		@media (hover:hover) {
-			&:has( > .c-textfield-input:hover) {
-				background-color: rgba(var(--g-color-on-surface), var(--g-opacity1));
-			}
+		&:has( > .c-textfield-input:hover) {
+			background-color: rgba(var(--g-color-on-surface), var(--g-opacity1));
 		}
 
 		&:has( > .c-textfield-input:active) {

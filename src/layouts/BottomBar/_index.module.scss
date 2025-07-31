@@ -25,12 +25,10 @@
 		padding-top: u.Rem(8px);
 		transition-duration: var(--g-duration-transition);
 
-		@media (hover: hover) {
-			&:hover {
-				color: rgb(var(--g-color-accent));
-				padding-top: 0;
-				padding-bottom: u.Rem(8px);
-			}
+		&:hover {
+			color: rgb(var(--g-color-accent));
+			padding-top: 0;
+			padding-bottom: u.Rem(8px);
 		}
 
 		&:active {

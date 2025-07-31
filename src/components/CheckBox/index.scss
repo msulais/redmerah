@@ -26,16 +26,14 @@
 	}
 
 	&:has( > .c-checkbox-input:not(:disabled)) {
-		@media (hover:hover) {
-			&:hover {
-				cursor: pointer;
+		&:hover {
+			cursor: pointer;
 
-				> .c-checkbox-input {
-					border-width: u.Rem(1px);
+			> .c-checkbox-input {
+				border-width: u.Rem(1px);
 
-					&:checked {
-						opacity: var(--g-opacity-inv3);
-					}
+				&:checked {
+					opacity: var(--g-opacity-inv3);
 				}
 			}
 		}
@@ -95,9 +93,7 @@
 		}
 	}
 
-	@media (hover:hover) {
-		&:hover {
-			cursor: pointer;
-		}
+	&:hover {
+		cursor: pointer;
 	}
 }

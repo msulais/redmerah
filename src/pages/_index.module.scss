@@ -18,11 +18,8 @@
 		background-color: rgb(var(--g-color-surface));
 		border: u.Rem(4px) solid hsl(var(--hue), 100%, 50%);
 		transition-duration: var(--g-duration-transition);
-
-		@media (hover: hover) {
-			&:hover {
-				transform: translateY(u.Rem(-8px));
-			}
+		&:hover {
+			transform: translateY(u.Rem(-8px));
 		}
 
 		& * {

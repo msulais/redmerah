@@ -87,12 +87,10 @@
 	background-color: rgb(var(--g-color-accent));
 	transition-duration: var(--g-duration-transition);
 
-	@media (hover: hover) {
-		&:hover {
-			cursor: grab;
-			width: min(u.Rem(88px), var(--c-modal-draghandle-width-hover));
-			height: u.Rem(8px);
-		}
+	&:hover {
+		cursor: grab;
+		width: min(u.Rem(88px), var(--c-modal-draghandle-width-hover));
+		height: u.Rem(8px);
 	}
 
 	&:active {

@@ -98,14 +98,14 @@ $SCREEN_WIDTH_SMALL: u.Rem(650px);
 }
 
 .listItem {
-	@media (hover:hover) {
-		&:hover {
-			> :global(.c-list-trailing) {
-				scale: 1;
-				opacity: 1;
-			}
+	&:hover {
+		> :global(.c-list-trailing) {
+			scale: 1;
+			opacity: 1;
 		}
+	}
 
+	@media (hover:hover) {
 		> :global(.c-list-trailing) {
 			scale: .9;
 			opacity: 0;

@@ -115,10 +115,8 @@ $SCREEN_WIDTH_SMALL: u.Rem(650px);
 				margin-top: u.Rem(8px);
 			}
 
-			@media (hover: hover) {
-				&:hover {
-					background-color: rgb(var(--g-color-on-surface), var(--g-opacity2));
-				}
+			&:hover {
+				background-color: rgb(var(--g-color-on-surface), var(--g-opacity2));
 			}
 
 			> span {

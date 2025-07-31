@@ -21,15 +21,13 @@
 		transition-property: scale;
 		border: u.Rem(2px) solid transparent;
 
-		@media (hover:hover) {
-			&:hover {
-				border-color: rgb(var(--g-color-accent));
-				background-color: rgba(var(--g-color-on-surface), var(--g-opacity2)) !important;
+		&:hover {
+			border-color: rgb(var(--g-color-accent));
+			background-color: rgba(var(--g-color-on-surface), var(--g-opacity2)) !important;
 
-				&::after {
-					opacity: 1;
-					width: 50%;
-				}
+			&::after {
+				opacity: 1;
+				width: 50%;
 			}
 		}
 

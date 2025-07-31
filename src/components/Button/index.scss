@@ -47,11 +47,9 @@
 			background-color: rgba(var(--g-color-on-surface), var(--g-opacity2));
 		}
 
-		@media (hover:hover) {
-			&:hover {
-				background-color: rgba(var(--g-color-on-surface), var(--g-opacity2));
-				cursor: pointer;
-			}
+		&:hover {
+			background-color: rgba(var(--g-color-on-surface), var(--g-opacity2));
+			cursor: pointer;
 		}
 
 		&:active {
@@ -91,10 +89,8 @@
 	color: rgb(var(--g-color-on-accent));
 
 	&:not(:is(:disabled,a:not([href]))){
-		@media (hover:hover) {
-			&:hover {
-				background-color: rgba(var(--g-color-accent), var(--g-opacity-inv3));
-			}
+		&:hover {
+			background-color: rgba(var(--g-color-accent), var(--g-opacity-inv3));
 		}
 
 		&:active {
@@ -107,10 +103,8 @@
 	background-color: rgba(var(--g-color-on-surface), var(--g-opacity2));
 
 	&:not(:is(:disabled,a:not([href]))){
-		@media (hover:hover) {
-			&:hover {
-				background-color: rgba(var(--g-color-on-surface), var(--g-opacity1));
-			}
+		&:hover {
+			background-color: rgba(var(--g-color-on-surface), var(--g-opacity1));
 		}
 
 		&:active {

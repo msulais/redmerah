@@ -90,11 +90,9 @@
 	transition-property: width, height;
 	transition-duration: var(--g-duration-transition);
 
-	@media (hover: hover) {
-		&:hover {
-			width: min(u.Rem(88px), var(--c-popover-draghandle-width-hover));
-			height: u.Rem(8px);
-		}
+	&:hover {
+		width: min(u.Rem(88px), var(--c-popover-draghandle-width-hover));
+		height: u.Rem(8px);
 	}
 
 	&:active {

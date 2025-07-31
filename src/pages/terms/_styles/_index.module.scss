@@ -17,11 +17,8 @@
 			border-bottom: .1em solid rgb(var(--g-color-accent));
 			position: relative;
 			transition-duration: var(--g-duration-transition);
-
-			@media (hover: hover) {
-				&:hover {
-					border-bottom-style: dashed;
-				}
+			&:hover {
+				border-bottom-style: dashed;
 			}
 
 			&:active {
@@ -50,11 +47,8 @@
 
 		> a {
 			transition-duration: var(--g-duration-transition);
-
-			@media (hover: hover) {
-				&:hover {
-					text-decoration: underline;
-				}
+			&:hover {
+				text-decoration: underline;
 			}
 
 			&:active {
