@@ -6,14 +6,12 @@
 	margin: 0;
 	padding: 0;
 	transition-timing-function: var(--g-transition-spring);
-	-webkit-tap-highlight-color: transparent;
 }
 
 a, button, .c-icon, :is(a, button, .c-icon) * {
 	user-select: none;
 	text-decoration: none;
 	-webkit-user-select: none;
-	-webkit-tap-highlight-color: transparent;
 }
 
 body {
