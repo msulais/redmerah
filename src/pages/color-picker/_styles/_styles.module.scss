@@ -56,18 +56,8 @@ $DEVICE_SMALL_SCREEN: u.Rem(800px);
 		border-radius: 50%;
 		border: u.Rem(2px) solid var(--border-color);
 		position: absolute;
-
-		:root[data-animation=on] & {
-			transition-property: border-color, background-color;
-			transition-duration: .25s;
-		}
-
-		@media (prefers-reduced-motion: no-preference) {
-			:root[data-animation=auto] & {
-				transition-property: border-color, background-color;
-				transition-duration: .25s;
-			}
-		}
+		transition-property: border-color, background-color;
+		transition-duration: var(--g-duration-transition);
 	}
 
 	> canvas {
@@ -92,18 +82,8 @@ $DEVICE_SMALL_SCREEN: u.Rem(800px);
 		border-radius: u.Rem(4px);
 		height: u.Rem(32px);
 		margin-top: u.Rem(21px);
-
-		:root[data-animation=on] & {
-			transition-property: background-color;
-			transition-duration: .25s;
-		}
-
-		@media (prefers-reduced-motion: no-preference) {
-			:root[data-animation=auto] & {
-				transition-property: background-color;
-				transition-duration: .25s;
-			}
-		}
+		transition-property: background-color;
+		transition-duration: var(--g-duration-transition);
 	}
 
 	> [data-css-group] {
@@ -180,18 +160,8 @@ $DEVICE_SMALL_SCREEN: u.Rem(800px);
 		border-radius: 50%;
 		border: u.Rem(2px) solid var(--border-color);
 		position: absolute;
-
-		:root[data-animation=on] & {
-			transition-property: border-color, background-color;
-			transition-duration: .25s;
-		}
-
-		@media (prefers-reduced-motion: no-preference) {
-			:root[data-animation=auto] & {
-				transition-property: border-color, background-color;
-				transition-duration: .25s;
-			}
-		}
+		transition-property: border-color, background-color;
+		transition-duration: var(--g-duration-transition);
 	}
 }
 
@@ -235,18 +205,8 @@ $DEVICE_SMALL_SCREEN: u.Rem(800px);
 		border-radius: 50%;
 		border: u.Rem(2px) solid var(--border-color);
 		background: var(--color);
-
-		:root[data-animation=on] & {
-			transition-property: border-color, background-color;
-			transition-duration: .25s;
-		}
-
-		@media (prefers-reduced-motion: no-preference) {
-			:root[data-animation=auto] & {
-				transition-property: border-color, background-color;
-				transition-duration: .25s;
-			}
-		}
+		transition-property: border-color, background-color;
+		transition-duration: var(--g-duration-transition);
 
 		&:active {
 			cursor: pointer;
@@ -263,18 +223,8 @@ $DEVICE_SMALL_SCREEN: u.Rem(800px);
 		border-radius: 50%;
 		border: u.Rem(2px) solid var(--border-color);
 		background: var(--color);
-
-		:root[data-animation=on] & {
-			transition-property: border-color, background-color;
-			transition-duration: .25s;
-		}
-
-		@media (prefers-reduced-motion: no-preference) {
-			:root[data-animation=auto] & {
-				transition-property: border-color, background-color;
-				transition-duration: .25s;
-			}
-		}
+		transition-property: border-color, background-color;
+		transition-duration: var(--g-duration-transition);
 
 		&:active {
 			cursor: pointer;

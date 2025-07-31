@@ -35,20 +35,9 @@ $SMALL_SCREEN: u.Rem(600px);
 		&::details-content {
 			height: u.Rem(0px);
 			overflow: clip;
-
-			:root[data-animation=on] & {
-				transition-duration: .25s;
-				transition-property: height, content-visibility;
-				transition-behavior: allow-discrete;
-			}
-
-			@media (prefers-reduced-motion: no-preference) {
-				:root[data-animation=auto] & {
-					transition-duration: .25s;
-					transition-property: height, content-visibility;
-					transition-behavior: allow-discrete;
-				}
-			}
+			transition-duration: var(--g-duration-transition);
+			transition-property: height, content-visibility;
+			transition-behavior: allow-discrete;
 		}
 
 		&[open] {
@@ -68,17 +57,8 @@ $SMALL_SCREEN: u.Rem(600px);
 			justify-content: space-between;
 
 			> :global(.c-icon) {
-				:root[data-animation=on] & {
-					transition-property: rotate;
-					transition-duration: .25s;
-				}
-
-				@media (prefers-reduced-motion: no-preference) {
-					:root[data-animation=auto] & {
-						transition-property: rotate;
-						transition-duration: .25s;
-					}
-				}
+				transition-property: rotate;
+				transition-duration: var(--g-duration-transition);
 			}
 		}
 
@@ -101,20 +81,9 @@ $SMALL_SCREEN: u.Rem(600px);
 		&::details-content {
 			height: u.Rem(0px);
 			overflow: clip;
-
-			:root[data-animation=on] & {
-				transition-duration: .25s;
-				transition-property: height, content-visibility;
-				transition-behavior: allow-discrete;
-			}
-
-			@media (prefers-reduced-motion: no-preference) {
-				:root[data-animation=auto] & {
-					transition-duration: .25s;
-					transition-property: height, content-visibility;
-					transition-behavior: allow-discrete;
-				}
-			}
+			transition-duration: var(--g-duration-transition);
+			transition-property: height, content-visibility;
+			transition-behavior: allow-discrete;
 		}
 
 		&:last-child {
@@ -137,17 +106,8 @@ $SMALL_SCREEN: u.Rem(600px);
 		justify-content: space-between;
 
 		> :global(.c-icon) {
-			:root[data-animation=on] & {
-				transition-property: rotate;
-				transition-duration: .25s;
-			}
-
-			@media (prefers-reduced-motion: no-preference) {
-				:root[data-animation=auto] & {
-					transition-property: rotate;
-					transition-duration: .25s;
-				}
-			}
+			transition-property: rotate;
+			transition-duration: var(--g-duration-transition);
 		}
 	}
 

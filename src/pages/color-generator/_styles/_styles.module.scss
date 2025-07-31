@@ -23,18 +23,8 @@
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: u.Rem(12px);
-
-		:root[data-animation=on] & {
-			transition-property: background-color;
-			transition-duration: .25s;
-		}
-
-		@media (prefers-reduced-motion: no-preference) {
-			:root[data-animation=auto] & {
-				transition-property: background-color;
-				transition-duration: .25s;
-			}
-		}
+		transition-property: background-color;
+		transition-duration: var(--g-duration-transition);
 
 		@media (max-width: u.Rem(360px)) {
 			grid-template-columns: 1fr;
@@ -45,18 +35,8 @@
 			padding: inherit;
 			border-radius: u.Rem(4px);
 			font-weight: bold;
-
-			:root[data-animation=on] & {
-				transition-property: background-color;
-				transition-duration: .25s;
-			}
-
-			@media (prefers-reduced-motion: no-preference) {
-				:root[data-animation=auto] & {
-					transition-property: background-color;
-					transition-duration: .25s;
-				}
-			}
+			transition-property: background-color;
+			transition-duration: var(--g-duration-transition);
 		}
 	}
 }
