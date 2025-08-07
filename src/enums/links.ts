@@ -24,6 +24,7 @@ export enum RoutesLinks {
 	mediaPlayer = '/media-player',
 	urlEncoder = '/url-encoder',
 	deadPixelTest = '/dead-pixel-test',
+	geolocation = '/geolocation',
 
 	// TODO: create these apps
 	sensor = '/sensor',

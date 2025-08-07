@@ -18,6 +18,17 @@ import logoJavaScriptMinifer from '@/assets/images/apps/javascript-minifier.svg'
 import logoMediaPlayer from '@/assets/images/apps/media-player.svg'
 import logoUrlEncoder from '@/assets/images/apps/url-encoder.svg'
 import logoDeadPixelTest from '@/assets/images/apps/dead-pixel-test.svg'
+import logoGeolocation from '@/assets/images/apps/geolocation.svg'
+
+export const APP_GEOLOCATION: AppItem = {
+	logoUrl: logoGeolocation.src,
+	name: 'Geolocation',
+	description: 'Easily test and utilize the browser\'s Geolocation API with our straightforward web app. Get your current latitude, longitude, accuracy, and altitude without any hassle.',
+	link: RoutesLinks.geolocation,
+	color: '#FF00FF',
+	buildNumber: 1,
+	buildVersion: '0.0.1',
+}
 
 export const APP_JAVASCRIPT_MINIFIER: AppItem = {
 	logoUrl: logoJavaScriptMinifer.src,
@@ -200,6 +211,7 @@ export const APP_DEAD_PIXEL_TEST: AppItem = {
 }
 
 export const APPS: AppItem[] = [
+	APP_GEOLOCATION,
 	APP_DEAD_PIXEL_TEST,
 	APP_RANDOMIZER,
 	APP_URL_ENCODER,
