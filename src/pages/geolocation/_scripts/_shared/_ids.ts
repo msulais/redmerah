@@ -28,4 +28,8 @@ export class ElementIds {
 	static readonly bd_latitude = _createId()
 	static readonly bd_longitude = _createId()
 	static readonly bd_speed = _createId()
+
+	// toa = toast
+	static readonly toa_permission = _createId()
+	static readonly toa_location = _createId()
 }

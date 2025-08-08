@@ -1,21 +1,46 @@
 ---
 import Button from '@/components/Button/index.astro'
+import Toast from '@/components/Toast/index.astro'
+import Icon from '@/components/Icon/index.astro'
+import { IconCodes } from '@/enums/icons'
 import { CSSClasses } from '../_styles/_css'
 import { ElementIds } from '../_scripts/_shared/_ids'
 import { ButtonVariant } from '@/components/Button'
+import { pxToRem } from '@/utils/css'
 ---
 
 <main class={CSSClasses.body}>
 	<Button
 		id={ElementIds.bd_startPause}
+		style={{'margin-bottom': pxToRem(8) + 'rem'}}
 		ButtonVariant={ButtonVariant.filled}>Show my location</Button>
 	<ul>
-		<li>Accuracy: <span id={ElementIds.bd_accuracy}>0</span></li>
-		<li>Altitude: <span id={ElementIds.bd_altitude}>Unknown</span></li>
-		<li>AltitudeAccuracy: <span id={ElementIds.bd_altitudeAccuracy}>Unknown</span></li>
-		<li>Heading: <span id={ElementIds.bd_heading}>Unknown</span></li>
-		<li>Latitude: <span id={ElementIds.bd_latitude}>0</span></li>
-		<li>Longitude: <span id={ElementIds.bd_longitude}>0</span></li>
-		<li>Speed: <span id={ElementIds.bd_speed}>Unknown</span></li>
+		<li>Accuracy&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <span id={ElementIds.bd_accuracy}>0</span> meter(s)</li>
+		<li>Latitude&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <span id={ElementIds.bd_latitude}>0</span>°</li>
+		<li>Longitude&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <span id={ElementIds.bd_longitude}>0</span>°</li>
+		<li>Altitude&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <span id={ElementIds.bd_altitude}>Unknown</span> meter(s)</li>
+		<li>Altitude accuracy: <span id={ElementIds.bd_altitudeAccuracy}>Unknown</span> meter(s)</li>
+		<li>Speed&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <span id={ElementIds.bd_speed}>Unknown</span> m/s</li>
+		<li>Heading&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <span id={ElementIds.bd_heading}>Unknown</span></li>
 	</ul>
 </main>
+<Toast
+	id={ElementIds.toa_location}
+	ToastCloseDelay={10000}
+	ToastContentAttr={{style: {
+		'align-items': 'flex-start',
+		'padding-top': pxToRem(8) + 'rem',
+		'padding-bottom': pxToRem(8) + 'rem',
+	}}}>
+	<Icon IconCode={IconCodes.globeOff} slot="leading"/>
+	Unable to retrive geolocation. Make sure to:
+	<ol style="margin-left:1em">
+		<li>Allow location permission.</li>
+		<li>Connect to internet.</li>
+		<li>Enable location mode on your device.</li>
+	</ol>
+</Toast>
+<Toast id={ElementIds.toa_permission} ToastCloseDelay={10000}>
+	<Icon IconCode={IconCodes.globeShield} slot="leading"/>
+	Permission to use geolocation is denied. Please allow location permission to use this app.
+</Toast>
