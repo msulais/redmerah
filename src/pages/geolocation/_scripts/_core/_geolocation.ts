@@ -43,7 +43,7 @@ let _geoWatchId: number | null = null
 
 function _watchGeolocation(): void {
 	navigator.permissions.query({name: 'geolocation'}).then((permission) => {
-		if (permission.state !== 'granted') {
+		if (permission.state === 'denied') {
 			_toa_permissionRef.showPopover()
 			GeolocationStore.update(v => v.isWatching = false)
 			return
