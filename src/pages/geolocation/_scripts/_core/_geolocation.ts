@@ -42,14 +42,14 @@ let _geoWatchId: number | null = null
 function _watchGeolocation(): void {
 	navigator.permissions.query({name: 'geolocation'}).then((permission) => {
 		if (permission.state !== 'granted') {
-			// TODO: show permission denied
+			_toa_permissionRef.showPopover()
+			GeolocationStore.update(v => v.isWatching = false)
 			return
 		}
 
 		if (typeof _geoWatchId === 'number'){
 			navigator.geolocation.clearWatch(_geoWatchId)
 		}
-		_toa_permissionRef.showPopover()
 		_geoWatchId = navigator.geolocation.watchPosition((v) => {
 			const coords = v.coords
 			GeolocationStore.update(v => {
@@ -66,10 +66,7 @@ function _watchGeolocation(): void {
 			GeolocationStore.update(v => v.isWatching = false)
 		}, {enableHighAccuracy: true,
 			maximumAge: Infinity})
-	}).catch(() => {
-		_toa_permissionRef.showPopover()
-		GeolocationStore.update(v => v.isWatching = false)
-	})
+	}).catch(() => {})
 }
 
 function _initSubscriber(): void {
