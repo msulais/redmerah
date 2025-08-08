@@ -12,16 +12,37 @@ import { pxToRem } from '@/utils/css'
 <main class={CSSClasses.body}>
 	<Button
 		id={ElementIds.bd_startPause}
-		style={{'margin-bottom': pxToRem(8) + 'rem'}}
-		ButtonVariant={ButtonVariant.filled}>Show my location</Button>
+		style={{'margin-bottom': pxToRem(16) + 'rem'}}
+		ButtonVariant={ButtonVariant.filled}>
+		<Icon IconCode={IconCodes.location} IconFilled/>
+		Show my location
+	</Button>
 	<ul>
-		<li>Accuracy&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <span id={ElementIds.bd_accuracy}>0</span> meter(s)</li>
-		<li>Latitude&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <span id={ElementIds.bd_latitude}>0</span>°</li>
-		<li>Longitude&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <span id={ElementIds.bd_longitude}>0</span>°</li>
-		<li>Altitude&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <span id={ElementIds.bd_altitude}>Unknown</span> meter(s)</li>
-		<li>Altitude accuracy: <span id={ElementIds.bd_altitudeAccuracy}>Unknown</span> meter(s)</li>
-		<li>Speed&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <span id={ElementIds.bd_speed}>Unknown</span> m/s</li>
-		<li>Heading&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <span id={ElementIds.bd_heading}>Unknown</span></li>
+		<li>
+			<Icon IconCode={IconCodes.road}/>
+			<div>Accuracy:<br/><span id={ElementIds.bd_accuracy}>N/A</span></div></li>
+		<li>
+			<Icon IconCode={IconCodes.arrowBidirectionalUpDown}/>
+			<div>Latitude:<br/><span id={ElementIds.bd_latitude}>N/A</span></div></li>
+		<li>
+			<Icon IconCode={IconCodes.arrowBidirectionalLeftRight}/>
+			<div>Longitude:<br/><span id={ElementIds.bd_longitude}>N/A</span></div></li>
+		<li>
+			<Icon IconCode={IconCodes.mountainLocationTop}/>
+			<div>Altitude:<br/><span id={ElementIds.bd_altitude}>N/A</span></div></li>
+		<li>
+			<Icon IconCode={IconCodes.locationCheckmark}/>
+			<div>Altitude accuracy:<br/><span id={ElementIds.bd_altitudeAccuracy}>N/A</span></div></li>
+		<li>
+			<Icon IconCode={IconCodes.topSpeed}/>
+			<div>Speed:<br/><span id={ElementIds.bd_speed}>N/A</div></span>
+		</li>
+		<li>
+			<Icon IconCode={IconCodes.compassNorthwest}/>
+			<div>
+				Heading:<br/><span id={ElementIds.bd_heading}>N/A</span>
+			</div>
+		</li>
 	</ul>
 </main>
 <Toast

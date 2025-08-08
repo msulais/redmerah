@@ -1,9 +1,10 @@
 import { ButtonVariant, updateButtonRef, type ButtonElement } from "@/components/Button"
 import { ElementIds } from "../_shared/_ids"
-import { $ } from "./_dom-utils"
+import { $, $$ } from "./_dom-utils"
 import { ObservableStore } from "@/utils/store"
 import { AppCSSColors } from "@/enums/app-data"
 import type { ToastElement } from "@/components/Toast"
+import { IconClasses, type IconElement } from "@/components/Icon"
 
 export type GeolocationStoreType = {
 	isWatching: boolean
@@ -28,6 +29,7 @@ export const GeolocationStore = new ObservableStore<GeolocationStoreType>({
 })
 
 const _startPauseBtnRef = $(ElementIds.bd_startPause) as ButtonElement
+const _startPauseIconRef = $$('.' + IconClasses.icon, _startPauseBtnRef) as IconElement
 const _accuracyRef = $(ElementIds.bd_accuracy) as HTMLSpanElement
 const _altitudeRef = $(ElementIds.bd_altitude) as HTMLSpanElement
 const _altitudeAccuracyRef = $(ElementIds.bd_altitudeAccuracy) as HTMLSpanElement
@@ -77,17 +79,15 @@ function _initSubscriber(): void {
 		if (isWatching) {
 			updateButtonRef(_startPauseBtnRef, {
 				ButtonVariant: ButtonVariant.tonal,
-				ButtonChildren: ['Pause my location']
+				ButtonChildren: [_startPauseIconRef, 'Pause my location']
 			})
-			_startPauseBtnRef.style.setProperty('color', `rgb(${AppCSSColors.accent})`)
 			_watchGeolocation()
 		}
 		else {
 			updateButtonRef(_startPauseBtnRef, {
 				ButtonVariant: ButtonVariant.filled,
-				ButtonChildren: ['Show my location']
+				ButtonChildren: [_startPauseIconRef, 'Show my location']
 			})
-			_startPauseBtnRef.style.removeProperty('color')
 			if (typeof _geoWatchId === 'number'){
 				navigator.geolocation.clearWatch(_geoWatchId)
 				_geoWatchId = null
@@ -96,12 +96,34 @@ function _initSubscriber(): void {
 	})
 
 	GeolocationStore.subscribe((v) => {
-		_accuracyRef.textContent = v.accuracy.toString()
-		_altitudeRef.textContent = v.altitude?.toString() ?? 'Unknown'
-		_altitudeAccuracyRef.textContent = v.altitudeAccuracy?.toString() ?? 'Unknown'
-		_latitudeRef.textContent = v.latitude.toString()
-		_longitudeRef.textContent = v.longitude.toString()
-		_speedRef.textContent = v.speed?.toString() ?? 'Unknown'
+		const accuracy = v.accuracy
+		_accuracyRef.textContent = (typeof accuracy === 'number'
+			? [Number.parseFloat(accuracy.toFixed(2)), ' meter', accuracy > 1? 's' : ''].join('')
+			: 'N/A'
+		)
+
+		const altitude = v.altitude
+		_altitudeRef.textContent = (typeof altitude === 'number'
+			? [Number.parseFloat(altitude.toFixed(2)), ' meter', altitude > 1? 's' : ''].join('')
+			: 'N/A'
+		)
+
+		const altitudeAccuracy = v.altitudeAccuracy
+		_altitudeAccuracyRef.textContent = (typeof altitudeAccuracy === 'number'
+			? [Number.parseFloat(altitudeAccuracy.toFixed(2)), ' meter', altitudeAccuracy > 1? 's' : ''].join('')
+			: 'N/A'
+		)
+
+		const speed = v.speed
+		_speedRef.textContent = (typeof speed === 'number'
+			? [Number.parseFloat(speed.toFixed(2)), ' m/s'].join('')
+			: 'N/A'
+		)
+
+		_latitudeRef.textContent = [v.latitude, '°'].join('')
+		_longitudeRef.textContent = [v.longitude, '°'].join('')
+
+		// heading
 		{
 			let text: string | null = null
 			let heading = v.heading
@@ -119,7 +141,7 @@ function _initSubscriber(): void {
 				else if (heading > 270 && heading < 360) text = heading + '° (North West)'
 			}
 
-			_headingRef.textContent = text ?? 'Unknown'
+			_headingRef.textContent = text ?? 'N/A'
 		}
 	})
 }
