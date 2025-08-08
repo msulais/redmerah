@@ -1,6 +1,21 @@
 ---
+import Button from '@/components/Button/index.astro'
 import { CSSClasses } from '../_styles/_css'
+import { ElementIds } from '../_scripts/_shared/_ids'
+import { ButtonVariant } from '@/components/Button'
 ---
 
 <main class={CSSClasses.body}>
+	<Button
+		id={ElementIds.bd_startPause}
+		ButtonVariant={ButtonVariant.filled}>Show my location</Button>
+	<ul>
+		<li>Accuracy: <span id={ElementIds.bd_accuracy}>0</span></li>
+		<li>Altitude: <span id={ElementIds.bd_altitude}>Unknown</span></li>
+		<li>AltitudeAccuracy: <span id={ElementIds.bd_altitudeAccuracy}>Unknown</span></li>
+		<li>Heading: <span id={ElementIds.bd_heading}>Unknown</span></li>
+		<li>Latitude: <span id={ElementIds.bd_latitude}>0</span></li>
+		<li>Longitude: <span id={ElementIds.bd_longitude}>0</span></li>
+		<li>Speed: <span id={ElementIds.bd_speed}>Unknown</span></li>
+	</ul>
 </main>

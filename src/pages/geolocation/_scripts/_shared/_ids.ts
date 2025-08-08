@@ -18,4 +18,14 @@ export class ElementIds {
 	static readonly apSett_menu = _createId()
 	static readonly apSett_animationMenu = _createId()
 	static readonly apSett_themeMenu = _createId()
+
+	// bd = body
+	static readonly bd_startPause = _createId()
+	static readonly bd_accuracy = _createId()
+	static readonly bd_altitude = _createId()
+	static readonly bd_altitudeAccuracy = _createId()
+	static readonly bd_heading = _createId()
+	static readonly bd_latitude = _createId()
+	static readonly bd_longitude = _createId()
+	static readonly bd_speed = _createId()
 }
