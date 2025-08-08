@@ -92,6 +92,8 @@ export enum IconCodes {
 	flag = 0xE811,
 	food = 0xE875,
 	gift = 0xE8B9,
+	globeOff = 0xE8E1,
+	globeShield = 0xE8E9,
 	handPoint = 0xE913,
 	handRight = 0xE915,
 	handRightOff = 0xE917,
