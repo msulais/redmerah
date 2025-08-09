@@ -25,14 +25,15 @@ export enum RoutesLinks {
 	urlEncoder = '/url-encoder',
 	deadPixelTest = '/dead-pixel-test',
 	geolocation = '/geolocation',
+	compass = '/compass',
 
 	// TODO: create these apps
+	networkInfo = '/network-info',
 	sensor = '/sensor',
 	screenRecorder = '/screen-recorder',
 	keyboardTest = '/keyboard-test',
 	voiceRecorder = '/voice-recorder',
 	vibrationTest = '/vibration-test',
-	compass = '/compass',
 	tasks = '/tasks',
 	notes = '/notes',
 	codeFormatter = '/code-formatter',
