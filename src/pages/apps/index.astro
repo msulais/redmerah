@@ -59,7 +59,7 @@ export const prerender = true
 			<ul class={CSSClasses.content} id={ElementIds.appList}>
 				{[...APPS].sort((a,b) => a.name.localeCompare(b.name)).map(app =>
 					<li>
-						<LinkButton href={app.link} LinkButtonVariant={ButtonVariant.tonal}>
+						<LinkButton style={`--color: ${app.color}`} href={app.link} LinkButtonVariant={ButtonVariant.tonal}>
 							<img
 								loading="eager"
 								src={app.logoUrl}
