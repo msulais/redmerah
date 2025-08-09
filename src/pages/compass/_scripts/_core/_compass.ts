@@ -13,7 +13,7 @@ function _initEvents(): void {
 		}
 
 		requestAnimationFrame(() => {
-			_textRef.textContent = alpha + '°'
+			_textRef.textContent = Math.round(alpha) + '°'
 			_compassRef.setAttribute('transform', `rotate(${360 - alpha},640,788)`)
 		})
 	})
