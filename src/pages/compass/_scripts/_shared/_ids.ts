@@ -22,4 +22,7 @@ export class ElementIds {
 	// bd = body
 	static readonly bd_compass = _createId()
 	static readonly bd_text = _createId()
+
+	// dlg = dialog
+	static readonly dlg_notSupport = _createId()
 }

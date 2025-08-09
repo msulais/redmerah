@@ -3,12 +3,18 @@ import { $ } from "./_dom-utils"
 
 const _textRef = $(ElementIds.bd_text) as unknown as SVGTextElement
 const _compassRef = $(ElementIds.bd_compass) as unknown as SVGGElement
+const _notSupportRef = $(ElementIds.dlg_notSupport) as HTMLDialogElement
+let _errorHasShown = false
 
 function _initEvents(): void {
 	window.addEventListener('deviceorientationabsolute', (ev) => {
 		let alpha = ev.alpha
 		if (alpha === null) {
-			// TODO: show error
+			if (!_errorHasShown) {
+				_notSupportRef.showModal()
+			}
+
+			_errorHasShown = true
 			return
 		}
 
