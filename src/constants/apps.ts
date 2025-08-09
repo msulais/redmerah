@@ -19,6 +19,17 @@ import logoMediaPlayer from '@/assets/images/apps/media-player.svg'
 import logoUrlEncoder from '@/assets/images/apps/url-encoder.svg'
 import logoDeadPixelTest from '@/assets/images/apps/dead-pixel-test.svg'
 import logoGeolocation from '@/assets/images/apps/geolocation.svg'
+import logoCompass from '@/assets/images/apps/compass.svg'
+
+export const APP_COMPASS: AppItem = {
+	logoUrl: logoCompass.src,
+	name: 'Compass',
+	description: 'Get a true compass reading instantly with the Compass web app. It\'s a simple, internet-free tool for finding your way, whether you\'re hiking, navigating, or just curious.',
+	link: RoutesLinks.compass,
+	color: '#1FFF3C',
+	buildNumber: 1,
+	buildVersion: '0.0.1',
+}
 
 export const APP_GEOLOCATION: AppItem = {
 	logoUrl: logoGeolocation.src,
@@ -211,6 +222,7 @@ export const APP_DEAD_PIXEL_TEST: AppItem = {
 }
 
 export const APPS: AppItem[] = [
+	APP_COMPASS,
 	APP_GEOLOCATION,
 	APP_DEAD_PIXEL_TEST,
 	APP_RANDOMIZER,
