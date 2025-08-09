@@ -2,7 +2,6 @@ import { ButtonVariant, updateButtonRef, type ButtonElement } from "@/components
 import { ElementIds } from "../_shared/_ids"
 import { $, $$ } from "./_dom-utils"
 import { ObservableStore } from "@/utils/store"
-import { AppCSSColors } from "@/enums/app-data"
 import type { ToastElement } from "@/components/Toast"
 import { IconClasses, type IconElement } from "@/components/Icon"
 
