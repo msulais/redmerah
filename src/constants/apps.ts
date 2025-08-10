@@ -21,6 +21,17 @@ import logoDeadPixelTest from '@/assets/images/apps/dead-pixel-test.svg'
 import logoGeolocation from '@/assets/images/apps/geolocation.svg'
 import logoCompass from '@/assets/images/apps/compass.svg'
 import logoNetworkInformation from '@/assets/images/apps/network-information.svg'
+import logoVibrator from '@/assets/images/apps/vibrator.svg'
+
+export const APP_VIBRATOR: AppItem = {
+	logoUrl: logoVibrator.src,
+	name: 'Vibrator',
+	description: "Instantly test the vibration on any compatible device. Use Vibrator to check your hardware's haptic feedback with a variety of patterns and durations in your browser.",
+	link: RoutesLinks.vibrator,
+	color: '#1AE5E5',
+	buildNumber: 1,
+	buildVersion: '0.0.1',
+}
 
 export const APP_NETWORK_INFORMATION: AppItem = {
 	logoUrl: logoNetworkInformation.src,
@@ -31,6 +42,7 @@ export const APP_NETWORK_INFORMATION: AppItem = {
 	buildNumber: 1,
 	buildVersion: '0.0.1',
 }
+
 export const APP_COMPASS: AppItem = {
 	logoUrl: logoCompass.src,
 	name: 'Compass',
@@ -232,6 +244,7 @@ export const APP_DEAD_PIXEL_TEST: AppItem = {
 }
 
 export const APPS: AppItem[] = [
+	APP_VIBRATOR,
 	APP_NETWORK_INFORMATION,
 	APP_COMPASS,
 	APP_GEOLOCATION,

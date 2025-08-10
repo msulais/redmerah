@@ -1,0 +1,45 @@
+@use '../../../styles/units.scss' as u;
+
+.body {
+	padding: u.Rem(8px) u.Rem(16px) u.Rem(16px) u.Rem(16px);
+	overflow: auto;
+	height: 100%;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	gap: u.Rem(16px);
+
+	> ul {
+		list-style: none;
+		text-align: center;
+		max-width: min(100%, u.Rem(1080px));
+
+		> li {
+			display: inline;
+			color: rgb(var(--g-color-accent));
+			font-size: var(--g-font-size-xxd);
+			font-weight: bold;
+
+			@media (max-width: u.Rem(600px)) {
+				font-size: var(--g-font-size-l);
+			}
+
+			&::after {
+				font-weight: normal;
+				color: rgb(var(--g-color-on-surface));
+				content: 'ms, '
+			}
+
+			&:last-child::after {
+				content: 'ms'
+			}
+		}
+	}
+
+	> div {
+		display: flex;
+		gap: u.Rem(8px);
+	}
+}

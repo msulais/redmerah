@@ -1,0 +1,22 @@
+---
+import Icon from '@/components/Icon/index.astro'
+import Button from '@/components/Button/index.astro'
+import IconButton from '@/components/Button/IconButton.astro'
+import { DEFAULT_VIBRATION_PATTERN } from '../_scripts/_shared/_constant'
+import { IconCodes } from '@/enums/icons'
+import { CSSClasses } from '../_styles/_css'
+import { ButtonVariant } from '@/components/Button'
+---
+
+<main class={CSSClasses.body}>
+	<ul>{DEFAULT_VIBRATION_PATTERN.map(v =>
+		<li>{v}</li>
+	)}</ul>
+	<div>
+		<IconButton ButtonVariant={ButtonVariant.tonal} IconButtonCode={IconCodes.edit}/>
+		<Button ButtonVariant={ButtonVariant.filled}>
+			<Icon IconCode={IconCodes.play} IconFilled/>
+			Vibrate
+		</Button>
+	</div>
+</main>
