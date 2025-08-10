@@ -57,3 +57,7 @@ export enum AppCSSElevation {
 	e4 = 'var(--g-elevation4)',
 	e5 = 'var(--g-elevation5)',
 }
+
+export enum AppCSSDuration {
+	transition = 'var(--g-duration-transition)'
+}
