@@ -3,6 +3,7 @@ import { ObservableStore } from "@/utils/store"
 import { ElementIds } from "../_shared/_ids"
 import { $ } from "./_dom-utils"
 import type { DialogElement } from "@/components/Dialog"
+import { isNumberDefined } from "@/utils/number"
 
 // NOTE: not every browser support all these property
 export type NetworkStoreType = {
@@ -37,11 +38,21 @@ function _initSubscriber(): void {
 	const isBoolean = (v: any) => typeof v === 'boolean'
 
 	NetworkStore.subscribe(v => {
-		_downlinkRef.textContent = isNumber(v.downlink)? (v.downlink + ' Mbps')  : 'N/A'
-		_downlinkMaxRef.textContent = isNumber(v.downlinkMax)? (v.downlinkMax + ' Mbps') : 'N/A'
+		const downlink = v.downlink
+		_downlinkRef.textContent = isNumber(downlink) && isNumberDefined(downlink)
+			? (downlink + ' Mbps')
+			: 'N/A'
+
+		const downlinkMax = v.downlinkMax
+		_downlinkMaxRef.textContent = isNumber(downlinkMax) && isNumberDefined(downlinkMax)
+			? (downlinkMax + ' Mbps')
+			: 'N/A'
+
+		const rtt = v.rtt
+		_rttRef.textContent = isNumber(rtt) && isNumberDefined(rtt)? (rtt + ' ms')  : 'N/A'
+
 		_effectiveTypeRef.textContent = isString(v.effectiveType)? v.effectiveType : 'N/A'
 		_typeRef.textContent = isString(v.type)? v.type : 'N/A'
-		_rttRef.textContent = isNumber(v.rtt)? (v.rtt + ' ms')  : 'N/A'
 		_saveDataRef.textContent = isBoolean(v.dataSaver)? v.dataSaver? 'Yes' : 'No' : 'N/A'
 	})
 }
