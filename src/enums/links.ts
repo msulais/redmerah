@@ -26,9 +26,9 @@ export enum RoutesLinks {
 	deadPixelTest = '/dead-pixel-test',
 	geolocation = '/geolocation',
 	compass = '/compass',
+	networkInformation = '/network-information',
 
 	// TODO: create these apps
-	networkInfo = '/network-info',
 	sensor = '/sensor',
 	screenRecorder = '/screen-recorder',
 	keyboardTest = '/keyboard-test',
