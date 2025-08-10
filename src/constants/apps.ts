@@ -20,7 +20,17 @@ import logoUrlEncoder from '@/assets/images/apps/url-encoder.svg'
 import logoDeadPixelTest from '@/assets/images/apps/dead-pixel-test.svg'
 import logoGeolocation from '@/assets/images/apps/geolocation.svg'
 import logoCompass from '@/assets/images/apps/compass.svg'
+import logoNetworkInformation from '@/assets/images/apps/network-information.svg'
 
+export const APP_NETWORK_INFORMATION: AppItem = {
+	logoUrl: logoNetworkInformation.src,
+	name: 'Network Information',
+	description: "Get detailed information about your network connection with Network Information. This app uses the Network Information API to provide real-time data on your connection type, speed, and status.",
+	link: RoutesLinks.networkInformation,
+	color: '#FFBD00',
+	buildNumber: 1,
+	buildVersion: '0.0.1',
+}
 export const APP_COMPASS: AppItem = {
 	logoUrl: logoCompass.src,
 	name: 'Compass',
@@ -222,6 +232,7 @@ export const APP_DEAD_PIXEL_TEST: AppItem = {
 }
 
 export const APPS: AppItem[] = [
+	APP_NETWORK_INFORMATION,
 	APP_COMPASS,
 	APP_GEOLOCATION,
 	APP_DEAD_PIXEL_TEST,

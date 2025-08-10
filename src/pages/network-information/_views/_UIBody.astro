@@ -1,0 +1,49 @@
+---
+import Icon from '@/components/Icon/index.astro'
+import { IconCodes } from '@/enums/icons'
+import { CSSClasses } from '../_styles/_css'
+import { ElementIds } from '../_scripts/_shared/_ids'
+import Dialog from '@/components/Dialog/index.astro'
+import Button from '@/components/Button/index.astro'
+import LinkButton from '@/components/Button/LinkButton.astro'
+import { ButtonVariant } from '@/components/Button/'
+import { Links } from '../_scripts/_shared/_enums'
+import { pxToRem } from '@/utils/css'
+---
+
+<main class={CSSClasses.body}>
+	<ul>
+		<li>
+			<Icon IconCode={IconCodes.arrowCircleDown}/>
+			<div>Downlink:<br/><span id={ElementIds.bd_downlink}>N/A</span></div></li>
+		<li>
+			<Icon IconCode={IconCodes.arrowCircleDownDouble}/>
+			<div>Downlink max:<br/><span id={ElementIds.bd_downlinkMax}>N/A</span></div></li>
+		<li>
+			<Icon IconCode={IconCodes.networkCheck}/>
+			<div>Effective type:<br/><span id={ElementIds.bd_effectiveType}>N/A</span></div></li>
+		<li>
+			<Icon IconCode={IconCodes.arrowCircleDownUp}/>
+			<div>Round trip time:<br/><span id={ElementIds.bd_rtt}>N/A</span></div></li>
+		<li>
+			<Icon IconCode={IconCodes.wifi1}/>
+			<div>Type:<br/><span id={ElementIds.bd_type}>N/A</span></div></li>
+		<li>
+			<Icon IconCode={IconCodes.leaf2}/>
+			<div>Data saver:<br/><span id={ElementIds.bd_saveData}>N/A</span></div></li>
+	</ul>
+</main>
+
+<Dialog id={ElementIds.dlg_browseNotSupported} style={`width:${pxToRem(500)}rem`}>
+	<Fragment slot="header">Browser Not Supported</Fragment>
+	<p>NetworkInformation API not fully supported in your browser. Some features may not function correctly.</p>
+	<form method="dialog" slot="footer" style="display:contents">
+		<Button ButtonVariant={ButtonVariant.tonal}>Close</Button>
+		<LinkButton
+			href={Links.compatibility}
+			LinkButtonNewTab
+			LinkButtonVariant={ButtonVariant.filled}>
+			Check browser
+		</LinkButton>
+	</form>
+</Dialog>
