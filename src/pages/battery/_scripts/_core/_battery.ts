@@ -17,6 +17,9 @@ function _checkBrowserCompatibility(): void {
 }
 
 function _initEvents(): void {
+	const supported = 'getBattery' in navigator
+	if (!supported) {return}
+
 	;((navigator as any).getBattery() as Promise<BatteryManager>).then((battery) => {
 		const update = () => {
 			const charging = battery.charging
