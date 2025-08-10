@@ -20,8 +20,12 @@ function _initEvents(): void {
 
 		requestAnimationFrame(() => {
 			alpha = Math.round(alpha!)
+			while (alpha >= 360) {
+				alpha -= 360
+			}
+
 			_textRef.textContent = 360 - alpha + '°'
-			_compassRef.setAttribute('transform', `rotate(${alpha},640,788)`)
+			_compassRef.style.setProperty('rotate', alpha + 'deg')
 		})
 	})
 }
