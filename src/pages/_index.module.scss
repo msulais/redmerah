@@ -174,22 +174,51 @@
 
 a.more_apps {
 	margin: u.Rem(32px) 0 u.Rem(64px) 0;
-	border-radius: u.Rem(9999px);
-	padding: u.Rem(16px) u.Rem(32px);
+	border-radius: u.Rem(8px);
+	padding: u.Rem(12px) u.Rem(24px);
 	font-size: var(--g-font-size-m);
 	gap: u.Rem(16px);
-	border: u.Rem(6px) solid rgba(var(--g-color-on-accent), var(--g-opacity-inv5));
+	outline: u.Rem(4px) solid transparent;
+	outline-offset: u.Rem(6px);
+	color: #fff !important;
+	background: linear-gradient(45deg, #ff0000, #e003b0);
+	transition-property: outline-color, scale;
 
-	&:hover > :global(.c-icon) {
-		:root[data-animation=on] & {
-			translate: u.Rem(12px) 0;
-		}
+	&:hover {
+		outline-color: rgb(var(--g-color-accent));
 
-		@media (prefers-reduced-motion: no-preference) {
-			:root[data-animation=auto] & {
+		> :global(.c-icon) {
+			:root[data-animation=on] & {
 				translate: u.Rem(12px) 0;
 			}
+
+			@media (prefers-reduced-motion: no-preference) {
+				:root[data-animation=auto] & {
+					translate: u.Rem(12px) 0;
+				}
+			}
 		}
+	}
+
+	&:focus-visible {
+		outline-color: rgb(var(--g-color-accent));
+
+		> :global(.c-icon) {
+			:root[data-animation=on] & {
+				translate: u.Rem(12px) 0;
+			}
+
+			@media (prefers-reduced-motion: no-preference) {
+				:root[data-animation=auto] & {
+					translate: u.Rem(12px) 0;
+				}
+			}
+		}
+	}
+
+	&:active {
+		outline-color: rgb(var(--g-color-accent));
+		scale: .9;
 	}
 
 	> :global(.c-icon) {
