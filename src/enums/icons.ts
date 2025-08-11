@@ -142,6 +142,7 @@ export enum IconCodes {
 	print = 0xEDB5,
 	pulse = 0xEDCD,
 	qrCode = 0xEDD9,
+	question = 0xEDDB,
 	questionCircle = 0xEDDD,
 	radioButton = 0xEDE7,
 	receipt = 0xEE01,
