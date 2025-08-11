@@ -14,19 +14,18 @@
 		}
 
 		> a {
-			border-bottom: .1em solid rgb(var(--g-color-accent));
-			position: relative;
+			text-decoration: underline;
+			text-underline-offset: 0.2em;
+			text-decoration-color: rgb(var(--g-color-accent));
 			transition-duration: var(--g-duration-transition);
+
 			&:hover {
-				border-bottom-style: dashed;
+				color: rgb(var(--g-color-accent));
 			}
 
 			&:active {
-				border-bottom-style: solid;
-				background-color: rgb(var(--g-color-accent));
-				color: rgb(var(--g-color-on-accent));
-				border-radius: u.Rem(4px);
-				padding: 0 .3em;
+				text-decoration-style: dashed;
+				color: rgb(var(--g-color-accent));
 			}
 		}
 	}
@@ -47,12 +46,14 @@
 
 		> a {
 			transition-duration: var(--g-duration-transition);
+			text-underline-offset: u.Rem(4px);
+
 			&:hover {
 				text-decoration: underline;
 			}
 
 			&:active {
-				text-decoration: underline dotted;
+				text-decoration: underline dashed;
 			}
 		}
 	}
@@ -62,11 +63,11 @@
 	}
 
 	> h1 {
-		font-size: min(10dvw, 56px);
-		margin-bottom: 64px;
-		color: rgb(var(--g-color-accent));
-		width: fit-content;
-		padding-bottom: .1em;
+		font-size: min(10dvw, u.Rem(56px));
+		margin-bottom: u.Rem(8px);
+		color: transparent;
+		-webkit-text-stroke-width: u.Rem(2px);
+		-webkit-text-stroke-color: rgb(var(--g-color-accent));
 	}
 
 	> :not(h1) {
