@@ -116,47 +116,40 @@ const themes: {
 			popovertarget={ElementIds.apInf_menu}
 		/>
 		<Menu id={ElementIds.apInf_menu} PopoverAnchorBy={ElementIds.apInf_btn}>
+			<MenuHeader>{APP.name}</MenuHeader>
+			<MenuItem id={ElementIds.apInf_shareBtn}>
+				<Icon IconCode={IconCodes.shareAndroid}/>
+				Share
+			</MenuItem>
+			<LinkMenuItem href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + encodeURI(APP.name)}>
+				<Icon IconCode={IconCodes.chat}/>
+				Send feedback
+			</LinkMenuItem>
+			<Divider />
 			<LinkMenuItem href="/">
 				<img src={logoRedmerah.src} style={{width: pxToRem(20) + 'rem'}}/>
 				Redmerah
-				<MenuIndent />
 			</LinkMenuItem>
 			<LinkMenuItem href={RoutesLinks.apps}>
 				<Icon IconCode={IconCodes.apps}/>
 				More apps
-				<MenuIndent />
 			</LinkMenuItem>
 			<LinkMenuItem href={RoutesLinks.about}>
 				<Icon IconCode={IconCodes.info}/>
 				About us
-				<MenuIndent />
 			</LinkMenuItem>
-			<Divider />
 			<LinkMenuItem href={RoutesLinks.privacy}>
 				<Icon IconCode={IconCodes.shieldCheckmark}/>
 				Privacy policy
-				<MenuIndent />
 			</LinkMenuItem>
 			<LinkMenuItem href={RoutesLinks.terms}>
 				<Icon IconCode={IconCodes.receipt}/>
 				Terms & conditions
 				<MenuIndent />
 			</LinkMenuItem>
-			<Divider />
-			<MenuItem id={ElementIds.apInf_shareBtn}>
-				<Icon IconCode={IconCodes.shareAndroid}/>
-				Share
-				<MenuIndent />
-			</MenuItem>
-			<LinkMenuItem href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + encodeURI(APP.name)}>
-				<Icon IconCode={IconCodes.chat}/>
-				Send feedback
-				<MenuIndent />
-			</LinkMenuItem>
 			<LinkMenuItem href={ExternalLinks.donate} LinkButtonNewTab>
 				<Icon IconCode={IconCodes.gift}/>
 				Donate
-				<MenuIndent />
 			</LinkMenuItem>
 			<MenuHeader>&copy; {new Date().getFullYear()} Redmerah</MenuHeader>
 		</Menu>

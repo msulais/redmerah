@@ -14,7 +14,7 @@ export class ElementIds {
 	// apInf = appbar info
 	static readonly apInf_btn = _createId()
 	static readonly apInf_menu = _createId()
-	static readonly apInf_menuShareBtn = _createId()
+	static readonly apInf_shareBtn = _createId()
 
 	// apSett = appbar settings
 	static readonly apSett_btn = _createId()

@@ -12,7 +12,7 @@ const _settingsButtonRef = $(ElementIds.apSett_btn) as HTMLButtonElement
 const _sideBarButtonRef = $(ElementIds.ap_sideBarBtn) as HTMLButtonElement
 const _sideBarRef = $(ElementIds.nav_sideBar) as HTMLDivElement
 const _drawerRef = $(ElementIds.nav_drawer) as HTMLDivElement
-const _shareButtonRef = $(ElementIds.apInf_menuShareBtn) as HTMLButtonElement
+const _shareButtonRef = $(ElementIds.apInf_shareBtn) as HTMLButtonElement
 
 function _initEvents(): void {
 	_shareButtonRef.addEventListener('click', () => {
