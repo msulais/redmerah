@@ -99,3 +99,39 @@ export function isTargetValidElement(
 		&& (condition?.(target) ?? true)
 	)
 }
+
+export function updateListElement<T extends Element, U>(
+	parent: Element,
+	data: U[],
+	create: () => T,
+	callback?: (child: T, data: U, index: number) => unknown
+): Element {
+	const refs = [...parent.children] as unknown as T[]
+	const dataLength = data.length
+	const refsLength = refs.length
+	for (let i = 0; i < refsLength; i++) {
+		const ref = refs[i]
+		if (!ref) {continue}
+
+		if (i > dataLength-1) {
+			ref.remove()
+			continue
+		}
+
+		callback?.(ref, data[i], i)
+	}
+
+	for (let i = 0; i < dataLength - refsLength; i++) {
+		const index = refsLength + i
+		const ref = create()
+		callback?.(ref, data[index], index)
+		parent.append(ref)
+	}
+
+	return parent
+}
+
+export function showInputMessage(ref: HTMLInputElement | HTMLTextAreaElement, msg: string) {
+	ref.setCustomValidity(msg)
+	ref.reportValidity()
+}
