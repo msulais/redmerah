@@ -20,6 +20,11 @@ export class ElementIds {
 	static readonly apSett_themeMenu = _createId()
 
 	// bd = body
-	static readonly bd_start = _createId()
-	static readonly bd_view = _createId()
+	static readonly bd_list = _createId()
+	static readonly bd_vibrate = _createId()
+	static readonly bd_edit = _createId()
+	static readonly bd_stop = _createId()
+	static readonly bd_editDialog = _createId()
+	static readonly bd_save = _createId()
+	static readonly bd_input = _createId()
 }
