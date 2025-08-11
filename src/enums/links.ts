@@ -30,7 +30,9 @@ export enum RoutesLinks {
 	vibrator = '/vibrator',
 
 	// TODO: create these apps
+	cssUnitConverter = '/css-unit-converter',
 	contrastChecker = '/contrast-checker',
+	shadowGenerator = '/shadow-generator',
 	sensor = '/sensor',
 	screenRecorder = '/screen-recorder',
 	keyboardTest = '/keyboard-test',
