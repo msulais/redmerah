@@ -1,9 +1,11 @@
 ---
 import AppBar from '@/components/AppBar/index.astro'
+import Button from '@/components/Button/index.astro'
 import IconButton from '@/components/Button/IconButton.astro'
 import Tooltip from '@/components/Tooltip/index.astro'
 import { APP_VIBRATOR as APP } from '@/constants/apps'
 import Menu from '@/components/Menu/index.astro'
+import Dialog from '@/components/Dialog/index.astro'
 import SubMenu from '@/components/Menu/SubMenu.astro'
 import SubMenuItem from '@/components/Menu/SubMenuItem.astro'
 import RadioMenuItem from '@/components/Menu/RadioMenuItem.astro'
@@ -21,6 +23,7 @@ import { ElementIds } from '../_scripts/_shared/_ids'
 import { pxToRem } from '@/utils/css'
 import { RadioNames } from '../_scripts/_shared/_input-names'
 import { DEFAULT_ANIMATION, DEFAULT_THEME } from '../_scripts/_shared/_constant'
+import { ButtonVariant } from '@/components/Button'
 
 const animations: {
 	value: PlatformAnimationMode
@@ -87,47 +90,44 @@ const themes: {
 			popovertarget={ElementIds.apInf_menu}
 		/>
 		<Menu id={ElementIds.apInf_menu} PopoverAnchorBy={ElementIds.apInf_btn}>
-			<LinkMenuItem href="/">
-				<img src={logoRedmerah.src} style={{width: pxToRem(20) + 'rem'}}/>
-				Redmerah
-				<MenuIndent />
-			</LinkMenuItem>
-			<LinkMenuItem href={RoutesLinks.apps}>
-				<Icon IconCode={IconCodes.apps}/>
-				More apps
-				<MenuIndent />
-			</LinkMenuItem>
-			<LinkMenuItem href={RoutesLinks.about}>
-				<Icon IconCode={IconCodes.info}/>
-				About us
-				<MenuIndent />
-			</LinkMenuItem>
-			<Divider />
-			<LinkMenuItem href={RoutesLinks.privacy}>
-				<Icon IconCode={IconCodes.shieldCheckmark}/>
-				Privacy policy
-				<MenuIndent />
-			</LinkMenuItem>
-			<LinkMenuItem href={RoutesLinks.terms}>
-				<Icon IconCode={IconCodes.receipt}/>
-				Terms & conditions
-				<MenuIndent />
-			</LinkMenuItem>
-			<Divider />
+			<MenuHeader>{APP.name}</MenuHeader>
 			<MenuItem id={ElementIds.apInf_shareBtn}>
 				<Icon IconCode={IconCodes.shareAndroid}/>
 				Share
-				<MenuIndent />
 			</MenuItem>
 			<LinkMenuItem href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + encodeURI(APP.name)}>
 				<Icon IconCode={IconCodes.chat}/>
 				Send feedback
+			</LinkMenuItem>
+			<MenuItem id={ElementIds.apInf_help}>
+				<Icon IconCode={IconCodes.questionCircle}/>
+				Your device not vibrate?
 				<MenuIndent />
+			</MenuItem>
+			<Divider />
+			<LinkMenuItem href="/">
+				<img src={logoRedmerah.src} style={{width: pxToRem(20) + 'rem'}}/>
+				Redmerah
+			</LinkMenuItem>
+			<LinkMenuItem href={RoutesLinks.apps}>
+				<Icon IconCode={IconCodes.apps}/>
+				More apps
+			</LinkMenuItem>
+			<LinkMenuItem href={RoutesLinks.about}>
+				<Icon IconCode={IconCodes.info}/>
+				About us
+			</LinkMenuItem>
+			<LinkMenuItem href={RoutesLinks.privacy}>
+				<Icon IconCode={IconCodes.shieldCheckmark}/>
+				Privacy policy
+			</LinkMenuItem>
+			<LinkMenuItem href={RoutesLinks.terms}>
+				<Icon IconCode={IconCodes.receipt}/>
+				Terms & conditions
 			</LinkMenuItem>
 			<LinkMenuItem href={ExternalLinks.donate} LinkButtonNewTab>
 				<Icon IconCode={IconCodes.gift}/>
 				Donate
-				<MenuIndent />
 			</LinkMenuItem>
 			<MenuHeader>&copy; {new Date().getFullYear()} Redmerah</MenuHeader>
 		</Menu>
@@ -180,3 +180,10 @@ const themes: {
 		</Menu>
 	</Tooltip>
 </AppBar>
+<Dialog id={ElementIds.apInf_helpDialog} style={`width:${pxToRem(500)}rem`}>
+	<Fragment slot="header">Why My Device Not Vibrate?</Fragment>
+	<p>This app requires a device with a built-in vibration motor to function. If your device doesn't not vibrate, then your device does not support this feature. Please try again on another device.</p>
+	<form method="dialog" slot="footer" style="display:contents">
+		<Button ButtonVariant={ButtonVariant.filled}>Close</Button>
+	</form>
+</Dialog>
