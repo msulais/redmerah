@@ -6,6 +6,7 @@ import { DEFAULT_VIBRATION_PATTERN } from "../_shared/_constant"
 import { showInputMessage, updateListElement } from "@/utils/element"
 import type { DialogElement } from "@/components/Dialog"
 import { isNumberDefined } from "@/utils/number"
+import { saveStorageItem } from "./_database"
 
 export type VibratorStoreType = {
 	pattern: number[]
@@ -27,7 +28,7 @@ function _subsPatternChanges(v: VibratorStoreType, o: VibratorStoreType): void {
 	const pattern = v.pattern
 	if (pattern === o.pattern) {return}
 
-	// TODO: save storage
+	saveStorageItem('pattern', pattern)
 }
 
 function _subsPatternView(v: VibratorStoreType, o: VibratorStoreType): void {

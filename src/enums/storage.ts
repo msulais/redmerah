@@ -22,5 +22,6 @@ export enum DatabaseNames {
 	xmlEscape = 'xml-escape',
 	javascriptMinifier = 'javascript-minifier',
 	cubicBezier = 'cubic-bezier',
-	urlEncoder = 'url-encoder'
+	urlEncoder = 'url-encoder',
+	vibrator = 'vibrator'
 }
