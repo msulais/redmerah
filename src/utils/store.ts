@@ -5,7 +5,7 @@ type ReadWrite<T> = {-readonly [P in keyof T]: T[P]}
 
 export class ObservableStore<T extends object> {
 	private state: Readonly<T>
-	private listeners = new Map<Symbol, Listener<Readonly<T>>>()
+	private listeners = new Map<symbol, Listener<Readonly<T>>>()
 
 	constructor(initialState: T) {
 		this.state = initialState
@@ -24,7 +24,7 @@ export class ObservableStore<T extends object> {
 	 * @param updater
 	 * @param notifyKeys Keys of listener. Order matter. It is possible to repeat key.
 	 */
-	update(updater: (state: ReadWrite<T>) => unknown, notifyKeys: Symbol[] | null = []) {
+	update(updater: (state: ReadWrite<T>) => unknown, notifyKeys: symbol[] | null = []) {
 		const oldState = this.state
 		updater(this.state = deepCopy(this.state))
 		if (notifyKeys !== null) {
@@ -32,7 +32,13 @@ export class ObservableStore<T extends object> {
 		}
 	}
 
-	subscribe(listener: Listener<T>, key = Symbol()) {
+	subscribeAll(listeners: Listener<T>[], keys: symbol[] = []) {
+		for (let i = 0; i < listeners.length; i++) {
+			this.subscribe(listeners[i], keys[i] ?? Symbol())
+		}
+	}
+
+	subscribe(listener: Listener<T>, key: symbol = Symbol()) {
 		if (this.listeners.values().some(v => v === listener)) {
 			return
 		}
@@ -41,7 +47,7 @@ export class ObservableStore<T extends object> {
 		return () => this.listeners.delete(key)
 	}
 
-	unsubscribe(key: Symbol) {
+	unsubscribe(key: symbol) {
 		return this.listeners.delete(key)
 	}
 
@@ -50,7 +56,7 @@ export class ObservableStore<T extends object> {
 	 * @param keys Keys of listener. Order matter. It is possible to repeat key.
 	 * @param oldState
 	 */
-	notify(keys: Symbol[] = [], oldState: T = this.state) {
+	notify(keys: symbol[] = [], oldState: T = this.state) {
 		for (const key of (keys.length === 0? this.listeners.keys() : keys)) {
 			this.listeners.get(key)?.(this.state, oldState)
 		}
