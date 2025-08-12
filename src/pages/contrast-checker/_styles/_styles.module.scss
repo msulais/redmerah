@@ -1,4 +1,49 @@
 @use '../../../styles/units.scss' as u;
 
 .body {
+	padding: u.Rem(8px) u.Rem(16px) u.Rem(16px) u.Rem(16px);
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	align-items: center;
+	gap: u.Rem(16px);
+}
+
+.output {
+	font-size: var(--g-font-size-d);
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+
+	> span {
+		display: block;
+
+		&:first-of-type {
+			text-align: end;
+			padding-right: .5em;
+			border-right: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
+		}
+
+		&:last-of-type {
+			padding-left: .5em;
+		}
+	}
+
+}
+
+.control {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: u.Rem(16px);
+	width: min(100%, u.Rem(720px));
+	aspect-ratio: 40 / 9;
+
+	> button {
+		display: block;
+		font-size: var(--g-font-size-l);
+		font-weight: bold;
+		border: none;
+		outline: u.Rem(2px) solid rgb(var(--g-color-on-surface));
+		outline-offset: u.Rem(2px);
+		border-radius: u.Rem(4px);
+	}
 }

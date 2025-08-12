@@ -18,4 +18,12 @@ export class ElementIds {
 	static readonly apSett_menu = _createId()
 	static readonly apSett_animationMenu = _createId()
 	static readonly apSett_themeMenu = _createId()
+
+	// bd = body
+	static readonly bd_foreground = _createId()
+	static readonly bd_background = _createId()
+	static readonly bd_forePicker = _createId()
+	static readonly bd_backPicker = _createId()
+	static readonly bd_ratio = _createId()
+	static readonly bd_percentage = _createId()
 }

@@ -1,6 +1,53 @@
 ---
+import ColorPicker from '@/components/ColorPicker/index.astro'
+import { colorContrastRatio, hexToRgb } from '@/utils/color'
+import { DEFAULT_BACKGROUND_COLOR, DEFAULT_FOREGROUND_COLOR } from '../_scripts/_shared/_constant'
+import { ElementIds } from '../_scripts/_shared/_ids'
 import { CSSClasses } from '../_styles/_css'
+import type { HEXColor } from '@/types/color'
+import { adjustDecimalNumber } from '@/utils/number'
+
+const contrast = (hex1: HEXColor, hex2: HEXColor) => colorContrastRatio(hexToRgb(hex1), hexToRgb(hex2))
 ---
 
 <main class={CSSClasses.body}>
+	<div aria-atomic="true" aria-live="polite" class={CSSClasses.output}>
+		<span id={ElementIds.bd_ratio}>0:0</span>
+		<span id={ElementIds.bd_percentage}>{adjustDecimalNumber(contrast(DEFAULT_BACKGROUND_COLOR, DEFAULT_FOREGROUND_COLOR), 2)}%</span>
+	</div>
+	<div class={CSSClasses.control}>
+		<button
+			aria-label="Background color"
+			id={ElementIds.bd_background}
+			popovertarget={ElementIds.bd_backPicker}
+			style={{
+				'background-color': DEFAULT_BACKGROUND_COLOR,
+				color: contrast(DEFAULT_BACKGROUND_COLOR, '#000000') > 50? '#000' : '#FFF'
+			}}>
+			{DEFAULT_BACKGROUND_COLOR}
+		</button>
+		<ColorPicker
+			ColorPickerValue={DEFAULT_BACKGROUND_COLOR}
+			id={ElementIds.bd_backPicker}
+			PopoverDraggable
+			PopoverAnchorBy={ElementIds.bd_background}
+		/>
+
+		<button
+			aria-label="Foreground color"
+			id={ElementIds.bd_foreground}
+			popovertarget={ElementIds.bd_forePicker}
+			style={{
+				'background-color': DEFAULT_FOREGROUND_COLOR,
+				color: contrast(DEFAULT_FOREGROUND_COLOR, '#000000') > 50? '#000' : '#FFF'
+			}}>
+			{DEFAULT_FOREGROUND_COLOR}
+		</button>
+		<ColorPicker
+			ColorPickerValue={DEFAULT_FOREGROUND_COLOR}
+			id={ElementIds.bd_forePicker}
+			PopoverDraggable
+			PopoverAnchorBy={ElementIds.bd_foreground}
+		/>
+	</div>
 </main>
