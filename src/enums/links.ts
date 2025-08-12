@@ -59,5 +59,5 @@ export enum RoutesLinks {
 export enum ExternalLinks {
 	siteUrl = 'https://redmerah.com',
 	contactEmail = 'redmerah1813@gmail.com',
-	donate = 'https://buymeacoffee.com/redmerah',
+	donate = 'https://buymeacoffee.com/msulais',
 }
