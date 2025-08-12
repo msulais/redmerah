@@ -11,12 +11,16 @@ export function isColorValid(hex: string): boolean {
 }
 
 export function colorLuminance(rgb: RGBColor): number {
-	const r = Math.pow(rgb.r, 2.2)
-	const g = Math.pow(rgb.g, 2.2)
-	const b = Math.pow(rgb.b, 2.2)
-	const luminance = r * 0.2126 + g * 0.7152 + b * 0.0722
+	let r = rgb.r
+	r = r <= 0.03928? r / 12.92 : ((r + 0.055) / 1.055) ** 2.4
 
-	return luminance
+	let g = rgb.g
+	g = g <= 0.03928? g / 12.92 : ((g + 0.055) / 1.055) ** 2.4
+
+	let b = rgb.b
+	b = b <= 0.03928? b / 12.92 : ((b + 0.055) / 1.055) ** 2.4
+
+	return r * 0.2126 + g * 0.7152 + b * 0.0722
 }
 
 /**
