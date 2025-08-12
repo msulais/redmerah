@@ -66,6 +66,7 @@
 		font-size: min(10dvw, u.Rem(56px));
 		margin-bottom: u.Rem(8px);
 		color: transparent;
+		letter-spacing: u.Rem(1px);
 		-webkit-text-stroke-width: u.Rem(2px);
 		-webkit-text-stroke-color: rgb(var(--g-color-accent));
 	}
