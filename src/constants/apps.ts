@@ -22,6 +22,17 @@ import logoGeolocation from '@/assets/images/apps/geolocation.svg'
 import logoCompass from '@/assets/images/apps/compass.svg'
 import logoNetworkInformation from '@/assets/images/apps/network-information.svg'
 import logoVibrator from '@/assets/images/apps/vibrator.svg'
+import logoContrastChecker from '@/assets/images/apps/contrast-checker.svg'
+
+export const APP_CONTRAST_CHECKER: AppItem = {
+	logoUrl: logoContrastChecker.src,
+	name: 'Contrast Checker',
+	description: "Check color contrast for websites, apps, or print materials. Ensure your text is readable on any background.",
+	link: RoutesLinks.contrastChecker,
+	color: '#0063F7',
+	buildNumber: 1,
+	buildVersion: '0.0.1',
+}
 
 export const APP_VIBRATOR: AppItem = {
 	logoUrl: logoVibrator.src,
@@ -244,6 +255,7 @@ export const APP_DEAD_PIXEL_TEST: AppItem = {
 }
 
 export const APPS: AppItem[] = [
+	APP_CONTRAST_CHECKER,
 	APP_VIBRATOR,
 	APP_NETWORK_INFORMATION,
 	APP_COMPASS,
