@@ -8,7 +8,7 @@ import { Math_clamp } from "@/utils/math"
 import { safeNumber } from "@/utils/number"
 import type { ComboBoxElement } from "@/components/ComboBox"
 import { isValidEnumValue } from "@/utils/object"
-import { colorContrastRatio, hexToRgb, hslToHex, rgbToHex, rgbToHsl } from "@/utils/color"
+import { colorContrastPercentage, hexToRgb, hslToHex, rgbToHex, rgbToHsl } from "@/utils/color"
 import { saveStorageItem } from "../_core/_database"
 
 export type ColorsStoreType = Readonly<{
@@ -145,7 +145,7 @@ function _subsOutputView(v: ColorsStoreType, o: ColorsStoreType): void {
 	const updateLIRef = (ref: HTMLLIElement, hex: HEXColor) => {
 		const rgb = hexToRgb(hex)
 		const hsl = rgbToHsl(rgb)
-		const color = colorContrastRatio(rgb, {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff'
+		const color = colorContrastPercentage(rgb, {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff'
 		const br = () => document.createElement('br')
 		ref.replaceChildren(
 			hex, br(),

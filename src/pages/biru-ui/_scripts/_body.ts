@@ -4,7 +4,7 @@ import { AnimationEasing } from "@/enums/animation"
 import { isAnimationAllowed } from "@/utils/animation"
 import { PopoverPosition, updatePopoverRef } from "@/components/Popover"
 import { ColorPickerAttributes, ColorPickerEvents } from "@/components/ColorPicker"
-import { colorContrastRatio, hexToRgb } from "@/utils/color"
+import { colorContrastPercentage, hexToRgb } from "@/utils/color"
 import type { HEXColor } from "@/types/color"
 import { IconClasses, updateIconRef } from "@/components/Icon"
 import { ListVariant, updateListRef, type ListElement } from "@/components/List"
@@ -173,7 +173,7 @@ function _colorPicker(): void {
 		button.textContent = value
 		button.setAttribute('data-tooltip', 'Pick color')
 		button.style.setProperty('background-color', value)
-		button.style.setProperty('color', colorContrastRatio(hexToRgb(value as HEXColor), {r: 0, g: 0, b: 0}) > 50 ? '#000' : '#fff')
+		button.style.setProperty('color', colorContrastPercentage(hexToRgb(value as HEXColor), {r: 0, g: 0, b: 0}) > 50 ? '#000' : '#fff')
 	})
 
 	options?.addEventListener('change', ev => {

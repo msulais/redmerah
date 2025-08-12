@@ -26,7 +26,7 @@ export function colorLuminance(rgb: RGBColor): number {
 /**
  * Result value is between `0` (low contrast) to `100` (high contrast)
  */
-export function colorContrastRatio(rgb1: RGBColor, rgb2: RGBColor): number {
+export function colorContrastPercentage(rgb1: RGBColor, rgb2: RGBColor): number {
 	/**
 	 * `Y` = Luminance
 	 */

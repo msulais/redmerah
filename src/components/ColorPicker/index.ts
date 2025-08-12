@@ -3,7 +3,7 @@ import {
 	type HSLColor
 } from "@/types/color"
 import {
-	colorContrastRatio,
+	colorContrastPercentage,
 	hexToHsl,
 	hslToHex,
 	hslToHsv,
@@ -237,12 +237,12 @@ function _initColorPickerRef(colorPickerRef: ColorPickerElement): void {
 			colorPickerRef.style.setProperty(ColorPickerCSSVariables.hue, hueHexColor)
 			colorPickerRef.style.setProperty(
 				ColorPickerCSSVariables.rectBorderColor,
-				colorContrastRatio(hslToRgb(hsla), {r: 0, g: 0, b: 0}) > 50
+				colorContrastPercentage(hslToRgb(hsla), {r: 0, g: 0, b: 0}) > 50
 					? '#000' : '#fff'
 			)
 			colorPickerRef.style.setProperty(
 				ColorPickerCSSVariables.sliderHueBorderColor,
-				colorContrastRatio(hslToRgb({...hsla, s: 1, l: 0.5}), {r: 0, g: 0, b: 0}) > 50
+				colorContrastPercentage(hslToRgb({...hsla, s: 1, l: 0.5}), {r: 0, g: 0, b: 0}) > 50
 					? '#000' : '#fff'
 			)
 		})

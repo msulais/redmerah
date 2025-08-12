@@ -2,7 +2,7 @@ import { $, $$ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
 import { ObservableStore } from "@/utils/store"
 import { DEFAULT_COLOR, DEFAULT_COLOR_IN_CMYK, DEFAULT_COLOR_IN_HSL, DEFAULT_COLOR_IN_HSV, DEFAULT_COLOR_IN_HWB, DEFAULT_COLOR_IN_RGB } from "../_shared/_constant"
-import { cmykToRgb, colorContrastRatio, colorToRgb, hslToHsv, hslToRgb, hsvToHex, hsvToHsl, hsvToHwb, hsvToRgb, hwbToHsv, hwbToRgb, rgbToCmyk, rgbToColor, rgbToHex, rgbToHsl, rgbToHsv } from "@/utils/color"
+import { cmykToRgb, colorContrastPercentage, colorToRgb, hslToHsv, hslToRgb, hsvToHex, hsvToHsl, hsvToHwb, hsvToRgb, hwbToHsv, hwbToRgb, rgbToCmyk, rgbToColor, rgbToHex, rgbToHsl, rgbToHsv } from "@/utils/color"
 import { safeNumber } from "@/utils/number"
 import type { TooltipElement } from "@/components/Tooltip"
 import { CSSClasses } from "../../_styles/_css"
@@ -102,7 +102,7 @@ function _updatePickerRefsView(color: PickerStoreType): void {
 	const value = rgbToColor(rgb)
 	const hwb = color.hwb
 	const cmyk = color.cmyk
-	const contrast = (rgb: RGBColor) => colorContrastRatio(rgb, {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff'
+	const contrast = (rgb: RGBColor) => colorContrastPercentage(rgb, {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff'
 	const style = (ref: HTMLElement, property: string, value: string) => ref.style.setProperty(property, value)
 	requestAnimationFrame(() => {
 		RECTANGLE_RECT: {
@@ -955,7 +955,7 @@ function _initEvents(): void {
 }
 
 function _initImageColorPicker(): void {
-	const contrast = (rgb: RGBColor) => colorContrastRatio(rgb, {r: 0, g: 0, b: 0}) > 50? '#000000' : '#ffffff'
+	const contrast = (rgb: RGBColor) => colorContrastPercentage(rgb, {r: 0, g: 0, b: 0}) > 50? '#000000' : '#ffffff'
 	let ctx: CanvasRenderingContext2D
 	let posX: number = 0 // 0-100
 	let posY: number = 0 // 0-100

@@ -6,7 +6,7 @@ import { DEFAULT_COLORS_COUNT, DEFAULT_COLORS_OUTPUT, DEFAULT_COLORS_HEX_MAX, DE
 import { Pages, ColorsRandomizerSpace } from "../../_scripts/_shared/_enums"
 import { ElementIds } from "../../_scripts/_shared/_ids"
 import { CSSClasses } from "../../_styles/_css"
-import { colorContrastRatio, hexToRgb, rgbToHsl } from '@/utils/color'
+import { colorContrastPercentage, hexToRgb, rgbToHsl } from '@/utils/color'
 import { pxToRem } from '@/utils/css'
 
 const colorSpaces: {
@@ -67,7 +67,7 @@ const colorSpaces: {
 				const rgb = hexToRgb(hex)
 				const hsl = rgbToHsl(rgb)
 				const r = (v: number) => Math.round(v)
-				const color = colorContrastRatio(rgb, {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff'
+				const color = colorContrastPercentage(rgb, {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff'
 				return (<li style={{
 						backgroundColor: hex,
 						color

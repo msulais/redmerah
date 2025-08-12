@@ -1,13 +1,13 @@
 ---
 import ColorPicker from '@/components/ColorPicker/index.astro'
-import { colorContrastRatio, hexToRgb } from '@/utils/color'
+import { colorContrastPercentage, hexToRgb } from '@/utils/color'
 import { DEFAULT_BACKGROUND_COLOR, DEFAULT_FOREGROUND_COLOR } from '../_scripts/_shared/_constant'
 import { ElementIds } from '../_scripts/_shared/_ids'
 import { CSSClasses } from '../_styles/_css'
 import type { HEXColor } from '@/types/color'
 import { adjustDecimalNumber } from '@/utils/number'
 
-const contrast = (hex1: HEXColor, hex2: HEXColor) => colorContrastRatio(hexToRgb(hex1), hexToRgb(hex2))
+const contrast = (hex1: HEXColor, hex2: HEXColor) => colorContrastPercentage(hexToRgb(hex1), hexToRgb(hex2))
 ---
 
 <main class={CSSClasses.body}>
