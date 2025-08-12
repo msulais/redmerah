@@ -10,6 +10,10 @@ export function isNumberDefined(num: number): boolean {
 	return !isNumberNotDefined(num)
 }
 
+export function adjustDecimalNumber(num: number, digits: number): number {
+	return Number.parseFloat(num.toFixed(digits))
+}
+
 export function formatNumber(num: number, separator: {
 	thousand?: string
 	decimal?: string
