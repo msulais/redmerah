@@ -1,4 +1,4 @@
-import { AnimationEffectTiming } from "@/enums/animation"
+import { AnimationEasing } from "@/enums/animation"
 import { GlobalElementIds } from "@/enums/ids"
 import { FlyoutPosition as TooltipPosition } from "@/enums/position"
 import { isAnimationAllowed } from "@/utils/animation"
@@ -151,7 +151,7 @@ function _initTooltipRefListener(): void {
 				translate: ['0 0', `${pxToRem(translateX)}rem ${pxToRem(translateY)}rem`],
 				opacity: [1, 0],
 				scale: [1, .75]
-			}, { duration: 250, easing: AnimationEffectTiming.springBounceInverse })
+			}, { duration: 250, easing: AnimationEasing.springBounceInverse })
 			.finished.then(() => {
 				tooltipTextRef.hidePopover()
 			})
@@ -265,7 +265,7 @@ function _initTooltipRefListener(): void {
 				translate: [`${pxToRem(translateX)}rem ${pxToRem(translateY)}rem`, '0 0'],
 				opacity: [0, 1],
 				scale: [.75, 1],
-			}, { duration: 250, easing: AnimationEffectTiming.springBounce })
+			}, { duration: 250, easing: AnimationEasing.springBounce })
 		}, startDelayDuration)
 	}
 

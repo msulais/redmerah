@@ -6,7 +6,7 @@ import { BarcodeFormat, DecodeHintType } from "@zxing/library"
 import { pickFile } from "@/utils/file"
 import { ObservableStore } from "@/utils/store"
 import { isAnimationAllowed } from "@/utils/animation"
-import { AnimationEffectTiming } from "@/enums/animation"
+import { AnimationEasing } from "@/enums/animation"
 import type { TextAreaFieldElement } from "@/components/TextAreaField"
 
 export type ScanStoreType = Readonly<{
@@ -20,7 +20,7 @@ export const ScanStore = new ObservableStore<ScanStoreType>({
 })
 const _animationOptions = {
 	duration: 250,
-	easing: AnimationEffectTiming.spring
+	easing: AnimationEasing.spring
 }
 const _barcodeFormat: BarcodeFormat[] = [
 	BarcodeFormat.QR_CODE,

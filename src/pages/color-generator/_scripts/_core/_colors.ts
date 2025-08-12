@@ -14,7 +14,7 @@ import { createIconButtonRef, type IconButtonElement } from "@/components/Button
 import { createIconRef } from "@/components/Icon"
 import { IconCodes } from "@/enums/icons"
 import { isAnimationAllowed } from "@/utils/animation"
-import { AnimationEffectTiming } from "@/enums/animation"
+import { AnimationEasing } from "@/enums/animation"
 import { saveStorageItem } from "./_database"
 import { pxToRem } from "@/utils/css"
 
@@ -27,7 +27,7 @@ export const ColorsStore = new ObservableStore<ColorsStoreType>({
 	seed: DEFAULT_COLOR,
 	palette: DEFAULT_PALETTE
 })
-const _animationOption = {duration: 250, easing: AnimationEffectTiming.spring}
+const _animationOption = {duration: 250, easing: AnimationEasing.spring}
 const _saveButtonRef = $(ElementIds.bd_saveBtn) as IconButtonElement
 const _toastCopiedRef = $(ElementIds.toa_copied) as ToastElement
 const _paletteListRef = $$(`.${CSSClasses.bodyList}`) as HTMLDivElement

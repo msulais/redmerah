@@ -2,7 +2,7 @@ import { SideBarClasses, updateSideBarButtonRef } from "@/components/SideBar"
 import { ElementIds } from "./_enums"
 import { ButtonVariant } from "@/components/Button"
 import { isAnimationAllowed } from "@/utils/animation"
-import { AnimationEffectTiming } from "@/enums/animation"
+import { AnimationEasing } from "@/enums/animation"
 import { isTargetValidElement } from "@/utils/element"
 import { closeDrawerRef, DrawerClasses, updateDrawerButtonRef } from "@/components/Drawer"
 import CSS from '../_index.module.scss'
@@ -88,7 +88,7 @@ function initNavigationEvents(): void {
 			opacity: [0, 1]
 		}, {
 			duration: 500,
-			easing: AnimationEffectTiming.spring
+			easing: AnimationEasing.spring
 		})
 	}
 

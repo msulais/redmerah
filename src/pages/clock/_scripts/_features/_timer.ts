@@ -5,7 +5,7 @@ import { type ButtonElement, type IconButtonElement } from "@/components/Button"
 import { IconClasses, updateIconRef, type IconElement } from "@/components/Icon"
 import { isTargetValidElement } from "@/utils/element"
 import { AppCSSColors } from "@/enums/app-data"
-import { AnimationEffectTiming } from "@/enums/animation"
+import { AnimationEasing } from "@/enums/animation"
 import { isAnimationAllowed } from "@/utils/animation"
 import { IconCodes } from "@/enums/icons"
 import { SideBarClasses } from "@/components/SideBar"
@@ -135,7 +135,7 @@ function _subscribeRunningRefView(v: TimerStoreType, o: TimerStoreType): void {
 	}
 
 	if (isAnimationAllowed()) {
-		const options = {duration: 250, easing: AnimationEffectTiming.spring}
+		const options = {duration: 250, easing: AnimationEasing.spring}
 		const btnRect2 = _playPauseButtonRef.getBoundingClientRect()
 		_editResetButtonRef.animate({
 			scale: [0, 1],
@@ -235,7 +235,7 @@ function _initEvents(): void {
 					_editResetIconRef.animate({
 						scale: [0, 1],
 						opacity: [0, 1]
-					}, {duration: 250, easing: AnimationEffectTiming.spring})
+					}, {duration: 250, easing: AnimationEasing.spring})
 				}
 			}
 		}

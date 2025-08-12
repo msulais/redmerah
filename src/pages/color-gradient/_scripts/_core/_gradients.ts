@@ -14,7 +14,7 @@ import { ColorSpace, GradientType, HueInterpolationMethod, PolarColorSpace, Radi
 import { ObservableStore } from "@/utils/store"
 import type { ComboBoxElement } from "@/components/ComboBox"
 import { isAnimationAllowed } from "@/utils/animation"
-import { AnimationEffectTiming } from "@/enums/animation"
+import { AnimationEasing } from "@/enums/animation"
 import { DEFAULT_STOP_COLOR_1, DEFAULT_STOP_COLOR_2 } from "../_shared/_constant"
 import { createSliderRef, registerSliderRef, SliderClasses, updateSliderRefValue, type SliderElement } from "@/components/Slider"
 import { safeNumber } from "@/utils/number"
@@ -72,7 +72,7 @@ export type GradientStoreType = Readonly<{
 	selected: ObservableStore<Readonly<GradientItem>>
 	gradients: ObservableStore<Readonly<GradientItem>>[]
 }>
-const _animationOption = {duration: 250, easing: AnimationEffectTiming.spring}
+const _animationOption = {duration: 250, easing: AnimationEasing.spring}
 const _defaultGradient = new ObservableStore<Readonly<GradientItem>>({
 	angle: 0,
 	colorMethod: PolarColorSpace.auto,

@@ -13,7 +13,7 @@ import {
 } from "@/constants/emoji"
 import { isTargetValidElement } from "@/utils/element"
 import { isAnimationAllowed } from "@/utils/animation"
-import { AnimationEffectTiming } from "@/enums/animation"
+import { AnimationEasing } from "@/enums/animation"
 
 import {
 	ButtonVariant,
@@ -156,7 +156,7 @@ const ALL_EMOJIS = [
 const REGISTERED_EMOJIPICKER: Set<EmojiPickerElement> = new Set<EmojiPickerElement>()
 
 function _initEmojiPickerRef(emojiPickerRef: EmojiPickerElement): void {
-	const animationOptions = {duration: 250, easing: AnimationEffectTiming.spring}
+	const animationOptions = {duration: 250, easing: AnimationEasing.spring}
 	const attributes = {
 		get emoji() {
 			return emojiPickerRef.getAttribute(EmojiPickerAttributes.emoji) ?? ''

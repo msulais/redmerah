@@ -8,7 +8,7 @@ import { SideBarClasses, updateSideBarButtonRef } from "@/components/SideBar"
 import { CSSClasses } from "../../_styles/_css"
 import { ButtonVariant } from "@/components/Button"
 import { isAnimationAllowed } from "@/utils/animation"
-import { AnimationEffectTiming } from "@/enums/animation"
+import { AnimationEasing } from "@/enums/animation"
 import { DEFAULT_PAGE, HIDE_NAVIGATION } from "../_shared/_constant"
 import { saveStorageItem } from "./_database"
 import { pxToRem } from "@/utils/css"
@@ -83,7 +83,7 @@ function _subscribePageRefView(v: NavigationStoreType, o: NavigationStoreType): 
 	const resultRef = $$<HTMLElement>('.' + CSSClasses.bodyResult, targetPanelRef)
 	const animationOptions = {
 		duration: 500,
-		easing: AnimationEffectTiming.spring
+		easing: AnimationEasing.spring
 	}
 	const isHideNavigation = window.matchMedia(`(max-width:${HIDE_NAVIGATION}rem)`).matches
 	optionsRef?.animate({

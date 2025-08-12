@@ -8,7 +8,7 @@ import { ElementIds } from "../_shared/_ids"
 import { $, $$ } from "./_dom-utils"
 import { IconClasses, type IconElement } from "@/components/Icon"
 import { BodyAttributes, GlobalAttributes } from "@/enums/attributes"
-import { AnimationEffectTiming } from "@/enums/animation"
+import { AnimationEasing } from "@/enums/animation"
 import { isAnimationAllowed } from "@/utils/animation"
 import { NumbersStore, updateOutput as updateNumbersOutput } from "../_features/_numbers"
 import { ColorsStore, updateOutput as updateColorsOutput } from "../_features/_colors"
@@ -51,7 +51,7 @@ function _subsIsGeneratingView(v: GeneratorStoreType): void {
 
 	if (!isAnimationAllowed() || SettingsStore.value.instantResult) {return}
 
-	const easing = AnimationEffectTiming.spring
+	const easing = AnimationEasing.spring
 	_generatorTextRef.animate({
 		translate: [`0 ${pxToRem(isGenerating? -12 : 12)}rem`, '0 0'],
 		scale: [.9, 1],

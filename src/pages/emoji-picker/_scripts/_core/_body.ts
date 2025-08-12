@@ -13,13 +13,13 @@ import { SettingsStore } from "./_settings"
 import { NavigationStore } from "./_navigation"
 import { SearchStore } from "./_search"
 import { isAnimationAllowed } from "@/utils/animation"
-import { AnimationEffectTiming } from "@/enums/animation"
+import { AnimationEasing } from "@/enums/animation"
 import { saveStorageItem } from "./_database"
 import { pxToRem } from "@/utils/css"
 
 const _animationOptions = {
 	duration: 250,
-	easing: AnimationEffectTiming.spring
+	easing: AnimationEasing.spring
 }
 const _bodyRef = $(ElementIds.body) as HTMLElement
 const _emojiListRef = $(ElementIds.bd_emojiList) as HTMLUListElement

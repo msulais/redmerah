@@ -8,7 +8,7 @@ import { formatOutput } from "../_core/_string-utils"
 import { isValidEnumValue } from "@/utils/object"
 import { DEFAULT_SCIENTIFIC_ANGLE, DEFAULT_SCIENTIFIC_INPUT, DEFAULT_SCIENTIFIC_OUTPUT } from "../_shared/_constant"
 import { ButtonVariant, updateButtonRef } from "@/components/Button"
-import { AnimationEffectTiming } from "@/enums/animation"
+import { AnimationEasing } from "@/enums/animation"
 import { isAnimationAllowed } from "@/utils/animation"
 import { CSSClasses } from "../../_styles/_css"
 import { IconClasses } from "@/components/Icon"
@@ -133,7 +133,7 @@ function _initEvents(): void {
 		if (isAnimationAllowed()) {
 			iconRef?.animate({
 				transform: [`rotate(${isOpen? 0 : 180}deg)`, `rotate(${isOpen? 180 : 0}deg)`]
-			}, {duration: 250, easing: AnimationEffectTiming.spring})
+			}, {duration: 250, easing: AnimationEasing.spring})
 		}
 	})
 

@@ -8,7 +8,7 @@ import { SideBarClasses, updateSideBarButtonRef } from "@/components/SideBar"
 import { CSSClasses } from "../../_styles/_css"
 import { ButtonVariant } from "@/components/Button"
 import { isAnimationAllowed } from "@/utils/animation"
-import { AnimationEffectTiming } from "@/enums/animation"
+import { AnimationEasing } from "@/enums/animation"
 import { saveStorageItem } from "./_database"
 import { DEFAULT_PAGE } from "../_shared/_constant"
 
@@ -115,7 +115,7 @@ function _subscribePageRefView(v: NavigationStoreType, o: NavigationStoreType): 
 		opacity: [0, 1]
 	}, {
 		duration: 500,
-		easing: AnimationEffectTiming.spring
+		easing: AnimationEasing.spring
 	})
 }
 

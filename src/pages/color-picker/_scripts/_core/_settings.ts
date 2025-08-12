@@ -10,7 +10,7 @@ import { $, $$, $$$ } from "./_dom-utils"
 import { ColorPickerMode } from "../_shared/_enums"
 import type { ComboBoxElement } from "@/components/ComboBox"
 import { isAnimationAllowed } from "@/utils/animation"
-import { AnimationEffectTiming } from "@/enums/animation"
+import { AnimationEasing } from "@/enums/animation"
 import { saveStorageItem } from "./_database"
 
 export type SettingsStoreType = Readonly<{
@@ -93,7 +93,7 @@ function _subscribePickerModeRefView(v: SettingsStoreType, o: SettingsStoreType)
 				ref.animate({
 					scale: [.9, 1],
 					opacity: [0, 1]
-				}, {duration: 250, delay: 250, easing: AnimationEffectTiming.spring}).finished.then(() => {
+				}, {duration: 250, delay: 250, easing: AnimationEasing.spring}).finished.then(() => {
 					ref.style.removeProperty('opacity')
 				})
 			}

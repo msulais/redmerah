@@ -1,6 +1,6 @@
 import { updateButtonRef, type ButtonVariant } from "@/components/Button"
 import { ElementIds } from "./_enums"
-import { AnimationEffectTiming } from "@/enums/animation"
+import { AnimationEasing } from "@/enums/animation"
 import { isAnimationAllowed } from "@/utils/animation"
 import { PopoverPosition, updatePopoverRef } from "@/components/Popover"
 import { ColorPickerAttributes, ColorPickerEvents } from "@/components/ColorPicker"
@@ -19,7 +19,7 @@ import { ComboBoxVariant, updateComboBoxRef, type ComboBoxElement } from "@/comp
 import type { CheckBoxElement } from "@/components/CheckBox"
 import { pxToRem } from "@/utils/css"
 
-const animationOptions = {duration: 250, easing: AnimationEffectTiming.spring}
+const animationOptions = {duration: 250, easing: AnimationEasing.spring}
 const $ = (id: string) => document.getElementById(id)
 
 function _button(): void {
@@ -84,7 +84,7 @@ function _checkBox(): void {
 }
 
 function _textField(): void {
-	const animationOptions = {duration: 250, easing: AnimationEffectTiming.spring}
+	const animationOptions = {duration: 250, easing: AnimationEasing.spring}
 	const textField = $(ElementIds.panelTextfieldPreview) as HTMLDivElement
 	const input = $(ElementIds.panelTextfieldPreviewInput) as HTMLInputElement
 	const leading = $(ElementIds.panelTextfieldPreviewLeading) as HTMLElement

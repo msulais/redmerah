@@ -16,7 +16,7 @@ import { safeNumber } from "@/utils/number"
 import { Math_clamp } from "@/utils/math"
 import { createElementId } from "@/utils/ids"
 import { isAnimationAllowed } from "@/utils/animation"
-import { AnimationEffectTiming } from "@/enums/animation"
+import { AnimationEasing } from "@/enums/animation"
 import {
 	type EyeDropper as EyeDropperInterface
 } from "@/interfaces/eye-dropper"
@@ -312,7 +312,7 @@ function _initColorPickerRef(colorPickerRef: ColorPickerElement): void {
 					labelColorRef.animate({
 						opacity: [0, 1],
 						translate: [`0 ${pxToRem(8)}rem`, '0 0'],
-					}, {duration: 300, easing: AnimationEffectTiming.spring})
+					}, {duration: 300, easing: AnimationEasing.spring})
 				}
 			}
 		}

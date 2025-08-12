@@ -1,4 +1,4 @@
-import { AnimationEffectTiming } from "@/enums/animation"
+import { AnimationEasing } from "@/enums/animation"
 import { KeyboardValue } from "@/enums/keyboard"
 import { FlyoutPosition as PopoverPosition } from "@/enums/position"
 import { isAnimationAllowed } from "@/utils/animation"
@@ -216,7 +216,7 @@ function _initPopoverRef(popoverRef: PopoverElement): void {
 			]
 		}, {
 			duration: 300,
-			easing: AnimationEffectTiming.spring
+			easing: AnimationEasing.spring
 		}).finished.then(() => {
 			options?.done()
 		})
@@ -254,7 +254,7 @@ function _initPopoverRef(popoverRef: PopoverElement): void {
 			]
 		}, {
 			duration: 300,
-			easing: AnimationEffectTiming.spring
+			easing: AnimationEasing.spring
 		}).finished.then(() => {
 			options?.done()
 		})
@@ -292,7 +292,7 @@ function _initPopoverRef(popoverRef: PopoverElement): void {
 		popoverRef.animate({
 			translate: ['0 0', `${pxToRem(translateX)}rem ${pxToRem(translateY)}rem`],
 			opacity: [1, 0]
-		}, { duration: 250, easing: AnimationEffectTiming.springBounceInverse })
+		}, { duration: 250, easing: AnimationEasing.springBounceInverse })
 	}
 
 	function setOpenPosition(): void {
@@ -332,7 +332,7 @@ function _initPopoverRef(popoverRef: PopoverElement): void {
 		popoverRef.animate({
 			translate: [`${pxToRem(translateX)}rem ${pxToRem(translateY)}rem`, '0 0'],
 			opacity: [0, 1]
-		}, { duration: 250, easing: AnimationEffectTiming.springBounce })
+		}, { duration: 250, easing: AnimationEasing.springBounce })
 	}
 
 	function dragHandleRefOnKeyDown(ev: KeyboardEvent): void {
@@ -543,7 +543,7 @@ function repositionEdgePopoverRef(popoverRef: PopoverElement): void {
 		]
 	}, {
 		duration: 250,
-		easing: AnimationEffectTiming.spring
+		easing: AnimationEasing.spring
 	})
 }
 

@@ -1,4 +1,4 @@
-import { AnimationEffectTiming } from "@/enums/animation"
+import { AnimationEasing } from "@/enums/animation"
 import { createElementId } from "@/utils/ids"
 import { isAnimationAllowed } from "@/utils/animation"
 
@@ -250,7 +250,7 @@ function openSelectRef(selectRef: SelectElement): void {
 	popoverRef.style.setProperty('left', pxToRem(left) + 'rem')
 	popoverRef.style.setProperty('top', pxToRem(top) + 'rem')
 	if (isAnimationAllowed()) {
-		popoverRef.animate({opacity: [0, 1]}, {duration: 300, easing: AnimationEffectTiming.spring})
+		popoverRef.animate({opacity: [0, 1]}, {duration: 300, easing: AnimationEasing.spring})
 	}
 }
 

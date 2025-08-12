@@ -8,7 +8,7 @@ import { SideBarClasses, updateSideBarButtonRef } from "@/components/SideBar"
 import { CSSClasses } from "../../_styles/_css"
 import { ButtonVariant } from "@/components/Button"
 import { isAnimationAllowed } from "@/utils/animation"
-import { AnimationEffectTiming } from "@/enums/animation"
+import { AnimationEasing } from "@/enums/animation"
 import { saveStorageItem } from "./_database"
 import { AppCSSColors, AppCSSOpacity } from "@/enums/app-data"
 import { DEFAULT_PAGE } from "../_shared/_constant"
@@ -100,7 +100,7 @@ function _subsPageView(v: NavigationStoreType, o: NavigationStoreType): void {
 		opacity: [0, 1]
 	}, {
 		duration: 500,
-		easing: AnimationEffectTiming.spring
+		easing: AnimationEasing.spring
 	})
 }
 

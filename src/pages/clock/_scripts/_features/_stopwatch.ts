@@ -5,7 +5,7 @@ import { IconClasses, updateIconRef, type IconElement } from "@/components/Icon"
 import { isTargetValidElement } from "@/utils/element"
 import { IconCodes } from "@/enums/icons"
 import { isAnimationAllowed } from "@/utils/animation"
-import { AnimationEffectTiming } from "@/enums/animation"
+import { AnimationEasing } from "@/enums/animation"
 import { SideBarClasses } from "@/components/SideBar"
 import { DrawerClasses } from "@/components/Drawer"
 import { Pages } from "../_shared/_enums"
@@ -27,7 +27,7 @@ export const StopwatchStore = new ObservableStore<_StopwatchStoreType>({
 	running: DEFAULT_STOPWATCH_RUNNING,
 	laps: DEFAULT_STOPWATCH_LAPS
 })
-const _animationOption = {duration: 250, easing: AnimationEffectTiming.spring}
+const _animationOption = {duration: 250, easing: AnimationEasing.spring}
 const _toastCopiedRef = $(ElementIds.toa_copied) as ToastElement
 const _lapsRef = $(ElementIds.pgSw_laps) as HTMLDivElement
 const _lapsContentRef = $(ElementIds.pgSw_lapsContent) as HTMLDivElement

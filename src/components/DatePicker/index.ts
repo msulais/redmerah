@@ -6,7 +6,7 @@ import { createDividerRef, type DividerElement, type DividerProps } from "../Div
 import { isValidEnumValue } from "@/utils/object"
 import { isAnimationAllowed } from "@/utils/animation"
 import { isDateEqual_Y, isDateEqual_YM, isDateEqual_YMD, isDateOutRange_Y, isDateOutRange_YM, isDateOutRange_YMD } from "@/utils/datetime"
-import { AnimationEffectTiming } from "@/enums/animation"
+import { AnimationEasing } from "@/enums/animation"
 import { IconCodes } from "@/enums/icons"
 
 type DatePickerProps = PopoverProps & {
@@ -320,7 +320,7 @@ function _initDatePickerRef(datePickerRef: DatePickerElement): void {
 				dateRef?.animate({
 					scale: [0.85, 1],
 					opacity: [0, 1]
-				}, {duration: 250, easing: AnimationEffectTiming.spring})
+				}, {duration: 250, easing: AnimationEasing.spring})
 			}
 			break
 		case DatePickerViewType.month:
@@ -330,7 +330,7 @@ function _initDatePickerRef(datePickerRef: DatePickerElement): void {
 				monthRef?.animate({
 					scale: [0.85, 1],
 					opacity: [0, 1]
-				}, {duration: 250, easing: AnimationEffectTiming.spring})
+				}, {duration: 250, easing: AnimationEasing.spring})
 			}
 			break
 		case DatePickerViewType.year:
@@ -340,7 +340,7 @@ function _initDatePickerRef(datePickerRef: DatePickerElement): void {
 				yearRef?.animate({
 					scale: [0.85, 1],
 					opacity: [0, 1]
-				}, {duration: 250, easing: AnimationEffectTiming.spring})
+				}, {duration: 250, easing: AnimationEasing.spring})
 			}
 			break
 		}
