@@ -58,25 +58,25 @@ const ratio = adjustDecimalNumber(colorContrastRatio(hexToRgb(DEFAULT_BACKGROUND
 	</div>
 	<Tooltip class={CSSClasses.wcag}>
 		<p
-			data-tooltip="Pass: (AA) ≥ 4.5, (AAA) ≥ 3"
-			aria-label="Pass: (AA) ≥ 4.5, (AAA) ≥ 3"
+			data-tooltip="Pass: (AA) ≥ 4.5, (AAA) ≥ 7"
+			aria-label="Pass: (AA) ≥ 4.5, (AAA) ≥ 7"
 			tabindex="0">
 			Normal text:
 			<br>AA: <span data-pass={String(ratio > 4.5)} id={ElementIds.bd_normalAA}>
 				<span data-pass>Pass</span>
 				<span data-fail>Fail</span>
 			</span>
-			, AAA: <span data-pass={String(ratio > 3)} id={ElementIds.bd_normalAAA}>
+			, AAA: <span data-pass={String(ratio > 7)} id={ElementIds.bd_normalAAA}>
 				<span data-pass>Pass</span>
 				<span data-fail>Fail</span>
 			</span>
 		</p>
 		<p
-			data-tooltip="Pass: (AA) ≥ 7, (AAA) ≥ 4.5"
-			aria-label="Pass: (AA) ≥ 7, (AAA) ≥ 4.5"
+			data-tooltip="Pass: (AA) ≥ 3, (AAA) ≥ 4.5"
+			aria-label="Pass: (AA) ≥ 3, (AAA) ≥ 4.5"
 			tabindex="0">
 			Large text:
-			<br>AA: <span data-pass={String(ratio > 7)} id={ElementIds.bd_largeAA}>
+			<br>AA: <span data-pass={String(ratio > 3)} id={ElementIds.bd_largeAA}>
 				<span data-pass>Pass</span>
 				<span data-fail>Fail</span>
 			</span>
