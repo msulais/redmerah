@@ -23,5 +23,6 @@ export enum DatabaseNames {
 	javascriptMinifier = 'javascript-minifier',
 	cubicBezier = 'cubic-bezier',
 	urlEncoder = 'url-encoder',
-	vibrator = 'vibrator'
+	vibrator = 'vibrator',
+	contrastChecker = 'contrast-checker'
 }

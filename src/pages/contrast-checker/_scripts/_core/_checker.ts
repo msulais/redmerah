@@ -6,6 +6,7 @@ import { ObservableStore } from "@/utils/store"
 import { DEFAULT_BACKGROUND_COLOR, DEFAULT_FOREGROUND_COLOR } from "../_shared/_constant"
 import { colorContrastPercentage, colorContrastRatio, hexToRgb } from "@/utils/color"
 import { adjustDecimalNumber } from "@/utils/number"
+import { saveStorageItem } from "./_database"
 
 export type CheckerStoreType = {
 	foreground: HEXColor
@@ -28,13 +29,22 @@ const _normalAARef = $(ElementIds.bd_normalAA) as HTMLSpanElement
 const _normalAAARef = $(ElementIds.bd_normalAAA) as HTMLSpanElement
 const _largeAARef = $(ElementIds.bd_largeAA) as HTMLSpanElement
 const _largeAAARef = $(ElementIds.bd_largeAAA) as HTMLSpanElement
+let _timeStorageId: ReturnType<typeof setTimeout> | undefined
 
 function _contrast(hex1: HEXColor, hex2: HEXColor){
 	return colorContrastPercentage(hexToRgb(hex1), hexToRgb(hex2))
 }
 
-function _subsStorage(): void {
-	// TODO: save storage
+function _subsStorage(v: CheckerStoreType, o: CheckerStoreType): void {
+	const foreground = v.foreground
+	const background = v.background
+	if (foreground === o.foreground && background === o.background) {return}
+
+	clearTimeout(_timeStorageId)
+	_timeStorageId = setTimeout(() => {
+		saveStorageItem('background-color', background)
+		saveStorageItem('foreground-color', foreground)
+	}, 1000)
 }
 
 function _subsOutput(v: CheckerStoreType, o: CheckerStoreType): void {
