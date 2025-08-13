@@ -1,6 +1,7 @@
 ---
 import ColorPicker from '@/components/ColorPicker/index.astro'
-import { colorContrastPercentage, hexToRgb } from '@/utils/color'
+import Tooltip from '@/components/Tooltip/index.astro'
+import { colorContrastPercentage, colorContrastRatio, hexToRgb } from '@/utils/color'
 import { DEFAULT_BACKGROUND_COLOR, DEFAULT_FOREGROUND_COLOR } from '../_scripts/_shared/_constant'
 import { ElementIds } from '../_scripts/_shared/_ids'
 import { CSSClasses } from '../_styles/_css'
@@ -8,11 +9,12 @@ import type { HEXColor } from '@/types/color'
 import { adjustDecimalNumber } from '@/utils/number'
 
 const contrast = (hex1: HEXColor, hex2: HEXColor) => colorContrastPercentage(hexToRgb(hex1), hexToRgb(hex2))
+const ratio = adjustDecimalNumber(colorContrastRatio(hexToRgb(DEFAULT_BACKGROUND_COLOR), hexToRgb(DEFAULT_FOREGROUND_COLOR)), 2)
 ---
 
 <main class={CSSClasses.body}>
 	<div aria-atomic="true" aria-live="polite" class={CSSClasses.output}>
-		<span id={ElementIds.bd_ratio}>0:0</span>
+		<span id={ElementIds.bd_ratio}>{ratio}</span>
 		<span id={ElementIds.bd_percentage}>{adjustDecimalNumber(contrast(DEFAULT_BACKGROUND_COLOR, DEFAULT_FOREGROUND_COLOR), 2)}%</span>
 	</div>
 	<div class={CSSClasses.control}>
@@ -21,6 +23,7 @@ const contrast = (hex1: HEXColor, hex2: HEXColor) => colorContrastPercentage(hex
 			id={ElementIds.bd_background}
 			popovertarget={ElementIds.bd_backPicker}
 			style={{
+				'--outline-color': contrast(DEFAULT_BACKGROUND_COLOR, '#000000') > 50? '#000' : '#FFF',
 				'background-color': DEFAULT_BACKGROUND_COLOR,
 				color: contrast(DEFAULT_BACKGROUND_COLOR, '#000000') > 50? '#000' : '#FFF'
 			}}>
@@ -29,6 +32,7 @@ const contrast = (hex1: HEXColor, hex2: HEXColor) => colorContrastPercentage(hex
 		<ColorPicker
 			ColorPickerValue={DEFAULT_BACKGROUND_COLOR}
 			id={ElementIds.bd_backPicker}
+			ColorPickerDisabledOpacity
 			PopoverDraggable
 			PopoverAnchorBy={ElementIds.bd_background}
 		/>
@@ -38,6 +42,7 @@ const contrast = (hex1: HEXColor, hex2: HEXColor) => colorContrastPercentage(hex
 			id={ElementIds.bd_foreground}
 			popovertarget={ElementIds.bd_forePicker}
 			style={{
+				'--outline-color': contrast(DEFAULT_FOREGROUND_COLOR, '#000000') > 50? '#000' : '#FFF',
 				'background-color': DEFAULT_FOREGROUND_COLOR,
 				color: contrast(DEFAULT_FOREGROUND_COLOR, '#000000') > 50? '#000' : '#FFF'
 			}}>
@@ -46,8 +51,54 @@ const contrast = (hex1: HEXColor, hex2: HEXColor) => colorContrastPercentage(hex
 		<ColorPicker
 			ColorPickerValue={DEFAULT_FOREGROUND_COLOR}
 			id={ElementIds.bd_forePicker}
+			ColorPickerDisabledOpacity
 			PopoverDraggable
 			PopoverAnchorBy={ElementIds.bd_foreground}
 		/>
 	</div>
+	<Tooltip class={CSSClasses.wcag}>
+		<p
+			data-tooltip="Pass: (AA) ≥ 4.5, (AAA) ≥ 3"
+			aria-label="Pass: (AA) ≥ 4.5, (AAA) ≥ 3"
+			tabindex="0">
+			Normal text:
+			<br>AA: <span data-pass={String(ratio > 4.5)} id={ElementIds.bd_normalAA}>
+				<span data-pass>Pass</span>
+				<span data-fail>Fail</span>
+			</span>
+			, AAA: <span data-pass={String(ratio > 3)} id={ElementIds.bd_normalAAA}>
+				<span data-pass>Pass</span>
+				<span data-fail>Fail</span>
+			</span>
+		</p>
+		<p
+			data-tooltip="Pass: (AA) ≥ 7, (AAA) ≥ 4.5"
+			aria-label="Pass: (AA) ≥ 7, (AAA) ≥ 4.5"
+			tabindex="0">
+			Large text:
+			<br>AA: <span data-pass={String(ratio > 7)} id={ElementIds.bd_largeAA}>
+				<span data-pass>Pass</span>
+				<span data-fail>Fail</span>
+			</span>
+			, AAA: <span data-pass={String(ratio > 4.5)} id={ElementIds.bd_largeAAA}>
+				<span data-pass>Pass</span>
+				<span data-fail>Fail</span>
+			</span>
+		</p>
+	</Tooltip>
+	<ul
+		aria-label="Preview text"
+		class={CSSClasses.preview}
+		id={ElementIds.bd_preview}
+		style={{
+			'--color': DEFAULT_FOREGROUND_COLOR,
+			'--background-color': DEFAULT_BACKGROUND_COLOR,
+		}}>
+		<li aria-label="Normal text 12pt" style="font-size:12pt" contenteditable>Normal text 12pt</li>
+		<li aria-label="Normal text 12pt" data-css-inverse style="font-size:12pt" contenteditable>Normal text 12pt</li>
+		<li aria-label="Large text 14pt bold" style="font-size:14pt;font-weight:bold;" contenteditable>Large text 14pt bold</li>
+		<li aria-label="Large text 14pt bold" data-css-inverse style="font-size:14pt;font-weight:bold;" contenteditable>Large text 14pt bold</li>
+		<li aria-label="Large text 18pt" style="font-size:18pt" contenteditable>Large text 18pt</li>
+		<li aria-label="Large text 18pt" data-css-inverse style="font-size:18pt" contenteditable>Large text 18pt</li>
+	</ul>
 </main>

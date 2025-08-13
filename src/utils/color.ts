@@ -23,6 +23,12 @@ export function colorLuminance(rgb: RGBColor): number {
 	return r * 0.2126 + g * 0.7152 + b * 0.0722
 }
 
+export function colorContrastRatio(rgb1: RGBColor, rgb2: RGBColor): number {
+	const L1 = colorLuminance(rgb1)
+	const L2 = colorLuminance(rgb2)
+	return (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05)
+}
+
 /**
  * Result value is between `0` (low contrast) to `100` (high contrast)
  */

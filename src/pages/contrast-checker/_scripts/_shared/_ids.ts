@@ -26,4 +26,9 @@ export class ElementIds {
 	static readonly bd_backPicker = _createId()
 	static readonly bd_ratio = _createId()
 	static readonly bd_percentage = _createId()
+	static readonly bd_preview = _createId()
+	static readonly bd_normalAA = _createId()
+	static readonly bd_normalAAA = _createId()
+	static readonly bd_largeAA = _createId()
+	static readonly bd_largeAAA = _createId()
 }

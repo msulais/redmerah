@@ -152,7 +152,10 @@ enum ColorPickerEvents {
 	/** `!bubbles | !cancelable | !detail` */
 	change = 'colorpicker:change',
 
-	/** `!bubbles | !cancelable | detail = _UpdateEventDetail` */
+	/** ATTENTION: Don't use this event. It was meant for update in
+	 * `updateColorPickerRef()`.
+	 *
+	 * `!bubbles | !cancelable | detail = _UpdateEventDetail` */
 	update = 'colorpicker:update'
 }
 
