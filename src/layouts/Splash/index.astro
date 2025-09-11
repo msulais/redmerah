@@ -12,37 +12,46 @@ import { GlobalElementIds } from '@/enums/ids'
 		position: fixed;
 		left: 0;
 		top: 0;
+		flex-direction: column;
+		gap: u.Rem(32px);
 		display: flex;
 		align-items: center;
 		justify-content: center;
 	}
 
 	.splash > :global(svg) {
-		width: u.Rem(128px) !important;
-		height: u.Rem(128px) !important;
+		width: u.Rem(108px) !important;
+		height: u.Rem(108px) !important;
 		animation: img-splash-start 1s var(--g-transition-spring);
 	}
 
-	:root[data-animation=off] .splash > :global(svg) {
-		animation: none;
-		will-change: opacity, scale;
-	}
+	.loading-indicator {
+		display: block;
+		width: u.Rem(108px) * 1.5;
+		height: u.Rem(4px);
+		max-width: calc(100% - u.Rem(32px));
+		border-radius: u.Rem(4px);
+		background-color: rgb(var(--g-color-accent));
+		animation: loading 1s ease-in-out infinite;
 
-	@media (prefers-reduced-motion: reduce) {
-		:root[data-animation=off] .splash > :global(svg) {
-			animation: none;
-			will-change: opacity, scale;
+		:root[data-animation=off] & {
+			display: none;
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			display: none;
 		}
 	}
 
-	@keyframes img-splash-start {
-		from {
-			scale: 0.5;
-			opacity: 0;
+	@keyframes loading {
+		0% {
+			clip-path: xywh(0 0 0 100% round u.Rem(4px));
 		}
-		to {
-			scale: 1;
-			opacity: 1;
+		50% {
+			clip-path: xywh(0 0 100% 100% round u.Rem(4px));
+		}
+		100% {
+			clip-path: xywh(100% 0 100% 100% round u.Rem(4px));
 		}
 	}
 </style>
@@ -50,4 +59,5 @@ import { GlobalElementIds } from '@/enums/ids'
 	class="splash"
 	id={GlobalElementIds.splash}>
 	<slot />
+	<span class="loading-indicator"/>
 </div>
