@@ -12,23 +12,25 @@ import Appbar from '@/layouts/Appbar/index.astro'
 import BottomBar from '@/layouts/BottomBar/index.astro'
 import CSS from './_index.module.scss'
 import { IconCodes } from '@/enums/icons'
-import { pxToRem } from '@/utils/css'
+import feature_uiUx from '@/assets/images/feature_ui_ux.svg'
+import feature_offlineWork from '@/assets/images/feature_offline_work.svg'
+import feature_localDB from '@/assets/images/feature_local_db.svg'
 
 const features = [
 	{
 		title: 'Prioritize UI/UX & Functionality',
 		description: 'Experience the perfect blend of aesthetics and usability. Our apps offer a visually stunning interface that is easy to navigate and packed with features.',
-		icon: IconCodes.sparkle
+		icon: feature_uiUx
 	},
 	{
 		title: 'Store Data Locally on Your Device',
 		description: 'We respect your privacy. All your settings, preferences, and history are stored securely in your browser, not on our server. Your data, your control.',
-		icon: IconCodes.databasePerson
+		icon: feature_localDB
 	},
 	{
 		title: 'Continue Working Offline',
 		description: 'No internet connection? No problem! Our apps work seamlessly offline, ensuring you can stay productive wherever you are.',
-		icon: IconCodes.settingsCogMultiple
+		icon: feature_offlineWork
 	},
 ]
 
@@ -83,13 +85,15 @@ function color_app_background(color: HEXColor): string {
 			</LinkButton>
 			<section class={CSS.features}>
 				<h2>Features</h2>
-				{features.map(v => <div>
-					<Icon IconCode={v.icon} IconFilled/>
-					<div>
-						<h3>{v.title}</h3>
-						<p>{v.description}</p>
-					</div>
-				</div>)}
+				<ul>
+					{features.map(v => <li>
+						<img src={v.icon.src} alt={v.title}/>
+						<div>
+							<h3>{v.title}</h3>
+							<p>{v.description}</p>
+						</div>
+					</li>)}
+				</ul>
 			</section>
 			<p id="quote" class={CSS.quote}><q>
 				{ 'We are also users. What’s good for you, good for us too.'.split(' ').map(v => <><span>{v}</span> </>) }
