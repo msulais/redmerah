@@ -2,10 +2,11 @@
 import type { HEXColor } from '@/types/color'
 import { RoutesLinks } from '@/enums/links'
 import { APPS } from '@/constants/apps'
-import { hexToHsl } from '@/utils/color'
+import { hexToHsl, hexToRgb, generateColorPalette } from '@/utils/color'
 import Splash from '@/layouts/Splash/index.astro'
 import Html from '@/layouts/Html/index.astro'
 import Icon from '@/components/Icon/index.astro'
+import Tooltip from '@/components/Tooltip/index.astro'
 import LinkButton from '@/components/Button/LinkButton.astro'
 import { ButtonVariant } from '@/components/Button'
 import Appbar from '@/layouts/Appbar/index.astro'
@@ -15,6 +16,7 @@ import { IconCodes } from '@/enums/icons'
 import feature_uiUx from '@/assets/images/feature_ui_ux.svg'
 import feature_offlineWork from '@/assets/images/feature_offline_work.svg'
 import feature_localDB from '@/assets/images/feature_local_db.svg'
+import { shuffleArray } from '@/utils/array'
 
 const features = [
 	{
@@ -34,9 +36,20 @@ const features = [
 	},
 ]
 
-function color_app_background(color: HEXColor): string {
+function appColorCustom(color: HEXColor): string {
 	const hsl = hexToHsl(color)
-	return `--hue:${hsl.h * 360}`
+	const palette = generateColorPalette(color)
+	const css = (d: HEXColor) => {
+		const rgb = hexToRgb(d)
+		return [Math.round(rgb.r * 0xff), Math.round(rgb.g * 0xff), Math.round(rgb.b * 0xff)].join(', ')
+	}
+	return [
+		`--hue:${hsl.h * 360}`,
+		`--color-accent-light: ${css(palette.color)}`,
+		`--color-on-accent-light: ${css(palette.onColor)}`,
+		`--color-accent-dark: ${css(palette.colorDark)}`,
+		`--color-on-accent-dark: ${css(palette.onColorDark)}`,
+	].join(';')
 }
 ---
 
@@ -60,47 +73,73 @@ function color_app_background(color: HEXColor): string {
 	</Splash>
 	<Appbar route={RoutesLinks.home}/>
 	<div class={CSS.body}>
-		<div class={CSS.header}>
-			<h1><span data-color=green>Tasks</span>, <span data-color=blue>Apps</span>, and <span data-color=red>Productivity</span>.</h1>
-			<p>Discover a suite of powerful apps designed to simplify your tasks and enhance your productivity. Whether you’re a developer, designer, or just someone who loves efficiency, our app has something for you.</p>
-		</div>
-		<main class={CSS.main}>
-			<section class={CSS.apps}>
-				{APPS.map((v, i) => <>{i < 3 && <div
-					style={color_app_background(v.color)}>
-					<img src={v.logoUrl} alt={v.name} />
-					<h3>{v.name}</h3>
-					<p>{v.description}</p>
+		<section class={CSS.header}>
+			<div>
+				<h1><span>Apps</span><br/><span>Tasks</span><br/><span>Productivity</span></h1>
+				<div>
+					<Tooltip>
+						<ul>
+							{shuffleArray([...APPS]).map((v, i) => <>{i < 5 && <li>
+								<img tabindex="0" data-tooltip={v.name} src={v.logoUrl} alt={v.name}/>
+							</li>}</>)}
+							{APPS.length > 5 && <li
+								tabindex="0"
+								data-tooltip={`And ${APPS.length-5} more apps`}
+								data-css-more>
+								{APPS.length - 5}+
+							</li>}
+						</ul>
+					</Tooltip>
+					<p>Discover a suite of powerful apps designed to simplify your tasks and enhance your productivity</p>
 					<LinkButton
-						LinkButtonVariant={ButtonVariant.outlined}
-						href={v.link}>Open <Icon IconCode={IconCodes.openFolder}/></LinkButton>
-				</div>}</>)}
-			</section>
-			<LinkButton
-				class={[CSS.more_apps].join(' ')}
-				LinkButtonVariant={ButtonVariant.filled}
-				href={RoutesLinks.apps}>
-				See {APPS.length-3} more apps
-				<Icon IconFilled IconCode={IconCodes.arrowRight}/>
-			</LinkButton>
-			<section class={CSS.features}>
-				<h2>Features</h2>
+						LinkButtonVariant={ButtonVariant.filled}
+						href={RoutesLinks.apps}
+						style={{width: 'fit-content'}}>
+						Browse apps
+						<Icon IconFilled IconCode={IconCodes.arrowRight}/>
+					</LinkButton>
+				</div>
+			</div>
+		</section>
+		<section class={CSS.apps}>
+			<h2 class={CSS.heading}><div><span>Apps</span></div></h2>
+			<div>
+				<ul>
+					{APPS.map((v, i) => <>{i < 3 && <li
+						style={appColorCustom(v.color)}>
+						<img src={v.logoUrl} alt={v.name} />
+						<h3>{v.name}</h3>
+						<p style="flex:1">{v.description}</p>
+						<LinkButton
+							LinkButtonVariant={ButtonVariant.filled}
+							href={v.link}><Icon IconCode={IconCodes.openFolder}/> Open</LinkButton>
+					</li>}</>)}
+				</ul>
+				<LinkButton
+					LinkButtonVariant={ButtonVariant.filled}
+					href={RoutesLinks.apps}>
+					See {APPS.length-3} more apps
+					<Icon IconFilled IconCode={IconCodes.arrowRight}/>
+				</LinkButton>
+			</div>
+		</section>
+		<section class={CSS.features}>
+			<h2 class={CSS.heading}><div><span>Features</span></div></h2>
+			<div>
 				<ul>
 					{features.map(v => <li>
 						<img src={v.icon.src} alt={v.title}/>
-						<div>
-							<h3>{v.title}</h3>
-							<p>{v.description}</p>
-						</div>
+						<h3>{v.title}</h3>
+						<p>{v.description}</p>
 					</li>)}
 				</ul>
-			</section>
-			<p id="quote" class={CSS.quote}><q>
-				{ 'We are also users. What’s good for you, good for us too.'.split(' ').map(v => <><span>{v}</span> </>) }
-			</q></p>
-		</main>
-		<BottomBar />
+			</div>
+		</section>
+		<p id="quote" class={CSS.quote}><q>
+			{ 'We are also users. What’s good for you, good for us too.'.split(' ').map(v => <><span>{v}</span> </>) }
+		</q></p>
 	</div>
+	<BottomBar />
 </Html>
 
 <script>
