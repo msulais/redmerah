@@ -14,24 +14,30 @@
 	position: sticky;
 	z-index: 100;
 	top: 0;
-	background-color: rgba(var(--g-color-background), var(--g-opacity-glass));
-	backdrop-filter: blur(var(--g-blur-glass));
 
 	> div {
 		display: flex !important;
-		gap: u.Rem(4px);
-		align-items: center;
+		gap: u.Rem(8px);
+		align-items: flex-start;
 		width: u.Rem(1080px);
 		max-width: 100%;
 		padding: u.Rem(8px);
 	}
 
-	& nav {
+	& [data-css-float] {
 		display: flex;
 		align-items: center;
 		gap: u.Rem(4px);
-		flex: 1;
-		justify-content: flex-end;
+		background-color: rgba(var(--g-color-background), .5);
+		backdrop-filter: blur(var(--g-blur-glass));
+		padding: u.Rem(4px);
+		border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity2));
+		border-radius: 8px;
+		box-shadow: var(--g-elevation2);
+
+		&:empty {
+			display: none;
+		}
 	}
 }
 
