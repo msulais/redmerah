@@ -4,7 +4,7 @@ import { DEFAULT_PROGRAMMER_INPUT, DEFAULT_PROGRAMMER_NUMBER_TYPE, DEFAULT_PROGR
 import { ElementIds } from "../_shared/_ids"
 import { $, $$, $$$, scrollInputToEnd } from "../_core/_dom-utils"
 import { isTargetValidElement } from "@/utils/element"
-import { CSSClasses } from "@/pages/calculator/_styles/_css"
+import { CSSClasses } from "../../_styles/_css"
 import { ButtonVariant, updateButtonRef } from "@/components/Button"
 import { calculate } from "../_core/_calculator"
 import { isNumberDefined, numberToBinary } from "@/utils/number"

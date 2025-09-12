@@ -97,7 +97,7 @@ function _initEvents(): void {
 	})
 
 	_forePickerRef.addEventListener('beforetoggle', (ev) => {
-		const isOpen = ev.newState === 'open'
+		const isOpen = (ev as ToggleEvent).newState === 'open'
 		_foregroundRef.toggleAttribute('data-focused', isOpen)
 		if (!isOpen) {return}
 
@@ -109,7 +109,7 @@ function _initEvents(): void {
 	})
 
 	_backPickerRef.addEventListener('beforetoggle', (ev) => {
-		const isOpen = ev.newState === 'open'
+		const isOpen = (ev as ToggleEvent).newState === 'open'
 		_backgroundRef.toggleAttribute('data-focused', isOpen)
 		if (!isOpen) {return}
 
