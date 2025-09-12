@@ -1,0 +1,82 @@
+@use '../../../../styles/units.scss' as u;
+
+.body {
+	padding: u.Rem(8px) u.Rem(16px) u.Rem(16px) u.Rem(16px);
+	width: 100%;
+
+	// NOTE: this cause bug (container not show all) when vertical scroll appear
+	// height: 100%;
+
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+
+	> button {
+		position: relative;
+		overflow: hidden;
+
+		&[data-c-button-variant=filled]::after {
+			display: none;
+		}
+
+		&::after {
+			$height: 2px;
+
+			content: '';
+			display: block;
+			width: 100%;
+			height: u.Rem($height);
+			background-color: rgb(var(--g-color-accent));
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			animation: loading 1s infinite ease-in-out;
+		}
+	}
+
+	> ul {
+		height: max-content;
+		list-style: none;
+		width: min(100%, u.Rem(720px));
+		display: flex;
+		flex-wrap: wrap;
+		gap: u.Rem(8px);
+
+		> li {
+			flex: 1 1 u.Rem(200px);
+			background-color: rgb(var(--g-color-surface));
+			border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity3));
+			padding: u.Rem(8px);
+			border-radius: u.Rem(4px);
+			display: flex;
+			gap: u.Rem(8px);
+
+			&:hover {
+				border-color: rgb(var(--g-color-accent));
+			}
+
+			> :global(.c-icon) {
+				margin-top: u.Rem(4px);
+			}
+
+			& span {
+				font-weight: bold;
+				color: rgb(var(--g-color-accent));
+			}
+		}
+	}
+}
+
+@keyframes loading {
+	0% {
+		clip-path: xywh(0 0 0 100%);
+	}
+	50% {
+		clip-path: xywh(0 0 100% 100%);
+	}
+	100% {
+		clip-path: xywh(100% 0 0 100%);
+	}
+}

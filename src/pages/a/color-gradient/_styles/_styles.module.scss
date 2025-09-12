@@ -1,0 +1,258 @@
+@use '../../../../styles/units.scss' as u;
+
+$SMALL_SCREEN: u.Rem(600px);
+
+.body {
+	display: flex;
+	height: 100%;
+
+	@media (max-width: $SMALL_SCREEN) {
+		flex-direction: column;
+	}
+}
+
+.bodyEditor {
+	width: u.Rem(280px);
+	border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity3));
+	border-radius: u.Rem(8px) 0 0 0;
+	background-color: rgb(var(--g-color-surface));
+	border-right: none;
+	border-bottom: none;
+	height: 100%;
+	overflow: auto;
+
+	@media (max-width: $SMALL_SCREEN) {
+		overflow: visible;
+		width: 100%;
+		border-left: none;
+		border-radius: 0;
+		height: fit-content;
+	}
+
+	> details {
+		padding: u.Rem(4px);
+
+		&::details-content {
+			height: u.Rem(0px);
+			overflow: clip;
+			transition-duration: var(--g-duration-transition);
+			transition-property: height, content-visibility;
+			transition-behavior: allow-discrete;
+		}
+
+		&[open] {
+			&::details-content {
+				height: calc-size(auto, size);
+			}
+
+			> summary {
+				> :global(.c-icon) {
+					rotate: 180deg;
+				}
+			}
+		}
+
+		> summary {
+			list-style: none;
+			justify-content: space-between;
+
+			> :global(.c-icon) {
+				transition-property: rotate;
+				transition-duration: var(--g-duration-transition);
+			}
+		}
+
+		& [data-css-content] {
+			padding: u.Rem(12px);
+
+			&:empty {
+				display: none;
+			}
+		}
+	}
+}
+
+.bodyGradientControl {
+	padding-top: u.Rem(12px);
+
+	& details {
+		padding: 0 u.Rem(12px) u.Rem(12px) u.Rem(12px);
+
+		&::details-content {
+			height: u.Rem(0px);
+			overflow: clip;
+			transition-duration: var(--g-duration-transition);
+			transition-property: height, content-visibility;
+			transition-behavior: allow-discrete;
+		}
+
+		&:last-child {
+			padding-top: u.Rem(12px);
+		}
+
+		&[open] {
+			&::details-content {
+				height: calc-size(auto, size);
+			}
+
+			> summary > :global(.c-icon) {
+				rotate: 180deg;
+			}
+		}
+	}
+
+	& summary {
+		list-style: none;
+		justify-content: space-between;
+
+		> :global(.c-icon) {
+			transition-property: rotate;
+			transition-duration: var(--g-duration-transition);
+		}
+	}
+
+	& [data-css-properties] {
+		> label {
+			margin-top: u.Rem(8px);
+
+			&:not(:global(.c-checkbox)) {
+				display: block;
+			}
+		}
+
+		> select {
+			margin-top: u.Rem(2px);
+		}
+
+		> :global(.c-textfield) {
+			margin-top: u.Rem(2px);
+		}
+
+		> :global(.c-checkbox) {
+			margin-top: u.Rem(12px);
+		}
+	}
+
+	& [data-css-stops] {
+		> button {
+			margin-top: u.Rem(12px);
+		}
+
+		& li {
+			margin-top: u.Rem(12px);
+
+			> div {
+				display: grid;
+				grid-template-columns: 1fr 3fr;
+				gap: u.Rem(4px);
+				margin-bottom: u.Rem(4px);
+			}
+
+			> input {
+				display: block;
+				width: 100%;
+				accent-color: rgb(var(--g-color-accent));
+			}
+
+			& :global(.c-textfield):last-child {
+				> :global(.c-textfield-input) {
+					padding-right: 0;
+				}
+
+				> :global(.c-textfield-trailing) {
+					display: flex;
+					align-items: center;
+					gap: u.Rem(1px);
+					padding-right: u.Rem(2px);
+				}
+			}
+		}
+	}
+}
+
+.bodyGradients {
+	display: block;
+
+	> * > ul {
+		list-style: none;
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: u.Rem(4px);
+
+		> li {
+			display: flex;
+			gap: u.Rem(1px);
+
+			&:not(:last-child) {
+				padding-bottom: u.Rem(4px);
+				border-bottom: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity3));
+			}
+
+			> :first-child {
+				flex: 1;
+				justify-content: flex-start;
+			}
+		}
+	}
+
+	& [data-command="gradient-edit"] {
+		> div {
+			width: 100%;
+			height: u.Rem(20px);
+			border-radius: u.Rem(4px);
+			outline: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
+		}
+	}
+}
+
+.bodyPreview {
+	outline: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
+	outline-offset: 0;
+}
+
+.bodyPreviewContainer {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	overflow: auto;
+
+	@media (max-width: $SMALL_SCREEN) {
+		min-height: u.Rem(360px);
+	}
+}
+
+.bodyProperties {
+	& :global(.c-textfield) {
+		margin-top: u.Rem(2px)
+	}
+
+	> label {
+		display: block;
+
+		&:not(:first-child) {
+			margin-top: u.Rem(8px);
+		}
+	}
+}
+
+.bodySavedGradient {
+	display: flex;
+	align-items: center;
+	gap: u.Rem(1px);
+	flex-wrap: wrap;
+	list-style: none;
+
+	& button {
+		padding: u.Rem(4px);
+		min-height: fit-content;
+		border-radius: 50%;
+
+		> span {
+			width: u.Rem(24px);
+			height: u.Rem(24px);
+			border-radius: 50%;
+		}
+	}
+}

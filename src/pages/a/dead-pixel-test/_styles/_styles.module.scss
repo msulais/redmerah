@@ -1,0 +1,39 @@
+@use '../../../../styles/units.scss' as u;
+
+.body {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	height: 100%;
+
+	& ul {
+		list-style: none;
+		padding: u.Rem(16px);
+		gap: u.Rem(8px);
+		width: 100%;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+
+	}
+
+	& li {
+		border-radius: u.Rem(4px);
+		box-shadow: var(--g-elevation2);
+		height: u.Rem(128px);
+		width: u.Rem(128px);
+	}
+
+	& [data-css-view] {
+		display: none;
+		width: 100%;
+		left: 0;
+		top: 0;
+		position: fixed;
+		height: 100dvh;
+		background-color: #000;
+		transition-duration: var(--g-duration-transition);
+		transition-property: background-color;
+	}
+}

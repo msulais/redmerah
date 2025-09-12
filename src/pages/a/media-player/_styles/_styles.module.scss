@@ -1,0 +1,63 @@
+@use '../../../../styles/units.scss' as u;
+
+$SMALL_SIZE: u.Rem(450px);
+
+.body {
+	padding: u.Rem(8px) u.Rem(16px) u.Rem(16px) u.Rem(16px);
+
+	> :is(img, video, audio) {
+		border: u.Rem(2px) solid rgb(var(--g-color-accent));
+		border-radius: u.Rem(8px);
+		width: 100%;
+	}
+
+	> [hidden] {
+		display:none;
+	}
+
+	> img {
+		height: calc(100dvh - u.Rem(76px));
+		object-fit: contain;
+
+		@media (max-width: $SMALL_SIZE) {
+			height: calc(100dvh - u.Rem(136px));
+		}
+	}
+
+	> audio {
+		height: calc(100dvh - u.Rem(76px));
+		padding: u.Rem(16px);
+
+		@media (max-width: $SMALL_SIZE) {
+			height: calc(100dvh - u.Rem(136px));
+		}
+	}
+
+	> video {
+		height: 100%;
+		max-height: calc(100dvh - u.Rem(76px));
+
+		&:fullscreen {
+			border: none;
+			border-radius: 0;
+		}
+
+		@media (max-width: $SMALL_SIZE) {
+			max-height: calc(100dvh - u.Rem(136px));
+		}
+	}
+}
+
+.pickBtn {
+	@media (max-width: $SMALL_SIZE) {
+		position: fixed;
+		bottom: calc(env(safe-area-inset-bottom) + u.Rem(16px));
+		right: u.Rem(16px);
+		box-shadow: var(--g-elevation2);
+		min-height: u.Rem(48px);
+		padding-left: u.Rem(16px);
+		padding-right: u.Rem(16px);
+		border-radius: u.Rem(8px);
+		z-index: 10;
+	}
+}
