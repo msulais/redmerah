@@ -4,8 +4,9 @@ import Appbar from '@/layouts/Appbar/index.astro'
 import BottomBar from '@/layouts/BottomBar/index.astro'
 import Main from '@/layouts/Main/index.astro'
 import Splash from '@/layouts/Splash/index.astro'
-import { CSSClasses } from './_styles/_css'
+import Article from '@/layouts/Article/index.astro'
 import { RoutesLinks } from '@/enums/links'
+import coverPicture from '@/assets/images/terms_page.jpg'
 ---
 
 <Html title="Terms & Conditions • Redmerah" description="Understand the terms and conditions governing your use of Redmerah's services. This page outlines important legal information.">
@@ -28,8 +29,11 @@ import { RoutesLinks } from '@/enums/links'
 	</Splash>
 	<Appbar route={RoutesLinks.terms}/>
 	<Main>
-		<article class={CSSClasses.article}>
-			<h1>Terms & Conditions</h1>
+		<Article
+			disabledAuthor
+			title="Terms & Conditions"
+			subtitle="What you can expect and what we expect from you."
+			coverPictureUrl={coverPicture.src}>
 			<p>Welcome to Redmerah!</p>
 			<p>These terms and conditions outline the rules and regulations for the use of Redmerah's Website, located at <a href="https://redmerah.com">https://redmerah.com</a>.</p>
 			<p>By accessing this website we assume you accept these terms and conditions. Do not continue to use Redmerah if you do not agree to take all of the terms and conditions stated on this page.</p>
@@ -122,7 +126,7 @@ import { RoutesLinks } from '@/enums/links'
 				<p>The limitations and prohibitions of liability set in this Section and elsewhere in this disclaimer: (a) are subject to the preceding paragraph; and (b) govern all liabilities arising under the disclaimer, including liabilities arising in contract, in tort and for breach of statutory duty.</p>
 				<p>As long as the website and the information and services on the website are provided free of charge, we will not be liable for any loss or damage of any nature.</p>
 			</section>
-		</article>
+		</Article>
 	</Main>
 	<BottomBar/>
 	<script src="./_scripts/_index.ts"/>

@@ -3,9 +3,10 @@ import { RoutesLinks, ExternalLinks } from '@/enums/links'
 import Html from '@/layouts/Html/index.astro'
 import Appbar from '@/layouts/Appbar/index.astro'
 import Splash from '@/layouts/Splash/index.astro'
+import Article from '@/layouts/Article/index.astro'
 import BottomBar from '@/layouts/BottomBar/index.astro'
 import Main from '@/layouts/Main/index.astro'
-import { CSSClasses } from './_styles/_css'
+import converPicture from '@/assets/images/about_page.jpg'
 
 export const prerender = true
 ---
@@ -32,8 +33,11 @@ export const prerender = true
 	</Splash>
 	<Appbar route={RoutesLinks.about} />
 	<Main>
-		<article class={CSSClasses.article}>
-			<h1>About Us</h1>
+		<Article
+			disabledAuthor
+			title="About Redmerah"
+			subtitle="Built for getting things done and make productivity painless."
+			coverPictureUrl={converPicture.src}>
 			<p>Welcome to Redmerah, your one-stop for becoming a productivity powerhouse. We're more than just a platform; we're your partner in streamlining your workflow and conquering your to-do list. Ever feel overwhelmed by a overflowing task list? Redmerah can help. With the right tools at your fingertips, you can tackle any project with confidence.</p>
 			<section>
 				<h2 id="Supercharged-by-Innovation"><a href="#Supercharged-by-Innovation">Supercharged by Innovation</a></h2>
@@ -57,7 +61,7 @@ export const prerender = true
 				<p>Have an idea for a feature? Encountered a bug? We&#39;re all ears! Contact us at <a href={"mailto:" + ExternalLinks.contactEmail}>{ExternalLinks.contactEmail}</a>, and we&#39;ll listen. Your feedback is the cornerstone of our development process, and it helps us create tools that truly meet your needs.</p>
 				<p>Thank you for joining the Redmerah community! We're thrilled to have you on board as we embark on this journey to unlock your full potential.</p>
 			</section>
-		</article>
+		</Article>
 	</Main>
 	<BottomBar />
 	<script src="./_scripts/_index.ts"/>
