@@ -1,0 +1,52 @@
+---
+import { ButtonVariant } from '@/components/Button'
+import Button from '@/components/Button/index.astro'
+import Icon from '@/components/Icon/index.astro'
+import { IconCodes } from '@/enums/icons'
+import { ElementIds } from './_scripts/_ids'
+import { CSSClasses } from './_styles/_css'
+
+type Props = {
+	title: string
+	subtitle?: string
+	datetime?: Date
+	author?: string
+	authorPictureUrl?: string
+	coverPictureUrl?: string
+	disabledAuthor?: boolean
+}
+
+const props = Astro.props
+---
+<article class={CSSClasses.article}>
+	<section class={CSSClasses.header}>
+		<h1>{props.title}</h1>
+		{props.subtitle && <p>{props.subtitle}</p>}
+		{props.coverPictureUrl && <img src={props.coverPictureUrl} alt={props.title}/>}
+		{!props.disabledAuthor && <div>
+			{props.authorPictureUrl && <img
+				src={props.authorPictureUrl}
+				alt={props.author ?? ''}
+			/>}
+			<p data-css-empty={props.author || props.datetime? undefined : ''}>
+				{props.author}
+				{props.author && props.datetime && <br/>}
+				{props.datetime && <time datetime={props.datetime?.toISOString() ?? ''}>{
+					props.datetime?.toLocaleDateString('en', {
+						year: 'numeric', month: 'long', day: 'numeric'
+					})
+				}</time>}
+			</p>
+			<div style={{flex: '1'}}/>
+			<Button
+				id={ElementIds.shareBtn}
+				ButtonVariant={ButtonVariant.tonal}>
+				<Icon IconCode={IconCodes.shareAndroid}/>
+				Share
+			</Button>
+		</div>}
+	</section>
+	<div class={CSSClasses.body}>
+		<slot />
+	</div>
+</article>
