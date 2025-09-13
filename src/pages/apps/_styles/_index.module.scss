@@ -78,8 +78,8 @@
 
 .main {
 	min-height: calc(100dvh - u.Rem(180px));
-	width: u.Rem(1080px);
-	padding: u.Rem(32px) u.Rem(16px);
+	width: u.Rem(1080px + 32px);
+	padding: u.Rem(32px) u.Rem(24px);
 	padding-bottom: u.Rem(64px);
 	max-width: 100%;
 
