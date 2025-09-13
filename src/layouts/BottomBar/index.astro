@@ -9,6 +9,7 @@ import LinkButton from '@/components/Button/LinkButton.astro'
 	<slot/>
 	<p data-css-copyright>&copy; { new Date().getFullYear() } Redmerah</p>
 	<div data-css-links>
+		<LinkButton href={RoutesLinks.home}>Home</LinkButton>
 		<LinkButton href={RoutesLinks.about}>About</LinkButton>
 		<LinkButton href={RoutesLinks.apps}>Apps</LinkButton>
 		<LinkButton href={RoutesLinks.privacy}>Privacy</LinkButton>
