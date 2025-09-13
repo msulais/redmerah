@@ -1,41 +1,61 @@
 @use '../../styles/units.scss' as u;
 
 .footer {
-	padding: 0 u.Rem(32px) u.Rem(64px) u.Rem(32px);
+	--g-color-accent: var(--g-color-accent-dark);
+	--g-color-on-accent: var(--g-color-on-accent-dark);
+	width: 100%;
+	padding: u.Rem(64px) u.Rem(16px);
+	background: linear-gradient(0deg, transparent 0%, rgb(var(--g-color-background)) 100%);
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 
-	> p {
-		text-align: center;
-		color: rgb(var(--g-color-accent));
-		font-weight: bold;
-		text-shadow: var(--g-elevation1);
+	&::before {
+		background-image: url(/images/footer-light.png);
+		background-repeat: no-repeat;
+		background-size: cover;
+		display: block;
+		content: '';
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		z-index: -1;
+		top: 0;
+		left: 0;
+
+		:root[data-theme="dark"] & {
+			background-image: url(/images/footer-dark.png);
+		}
+
+		:root[data-theme="auto"] & {
+			@media (prefers-color-scheme: dark) {
+				background-image: url(/images/footer-dark.png);
+			}
+		}
 	}
 
-	> div {
+	> p[data-css-copyright] {
+		text-align: center;
+		font-weight: bold;
+		text-shadow: var(--g-elevation1);
+		color: rgb(var(--g-color-on-surface));
+		margin-bottom: u.Rem(16px);
+	}
+
+	> div[data-css-links] {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		gap: u.Rem(16px);
-		padding-top: u.Rem(8px);
+		gap: u.Rem(4px);
 		flex-wrap: wrap;
-	}
-
-	& a {
-		display: inline-block;
-		border-bottom: u.Rem(2px) solid rgb(var(--g-color-accent));
-		padding-top: u.Rem(8px);
-		transition-duration: var(--g-duration-transition);
-
-		&:hover {
-			color: rgb(var(--g-color-accent));
-			padding-top: 0;
-			padding-bottom: u.Rem(8px);
-		}
-
-		&:active {
-			color: rgb(var(--g-color-accent));
-			padding-top: 0;
-			padding-bottom: u.Rem(8px);
-			border-bottom-style: dashed;
-		}
+		width: fit-content;
+		color: rgb(var(--g-color-on-surface));
+		background-color: rgba(var(--g-color-background), .5);
+		backdrop-filter: blur(var(--g-blur-glass));
+		padding: u.Rem(4px);
+		border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity2));
+		border-radius: 8px;
+		box-shadow: var(--g-elevation2);
 	}
 }
