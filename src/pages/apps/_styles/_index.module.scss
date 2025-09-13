@@ -13,6 +13,8 @@
 	& :global(.c-button){
 		--color: rgb(var(--g-color-accent));
 
+		background-color: rgb(var(--g-color-surface)) !important;
+		border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity2));
 		padding: u.Rem(12px);
 		flex-direction: column;
 		text-align: center;
@@ -45,15 +47,12 @@
 		}
 
 		&:hover {
-			background-color: rgba(var(--g-color-on-surface), var(--g-opacity2)) !important;
-
 			&::after {
 				opacity: 1;
 			}
 		}
 
 		&:active {
-			background-color: rgba(var(--g-color-on-surface), var(--g-opacity2)) !important;
 			scale: .9;
 
 			&::after {
