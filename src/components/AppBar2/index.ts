@@ -25,7 +25,7 @@ type AppBarUpdateOptions<T extends AppBarElement<HTMLElement>> = {
 }
 
 enum AppBarClasses {
-	appbar   = 'c-appbar',
+	appbar   = 'c-appbar2',
 	leading  = appbar + '-leading',
 	trailing = appbar + '-trailing',
 	content  = appbar + '-content',

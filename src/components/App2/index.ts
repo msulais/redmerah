@@ -28,7 +28,7 @@ type AppUpdateOptions<T extends AppElement<HTMLElement>> = {
 }
 
 enum AppClasses {
-	app          = 'c-app',
+	app          = 'c-app2',
 	appBar       = app + '-appbar',
 	container    = app + '-container',
 	leftSideBar  = app + '-left-sidebar',

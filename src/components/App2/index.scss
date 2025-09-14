@@ -1,4 +1,4 @@
-.c-app {
+.c-app2 {
 	max-height: 100dvh;
 	max-width: 100%;
 	width: 100%;
@@ -9,20 +9,20 @@
 	overflow: hidden;
 }
 
-.c-app-appbar {
+.c-app2-appbar {
 	position: sticky;
 	top: 0;
 	left: 0;
 	z-index: var(--g-z-index-appbar);
 }
 
-.c-app-body {
+.c-app2-body {
 	flex: 1;
 	max-width: 100%;
 	max-height: 100%;
 }
 
-.c-app-container {
+.c-app2-container {
 	overflow: auto;
 	position: relative;
 	flex: 1;
@@ -35,16 +35,16 @@
 	justify-content: stretch;
 }
 
-.c-app-left-sidebar,
-.c-app-right-sidebar {
+.c-app2-left-sidebar,
+.c-app2-right-sidebar {
 	max-height: 100%;
 	overflow: auto;
 }
 
 :is(
-	.c-app-appbar, .c-app-left-sidebar,
-	.c-app-right-sidebar,
-	.c-app-bottombar, .c-app-fab
+	.c-app2-appbar, .c-app2-left-sidebar,
+	.c-app2-right-sidebar,
+	.c-app2-bottombar, .c-app2-fab
 ):empty {
 	display: none;
 }
