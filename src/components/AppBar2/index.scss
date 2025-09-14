@@ -1,0 +1,54 @@
+@use '../../styles/units.scss' as u;
+
+.c-appbar {
+	width: 100%;
+	padding: u.Rem(8px);
+	display: flex;
+	align-items: center;
+	gap: u.Rem(4px);
+}
+
+.c-appbar-content {
+	display: flex;
+	align-items: center;
+	gap: u.Rem(8px);
+	overflow: hidden;
+	background-color: rgba(var(--g-color-surface), var(--g-opacity-half));
+	backdrop-filter: blur(var(--g-blur-glass));
+	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity2));
+	padding: u.Rem(4px);
+	border-radius: u.Rem(8px);
+	box-shadow: var(--g-elevation2);
+}
+
+.c-appbar-headline {
+	font-size: var(--g-font-size-m);
+	font-weight: 500;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	text-wrap: nowrap;
+	display: flex;
+	gap: u.Rem(8px);
+	padding-right: u.Rem(8px);
+}
+
+.c-appbar-flex {
+	flex: 1;
+}
+
+.c-appbar-leading,
+.c-appbar-trailing {
+	display: flex;
+	align-items: center;
+	gap: u.Rem(2px);
+	background-color: rgba(var(--g-color-surface), var(--g-opacity-half));
+	backdrop-filter: blur(var(--g-blur-glass));
+	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity2));
+	padding: u.Rem(4px);
+	border-radius: u.Rem(8px);
+	box-shadow: var(--g-elevation2);
+}
+
+:is(.c-appbar, .c-appbar-leading, .c-appbar-trailing, .c-appbar-headline):empty {
+	display: none;
+}

@@ -1,0 +1,47 @@
+---
+import { joinClassList } from '@/utils/attributes'
+
+import {
+	AppBarClasses,
+	type AppBarProps
+} from '.'
+import './index.scss'
+
+type Props = AppBarProps
+const {
+	'class': className,
+	AppBarTagName: AppTagName      = 'header',
+	AppBarLeadingAttr  = {},
+	AppBarTrailingAttr = {},
+	AppBarContentAttr  = {},
+	AppBarHeadingAttr  = {},
+	AppBarFlexAttr     = {},
+	...other
+} = Astro.props
+const {'class': contentClass , ...contentOther } = AppBarContentAttr
+const {'class': headingClass , ...headingOther } = AppBarHeadingAttr
+const {'class': leadingClass , ...leadingOther } = AppBarLeadingAttr
+const {'class': trailingClass, ...trailingOther} = AppBarTrailingAttr
+const {'class': flexClass    , ...flexOther} = AppBarFlexAttr
+
+const Dynamic = AppTagName as 'header'
+---
+<Dynamic
+	class={joinClassList(AppBarClasses.appbar, className)}
+	{...other}>
+	<div
+		class={joinClassList(AppBarClasses.leading, leadingClass)}
+		{...leadingOther}><slot name='leading'/></div>
+	<div class={joinClassList(AppBarClasses.content, contentClass)} {...contentOther}>
+		<h2
+			class={joinClassList(AppBarClasses.headline, headingClass)}
+			{...headingOther}><slot name='headline'/></h2>
+		<slot />
+	</div>
+	<div
+		class={joinClassList(AppBarClasses.flex, flexClass)}
+		{...flexOther}/>
+	<div
+		class={joinClassList(AppBarClasses.trailing, trailingClass)}
+		{...trailingOther}><slot name='trailing'/></div>
+</Dynamic>

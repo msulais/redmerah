@@ -1,0 +1,54 @@
+---
+import { joinClassList } from '@/utils/attributes'
+
+import {
+	AppClasses,
+	type AppProps
+} from '.'
+import './index.scss'
+
+type Props = AppProps
+const {
+	'class': className,
+	AppTagName          = 'div',
+	AppAppBarAttr       = {},
+	AppBottomBarAttr    = {},
+	AppBodyAttr         = {},
+	AppContainerAttr    = {},
+	AppLeftSideBarAttr  = {},
+	AppRightSideBarAttr = {},
+	...other
+} = Astro.props
+const {'class': appBarClass      , ...appBarOther      } = AppAppBarAttr
+const {'class': bottomBarClass   , ...bottomBarOther   } = AppBottomBarAttr
+const {'class': bodyClass        , ...bodyOther        } = AppBodyAttr
+const {'class': containerClass   , ...containerOther   } = AppContainerAttr
+const {'class': leftSideBarClass , ...leftSideBarOther } = AppLeftSideBarAttr
+const {'class': rightSideBarClass, ...rightSideBarOther} = AppRightSideBarAttr
+
+const AppDynamic = AppTagName as 'div'
+---
+
+<AppDynamic class={joinClassList(AppClasses.app, className)} {...other}>
+	<div
+		class={joinClassList(AppClasses.leftSideBar, leftSideBarClass)}
+		{...leftSideBarOther}><slot name='left-sidebar'/></div>
+	<div
+		class={joinClassList(AppClasses.container, containerClass)}
+		{...containerOther}>
+		<div
+			class={joinClassList(AppClasses.appBar, appBarClass)}
+			{...appBarOther}><slot name='appbar'/></div>
+		<div
+			class={joinClassList(AppClasses.body)}
+			{...bodyOther}>
+			<slot/>
+		</div>
+		<div
+			class={joinClassList(AppClasses.bottomBar, bottomBarClass)}
+			{...bottomBarOther}><slot name='bottombar'/></div>
+	</div>
+	<div
+		class={joinClassList(AppClasses.rightSideBar, rightSideBarClass)}
+		{...rightSideBarOther}><slot name='right-sidebar'/></div>
+</AppDynamic>
