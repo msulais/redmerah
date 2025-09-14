@@ -1,0 +1,103 @@
+@use '../../styles/units.scss' as u;
+
+.c-sidebar2 {
+	height: 100%;
+	width: u.Rem(280px);
+	max-width: u.Rem(280px);
+	max-height: 100%;
+	overflow: hidden;
+	border-radius: u.Rem(8px);
+	padding: u.Rem(8px);
+	transition-property: width, max-width;
+	transition-duration: var(--g-duration-transition);
+
+	&[data-c-sidebar-minimized] {
+		width: u.Rem(50px);
+		max-width: u.Rem(50px);
+	}
+}
+
+.c-sidebar2-container {
+	display: flex;
+	flex-direction: column;
+	gap: u.Rem(4px);
+	background-color: rgba(var(--g-color-surface), var(--g-opacity-half));
+	backdrop-filter: blur(var(--g-blur-glass));
+	border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity2));
+	overflow: hidden;
+	box-shadow: var(--g-elevation2);
+	max-height: 100%;
+	height: 100%;
+	border-radius: u.Rem(8px);
+}
+
+.c-sidebar2-content {
+	flex: 1;
+	overflow: auto;
+	display: flex;
+	flex-direction: column;
+	gap: u.Rem(2px);
+	height: inherit;
+	width: 100%;
+	max-width: inherit;
+	padding: u.Rem(8px);
+	max-height: 100%;
+	overflow-x: hidden;
+}
+
+.c-sidebar2-button.c-button {
+	justify-content: flex-start;
+	position: relative;
+
+	&::before {
+		content: '';
+		display: block;
+		background-color: rgb(var(--g-color-accent));
+		position: absolute;
+		left: u.Rem(1px);
+		width: u.Rem(3px);
+		top: 50%;
+		opacity: 0;
+		transform: translateY(-50%);
+		height: u.Rem(3px);
+		border-radius: u.Rem(999px);
+		transition-property: height;
+		transition-duration: var(--g-duration-transition);
+	}
+
+	&[data-c-sidebar-button-selected]::before {
+		opacity: 1;
+		height: max(50%, u.Rem(3px));
+	}
+}
+
+.c-sidebar2-button-leading2 {
+}
+
+.c-sidebar2-button-content {
+	flex: 1;
+	display: inherit;
+	gap: inherit;
+
+	.c-sidebar[data-c-sidebar-minimized] & {
+		display: none;
+	}
+}
+
+.c-sidebar2-footer,
+.c-sidebar2-header {
+	overflow: auto;
+	display: flex;
+	flex-direction: column;
+	gap: u.Rem(1px);
+	height: inherit;
+	width: 100%;
+	max-width: inherit;
+	padding: u.Rem(4px);
+	max-height: 100%;
+	overflow-x: hidden;
+}
+
+:is(.c-sidebar2-content, .c-sidebar2-footer, .c-sidebar2-header):empty {
+	display: none;
+}
