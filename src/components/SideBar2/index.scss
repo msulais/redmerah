@@ -12,8 +12,8 @@
 	transition-duration: var(--g-duration-transition);
 
 	&[data-c-sidebar-minimized] {
-		width: u.Rem(50px);
-		max-width: u.Rem(50px);
+		width: u.Rem(76px);
+		max-width: u.Rem(76px);
 	}
 }
 
@@ -71,7 +71,7 @@
 	}
 }
 
-.c-sidebar2-button-leading2 {
+.c-sidebar2-button-leading {
 }
 
 .c-sidebar2-button-content {
@@ -79,7 +79,7 @@
 	display: inherit;
 	gap: inherit;
 
-	.c-sidebar[data-c-sidebar-minimized] & {
+	.c-sidebar2[data-c-sidebar-minimized] & {
 		display: none;
 	}
 }
