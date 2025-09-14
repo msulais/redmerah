@@ -5,11 +5,7 @@
 	height: 100%;
 	padding: u.Rem(24px);
 	max-height: 100%;
-	overflow: auto;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-direction: column;
+	margin: auto;
 
 	> h1 {
 		font-size: min(u.Rem(256px), 32dvw);
@@ -45,6 +41,7 @@
 }
 
 .bodyStatus {
+	margin: auto;
 	margin-top: u.Rem(16px);
 	background-color: rgba(var(--g-color-accent), var(--g-opacity3));
 	padding: u.Rem(4px) u.Rem(12px);
@@ -56,6 +53,7 @@
 	font-size: var(--g-font-size-xs);
 	border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity1));
 	transition-duration: var(--g-duration-transition);
+	width: fit-content;
 
 	> :global(.c-icon) {
 		color: rgb(var(--g-color-accent));
