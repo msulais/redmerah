@@ -1,6 +1,9 @@
 import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
 import { InputMode } from "./_enums"
+import type { AppItem } from "@/types/apps"
+import { APP_SASS_CONVERTER } from "@/constants/apps"
 
+export const APP: AppItem = APP_SASS_CONVERTER
 export const DEFAULT_THEME = PlatformThemeMode.auto
 export const DEFAULT_ANIMATION = PlatformAnimationMode.auto
 export const DEFAULT_TEXT_WRAP = true

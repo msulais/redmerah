@@ -1,8 +1,11 @@
+import { stringToHash } from "@/utils/string"
+import { APP } from "./_constant"
+
 let _ID_INDEX = 0
 
+const idPrefix = stringToHash(APP.link)
 function _createId(): string {
-	++_ID_INDEX
-	return 'clock-' + _ID_INDEX
+	return idPrefix + (++_ID_INDEX)
 }
 
 export class ElementIds {
@@ -30,8 +33,6 @@ export class ElementIds {
 	static readonly pg_clock = _createId()
 	static readonly pg_stopwatch = _createId()
 	static readonly pg_timer = _createId()
-
-
 
 	// pgClk = page clock
 	static readonly pgClk_time = _createId()

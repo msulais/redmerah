@@ -1,6 +1,9 @@
+import { APP_MARKDOWN_CONVERTER } from "@/constants/apps"
 import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
+import type { AppItem } from "@/types/apps"
 import { pxToRem } from "@/utils/css"
 
+export const APP: AppItem = APP_MARKDOWN_CONVERTER
 export const DEFAULT_THEME = PlatformThemeMode.auto
 export const DEFAULT_ANIMATION = PlatformAnimationMode.auto
 export const DEFAULT_TEXT_WRAP = true

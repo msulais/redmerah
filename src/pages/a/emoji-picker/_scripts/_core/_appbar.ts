@@ -1,9 +1,8 @@
 import { ButtonVariant, updateIconButtonRef, type IconButtonElement } from "@/components/Button"
-import { APP_EMOJI_PICKER as app } from "@/constants/apps"
 import { ElementIds } from "../_shared/_ids"
 import { $ } from "./_dom-utils"
 import { SideBarAttributes, updateSideBarRef } from "@/components/SideBar"
-import { SCREEN_WIDTH_SMALL } from "../_shared/_constant"
+import { APP, SCREEN_WIDTH_SMALL } from "../_shared/_constant"
 import type { PopoverElement } from "@/components/Popover"
 
 const _infoMenuRef = $(ElementIds.apInf_menu) as HTMLDivElement
@@ -21,7 +20,7 @@ function _initEvents(): void {
 	_shareButtonRef.addEventListener('click', () => {
 		_infoMenuRef.hidePopover()
 		navigator.share({
-			text: app.name,
+			text: APP.name,
 			url: document.URL
 		})
 	})

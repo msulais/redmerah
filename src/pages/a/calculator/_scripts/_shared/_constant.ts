@@ -3,7 +3,10 @@ import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
 import { ConverterType, DateOperation, DecimalNumberFormat, GroupingNumberFormat, NumberType, Pages, ScientificAngleType } from "./_enums"
 import { LengthUnits } from "./_units"
 import { pxToRem } from "@/utils/css"
+import type { AppItem } from "@/types/apps"
+import { APP_CALCULATOR } from "@/constants/apps"
 
+export const APP: AppItem = APP_CALCULATOR
 export const SCREEN_WIDTH_SMALL = pxToRem(650)
 export const DEFAULT_MEMORY = 0
 export const DEFAULT_PAGE: Pages = Pages.basic

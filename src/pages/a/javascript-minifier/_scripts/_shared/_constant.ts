@@ -1,5 +1,8 @@
+import { APP_JAVASCRIPT_MINIFIER } from "@/constants/apps"
 import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
+import type { AppItem } from "@/types/apps"
 
+export const APP: AppItem = APP_JAVASCRIPT_MINIFIER
 export const DEFAULT_THEME = PlatformThemeMode.auto
 export const DEFAULT_ANIMATION = PlatformAnimationMode.auto
 export const DEFAULT_TEXT_WRAP = true

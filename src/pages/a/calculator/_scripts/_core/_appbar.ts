@@ -1,7 +1,7 @@
 import { updateIconButtonRef } from "@/components/Button"
-import { APP_CALCULATOR as app } from "@/constants/apps"
 import { $ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
+import { APP } from "../_shared/_constant"
 
 // inf = info
 const _inf_menuRef = $(ElementIds.apInf_menu) as HTMLDivElement
@@ -33,7 +33,7 @@ function _initEvents(): void {
 	_shareBtnRef.addEventListener('click', () => {
 		_inf_menuRef.hidePopover()
 		navigator.share({
-			text: app.name,
+			text: APP.name,
 			url: document.URL
 		})
 	})

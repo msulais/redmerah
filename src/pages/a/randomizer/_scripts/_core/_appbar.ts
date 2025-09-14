@@ -1,8 +1,7 @@
 import { updateIconButtonRef } from "@/components/Button"
-import { APP_RANDOMIZER as app } from "@/constants/apps"
 import { $ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
-import { HIDE_NAVIGATION } from "../_shared/_constant"
+import { APP, HIDE_NAVIGATION } from "../_shared/_constant"
 import { SideBarAttributes, updateSideBarRef } from "@/components/SideBar"
 
 // inf = info
@@ -36,7 +35,7 @@ function _initEvents(): void {
 	_shareBtnRef.addEventListener('click', () => {
 		_inf_menuRef.hidePopover()
 		navigator.share({
-			text: app.name,
+			text: APP.name,
 			url: document.URL
 		})
 	})

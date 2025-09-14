@@ -1,6 +1,5 @@
 ---
-import { APP_GEOLOCATION as app } from '@/constants/apps'
-
+import { APP } from './_scripts/_shared/_constant'
 import UIAppBar from './_views/_UIAppBar.astro'
 import UIBody from './_views/_UIBody.astro'
 import UISplash from './_views/_UISplash.astro'
@@ -11,15 +10,15 @@ export const prerender = true
 ---
 
 <Html
-	title={app.name + ' • Redmerah'}
-	accentColor={app.color}
-	description={app.description}>
+	title={APP.name + ' • Redmerah'}
+	accentColor={APP.color}
+	description={APP.description}>
 	<Fragment slot="favicon">
-		<link rel="shortcut icon" type="image/ico" href={`/favicon${app.link}/favicon.ico`} />
-		<link rel="apple-touch-icon" sizes="180x180" href={`/favicon${app.link}/apple-touch-icon.png`}>
-		<link rel="icon" type="image/png" sizes="32x32" href={`/favicon${app.link}/favicon-32x32.png`}>
-		<link rel="icon" type="image/png" sizes="16x16" href={`/favicon${app.link}/favicon-16x16.png`}>
-		<link rel="manifest" href={`/favicon${app.link}/site.webmanifest`}>
+		<link rel="shortcut icon" type="image/ico" href={`/favicon${APP.link}/favicon.ico`} />
+		<link rel="apple-touch-icon" sizes="180x180" href={`/favicon${APP.link}/apple-touch-icon.png`}>
+		<link rel="icon" type="image/png" sizes="32x32" href={`/favicon${APP.link}/favicon-32x32.png`}>
+		<link rel="icon" type="image/png" sizes="16x16" href={`/favicon${APP.link}/favicon-16x16.png`}>
+		<link rel="manifest" href={`/favicon${APP.link}/site.webmanifest`}>
 	</Fragment>
 	<UISplash/>
 	<App>

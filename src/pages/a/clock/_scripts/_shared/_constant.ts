@@ -1,7 +1,10 @@
 import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
 import { Pages } from "./_enums"
 import { pxToRem } from "@/utils/css"
+import type { AppItem } from "@/types/apps"
+import { APP_CLOCK } from "@/constants/apps"
 
+export const APP: AppItem = APP_CLOCK
 export const SCREEN_WIDTH_SMALL = pxToRem(650)
 export const DEFAULT_PAGE: Pages = Pages.clock
 export const DEFAULT_THEME = PlatformThemeMode.auto

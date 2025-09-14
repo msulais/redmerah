@@ -1,10 +1,9 @@
 import { updateIconButtonRef } from "@/components/Button"
-import { APP_QR_CODE as app } from "@/constants/apps"
 import { ElementIds } from "../_shared/_ids"
 import { $ } from "./_dom-utils"
 import { SideBarAttributes, updateSideBarRef, type SideBarElement } from "@/components/SideBar"
 import type { DrawerElement } from "@/components/Drawer"
-import { SCREEN_WIDTH_SMALL } from "../_shared/_constant"
+import { APP, SCREEN_WIDTH_SMALL } from "../_shared/_constant"
 
 const _infoMenuRef = $(ElementIds.apInf_menu) as HTMLDivElement
 const _infoButtonRef = $(ElementIds.apInf_btn) as HTMLButtonElement
@@ -19,7 +18,7 @@ function _initEvents(): void {
 	_shareButtonRef.addEventListener('click', () => {
 		_infoMenuRef.hidePopover()
 		navigator.share({
-			text: app.name,
+			text: APP.name,
 			url: document.URL
 		})
 	})

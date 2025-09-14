@@ -1,8 +1,11 @@
+import { stringToHash } from "@/utils/string"
+import { APP } from "./_constant"
+
 let _ID_INDEX = 0
 
+const idPrefix = stringToHash(APP.link)
 function _createId(): string {
-	++_ID_INDEX
-	return 'emoji-picker-' + _ID_INDEX
+	return idPrefix + (++_ID_INDEX)
 }
 
 export class ElementIds {

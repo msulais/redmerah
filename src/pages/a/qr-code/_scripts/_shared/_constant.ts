@@ -2,7 +2,10 @@ import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
 import { EncodingMode, ErrorCorrectionLevel, Pages, QRVersion } from "./_enums"
 import type { HEXColor } from "@/types/color"
 import { pxToRem } from "@/utils/css"
+import type { AppItem } from "@/types/apps"
+import { APP_QR_CODE } from "@/constants/apps"
 
+export const APP: AppItem = APP_QR_CODE
 export const DEFAULT_PAGE: Pages = Pages.generate
 export const DEFAULT_DATA = 'https://www.redmerah.com/qr-code'
 export const DEFAULT_THEME: PlatformThemeMode = PlatformThemeMode.auto

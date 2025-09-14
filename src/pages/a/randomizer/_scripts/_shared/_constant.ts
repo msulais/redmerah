@@ -2,7 +2,10 @@ import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
 import { ColorsRandomizerSpace, NumbersRandomizerType, NumbersRandomizerSort, Pages, WordsRandomizerCase } from "./_enums"
 import type { HEXColor } from "@/types/color"
 import { pxToRem } from "@/utils/css"
+import { APP_RANDOMIZER } from "@/constants/apps"
+import type { AppItem } from "@/types/apps"
 
+export const APP: AppItem = APP_RANDOMIZER
 export const HIDE_NAVIGATION = pxToRem(900)
 export const DEVICE_WIDTH_SMALL = pxToRem(650)
 export const DEFAULT_PAGE: Pages = Pages.string
