@@ -30,4 +30,6 @@ export class CSSClasses {
 
 	// nav = navigation
 	static readonly nav_sideBar = CSS.navigationSideBar
+
+	static readonly smallScreenOnly = CSS.smallScreenOnly
 }

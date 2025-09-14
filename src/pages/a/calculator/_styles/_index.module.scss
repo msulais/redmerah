@@ -8,7 +8,6 @@ $SCREEN_WIDTH_SMALL: u.Rem(650px);
 	align-items: center;
 	height: 100%;
 	max-height: 100%;
-	overflow: auto;
 }
 
 .bodyInputField {
@@ -37,7 +36,6 @@ $SCREEN_WIDTH_SMALL: u.Rem(650px);
 	width: 100%;
 	flex-direction: column;
 	height: 100%;
-	overflow: auto;
 
 	&:not([hidden]) {
 		display: flex;
@@ -50,11 +48,11 @@ $SCREEN_WIDTH_SMALL: u.Rem(650px);
 	height: 100%;
 	gap: u.Rem(4px);
 	width: 100%;
-	padding: u.Rem(4px) u.Rem(4px) u.Rem(4px) 0;
+	padding: u.Rem(4px) u.Rem(8px) u.Rem(8px) u.Rem(8px);
 	border-radius: u.Rem(16px);
 
 	@media (max-width: $SCREEN_WIDTH_SMALL) {
-		padding: u.Rem(4px);
+		padding: u.Rem(8px);
 	}
 
 	> :global(.c-button) {
@@ -152,7 +150,7 @@ $SCREEN_WIDTH_SMALL: u.Rem(650px);
 }
 
 .bodyPageInput {
-	padding: 0 u.Rem(12px);
+	padding: 0 u.Rem(8px);
 }
 
 .bodyPageMemoryPreview {
@@ -164,11 +162,7 @@ $SCREEN_WIDTH_SMALL: u.Rem(650px);
 	flex-direction: column;
 	align-items: flex-start;
 	gap: u.Rem(4px);
-	padding: 0 u.Rem(4px) 0 0;
-
-	@media (max-width: $SCREEN_WIDTH_SMALL) {
-		padding: 0 u.Rem(4px);
-	}
+	padding: 0 u.Rem(8px);
 }
 
 .bodyPageOptionsGroup {
@@ -179,6 +173,12 @@ $SCREEN_WIDTH_SMALL: u.Rem(650px);
 
 .navigationSideBar {
 	@media (max-width: $SCREEN_WIDTH_SMALL) {
+		display: none !important;
+	}
+}
+
+.smallScreenOnly {
+	@media not (max-width: $SCREEN_WIDTH_SMALL) {
 		display: none !important;
 	}
 }
