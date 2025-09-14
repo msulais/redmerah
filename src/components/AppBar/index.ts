@@ -1,9 +1,9 @@
 type AppBarProps = astroHTML.JSX.HTMLAttributes & {
-	AppTagName     ?: string
-	AppContentAttr ?: astroHTML.JSX.HTMLAttributes
-	AppLeadingAttr ?: astroHTML.JSX.HTMLAttributes
-	AppTrailingAttr?: astroHTML.JSX.HTMLAttributes
-	AppHeadingAttr ?: astroHTML.JSX.HTMLAttributes
+	AppBarTagName     ?: string
+	AppBarContentAttr ?: astroHTML.JSX.HTMLAttributes
+	AppBarLeadingAttr ?: astroHTML.JSX.HTMLAttributes
+	AppBarTrailingAttr?: astroHTML.JSX.HTMLAttributes
+	AppBarHeadingAttr ?: astroHTML.JSX.HTMLAttributes
 }
 
 type AppBarElement<T extends HTMLElement> = T
