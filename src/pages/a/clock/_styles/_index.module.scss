@@ -8,23 +8,11 @@ $SCREEN_WIDTH_SMALL: u.Rem(650px);
 	align-items: center;
 	height: 100%;
 	max-height: 100%;
-	overflow: auto;
-	background-color: rgb(var(--g-color-surface));
-	border-radius: u.Rem(8px) 0 0 0;
-	border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity3));
-	border-bottom: none;
-	border-right: none;
-
-	@media (max-width: $SCREEN_WIDTH_SMALL) {
-		border: none;
-		background-color: transparent;
-	}
 }
 
 .bodyPage {
 	width: 100%;
 	height: 100%;
-	overflow: auto;
 
 	&[hidden] {
 		display: none !important;
@@ -33,7 +21,6 @@ $SCREEN_WIDTH_SMALL: u.Rem(650px);
 
 .bodyPageClock {
 	display: flex;
-	padding: u.Rem(16px);
 	flex-direction: column;
 	height: 100%;
 	justify-content: center;
@@ -130,7 +117,6 @@ $SCREEN_WIDTH_SMALL: u.Rem(650px);
 
 .bodyPageTimer {
 	display: flex;
-	padding: u.Rem(16px);
 	flex-direction: column;
 	height: 100%;
 	justify-content: center;
@@ -148,6 +134,12 @@ $SCREEN_WIDTH_SMALL: u.Rem(650px);
 
 .navigationSideBar {
 	@media (max-width: $SCREEN_WIDTH_SMALL) {
+		display: none !important;
+	}
+}
+
+.smallScreenOnly {
+	@media not (max-width: $SCREEN_WIDTH_SMALL) {
 		display: none !important;
 	}
 }

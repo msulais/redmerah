@@ -1,5 +1,5 @@
 ---
-import AppBar from '@/components/AppBar/index.astro'
+import AppBar from '@/components/AppBar2/index.astro'
 import IconButton from '@/components/Button/IconButton.astro'
 import Tooltip from '@/components/Tooltip/index.astro'
 import { APP_CLOCK as APP } from '@/constants/apps'
@@ -22,6 +22,7 @@ import { ElementIds } from '../_scripts/_shared/_ids'
 import { RadioNames } from '../_scripts/_shared/_input-names'
 import { DEFAULT_ANIMATION, DEFAULT_KEEP_AWAKE, DEFAULT_THEME } from '../_scripts/_shared/_constant'
 import { pxToRem } from '@/utils/css'
+import { CSSClasses } from '../_styles/_css'
 
 const animations: {
 	value: PlatformAnimationMode
@@ -67,22 +68,27 @@ const themes: {
 ]
 ---
 
-<AppBar id={ElementIds.appbar}>
+<AppBar
+	id={ElementIds.appbar}
+	AppBarLeadingAttr={{class: CSSClasses.smallScreenOnly}}>
 	<Fragment slot="leading">
 		<IconButton
-			id={ElementIds.ap_sideBarBtn}
+			class={CSSClasses.smallScreenOnly}
+			id={ElementIds.ap_openDrawerBtn}
 			IconButtonCode={IconCodes.lineHorizontal3}
 		/>
+	</Fragment>
+	<Fragment slot="headline">
 		<img
 			src={APP.logoUrl}
 			alt={APP.name + ' logo'}
 			style={{
-				width: pxToRem(32) + 'rem',
-				margin: `0 ${pxToRem(8)}rem 0 0`
+				width: pxToRem(24) + 'rem',
+				marginLeft: pxToRem(4) + 'rem'
 			}}
 		/>
+		{APP.name}
 	</Fragment>
-	<Fragment slot="headline">{APP.name}</Fragment>
 	<Tooltip slot="trailing">
 		<IconButton
 			id={ElementIds.apInf_btn}

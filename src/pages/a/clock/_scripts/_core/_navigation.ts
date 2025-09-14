@@ -4,9 +4,9 @@ import { ElementIds } from "../_shared/_ids"
 import { $, $$, $$$ } from "./_dom-utils"
 import { isValidEnumValue } from "@/utils/object"
 import { DrawerClasses, updateDrawerButtonRef } from "@/components/Drawer"
-import { SideBarClasses, updateSideBarButtonRef } from "@/components/SideBar"
+import { SideBarAttributes, SideBarClasses, updateSideBarButtonRef, updateSideBarRef } from "@/components/SideBar2"
 import { CSSClasses } from "../../_styles/_css"
-import { ButtonVariant } from "@/components/Button"
+import { ButtonVariant, type IconButtonElement } from "@/components/Button"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEasing } from "@/enums/animation"
 import { saveStorageItem } from "./_database"
@@ -20,33 +20,9 @@ export const NavigationStore = new ObservableStore<NavigationStoreType>({
 	page: DEFAULT_PAGE
 })
 
+const _minimizeBtnRef = $(ElementIds.nav_minimizeBtn) as IconButtonElement
 const _sideBarRef = $(ElementIds.nav_sideBar)
 const _drawerRef = $(ElementIds.nav_drawer)
-
-function _initDrawerEvents(): void {
-	_drawerRef?.addEventListener('click', (ev) => {
-		const targetRef = (ev.target as HTMLElement).closest<HTMLButtonElement>(`.${DrawerClasses.button}[data-page]`)
-		if (!targetRef) return
-
-		const page = targetRef.dataset.page
-		if (!isValidEnumValue(page, Pages)) return
-
-		_drawerRef.hidePopover()
-		NavigationStore.update(v => v.page = page as Pages)
-	})
-}
-
-function _initSideBarEvents(): void {
-	_sideBarRef?.addEventListener('click', (ev) => {
-		const targetRef = (ev.target as HTMLElement).closest<HTMLButtonElement>(`.${SideBarClasses.button}[data-page]`)
-		if (!targetRef) return
-
-		const page = targetRef.dataset.page
-		if (!isValidEnumValue(page, Pages)) return
-
-		NavigationStore.update(v => v.page = page as Pages)
-	})
-}
 
 function _subscribePageChanges(v: NavigationStoreType, o: NavigationStoreType): void {
 	const page = v.page
@@ -124,8 +100,43 @@ function _initSubscriber(): void {
 	NavigationStore.subscribe(_subscribePageRefView)
 }
 
+function _initEvents(): void {
+	_drawerRef?.addEventListener('click', (ev) => {
+		const targetRef = (ev.target as HTMLElement).closest<HTMLButtonElement>(`.${DrawerClasses.button}[data-page]`)
+		if (!targetRef) return
+
+		const page = targetRef.dataset.page
+		if (!isValidEnumValue(page, Pages)) return
+
+		_drawerRef.hidePopover()
+		NavigationStore.update(v => v.page = page as Pages)
+	})
+
+	_sideBarRef?.addEventListener('click', (ev) => {
+		const targetRef = (ev.target as HTMLElement).closest<HTMLButtonElement>(`.${SideBarClasses.button}[data-page]`)
+		if (!targetRef) return
+
+		const page = targetRef.dataset.page
+		if (!isValidEnumValue(page, Pages)) return
+
+		NavigationStore.update(v => v.page = page as Pages)
+	})
+
+	_minimizeBtnRef?.addEventListener('click', () => {
+		if (!_sideBarRef) {return}
+
+		const isMinimized = _sideBarRef.hasAttribute(SideBarAttributes.minimized)
+		_minimizeBtnRef.setAttribute('data-tooltip',
+			isMinimized? 'Minimize side bar' : 'Maximize side bar'
+		)
+
+		updateSideBarRef(_sideBarRef, {
+			SideBarMinimized: !isMinimized
+		})
+	})
+}
+
 export default () => {
-	_initDrawerEvents()
-	_initSideBarEvents()
 	_initSubscriber()
+	_initEvents()
 }

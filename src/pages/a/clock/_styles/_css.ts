@@ -8,4 +8,5 @@ export class CSSClasses {
 	static readonly bodyPageStopwatch = CSS.bodyPageStopwatch
 	static readonly bodyPageStopwatchLaps = CSS.bodyPageStopwatchLaps
 	static readonly navigationSideBar = CSS.navigationSideBar
+	static readonly smallScreenOnly = CSS.smallScreenOnly
 }
