@@ -51,7 +51,7 @@
 		flex-wrap: wrap;
 		width: fit-content;
 		color: rgb(var(--g-color-on-surface));
-		background-color: rgba(var(--g-color-background), .5);
+		background-color: rgba(var(--g-color-background), var(--g-opacity-half));
 		backdrop-filter: blur(var(--g-blur-glass));
 		padding: u.Rem(4px);
 		border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity2));
