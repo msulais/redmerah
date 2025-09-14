@@ -1,0 +1,32 @@
+{
+	"name": "Markdown Converter",
+	"short_name": "Markdown Converter",
+	"id": "/markdown-converter",
+	"start_url": "/markdown-converter",
+	"description": "Convert markdown to HTML effortlessly with our online markdown converter. Create beautifully formatted web content from plain text using our user-friendly tool.",
+	"icons": [
+		{
+			"src": "/favicon/a/markdown-converter/favicon-16x16.png",
+			"sizes": "16x16",
+			"type": "image/png"
+		},
+		{
+			"src": "/favicon/a/markdown-converter/favicon-32x32.png",
+			"sizes": "32x32",
+			"type": "image/png"
+		},
+		{
+			"src": "/favicon/a/markdown-converter/android-chrome-192x192.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		},
+		{
+			"src": "/favicon/a/markdown-converter/android-chrome-512x512.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		}
+	],
+	"theme_color": "#01B92A",
+	"background_color": "#ffffff",
+	"display": "standalone"
+}

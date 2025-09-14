@@ -1,0 +1,32 @@
+{
+	"name": "XML Escape",
+	"short_name": "XML Escape",
+	"id": "/xml-escape",
+	"description": "Effortlessly escape and unescape XML entities with our user-friendly web app. Ensure your data is correctly formatted for XML with our reliable, privacy-focused tool. No third-party dependencies, enhancing performance and security.",
+	"start_url": "/xml-escape",
+	"icons": [
+		{
+			"src": "/favicon/a/xml-escape/favicon-16x16.png",
+			"sizes": "16x16",
+			"type": "image/png"
+		},
+		{
+			"src": "/favicon/a/xml-escape/favicon-32x32.png",
+			"sizes": "32x32",
+			"type": "image/png"
+		},
+		{
+			"src": "/favicon/a/xml-escape/android-chrome-192x192.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		},
+		{
+			"src": "/favicon/a/xml-escape/android-chrome-512x512.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		}
+	],
+	"theme_color": "#FFF600",
+	"background_color": "#ffffff",
+	"display": "standalone"
+}
