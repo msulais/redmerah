@@ -5,11 +5,9 @@ $DEVICE_SMALL_SCREEN: u.Rem(800px);
 .body {
 	display: flex;
 	width: 100%;
-	height: 100%;
 	gap: u.Rem(16px);
 	padding: 0 u.Rem(16px) u.Rem(16px) u.Rem(16px);
 	justify-content: center;
-	overflow: auto;
 
 	@media (max-width: $DEVICE_SMALL_SCREEN) {
 		flex-direction: column;
