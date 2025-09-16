@@ -1,7 +1,7 @@
 @use '../../../../styles/units.scss' as u;
 
 .body {
-	padding: u.Rem(12px) u.Rem(16px) u.Rem(16px) u.Rem(16px);
+	padding: u.Rem(8px) u.Rem(16px) u.Rem(16px) u.Rem(16px);
 	display: flex;
 	gap: u.Rem(32px);
 	flex-wrap: wrap;
