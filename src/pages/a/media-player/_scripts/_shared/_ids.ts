@@ -12,6 +12,7 @@ export class ElementIds {
 	static readonly appbar = _createId()
 
 	// apOpen = appbar open
+	static readonly apOpen_container = _createId()
 	static readonly apOpen_btn = _createId()
 	static readonly apOpen_menu = _createId()
 	static readonly apOpen_device = _createId()

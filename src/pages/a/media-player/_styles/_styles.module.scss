@@ -16,7 +16,7 @@ $SMALL_SIZE: u.Rem(450px);
 	}
 
 	> img {
-		height: calc(100dvh - u.Rem(76px));
+		height: calc(100dvh - u.Rem(86px));
 		object-fit: contain;
 
 		@media (max-width: $SMALL_SIZE) {
@@ -25,7 +25,7 @@ $SMALL_SIZE: u.Rem(450px);
 	}
 
 	> audio {
-		height: calc(100dvh - u.Rem(76px));
+		height: calc(100dvh - u.Rem(86px));
 		padding: u.Rem(16px);
 
 		@media (max-width: $SMALL_SIZE) {
@@ -35,7 +35,7 @@ $SMALL_SIZE: u.Rem(450px);
 
 	> video {
 		height: 100%;
-		max-height: calc(100dvh - u.Rem(76px));
+		max-height: calc(100dvh - u.Rem(86px));
 
 		&:fullscreen {
 			border: none;
