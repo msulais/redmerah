@@ -24,10 +24,10 @@ export function getBaseFontSize(): number {
 	return _baseFontSize
 }
 
-export function remToPx(rem: number): number {
-	return rem * getBaseFontSize()
+export function remToPx(rem: number, fontSize?: number): number {
+	return rem * (fontSize ?? getBaseFontSize())
 }
 
-export function pxToRem(px: number) {
-	return px / getBaseFontSize()
+export function pxToRem(px: number, fontSize?: number) {
+	return px / (fontSize ?? getBaseFontSize())
 }
