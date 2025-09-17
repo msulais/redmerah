@@ -1,5 +1,5 @@
 ---
-import AppBar from '@/components/AppBar/index.astro'
+import AppBar from '@/components/AppBar2/index.astro'
 import IconButton from '@/components/Button/IconButton.astro'
 import Tooltip from '@/components/Tooltip/index.astro'
 import Menu from '@/components/Menu/index.astro'
@@ -67,17 +67,17 @@ const themes: {
 ---
 
 <AppBar id={ElementIds.appbar}>
-	<Fragment slot="leading">
+	<Fragment slot="headline">
 		<img
 			src={APP.logoUrl}
 			alt={APP.name + ' logo'}
 			style={{
-				width: pxToRem(32) + 'rem',
-				margin: `0 ${pxToRem(8)}rem 0 ${pxToRem(12)}rem`
+				width: pxToRem(24) + 'rem',
+				marginLeft: pxToRem(4) + 'rem'
 			}}
 		/>
+		{APP.name}
 	</Fragment>
-	<Fragment slot="headline">{APP.name}</Fragment>
 	<Tooltip slot="trailing">
 		<IconButton
 			id={ElementIds.apInf_btn}
