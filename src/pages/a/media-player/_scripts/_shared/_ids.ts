@@ -3,7 +3,7 @@ import { APP } from "./_constant"
 
 let _ID_INDEX = 0
 
-const idPrefix = stringToHash(APP.link)
+const idPrefix = 'ID' + stringToHash(APP.link)
 function _createId(): string {
 	return idPrefix + (++_ID_INDEX)
 }

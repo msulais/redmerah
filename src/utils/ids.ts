@@ -1,7 +1,7 @@
 import { stringToHash } from "./string"
 
 let ID_INDEX = 0
-const prefixID = stringToHash('global-id')
+const prefixID = 'ID' +  stringToHash('global-id')
 export function createElementId(prefix?: string, suffix?: string): string {
 	const generate = () => {
 		++ID_INDEX

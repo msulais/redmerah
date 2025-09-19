@@ -25,7 +25,7 @@ export function reverseString(text: string): string {
 	return [...text].reverse().join('')
 }
 
-export function stringToHash(input: string, length = 6): string {
+export function stringToHash(input: string, length = 4): string {
 	length = Math.floor(length)
 	if (length <= 0) return ""
 
