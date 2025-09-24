@@ -69,6 +69,10 @@
 		margin-left: 2em;
 	}
 
+	> :not(:first-child) {
+		margin-top: 1em;
+	}
+
 	> section > :not(:first-child) {
 		margin-top: 1em;
 	}
