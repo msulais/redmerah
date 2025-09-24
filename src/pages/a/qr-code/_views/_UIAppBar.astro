@@ -25,7 +25,7 @@ import { ElementIds } from '../_scripts/_shared/_ids'
 import { RadioNames } from '../_scripts/_shared/_input-names'
 import { APP, DEFAULT_ANIMATION, DEFAULT_ERROR_CORRECTION_LEVEL, DEFAULT_THEME, DEFAULT_ENCODING_MODE, DEFAULT_VERSION, DEFAULT_MARGIN, DEFAULT_BACKGROUND_COLOR, DEFAULT_COLOR } from '../_scripts/_shared/_constant'
 import { EncodingMode, ErrorCorrectionLevel, QRVersion } from '../_scripts/_shared/_enums'
-import { ButtonVariant } from '@/components/Button'
+import { CButton } from '@/components/Button'
 import { FlyoutPosition } from '@/enums/position'
 
 const animations: {
@@ -366,7 +366,7 @@ const themes: {
 					'margin-top': pxToRem(4) + 'rem',
 					width: '100%'
 				}}
-				ButtonVariant={ButtonVariant.tonal}
+				ButtonVariant={CButton.Variant.tonal}
 				id={ElementIds.apSett_colorForePickerBtn}
 				popovertarget={ElementIds.apSett_colorForePicker}
 				>{DEFAULT_COLOR}</Button>
@@ -388,7 +388,7 @@ const themes: {
 					'margin-top': pxToRem(4) + 'rem',
 					width: '100%'
 				}}
-				ButtonVariant={ButtonVariant.tonal}
+				ButtonVariant={CButton.Variant.tonal}
 				id={ElementIds.apSett_colorBackPickerBtn2}
 				popovertarget={ElementIds.apSett_colorBackPicker}
 				>{DEFAULT_BACKGROUND_COLOR}</Button>
@@ -401,8 +401,8 @@ const themes: {
 		</div>
 	</div>
 	<form style="display:contents" method="dialog" slot="footer">
-		<Button ButtonVariant={ButtonVariant.tonal}>Cancel</Button>
-		<Button ButtonVariant={ButtonVariant.filled} id={ElementIds.apSett_colorSave}>Save</Button>
+		<Button ButtonVariant={CButton.Variant.tonal}>Cancel</Button>
+		<Button ButtonVariant={CButton.Variant.filled} id={ElementIds.apSett_colorSave}>Save</Button>
 	</form>
 </Dialog>
 <Dialog id={ElementIds.apSett_marginDialog} style={{width: pxToRem(360) + 'rem'}}>
@@ -415,7 +415,7 @@ const themes: {
 		min: '0'
 	}}/>
 	<form style="display:contents" method="dialog" slot="footer">
-		<Button ButtonVariant={ButtonVariant.tonal}>Cancel</Button>
-		<Button ButtonVariant={ButtonVariant.filled} id={ElementIds.apSett_marginSave}>Save</Button>
+		<Button ButtonVariant={CButton.Variant.tonal}>Cancel</Button>
+		<Button ButtonVariant={CButton.Variant.filled} id={ElementIds.apSett_marginSave}>Save</Button>
 	</form>
 </Dialog>

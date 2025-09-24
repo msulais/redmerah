@@ -7,7 +7,7 @@ import { RootAttributes } from "@/enums/attributes"
 import { RadioNames } from "../_shared/_input-names"
 import { DEFAULT_ANIMATION, DEFAULT_COLOR_SPACE, DEFAULT_THEME } from "../_shared/_constant"
 import { $, $$ } from "./_dom-utils"
-import type { SubMenuElement } from "@/components/Menu"
+import { CMenu } from "@/components/Menu"
 import { ColorSpace } from "../_shared/_enums"
 import { saveStorageItem } from "./_database"
 
@@ -22,11 +22,11 @@ export const SettingsStore = new ObservableStore<SettingsStoreType>({
 	animation: DEFAULT_ANIMATION,
 	colorSpace: DEFAULT_COLOR_SPACE
 })
-const _rootRef = document.documentElement
-const _themeRef = $(ElementIds.apSett_themeMenu) as HTMLDivElement
-const _animationRef = $(ElementIds.apSett_animationMenu) as HTMLDivElement
-const _colorSpaceRef = $(ElementIds.apSett_colorSpaceMenu) as SubMenuElement
-const _settingsMenuRef = $(ElementIds.apSett_menu) as HTMLDivElement
+const _ref_root = document.documentElement
+const _ref_theme = $(ElementIds.apSett_themeMenu) as HTMLDivElement
+const _ref_animation = $(ElementIds.apSett_animationMenu) as HTMLDivElement
+const _ref_colorSpace = $(ElementIds.apSett_colorSpaceMenu) as CMenu.CSub.CElement
+const _ref_settingsMenu = $(ElementIds.apSett_menu) as HTMLDivElement
 
 function _subscribeAnimationChanges(v: SettingsStoreType, o: SettingsStoreType): void {
 	const animation = v.animation
@@ -46,17 +46,17 @@ function _subscribeAnimationRefView(v: SettingsStoreType, o: SettingsStoreType):
 	const animation = v.animation
 	if (animation === o.animation) return
 
-	_rootRef.setAttribute(RootAttributes.animation, animation)
-	const previousRef = $$(
+	_ref_root.setAttribute(RootAttributes.animation, animation)
+	const ref_previous = $$(
 		`input[name="${CSS.escape(RadioNames.animation)}"]:checked`
 	) as HTMLInputElement
-	const targetRef = $$(
+	const ref_target = $$(
 		`input[name="${CSS.escape(RadioNames.animation)}"][value="${CSS.escape(animation)}"]`
 	) as HTMLInputElement
 
-	if (previousRef === targetRef) {return}
-	if (previousRef) previousRef.checked = false
-	if (targetRef) targetRef.checked = true
+	if (ref_previous === ref_target) {return}
+	if (ref_previous) ref_previous.checked = false
+	if (ref_target) ref_target.checked = true
 }
 
 function _subscribeColorSpaceChanges(v: SettingsStoreType, o: SettingsStoreType): void {
@@ -70,33 +70,33 @@ function _subscribeColorSpaceRefView(v: SettingsStoreType, o: SettingsStoreType)
 	const colorSpace = v.colorSpace
 	if (colorSpace === o.colorSpace) return
 
-	const previousRef = $$(
+	const ref_previous = $$(
 		`input[name="${CSS.escape(RadioNames.colorSpace)}"]:checked`
 	) as HTMLInputElement
-	const targetRef = $$(
+	const ref_target = $$(
 		`input[name="${CSS.escape(RadioNames.colorSpace)}"][value="${CSS.escape(colorSpace)}"]`
 	) as HTMLInputElement
 
-	if (previousRef === targetRef) {return}
-	if (previousRef) previousRef.checked = false
-	if (targetRef) targetRef.checked = true
+	if (ref_previous === ref_target) {return}
+	if (ref_previous) ref_previous.checked = false
+	if (ref_target) ref_target.checked = true
 }
 
 function _subscribeThemeRefView(v: SettingsStoreType, o: SettingsStoreType): void {
 	const theme = v.theme
 	if (theme === o.theme) return
 
-	_rootRef.setAttribute(RootAttributes.theme, theme)
-	const previousRef = $$(
+	_ref_root.setAttribute(RootAttributes.theme, theme)
+	const ref_previous = $$(
 		`input[name="${CSS.escape(RadioNames.theme)}"]:checked`
 	) as HTMLInputElement
-	const targetRef = $$(
+	const ref_target = $$(
 		`input[name="${CSS.escape(RadioNames.theme)}"][value="${CSS.escape(theme)}"]`
 	) as HTMLInputElement
 
-	if (previousRef === targetRef) {return}
-	if (previousRef) previousRef.checked = false
-	if (targetRef) targetRef.checked = true
+	if (ref_previous === ref_target) {return}
+	if (ref_previous) ref_previous.checked = false
+	if (ref_target) ref_target.checked = true
 }
 
 function _initSubscriber(): void {
@@ -109,30 +109,30 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_themeRef.addEventListener('change', ev => {
+	_ref_theme.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as PlatformThemeMode
 		if (!value || !isValidEnumValue(value, PlatformThemeMode)) {return}
 
-		_settingsMenuRef.hidePopover()
+		_ref_settingsMenu.hidePopover()
 		SettingsStore.update(v => v.theme = value)
 	})
 
-	_animationRef.addEventListener('change', ev => {
+	_ref_animation.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as PlatformAnimationMode
 		if (!value || !isValidEnumValue(value, PlatformAnimationMode)) {return}
 
-		_settingsMenuRef.hidePopover()
+		_ref_settingsMenu.hidePopover()
 		SettingsStore.update(v => v.animation = value)
 	})
 
-	_colorSpaceRef.addEventListener('change', (ev) => {
+	_ref_colorSpace.addEventListener('change', (ev) => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as ColorSpace
 		if (!value || !isValidEnumValue(value, ColorSpace)) {return}
 
-		_settingsMenuRef.hidePopover()
+		_ref_settingsMenu.hidePopover()
 		SettingsStore.update(v => v.colorSpace = value)
 	})
 }

@@ -2,17 +2,17 @@ import { ObservableStore } from "@/utils/store"
 import { DEFAULT_LISTS } from "../_shared/_constant"
 import { $, $$, $$$ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
-import type { MenuElement, MenuItemElement } from "@/components/Menu"
-import { updateDialogRef, type DialogElement } from "@/components/Dialog"
+import { CMenu } from "@/components/Menu"
+import { CDialog } from "@/components/Dialog"
 import { isTargetValidElement } from "@/utils/element"
 import { Commands } from "../_shared/_commands"
-import type { TextAreaFieldElement } from "@/components/TextAreaField"
-import { createIconButtonRef, type ButtonElement } from "@/components/Button"
-import { createListRef, ListVariant, updateListRef, type ListElement } from "@/components/List"
+import { CTextAreaField } from "@/components/TextAreaField"
+import { CButton } from "@/components/Button"
+import { CList } from "@/components/List"
 import { IconCodes } from "@/enums/icons"
-import { createIconRef } from "@/components/Icon"
+import { CIcon } from "@/components/Icon"
 import { AppCSSColors } from "@/enums/app-data"
-import { createComboBoxOptionRef, type ComboBoxElement, type ComboBoxOptionElement } from "@/components/ComboBox"
+import { CComboBox } from "@/components/ComboBox"
 import { SelectionStore } from "../_features/_selection"
 import { Math_clamp } from "@/utils/math"
 import { TeamsStore } from "../_features/_teams"
@@ -36,22 +36,22 @@ export const ListsStore = new ObservableStore<ListsStoreType>({
 	list: DEFAULT_LISTS
 })
 
-const _selectionListRef = $(ElementIds.pgSel_list) as ComboBoxElement
-const _teamsNamesRef = $(ElementIds.pgTm_names) as ComboBoxElement
-const _teamsMembersRef = $(ElementIds.pgTm_members) as ComboBoxElement
-const _wordsListRef = $(ElementIds.pgWrd_list) as ComboBoxElement
-const _listBtnRef = $(ElementIds.apSett_listBtn) as MenuItemElement
-const _settingsMenuRef = $(ElementIds.apSett_menu) as MenuElement
-const _listDialogRef = $(ElementIds.apSett_listDialog) as DialogElement
-const _listSaveRef = $(ElementIds.apSett_listSave) as ButtonElement
-const _listsRef = $(ElementIds.apSett_list) as HTMLUListElement
-const _newDialogRef = $(ElementIds.apSett_listNewDialog) as DialogElement
-const _newListBtnRef = $(ElementIds.apSett_listNew) as ButtonElement
-const _listNameInputRef = $(ElementIds.apSett_listNewName) as HTMLInputElement
-const _listItemsInputRef = $(ElementIds.apSett_listNewItems) as TextAreaFieldElement
-const _deleteDialogRef = $(ElementIds.apSett_listDeleteDialog) as DialogElement
-const _deleteItemRef = $(ElementIds.apSett_listDeleteItem) as ListElement<HTMLDivElement>
-const _deleteBtnRef = $(ElementIds.apSett_listDelete) as ButtonElement
+const _ref_selectionList = $(ElementIds.pgSel_list) as CComboBox.CElement
+const _ref_teamsNames = $(ElementIds.pgTm_names) as CComboBox.CElement
+const _ref_teamsMembers = $(ElementIds.pgTm_members) as CComboBox.CElement
+const _ref_wordsList = $(ElementIds.pgWrd_list) as CComboBox.CElement
+const _ref_listBtn = $(ElementIds.apSett_listBtn) as CMenu.CItem.CElement
+const _ref_settingsMenu = $(ElementIds.apSett_menu) as CMenu.CElement
+const _ref_listDialog = $(ElementIds.apSett_listDialog) as CDialog.CElement
+const _ref_listSave = $(ElementIds.apSett_listSave) as CButton.CElement
+const _ref_lists = $(ElementIds.apSett_list) as HTMLUListElement
+const _ref_newDialog = $(ElementIds.apSett_listNewDialog) as CDialog.CElement
+const _ref_newListBtn = $(ElementIds.apSett_listNew) as CButton.CElement
+const _ref_listNameInput = $(ElementIds.apSett_listNewName) as HTMLInputElement
+const _ref_listItemsInput = $(ElementIds.apSett_listNewItems) as CTextAreaField.CElement
+const _ref_deleteDialog = $(ElementIds.apSett_listDeleteDialog) as CDialog.CElement
+const _ref_deleteItem = $(ElementIds.apSett_listDeleteItem) as CList.CElement<HTMLDivElement>
+const _ref_deleteBtn = $(ElementIds.apSett_listDelete) as CButton.CElement
 let _listEditMode = false
 let _listIndexToRemove = -1
 let _listIndexToEdit = -1
@@ -174,7 +174,7 @@ function _subsListView(v: ListsStoreType, o: ListsStoreType): void {
 	if (list === o.list) {return}
 
 	const sortedList = [...list].sort((a, b) => a.name.localeCompare(b.name))
-	const refs = $$$<HTMLLIElement>('li', _listsRef)
+	const refs = $$$<HTMLLIElement>('li', _ref_lists)
 	for (let i = 0; i < refs.length; i++) {
 		const ref = refs[i]
 		if (i >= sortedList.length) {
@@ -185,16 +185,16 @@ function _subsListView(v: ListsStoreType, o: ListsStoreType): void {
 		const list = sortedList[i]
 		const itemLength = list.items.length
 		ref.setAttribute('data-list-id', list.id.toString())
-		updateListRef<HTMLLIElement>(ref, {
-			ListChildren: [list.name],
-			ListSubtitle: [
-				[itemLength, 'item' + (itemLength > 1? 's' : '')].join(' ')
-			]
+		CList.update<HTMLLIElement>(ref, {
+			List: {
+				children: [list.name],
+				subtitle: [[itemLength, 'item' + (itemLength > 1? 's' : '')].join(' ')]
+			}
 		})
 
-		const deleteBtnRef = $$<ButtonElement>(`[data-command=${CSS.escape(Commands.deleteList)}]`)
-		if (deleteBtnRef) {
-			deleteBtnRef.disabled = sortedList.length <= 1
+		const ref_deleteBtn = $$<CButton.CElement>(`[data-command=${CSS.escape(Commands.deleteList)}]`)
+		if (ref_deleteBtn) {
+			ref_deleteBtn.disabled = sortedList.length <= 1
 		}
 	}
 
@@ -202,42 +202,40 @@ function _subsListView(v: ListsStoreType, o: ListsStoreType): void {
 		const index = refs.length + i
 		const list = sortedList[index]
 		const itemLength = list.items.length
-		_listsRef.append(createListRef({
-			ListTagName: 'li',
-			ListVariant: ListVariant.tonal,
-			ListChildren: [list.name],
-			ListSubtitle: [
-				[itemLength, 'item' + (itemLength > 1? 's' : '')].join(' ')
-			],
-			ListLeading: [
-				createIconRef({
-					IconCode: IconCodes.textBulletListLtr,
-					IconFilled: true,
-					IconRefs: {icon(ref) {
-						ref.style.setProperty('color', `rgb(${AppCSSColors.accent})`)
-					}}
-				})
-			],
-			ListTrailing: [
-				createIconButtonRef({
-					IconButtonIcon: {IconCode: IconCodes.edit},
-					IconButtonRefs: {button(ref) {
+		_ref_lists.append(CList.create({List: {
+			tagname: 'li',
+			variant: CList.Variant.tonal,
+			children: [list.name],
+			subtitle: [[itemLength, 'item' + (itemLength > 1? 's' : '')].join(' ')],
+			leading: [CIcon.create({Icon: {
+				code: IconCodes.textBulletListLtr,
+				filled: true,
+				refs: {icon(ref) {
+					ref.style.setProperty('color', `rgb(${AppCSSColors.accent})`)
+				}}
+			}})],
+			trailing: [
+				CButton.CIcon.create({IconButton: {
+					Icon: {code: IconCodes.edit},
+					refs: {button(ref) {
 						ref.setAttribute('aria-label', 'Edit')
 						ref.setAttribute('data-tooltip', 'Edit')
 						ref.setAttribute('data-command', Commands.editList)
 					}}
-				}),
-				createIconButtonRef({
-					IconButtonIcon: {IconCode: IconCodes.delete},
-					ButtonDisabled: sortedList.length <= 1,
-					IconButtonRefs: {button(ref) {
-						ref.setAttribute('aria-label', 'Delete')
-						ref.setAttribute('data-tooltip', 'Delete')
-						ref.setAttribute('data-command', Commands.deleteList)
-					}}
+				}}),
+				CButton.CIcon.create({
+					Button: {disabled: sortedList.length <= 1},
+					IconButton: {
+						Icon: {code: IconCodes.delete},
+						refs: {button(ref) {
+							ref.setAttribute('aria-label', 'Delete')
+							ref.setAttribute('data-tooltip', 'Delete')
+							ref.setAttribute('data-command', Commands.deleteList)
+						}}
+					}
 				}),
 			],
-			ListRefs: {
+			refs: {
 				list(ref) {
 					ref.style.setProperty('padding-right', pxToRem(4) + 'rem')
 					ref.setAttribute('data-list-id', list.id.toString())
@@ -247,18 +245,18 @@ function _subsListView(v: ListsStoreType, o: ListsStoreType): void {
 					ref.style.setProperty('display', 'flex')
 					ref.style.setProperty('align-items', 'center')
 					ref.style.setProperty('gap', pxToRem(1) + 'rem')
-				},
+				}
 			}
-		}))
+		}}))
 	}
 
 	for (const ref of [
-		_selectionListRef,
-		_teamsNamesRef,
-		_teamsMembersRef,
-		_wordsListRef,
+		_ref_selectionList,
+		_ref_teamsNames,
+		_ref_teamsMembers,
+		_ref_wordsList,
 	]) {
-		const refs = $$$<ComboBoxOptionElement>('option', ref)
+		const refs = $$$<CComboBox.COption.CElement>('option', ref)
 		for (let i = 0; i < refs.length; i++) {
 			const ref = refs[i]
 			if (i >= sortedList.length) {
@@ -274,9 +272,9 @@ function _subsListView(v: ListsStoreType, o: ListsStoreType): void {
 		for (let i = 0; i < sortedList.length - refs.length; i++) {
 			const index = refs.length + i
 			const list = sortedList[index]
-			const opt = createComboBoxOptionRef({
-				ComboBoxOptionChildren: [list.name + ` (${list.items.length})`]
-			})
+			const opt = CComboBox.COption.create({Option: {
+				children: [list.name + ` (${list.items.length})`]
+			}})
 			opt.value = list.id.toString()
 			ref.append(opt)
 		}
@@ -290,14 +288,14 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_listBtnRef.addEventListener('click', () => {
-		_settingsMenuRef.hidePopover()
-		_listDialogRef.showModal()
+	_ref_listBtn.addEventListener('click', () => {
+		_ref_settingsMenu.hidePopover()
+		_ref_listDialog.showModal()
 	})
 
-	_listsRef.addEventListener('click', () => {
-		const ref = document.activeElement as HTMLButtonElement
-		if (!isTargetValidElement(_listsRef, ref)) {return}
+	_ref_lists.addEventListener('click', () => {
+		const ref = document.activeElement as CButton.CElement
+		if (!isTargetValidElement(_ref_lists, ref)) {return}
 
 		const command = ref.dataset.command as Commands
 		const getListId = () => {
@@ -322,11 +320,11 @@ function _initEvents(): void {
 
 			_listIndexToEdit = index
 			_listEditMode = true
-			updateDialogRef(_newDialogRef, {DialogHeader: ['Edit list']})
-			_listNameInputRef.value = list.name
-			_listItemsInputRef.value = list.items.join('; ')
-			_listDialogRef.close()
-			_newDialogRef.showModal()
+			CDialog.update(_ref_newDialog, {Dialog: {header: ['Edit list']}})
+			_ref_listNameInput.value = list.name
+			_ref_listItemsInput.value = list.items.join('; ')
+			_ref_listDialog.close()
+			_ref_newDialog.showModal()
 			break
 		}
 		case Commands.deleteList: {
@@ -340,55 +338,55 @@ function _initEvents(): void {
 			const list = lists[index]
 			const itemLength = list.items.length
 			_listIndexToRemove = index
-			updateListRef(_deleteItemRef, {
-				ListChildren: [list.name],
-				ListSubtitle: [[itemLength, 'item' + (itemLength > 1? 's' : '')].join(' ')]
-			})
-			_listDialogRef.close()
-			_deleteDialogRef.showModal()
+			CList.update(_ref_deleteItem, {List: {
+				children: [list.name],
+				subtitle: [[itemLength, 'item' + (itemLength > 1? 's' : '')].join(' ')]
+			}})
+			_ref_listDialog.close()
+			_ref_deleteDialog.showModal()
 			break
 		}}
 	})
 
-	_newListBtnRef.addEventListener('click', () => {
-		updateDialogRef(_newDialogRef, {DialogHeader: ['New list']})
-		_listNameInputRef.value = ''
-		_listItemsInputRef.value = ''
-		_listDialogRef.close()
-		_newDialogRef.showModal()
+	_ref_newListBtn.addEventListener('click', () => {
+		CDialog.update(_ref_newDialog, {Dialog: {header: ['New list']}})
+		_ref_listNameInput.value = ''
+		_ref_listItemsInput.value = ''
+		_ref_listDialog.close()
+		_ref_newDialog.showModal()
 		_listEditMode = false
 	})
 
-	_newDialogRef.addEventListener('close', () => {
-		_listDialogRef.showModal()
+	_ref_newDialog.addEventListener('close', () => {
+		_ref_listDialog.showModal()
 	})
 
-	_deleteDialogRef.addEventListener('close', () => {
-		_listDialogRef.showModal()
+	_ref_deleteDialog.addEventListener('close', () => {
+		_ref_listDialog.showModal()
 	})
 
-	_deleteBtnRef.addEventListener('click', () => {
+	_ref_deleteBtn.addEventListener('click', () => {
 		_deleteList(_listIndexToRemove)
 	})
 
-	_listNameInputRef.addEventListener('input', () => {
-		_listNameInputRef.setCustomValidity('')
-		_listNameInputRef.reportValidity()
+	_ref_listNameInput.addEventListener('input', () => {
+		_ref_listNameInput.setCustomValidity('')
+		_ref_listNameInput.reportValidity()
 	})
 
-	_listItemsInputRef.addEventListener('input', () => {
-		_listItemsInputRef.setCustomValidity('')
-		_listItemsInputRef.reportValidity()
+	_ref_listItemsInput.addEventListener('input', () => {
+		_ref_listItemsInput.setCustomValidity('')
+		_ref_listItemsInput.reportValidity()
 	})
 
-	_listSaveRef.addEventListener('click', (ev) => {
+	_ref_listSave.addEventListener('click', (ev) => {
 		const report = (el: HTMLInputElement | HTMLTextAreaElement, msg: string) => {
 			el.setCustomValidity(msg)
 			el.reportValidity()
 		}
 
-		let name = _listNameInputRef.value.trim()
-		let members: string[] = (_listItemsInputRef
+		let name = _ref_listNameInput.value.trim()
+		let members: string[] = (_ref_listItemsInput
 			.value
 			.split(/[\t\n;]/g)
 			.map(v => v.trim())
@@ -397,13 +395,13 @@ function _initEvents(): void {
 		)
 
 		if (name.length <= 0) {
-			report(_listNameInputRef, 'List name must not empty')
+			report(_ref_listNameInput, 'List name must not empty')
 			return ev.preventDefault()
 		}
 
 		if (members.length <= 1) {
-			report(_listItemsInputRef, 'Must have at least 2 items')
-			_listItemsInputRef.reportValidity()
+			report(_ref_listItemsInput, 'Must have at least 2 items')
+			_ref_listItemsInput.reportValidity()
 			return ev.preventDefault()
 		}
 

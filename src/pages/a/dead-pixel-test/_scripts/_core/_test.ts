@@ -2,7 +2,7 @@ import type { HEXColor } from "@/types/color"
 import { ObservableStore } from "@/utils/store"
 import { $ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
-import type { ButtonElement } from "@/components/Button"
+import { CButton } from "@/components/Button"
 import { KeyboardValue } from "@/enums/keyboard"
 
 export type TestStoreType = {
@@ -27,8 +27,8 @@ export const TestStore = new ObservableStore<TestStoreType>({
 	color: _palette[_paletteIdx]
 })
 
-const _viewRef = $(ElementIds.bd_view) as HTMLDivElement
-const _startBtnRef = $(ElementIds.bd_start) as ButtonElement
+const _ref_view = $(ElementIds.bd_view) as HTMLDivElement
+const _ref_startBtn = $(ElementIds.bd_start) as CButton.CElement
 
 function _nextColor(): void {
 	++_paletteIdx
@@ -44,7 +44,7 @@ function _subsColorView(v: TestStoreType, o: TestStoreType): void {
 	if (color === o.color) {return}
 
 	requestAnimationFrame(() => {
-		_viewRef.style.setProperty('background-color', color)
+		_ref_view.style.setProperty('background-color', color)
 	})
 }
 
@@ -53,11 +53,11 @@ function _subsRunningView(v: TestStoreType, o: TestStoreType): void {
 	if (running === o.running) {return}
 
 	if (running) {
-		_viewRef.style.setProperty('display', 'block')
-		_viewRef.requestFullscreen()
+		_ref_view.style.setProperty('display', 'block')
+		_ref_view.requestFullscreen()
 	} else {
 		document.exitFullscreen()
-		_viewRef.style.removeProperty('display')
+		_ref_view.style.removeProperty('display')
 	}
 }
 
@@ -67,7 +67,7 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_startBtnRef.addEventListener('click', () => {
+	_ref_startBtn.addEventListener('click', () => {
 		TestStore.update(v => {
 			v.color = _palette[0]
 			v.running = true
@@ -82,15 +82,15 @@ function _initEvents(): void {
 		_nextColor()
 	})
 
-	_viewRef.addEventListener('click', _nextColor)
+	_ref_view.addEventListener('click', _nextColor)
 
-	_viewRef.addEventListener('fullscreenchange', () => {
+	_ref_view.addEventListener('fullscreenchange', () => {
 		if (document.fullscreenElement) {return}
 
 		TestStore.update(v => v.running = false)
 	})
 
-	_viewRef.addEventListener('fullscreenerror', () => {
+	_ref_view.addEventListener('fullscreenerror', () => {
 		TestStore.update(v => v.running = false)
 		// TODO: show error message
 	})

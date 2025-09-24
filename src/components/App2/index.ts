@@ -1,4 +1,152 @@
-type AppProps = astroHTML.JSX.HTMLAttributes & {
+import { $create, $classlist, $query, $is_false, $children, $is_array, $is_node } from "../utils"
+
+export namespace CApp {
+	export type CElement<T extends HTMLElement = HTMLDivElement> = T
+	export type UpdateOptions<T extends CElement, U extends 'with-tagname' | null = null> = {
+		App?: (U extends 'with-tagname'? {tagname?: keyof HTMLElementTagNameMap} : {}) & {
+			children    ?: (Node | string)[] | boolean
+			appBar      ?: (Node | string)[] | boolean
+			bottomBar   ?: (Node | string)[] | boolean
+			leftSideBar ?: (Node | string)[] | boolean
+			rightSideBar?: (Node | string)[] | boolean
+			refs?: {
+				app         ?(ref: T             ): unknown
+				appBar      ?(ref: HTMLDivElement): unknown
+				container   ?(ref: HTMLDivElement): unknown
+				leftSideBar ?(ref: HTMLDivElement): unknown
+				body        ?(ref: HTMLDivElement): unknown
+				rightSideBar?(ref: HTMLDivElement): unknown
+				bottomBar   ?(ref: HTMLDivElement): unknown
+			}
+		}
+	}
+
+	export enum Classes {
+		app          = 'c-app2',
+		appBar       = app + '-appbar',
+		container    = app + '-container',
+		leftSideBar  = app + '-left-sidebar',
+		rightSideBar = app + '-right-sidebar',
+		bottomBar    = app + '-bottombar',
+		body         = app + '-body'
+	}
+
+	export function create<T extends CElement>(
+		options?: UpdateOptions<T, 'with-tagname'>
+	): T {
+		const ref_app = $create(options?.App?.tagname ?? 'div') as T
+		return update(ref_app, options)
+	}
+
+	export function update<T extends CElement>(
+		ref_app: T, options?: UpdateOptions<T>
+	): T {
+		const opt = options?.App
+		const refs = opt?.refs
+		$classlist(ref_app, Classes.app)
+
+		// appbar
+		const opt_appBar = opt?.appBar
+		let ref_appBar = $query<HTMLDivElement>(`.${Classes.appBar}`, ref_app)
+		if ($is_false(opt_appBar)) {
+			$children(ref_appBar)
+		}
+		else if ($is_array(opt_appBar)) {
+			if (!ref_appBar) {
+				ref_appBar = $create('div')
+				$classlist(ref_appBar, Classes.appBar)
+			}
+
+			$children(ref_appBar, ...opt_appBar)
+		}
+
+		// container
+		let ref_container = $query<HTMLDivElement>(`.${Classes.container}`, ref_app)
+		if (!ref_container) {
+			ref_container = $create('div')
+			$classlist(ref_container, Classes.container)
+		}
+
+		// container -> leftsidebar
+		const opt_leftSideBar = opt?.leftSideBar
+		let ref_leftSideBar = $query<HTMLDivElement>(`.${Classes.leftSideBar}`, ref_container)
+		if ($is_false(opt_leftSideBar)) {
+			$children(ref_leftSideBar)
+		}
+		else if ($is_array(opt_leftSideBar)) {
+			if (!ref_leftSideBar) {
+				ref_leftSideBar = $create('div')
+				$classlist(ref_leftSideBar, Classes.leftSideBar)
+			}
+
+			$children(ref_leftSideBar, ...opt_leftSideBar)
+		}
+
+		// container -> body
+		let ref_body = $query<HTMLDivElement>(`.${Classes.body}`, ref_app)
+		if (!ref_body) {
+			ref_body = $create('div')
+			$classlist(ref_body, Classes.body)
+		}
+
+		const opt_children = opt?.children
+		if ($is_false(opt_children)) {
+			$children(ref_body)
+		}
+		else if ($is_array(opt_children)) {
+			$children(ref_body, ...opt_children)
+		}
+
+		// container -> rightsidebar
+		const opt_rightSideBar = opt?.rightSideBar
+		let ref_rightSideBar = $query<HTMLDivElement>(`.${Classes.rightSideBar}`, ref_app)
+		if ($is_false(opt_rightSideBar)) {
+			$children(ref_rightSideBar)
+		}
+		else if ($is_array(opt_rightSideBar)) {
+			if (!ref_rightSideBar) {
+				ref_rightSideBar = $create('div')
+				$classlist(ref_rightSideBar, Classes.rightSideBar)
+			}
+
+			$children(ref_rightSideBar, ...opt_rightSideBar)
+		}
+
+		// bottombar
+		const opt_bottomBar = opt?.bottomBar
+		let ref_bottomBar = $query<HTMLDivElement>(`.${Classes.bottomBar}`, ref_app)
+		if ($is_false(opt_bottomBar)) {
+			$children(ref_bottomBar)
+		}
+		else if ($is_array(opt_bottomBar)) {
+			if (!ref_bottomBar) {
+				ref_bottomBar = $create('div')
+				$classlist(ref_bottomBar, Classes.bottomBar)
+			}
+
+			$children(ref_bottomBar, ...opt_bottomBar)
+		}
+
+		$children(
+			ref_container,
+			...[ref_appBar, ref_body, ref_bottomBar].filter($is_node) as Node[]
+		)
+		$children(
+			ref_app,
+			...[opt_leftSideBar, ref_container, ref_rightSideBar].filter($is_node) as Node[]
+		)
+		refs?.app?.(ref_app)
+		refs?.container?.(ref_container)
+		refs?.body?.(ref_body)
+		if (ref_appBar) refs?.appBar?.(ref_appBar)
+		if (ref_leftSideBar) refs?.leftSideBar?.(ref_leftSideBar)
+		if (ref_rightSideBar) refs?.rightSideBar?.(ref_rightSideBar)
+		if (ref_bottomBar) refs?.bottomBar?.(ref_bottomBar)
+		return ref_app
+	}
+}
+
+export type AppProps = astroHTML.JSX.HTMLAttributes & {
 	AppTagName         ?: string
 	AppAppBarAttr      ?: astroHTML.JSX.HTMLAttributes
 	AppBottomBarAttr   ?: astroHTML.JSX.HTMLAttributes
@@ -6,152 +154,4 @@ type AppProps = astroHTML.JSX.HTMLAttributes & {
 	AppContainerAttr   ?: astroHTML.JSX.HTMLAttributes
 	AppLeftSideBarAttr ?: astroHTML.JSX.HTMLAttributes
 	AppRightSideBarAttr?: astroHTML.JSX.HTMLAttributes
-}
-
-type AppElement<T extends HTMLElement> = T
-
-type AppUpdateOptions<T extends AppElement<HTMLElement>> = {
-	AppChildren    ?: (Node | string)[] | boolean
-	AppAppBar      ?: (Node | string)[] | boolean
-	AppBottomBar   ?: (Node | string)[] | boolean
-	AppLeftSideBar ?: (Node | string)[] | boolean
-	AppRightSideBar?: (Node | string)[] | boolean
-	AppRefs?: {
-		app         ?(ref: T             ): unknown
-		appBar      ?(ref: HTMLDivElement): unknown
-		container   ?(ref: HTMLDivElement): unknown
-		leftSideBar ?(ref: HTMLDivElement): unknown
-		body        ?(ref: HTMLDivElement): unknown
-		rightSideBar?(ref: HTMLDivElement): unknown
-		bottomBar   ?(ref: HTMLDivElement): unknown
-	}
-}
-
-enum AppClasses {
-	app          = 'c-app2',
-	appBar       = app + '-appbar',
-	container    = app + '-container',
-	leftSideBar  = app + '-left-sidebar',
-	rightSideBar = app + '-right-sidebar',
-	bottomBar    = app + '-bottombar',
-	body         = app + '-body'
-}
-
-function createAppRef<T extends AppElement<HTMLElement>>(
-	options?: AppUpdateOptions<T> & {AppTagName?: keyof HTMLElementTagNameMap}
-): T {
-	const appRef = document.createElement(options?.AppTagName ?? 'div')
-	return updateAppRef(appRef, options) as T
-}
-
-function updateAppRef<T extends AppElement<HTMLElement>>(appRef: T, options?: AppUpdateOptions<T>): T {
-	const refs = options?.AppRefs
-	appRef.classList.add(AppClasses.app)
-
-	// appbar
-	const appBarOption = options?.AppAppBar
-	let appBarRef = appRef.querySelector(`.${AppClasses.appBar}`) as HTMLDivElement | null
-	if (appBarOption === false) {
-		appBarRef?.replaceChildren()
-	}
-	else if (appBarOption !== undefined && appBarOption !== true) {
-		if (!appBarRef) {
-			appBarRef = document.createElement('div')
-			appBarRef.classList.add(AppClasses.appBar)
-		}
-
-		appBarRef.replaceChildren(...appBarOption)
-	}
-
-	// container
-	let containerRef = appRef.querySelector(`.${AppClasses.container}`) as HTMLDivElement | null
-	if (!containerRef) {
-		containerRef = document.createElement('div')
-		containerRef.classList.add(AppClasses.container)
-	}
-
-	// container -> leftsidebar
-	const leftSideBarOption = options?.AppLeftSideBar
-	let leftSideBarRef = containerRef.querySelector(`.${AppClasses.leftSideBar}`) as HTMLDivElement | null
-	if (leftSideBarOption === false) {
-		leftSideBarRef?.replaceChildren()
-	}
-	else if (leftSideBarOption !== undefined && leftSideBarOption !== true) {
-		if (!leftSideBarRef) {
-			leftSideBarRef = document.createElement('div')
-			leftSideBarRef.classList.add(AppClasses.leftSideBar)
-		}
-
-		leftSideBarRef.replaceChildren(...leftSideBarOption)
-	}
-
-	// container -> body
-	let bodyRef = appRef.querySelector(`.${AppClasses.body}`) as HTMLDivElement | null
-	if (!bodyRef) {
-		bodyRef = document.createElement('div')
-		bodyRef.classList.add(AppClasses.body)
-	}
-
-	const childrenOption = options?.AppChildren
-	if (childrenOption === false) {
-		bodyRef.replaceChildren()
-	}
-	else if (childrenOption !== undefined && childrenOption !== true) {
-		bodyRef.replaceChildren(...childrenOption)
-	}
-
-	// container -> rightsidebar
-	const rightSideBarOption = options?.AppRightSideBar
-	let rightSideBarRef = appRef.querySelector(`.${AppClasses.rightSideBar}`) as HTMLDivElement | null
-	if (rightSideBarOption === false) {
-		rightSideBarRef?.replaceChildren()
-	}
-	else if (rightSideBarOption !== undefined && rightSideBarOption !== true) {
-		if (!rightSideBarRef) {
-			rightSideBarRef = document.createElement('div')
-			rightSideBarRef.classList.add(AppClasses.rightSideBar)
-		}
-
-		rightSideBarRef.replaceChildren(...rightSideBarOption)
-	}
-
-	// bottombar
-	const bottomBarOption = options?.AppBottomBar
-	let bottomBarRef = appRef.querySelector(`.${AppClasses.bottomBar}`) as HTMLDivElement | null
-	if (bottomBarOption === false) {
-		bottomBarRef?.replaceChildren()
-	}
-	else if (bottomBarOption !== undefined && bottomBarOption !== true) {
-		if (!bottomBarRef) {
-			bottomBarRef = document.createElement('div')
-			bottomBarRef.classList.add(AppClasses.bottomBar)
-		}
-
-		bottomBarRef.replaceChildren(...bottomBarOption)
-	}
-
-	containerRef.replaceChildren(...[appBarRef, bodyRef, bottomBarRef].filter(
-		v => typeof v === 'string' || v instanceof Node
-	))
-
-	appRef.replaceChildren(...[leftSideBarOption, containerRef, rightSideBarRef].filter(
-		v => typeof v === 'string' || v instanceof Node
-	))
-	refs?.app?.(appRef)
-	refs?.container?.(containerRef)
-	refs?.body?.(bodyRef)
-	if (appBarRef) refs?.appBar?.(appBarRef)
-	if (leftSideBarRef) refs?.leftSideBar?.(leftSideBarRef)
-	if (rightSideBarRef) refs?.rightSideBar?.(rightSideBarRef)
-	if (bottomBarRef) refs?.bottomBar?.(bottomBarRef)
-	return appRef
-}
-
-export {
-	type AppProps,
-	type AppUpdateOptions,
-	type AppElement,
-	AppClasses,
-	createAppRef,
-	updateAppRef
 }

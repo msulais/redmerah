@@ -3,8 +3,8 @@ import { Pages } from "../_shared/_enums"
 import { ElementIds } from "../_shared/_ids"
 import { $ } from "./_dom-utils"
 import { isValidEnumValue } from "@/utils/object"
-import { DrawerClasses } from "@/components/Drawer"
-import { SideBarClasses } from "@/components/SideBar"
+import { CDrawer } from "@/components/Drawer"
+import { CSideBar } from "@/components/SideBar"
 import { updateEmojiList } from "./_body"
 import { saveStorageItem } from "./_database"
 import { DEFAULT_PAGE } from "../_shared/_constant"
@@ -17,26 +17,26 @@ export const NavigationStore = new ObservableStore<NavigationStoreType>({
 	page: DEFAULT_PAGE
 })
 
-const _sideBarRef = $(ElementIds.navigationSideBar)
-const _drawerRef = $(ElementIds.navigationDrawer)
+const _ref_sideBar = $(ElementIds.navigationSideBar)
+const _ref_drawerBtn = $(ElementIds.navigationDrawer)
 
 function _initEvents(): void {
-	_drawerRef?.addEventListener('click', (ev) => {
-		const targetRef = (ev.target as HTMLElement).closest<HTMLButtonElement>(`.${DrawerClasses.button}[data-page]`)
-		if (!targetRef) return
+	_ref_drawerBtn?.addEventListener('click', (ev) => {
+		const ref_target = (ev.target as HTMLElement).closest<CSideBar.CButton.CElement>(`.${CDrawer.Classes.button}[data-page]`)
+		if (!ref_target) return
 
-		const page = targetRef.dataset.page
+		const page = ref_target.dataset.page
 		if (!isValidEnumValue(page, Pages)) return
 
-		_drawerRef.hidePopover()
+		_ref_drawerBtn.hidePopover()
 		NavigationStore.update(v => v.page = page as Pages)
 	})
 
-	_sideBarRef?.addEventListener('click', (ev) => {
-		const targetRef = (ev.target as HTMLElement).closest<HTMLButtonElement>(`.${SideBarClasses.button}[data-page]`)
-		if (!targetRef) return
+	_ref_sideBar?.addEventListener('click', (ev) => {
+		const ref_target = (ev.target as HTMLElement).closest<CSideBar.CButton.CElement>(`.${CSideBar.Classes.button}[data-page]`)
+		if (!ref_target) return
 
-		const page = targetRef.dataset.page
+		const page = ref_target.dataset.page
 		if (!isValidEnumValue(page, Pages)) return
 
 		NavigationStore.update(v => v.page = page as Pages)

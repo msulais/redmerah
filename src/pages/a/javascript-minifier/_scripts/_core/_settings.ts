@@ -31,18 +31,18 @@ export const SettingsStore = new ObservableStore<SettingsStoreType>({
 	textWrap: DEFAULT_TEXT_WRAP,
 	topLevel: DEFAULT_TOP_LEVEL
 })
-const _rootRef = document.documentElement
-const _themeRef = $(ElementIds.apSett_themeMenu) as HTMLDivElement
-const _animationRef = $(ElementIds.apSett_animationMenu) as HTMLDivElement
-const _settingsMenuRef = $(ElementIds.apSett_menu) as HTMLDivElement
-const _inputRef = $(ElementIds.bd_input) as HTMLTextAreaElement
-const _outputRef = $(ElementIds.bd_output) as HTMLTextAreaElement
-const _sett_textWrapRef = $(ElementIds.apSett_textWrap) as HTMLInputElement
-const _sett_moduleRef = $(ElementIds.apSett_module) as HTMLInputElement
-const _sett_keepClsNamesRef = $(ElementIds.apSett_keepClsNames) as HTMLInputElement
-const _sett_keepFnNamesRef = $(ElementIds.apSett_keepFnNames) as HTMLInputElement
-const _sett_topLevelRef = $(ElementIds.apSett_topLevel) as HTMLInputElement
-const _sett_beautifyRef = $(ElementIds.apSett_beautify) as HTMLInputElement
+const _ref_root = document.documentElement
+const _ref_theme = $(ElementIds.apSett_themeMenu) as HTMLDivElement
+const _ref_animation = $(ElementIds.apSett_animationMenu) as HTMLDivElement
+const _ref_settingsMenu = $(ElementIds.apSett_menu) as HTMLDivElement
+const _ref_input = $(ElementIds.bd_input) as HTMLTextAreaElement
+const _ref_output = $(ElementIds.bd_output) as HTMLTextAreaElement
+const _ref_sett_textWrap = $(ElementIds.apSett_textWrap) as HTMLInputElement
+const _ref_sett_module = $(ElementIds.apSett_module) as HTMLInputElement
+const _ref_sett_keepClsNames = $(ElementIds.apSett_keepClsNames) as HTMLInputElement
+const _ref_sett_keepFnNames = $(ElementIds.apSett_keepFnNames) as HTMLInputElement
+const _ref_sett_topLevel = $(ElementIds.apSett_topLevel) as HTMLInputElement
+const _ref_sett_beautify = $(ElementIds.apSett_beautify) as HTMLInputElement
 
 function _subsAnimationChanges(v: SettingsStoreType, o: SettingsStoreType): void {
 	const animation = v.animation
@@ -62,43 +62,43 @@ function _subsAnimationView(v: SettingsStoreType, o: SettingsStoreType): void {
 	const animation = v.animation
 	if (animation === o.animation) return
 
-	_rootRef.setAttribute(RootAttributes.animation, animation)
-	const previousRef = $$(
+	_ref_root.setAttribute(RootAttributes.animation, animation)
+	const ref_previous = $$(
 		`input[name="${CSS.escape(RadioNames.animation)}"]:checked`
 	) as HTMLInputElement
-	const targetRef = $$(
+	const ref_target = $$(
 		`input[name="${CSS.escape(RadioNames.animation)}"][value="${CSS.escape(animation)}"]`
 	) as HTMLInputElement
 
-	if (previousRef === targetRef) {return}
-	if (previousRef) previousRef.checked = false
-	if (targetRef) targetRef.checked = true
+	if (ref_previous === ref_target) {return}
+	if (ref_previous) ref_previous.checked = false
+	if (ref_target) ref_target.checked = true
 }
 
 function _subsThemeView(v: SettingsStoreType, o: SettingsStoreType): void {
 	const theme = v.theme
 	if (theme === o.theme) return
 
-	_rootRef.setAttribute(RootAttributes.theme, theme)
-	const previousRef = $$(
+	_ref_root.setAttribute(RootAttributes.theme, theme)
+	const ref_previous = $$(
 		`input[name="${CSS.escape(RadioNames.theme)}"]:checked`
 	) as HTMLInputElement
-	const targetRef = $$(
+	const ref_target = $$(
 		`input[name="${CSS.escape(RadioNames.theme)}"][value="${CSS.escape(theme)}"]`
 	) as HTMLInputElement
 
-	if (previousRef === targetRef) {return}
-	if (previousRef) previousRef.checked = false
-	if (targetRef) targetRef.checked = true
+	if (ref_previous === ref_target) {return}
+	if (ref_previous) ref_previous.checked = false
+	if (ref_target) ref_target.checked = true
 }
 
 function _subsTextWrapView(v: SettingsStoreType, o: SettingsStoreType): void {
 	const textWrap = v.textWrap
 	if (textWrap === o.textWrap) {return}
 
-	_inputRef.toggleAttribute('data-text-wrap', textWrap)
-	_outputRef.toggleAttribute('data-text-wrap', textWrap)
-	_sett_textWrapRef.checked = textWrap
+	_ref_input.toggleAttribute('data-text-wrap', textWrap)
+	_ref_output.toggleAttribute('data-text-wrap', textWrap)
+	_ref_sett_textWrap.checked = textWrap
 }
 
 function _subsTextWrapChanges(v: SettingsStoreType, o: SettingsStoreType): void {
@@ -110,9 +110,9 @@ function _subsTextWrapChanges(v: SettingsStoreType, o: SettingsStoreType): void 
 
 function _subsModuleView(v: SettingsStoreType): void {
 	const module = v.module
-	if (module === _sett_moduleRef.checked) {return}
+	if (module === _ref_sett_module.checked) {return}
 
-	_sett_moduleRef.checked = module
+	_ref_sett_module.checked = module
 }
 
 function _subsModuleChanges(v: SettingsStoreType, o: SettingsStoreType): void {
@@ -124,9 +124,9 @@ function _subsModuleChanges(v: SettingsStoreType, o: SettingsStoreType): void {
 
 function _subsKeepClsNamesView(v: SettingsStoreType): void {
 	const clsNames = v.keepClassNames
-	if (clsNames === _sett_keepClsNamesRef.checked) {return}
+	if (clsNames === _ref_sett_keepClsNames.checked) {return}
 
-	_sett_keepClsNamesRef.checked = clsNames
+	_ref_sett_keepClsNames.checked = clsNames
 }
 
 function _subsKeepClsNamesChanges(v: SettingsStoreType, o: SettingsStoreType): void {
@@ -138,9 +138,9 @@ function _subsKeepClsNamesChanges(v: SettingsStoreType, o: SettingsStoreType): v
 
 function _subsKeepFnNamesView(v: SettingsStoreType): void {
 	const fnNames = v.keepFunctionNames
-	if (fnNames === _sett_keepFnNamesRef.checked) {return}
+	if (fnNames === _ref_sett_keepFnNames.checked) {return}
 
-	_sett_keepFnNamesRef.checked = fnNames
+	_ref_sett_keepFnNames.checked = fnNames
 }
 
 function _subsKeepFnNamesChanges(v: SettingsStoreType, o: SettingsStoreType): void {
@@ -152,9 +152,9 @@ function _subsKeepFnNamesChanges(v: SettingsStoreType, o: SettingsStoreType): vo
 
 function _subsTopLevelView(v: SettingsStoreType): void {
 	const topLevel = v.topLevel
-	if (topLevel === _sett_topLevelRef.checked) {return}
+	if (topLevel === _ref_sett_topLevel.checked) {return}
 
-	_sett_topLevelRef.checked = topLevel
+	_ref_sett_topLevel.checked = topLevel
 }
 
 function _subsTopLevelChanges(v: SettingsStoreType, o: SettingsStoreType): void {
@@ -166,9 +166,9 @@ function _subsTopLevelChanges(v: SettingsStoreType, o: SettingsStoreType): void 
 
 function _subsBeautifyView(v: SettingsStoreType): void {
 	const beautify = v.beautify
-	if (beautify === _sett_beautifyRef.checked) {return}
+	if (beautify === _ref_sett_beautify.checked) {return}
 
-	_sett_beautifyRef.checked = beautify
+	_ref_sett_beautify.checked = beautify
 }
 
 function _subsBeautifyChanges(v: SettingsStoreType, o: SettingsStoreType): void {
@@ -198,48 +198,48 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_themeRef.addEventListener('change', ev => {
+	_ref_theme.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as PlatformThemeMode
 		if (!value || !isValidEnumValue(value, PlatformThemeMode)) {return}
 
-		_settingsMenuRef.hidePopover()
+		_ref_settingsMenu.hidePopover()
 		SettingsStore.update(v => v.theme = value)
 	})
 
-	_animationRef.addEventListener('change', ev => {
+	_ref_animation.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as PlatformAnimationMode
 		if (!value || !isValidEnumValue(value, PlatformAnimationMode)) {return}
 
-		_settingsMenuRef.hidePopover()
+		_ref_settingsMenu.hidePopover()
 		SettingsStore.update(v => v.animation = value)
 	})
 
-	_settingsMenuRef.addEventListener('change', ev => {
+	_ref_settingsMenu.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const checked = target?.checked
 		switch (target) {
-		case _sett_textWrapRef:
+		case _ref_sett_textWrap:
 			SettingsStore.update(v => v.textWrap = checked)
 			break
-		case _sett_moduleRef:
+		case _ref_sett_module:
 			SettingsStore.update(v => v.module = checked)
 			break
-		case _sett_keepClsNamesRef:
+		case _ref_sett_keepClsNames:
 			SettingsStore.update(v => v.keepClassNames = checked)
 			break
-		case _sett_keepFnNamesRef:
+		case _ref_sett_keepFnNames:
 			SettingsStore.update(v => v.keepFunctionNames = checked)
 			break
-		case _sett_topLevelRef:
+		case _ref_sett_topLevel:
 			SettingsStore.update(v => v.topLevel = checked)
 			break
-		case _sett_beautifyRef:
+		case _ref_sett_beautify:
 			SettingsStore.update(v => v.beautify = checked)
 			break
 		}
-		_settingsMenuRef.hidePopover()
+		_ref_settingsMenu.hidePopover()
 		MinifyStore.notify()
 	})
 }

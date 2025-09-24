@@ -23,7 +23,7 @@ import { IconCodes } from '@/enums/icons'
 import { ElementIds } from '../_scripts/_shared/_ids'
 import { RadioNames } from '../_scripts/_shared/_input-names'
 import { APP, DEFAULT_ANIMATION, DEFAULT_THEME } from '../_scripts/_shared/_constant'
-import { ButtonVariant } from '@/components/Button'
+import { CButton } from '@/components/Button'
 import { FlyoutPosition } from '@/enums/position'
 import { pxToRem } from '@/utils/css'
 
@@ -88,7 +88,7 @@ const themes: {
 			style={{display: 'contents'}}
 			id={ElementIds.apOpen_container}>
 			<Button
-				ButtonVariant={ButtonVariant.filled}
+				ButtonVariant={CButton.Variant.filled}
 				id={ElementIds.apOpen_btn}
 				popovertarget={ElementIds.apOpen_menu}
 				class={CSSClasses.pickBtn}>
@@ -211,9 +211,9 @@ const themes: {
 		placeholder: 'https://example.com/media/image-video-audio',
 	}}/>
 	<form slot="footer" method="dialog" style="display:contents">
-		<Button ButtonVariant={ButtonVariant.tonal}>Cancel</Button>
+		<Button ButtonVariant={CButton.Variant.tonal}>Cancel</Button>
 		<Button
-			ButtonVariant={ButtonVariant.filled}
+			ButtonVariant={CButton.Variant.filled}
 			disabled
 			id={ElementIds.apOpen_linkInsert}>
 			Insert

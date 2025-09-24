@@ -1,19 +1,19 @@
 ---
 import { joinClassList } from '@/utils/attributes'
-import { ComboBoxClasses, ComboBoxVariant, type ComboBoxProps } from '.'
+import { CComboBox, type ComboBoxProps } from '.'
 import './index.scss'
 type Props = ComboBoxProps
 const {
 	'class': className,
-	ComboBoxVariant: variant = ComboBoxVariant.tonal,
+	ComboBoxVariant: variant = CComboBox.Variant.tonal,
 	autocomplete = 'off',
 	...other
 } = Astro.props
+
+const cls = CComboBox.Classes
 ---
 <select
-	class={joinClassList(ComboBoxClasses.combobox, className)}
+	class={joinClassList(cls.combobox, className)}
 	data-c-combobox-variant={variant}
 	autocomplete={autocomplete}
-	{...other}>
-	<slot />
-</select>
+	{...other}><slot /></select>

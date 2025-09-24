@@ -22,7 +22,7 @@ import { ElementIds } from '../_scripts/_shared/_ids'
 import { pxToRem } from '@/utils/css'
 import { RadioNames } from '../_scripts/_shared/_input-names'
 import { DEFAULT_ANIMATION, DEFAULT_THEME, APP } from '../_scripts/_shared/_constant'
-import { ButtonVariant } from '@/components/Button'
+import { CButton } from '@/components/Button'
 
 const animations: {
 	value: PlatformAnimationMode
@@ -183,6 +183,6 @@ const themes: {
 	<Fragment slot="header">Why My Device Not Vibrate?</Fragment>
 	<p>This app requires a device with a built-in vibration motor to function. If your device doesn't not vibrate, then your device does not support this feature. Please try again on another device.</p>
 	<form method="dialog" slot="footer" style="display:contents">
-		<Button ButtonVariant={ButtonVariant.filled}>Close</Button>
+		<Button ButtonVariant={CButton.Variant.filled}>Close</Button>
 	</form>
 </Dialog>

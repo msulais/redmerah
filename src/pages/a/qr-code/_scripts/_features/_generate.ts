@@ -1,12 +1,12 @@
 import { ObservableStore } from "@/utils/store"
 import { $ } from "../_core/_dom-utils"
 import { ElementIds } from "../_shared/_ids"
-import type { TextAreaFieldElement } from "@/components/TextAreaField"
+import { CTextAreaField } from "@/components/TextAreaField"
 import { SettingsStore } from "../_core/_settings"
 import { EncodingMode, QRVersion } from "../_shared/_enums"
 import { toCanvas as dataToQRCanvas, toString as dataToQRString } from "qrcode"
-import type { ToastElement } from "@/components/Toast"
-import type { ButtonElement } from "@/components/Button"
+import { CToast } from "@/components/Toast"
+import { CButton } from "@/components/Button"
 import { downloadFileByUrl } from "@/utils/url"
 import { DEFAULT_DATA } from "../_shared/_constant"
 
@@ -18,19 +18,19 @@ export const GenerateStore = new ObservableStore<GenerateStoreType>({
 	data: DEFAULT_DATA
 })
 
-const _inputRef = $(ElementIds.pgGen_input) as TextAreaFieldElement
-const _outputRef = $(ElementIds.pgGen_output) as HTMLCanvasElement
-const _errorMessageRef = $(ElementIds.toa_generateErrorMessage) as HTMLSpanElement
-const _toastErrorRef = $(ElementIds.toa_generateError) as ToastElement
-const _downloadPngRef = $(ElementIds.pgGen_png) as ButtonElement
-const _downloadJpgRef = $(ElementIds.pgGen_jpg) as ButtonElement
-const _downloadSvgRef = $(ElementIds.pgGen_svg) as ButtonElement
-let _timeInputId: NodeJS.Timeout | number | null = null
+const _ref_input = $(ElementIds.pgGen_input) as CTextAreaField.CElement
+const _ref_output = $(ElementIds.pgGen_output) as HTMLCanvasElement
+const _ref_errorMessage = $(ElementIds.toa_generateErrorMessage) as HTMLSpanElement
+const _ref_toastError = $(ElementIds.toa_generateError) as CToast.CElement
+const _ref_downloadPng = $(ElementIds.pgGen_png) as CButton.CElement
+const _ref_downloadJpg = $(ElementIds.pgGen_jpg) as CButton.CElement
+const _ref_downloadSvg = $(ElementIds.pgGen_svg) as CButton.CElement
+let _time_input: NodeJS.Timeout | number | null = null
 
 function _renderQRCode(): void {
 	const data = GenerateStore.value.data
 	const settings = SettingsStore.value
-	dataToQRCanvas(_outputRef, settings.encodingMode === EncodingMode.auto
+	dataToQRCanvas(_ref_output, settings.encodingMode === EncodingMode.auto
 		? data
 		: [{data: data, mode: settings.encodingMode as any}],
 	{
@@ -43,20 +43,20 @@ function _renderQRCode(): void {
 		margin: settings.margin,
 		version: settings.version === QRVersion.auto? undefined : Number.parseInt(settings.version),
 	}, (error) => {
-		_downloadPngRef.disabled = (
-			_downloadJpgRef.disabled =
-			_downloadSvgRef.disabled = Boolean(error)
+		_ref_downloadPng.disabled = (
+			_ref_downloadJpg.disabled =
+			_ref_downloadSvg.disabled = Boolean(error)
 		)
 		if (!error) {return}
 
 		// ignore empty data
 		if (data.length > 0) {
-			_errorMessageRef.textContent = error.message
-			_toastErrorRef.showPopover()
+			_ref_errorMessage.textContent = error.message
+			_ref_toastError.showPopover()
 		}
-		const ctx = _outputRef.getContext('2d')
+		const ctx = _ref_output.getContext('2d')
 		if (ctx) ctx.fillStyle = settings.backgroundColor
-		ctx?.fillRect(0, 0, _outputRef.width,  _outputRef.height)
+		ctx?.fillRect(0, 0, _ref_output.width,  _ref_output.height)
 	})
 }
 
@@ -66,8 +66,8 @@ export function subsSettingsStore(): void {
 
 function _subsDataView(v: GenerateStoreType, o: GenerateStoreType): void {
 	const data = v.data
-	if (data !== _inputRef.value) {
-		_inputRef.value = data
+	if (data !== _ref_input.value) {
+		_ref_input.value = data
 	}
 
 	if (data === o.data) {return}
@@ -80,26 +80,26 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_inputRef.addEventListener('input', () => {
-		if (_timeInputId !== null) {
-			clearTimeout(_timeInputId)
+	_ref_input.addEventListener('input', () => {
+		if (_time_input !== null) {
+			clearTimeout(_time_input)
 		}
 
-		_timeInputId = setTimeout(() => {
-			_timeInputId = null
-			GenerateStore.update(v => v.data = _inputRef.value)
+		_time_input = setTimeout(() => {
+			_time_input = null
+			GenerateStore.update(v => v.data = _ref_input.value)
 		}, 100)
 	})
 
-	_downloadPngRef.addEventListener('click', () => {
-		downloadFileByUrl(_outputRef.toDataURL('image/png', 1), 'qrcode')
+	_ref_downloadPng.addEventListener('click', () => {
+		downloadFileByUrl(_ref_output.toDataURL('image/png', 1), 'qrcode')
 	})
 
-	_downloadJpgRef.addEventListener('click', () => {
-		downloadFileByUrl(_outputRef.toDataURL('image/jpeg', 1), 'qrcode')
+	_ref_downloadJpg.addEventListener('click', () => {
+		downloadFileByUrl(_ref_output.toDataURL('image/jpeg', 1), 'qrcode')
 	})
 
-	_downloadSvgRef.addEventListener('click', () => {
+	_ref_downloadSvg.addEventListener('click', () => {
 		const data = GenerateStore.value.data
 		const settings = SettingsStore.value
 		dataToQRString(settings.encodingMode === EncodingMode.auto

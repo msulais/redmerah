@@ -10,7 +10,7 @@ import { ElementIds } from "../_shared/_ids"
 import { isValidEnumValue } from "@/utils/object"
 import { AppCSSColors } from "@/enums/app-data"
 import { saveStorageItem } from "../_core/_database"
-import { createComboBoxOptionRef, updateComboBoxRef, type ComboBoxElement, type ComboBoxOptionElement } from "@/components/ComboBox"
+import { CComboBox } from "@/components/ComboBox"
 
 export type ConverterStoreType = Readonly<{
 	input: string
@@ -27,13 +27,13 @@ export const ConverterStore = new ObservableStore<ConverterStoreType>({
 	inputUnit: DEFAULT_CONVERTER_INPUT_UNIT,
 	outputUnit: DEFAULT_CONVERTER_OUTPUT_UNIT
 })
-const _inputRef      = $(ElementIds.pgConv_input) as HTMLInputElement
-const _outputRef     = $(ElementIds.pgConv_output) as HTMLInputElement
-const _converterRef  = $(ElementIds.pgConv_type) as ComboBoxElement
-const _inputUnitRef  = $(ElementIds.pgConv_inputUnit) as ComboBoxElement
-const _outputUnitRef = $(ElementIds.pgConv_outputUnit) as ComboBoxElement
-let _timeCalculateId: NodeJS.Timeout | number | null = null
-let _timeSaveInputId: NodeJS.Timeout | number | null = null
+const _ref_input      = $(ElementIds.pgConv_input) as HTMLInputElement
+const _ref_output     = $(ElementIds.pgConv_output) as HTMLInputElement
+const _ref_converter  = $(ElementIds.pgConv_type) as CComboBox.CElement
+const _ref_inputUnit  = $(ElementIds.pgConv_inputUnit) as CComboBox.CElement
+const _ref_outputUnit = $(ElementIds.pgConv_outputUnit) as CComboBox.CElement
+let _time_calculate: NodeJS.Timeout | number | null = null
+let _time_saveInput: NodeJS.Timeout | number | null = null
 
 function _changeUnit(type: 'input' | 'output', unitId: string): void {
 	let units = LengthUnits.all
@@ -63,11 +63,11 @@ function _changeUnit(type: 'input' | 'output', unitId: string): void {
 }
 
 function _calculate(value: ConverterStoreType): void {
-	if (_timeCalculateId !== null) {
-		clearTimeout(_timeCalculateId)
+	if (_time_calculate !== null) {
+		clearTimeout(_time_calculate)
 	}
 
-	_timeCalculateId = setTimeout(() => {
+	_time_calculate = setTimeout(() => {
 		const output = calculate(value.input)
 		const parsedOutput = convertUnit(Number.parseFloat(output), value.converter, value.inputUnit, value.outputUnit)
 		ConverterStore.update(v => v.output = isNumberDefined(parsedOutput)? parsedOutput : null)
@@ -92,37 +92,37 @@ function _subsConverterChanges(value: ConverterStoreType, old: ConverterStoreTyp
 	case ConverterType.angle      : units = AngleUnits      .all; break
 	}
 
-	const inputOptionRefs: ComboBoxOptionElement[] = []
-	const outputOptionRefs: ComboBoxOptionElement[] = []
+	const refs_inputOption: CComboBox.COption.CElement[] = []
+	const refs_outputOption: CComboBox.COption.CElement[] = []
 	for (const i in units) {
-		const inputSpan = document.createElement('span')
-		inputSpan.style.setProperty('color', `rgb(${AppCSSColors.accent})`)
-		inputSpan.textContent = units[i].symbol
-		const inputOptionRef = createComboBoxOptionRef({
-			ComboBoxOptionChildren: [`${units[i].name} [\xa0`, inputSpan, '\xa0]']
+		const ref_inputSpan = document.createElement('span')
+		ref_inputSpan.style.setProperty('color', `rgb(${AppCSSColors.accent})`)
+		ref_inputSpan.textContent = units[i].symbol
+		const ref_inputOption = CComboBox.COption.create({
+			Option: {children: [`${units[i].name} [\xa0`, ref_inputSpan, '\xa0]']}
 		})
-		inputOptionRef.value = units[i].id
-		inputOptionRef.selected = Number(i) === 0
-		inputOptionRef.style.setProperty('gap', '0')
-		inputOptionRefs.push(inputOptionRef)
+		ref_inputOption.value = units[i].id
+		ref_inputOption.selected = Number(i) === 0
+		ref_inputOption.style.setProperty('gap', '0')
+		refs_inputOption.push(ref_inputOption)
 
-		const outputSpan = document.createElement('span')
-		outputSpan.style.setProperty('color', `rgb(${AppCSSColors.accent})`)
-		outputSpan.textContent = units[i].symbol
-		const outputOptionRef = createComboBoxOptionRef({
-			ComboBoxOptionChildren: [`${units[i].name} [\xa0`, outputSpan, '\xa0]']
+		const ref_outputSpan = document.createElement('span')
+		ref_outputSpan.style.setProperty('color', `rgb(${AppCSSColors.accent})`)
+		ref_outputSpan.textContent = units[i].symbol
+		const ref_outputOption = CComboBox.COption.create({
+			Option: {children: [`${units[i].name} [\xa0`, ref_outputSpan, '\xa0]']}
 		})
-		outputOptionRef.value = units[i].id
-		outputOptionRef.selected = Number(i) === 1
-		outputOptionRef.style.setProperty('gap', '0')
-		outputOptionRefs.push(outputOptionRef)
+		ref_outputOption.value = units[i].id
+		ref_outputOption.selected = Number(i) === 1
+		ref_outputOption.style.setProperty('gap', '0')
+		refs_outputOption.push(ref_outputOption)
 	}
 
-	updateComboBoxRef(_inputUnitRef, {
-		ComboBoxChildren: inputOptionRefs
+	CComboBox.update(_ref_inputUnit, {
+		ComboBox: {children: refs_inputOption}
 	})
-	updateComboBoxRef(_outputUnitRef, {
-		ComboBoxChildren: outputOptionRefs
+	CComboBox.update(_ref_outputUnit, {
+		ComboBox: {children: refs_outputOption}
 	})
 
 	ConverterStore.update(v => {
@@ -147,56 +147,56 @@ function _subsInputChanges(value: ConverterStoreType, old: ConverterStoreType) {
 	if (input === old.input) return
 
 	_calculate(value)
-	if (_timeSaveInputId !== null) {
-		clearTimeout(_timeSaveInputId)
+	if (_time_saveInput !== null) {
+		clearTimeout(_time_saveInput)
 	}
 
-	_timeSaveInputId = setTimeout(() => {
-		_timeSaveInputId = null
+	_time_saveInput = setTimeout(() => {
+		_time_saveInput = null
 		saveStorageItem('calc:converter/input', input)
 	}, 250)
 }
 
 function _subsInputView(value: ConverterStoreType) {
 	const input = value.input
-	if (input === _inputRef.value) return
+	if (input === _ref_input.value) return
 
-	_inputRef.value = input
-	scrollInputToEnd(_inputRef)
+	_ref_input.value = input
+	scrollInputToEnd(_ref_input)
 }
 
 function _subsOutputView(value: ConverterStoreType, old: ConverterStoreType) {
 	const output = value.output
-	if (output === null) return _outputRef.value = ''
+	if (output === null) return _ref_output.value = ''
 
 	const formattedOutput = formatOutput(output)
 	if (
 		output === old.output
-		&& _outputRef.value === formattedOutput
+		&& _ref_output.value === formattedOutput
 	) return;
 
-	_outputRef.value = formattedOutput
+	_ref_output.value = formattedOutput
 }
 
 function _subsConverterView(value: ConverterStoreType): void {
 	const converter = value.converter
-	if (converter === _converterRef.value) return
+	if (converter === _ref_converter.value) return
 
-	_converterRef.value = converter
+	_ref_converter.value = converter
 }
 
 function _subsInputUnitView(value: ConverterStoreType): void {
 	const id = value.inputUnit.id
-	if (id === _inputUnitRef.value) return
+	if (id === _ref_inputUnit.value) return
 
-	_inputUnitRef.value = id
+	_ref_inputUnit.value = id
 }
 
 function _subsOutputUnitView(value: ConverterStoreType): void {
 	const id = value.outputUnit.id
-	if (id === _outputUnitRef.value) return
+	if (id === _ref_outputUnit.value) return
 
-	_outputUnitRef.value = id
+	_ref_outputUnit.value = id
 }
 
 function _initSubscriber(): void {
@@ -211,19 +211,19 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_converterRef.addEventListener('change', () => {
-		const value = _converterRef.value
+	_ref_converter.addEventListener('change', () => {
+		const value = _ref_converter.value
 		if (!isValidEnumValue(value, ConverterType)) return
 
 		ConverterStore.update(v => v.converter = value as ConverterType)
 	})
 
-	_inputUnitRef.addEventListener('change', () => {
-		_changeUnit('input', _inputUnitRef.value)
+	_ref_inputUnit.addEventListener('change', () => {
+		_changeUnit('input', _ref_inputUnit.value)
 	})
 
-	_outputUnitRef.addEventListener('change', () => {
-		_changeUnit('output', _outputUnitRef.value)
+	_ref_outputUnit.addEventListener('change', () => {
+		_changeUnit('output', _ref_outputUnit.value)
 	})
 }
 

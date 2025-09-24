@@ -1,10 +1,6 @@
 ---
 import { joinClassList } from '@/utils/attributes'
-
-import {
-	MenuClasses,
-	type LinkMenuItemProps
-} from '.'
+import {CMenu, type LinkMenuItemProps} from '.'
 import LinkButton from '@/components/Button/LinkButton.astro'
 import './index.scss'
 
@@ -14,11 +10,11 @@ const {
 	role,
 	...other
 } = Astro.props
+
+const cls = CMenu.Classes
 ---
 
 <LinkButton
-	class={joinClassList(MenuClasses.item, className)}
+	class={joinClassList(cls.item, className)}
 	role={role ?? "menuitem"}
-	{...other}>
-	<slot/>
-</LinkButton>
+	{...other}><slot/></LinkButton>

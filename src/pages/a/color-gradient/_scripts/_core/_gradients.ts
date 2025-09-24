@@ -1,32 +1,32 @@
-import { updateMenuRef, type MenuElement, type MenuItemElement, type SubMenuItemElement } from "@/components/Menu"
+import { CMenu } from "@/components/Menu"
 import { $, $$, $$$ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
 import { CSSClasses, CSSGroup } from "../../_styles/_css"
-import type { TooltipElement } from "@/components/Tooltip"
+import { CTooltip } from "@/components/Tooltip"
 import { isTargetValidElement } from "@/utils/element"
 import { isValidEnumValue } from "@/utils/object"
 import { Commands } from "../_shared/_commands"
 import { createElementId } from "@/utils/ids"
-import { isPopoverRefOpen, repositionPopoverRef, updatePopoverRef } from "@/components/Popover"
-import { createButtonRef, createIconButtonRef, updateButtonRef, updateIconButtonRef, type ButtonElement, type IconButtonElement } from "@/components/Button"
+import { CPopover } from "@/components/Popover"
+import { CButton } from "@/components/Button"
 import type { HEXColor } from "@/types/color"
 import { ColorSpace, GradientType, HueInterpolationMethod, PolarColorSpace, RadialGradientShape, type RectangularColorSpace } from "../_shared/_enums"
 import { ObservableStore } from "@/utils/store"
-import type { ComboBoxElement } from "@/components/ComboBox"
+import { CComboBox } from "@/components/ComboBox"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEasing } from "@/enums/animation"
 import { DEFAULT_STOP_COLOR_1, DEFAULT_STOP_COLOR_2 } from "../_shared/_constant"
-import { createSliderRef, registerSliderRef, SliderClasses, updateSliderRefValue, type SliderElement } from "@/components/Slider"
+import { CSlider } from "@/components/Slider"
 import { safeNumber } from "@/utils/number"
 import { Math_clamp } from "@/utils/math"
-import { createTextFieldButtonRef, createTextFieldRef, type TextFieldButtonElement } from "@/components/TextField"
-import { createIconRef } from "@/components/Icon"
+import { CTextField } from "@/components/TextField"
+import { CIcon } from "@/components/Icon"
 import { IconCodes } from "@/enums/icons"
 import { gradientToCSSText } from "./_gradient-utils"
 import { SettingsStore } from "./_settings"
-import { ColorPickerEvents, getColorPickerRefValue, updateColorPickerRef, type ColorPickerElement } from "@/components/ColorPicker"
+import { CColorPicker } from "@/components/ColorPicker"
 import { generateSavedGradientId, SavedGradients } from "./_saved-gradients"
-import type { ToastElement } from "@/components/Toast"
+import { CToast } from "@/components/Toast"
 import { saveGradientDB } from "./_database"
 import { moveArrayElement } from "@/utils/array"
 
@@ -96,81 +96,81 @@ export const GradientStore = new ObservableStore<GradientStoreType>({
 })
 
 // ctrlStop = control stop
-const _ctrlStop_actionsRef = $(ElementIds.bdGradStop_actions) as MenuElement
-const _ctrlStop_colorPickerRef = $(ElementIds.bdGradStop_colorPicker) as ColorPickerElement
-const _ctrlStop_addRef = $(ElementIds.bdGradStop_add) as ButtonElement
-const _ctrlStop_sortRef = $(ElementIds.bdGradStop_sort) as IconButtonElement
+const _ref_ctrlStop_actions = $(ElementIds.bdGradStop_actions) as CMenu.CElement
+const _ref_ctrlStop_colorPicker = $(ElementIds.bdGradStop_colorPicker) as CColorPicker.CElement
+const _ref_ctrlStop_add = $(ElementIds.bdGradStop_add) as CButton.CElement
+const _ref_ctrlStop_sort = $(ElementIds.bdGradStop_sort) as CButton.CIcon.CElement
 
 // ctrlStopAct = control stop action
-const _ctrlStopAct_deleteRef = $(ElementIds.bdGradStopAct_delete) as ButtonElement
-const _ctrlStopAct_newTopRef = $(ElementIds.bdGradStopAct_newTop) as ButtonElement
-const _ctrlStopAct_newBottomRef = $(ElementIds.bdGradStopAct_newBottom) as ButtonElement
-const _ctrlStopAct_moveTopRef = $(ElementIds.bdGradStopAct_moveTop) as ButtonElement
-const _ctrlStopAct_moveBottomRef = $(ElementIds.bdGradStopAct_moveBottom) as ButtonElement
+const _ref_ctrlStopAct_delete = $(ElementIds.bdGradStopAct_delete) as CButton.CElement
+const _ref_ctrlStopAct_newTop = $(ElementIds.bdGradStopAct_newTop) as CButton.CElement
+const _ref_ctrlStopAct_newBottom = $(ElementIds.bdGradStopAct_newBottom) as CButton.CElement
+const _ref_ctrlStopAct_moveTop = $(ElementIds.bdGradStopAct_moveTop) as CButton.CElement
+const _ref_ctrlStopAct_moveBottom = $(ElementIds.bdGradStopAct_moveBottom) as CButton.CElement
 
 // ctrlProp = control property
-const _ctrlProp_colorStopsRef = $(ElementIds.bdGradCtrl_colorStops) as HTMLUListElement
-const _ctrlProp_typeRef = $(ElementIds.bdGradCtrl_type) as ComboBoxElement
-const _ctrlProp_colorSpaceRef = $(ElementIds.bdGradCtrl_colorSpace) as ComboBoxElement
-const _ctrlProp_hueInterpolationRef = $(ElementIds.bdGradCtrl_hueInterpolation) as ComboBoxElement
-const _ctrlProp_radialShapeRef = $(ElementIds.bdGradCtrl_radialShape) as ComboBoxElement
-const _ctrlProp_positionXRef = $(ElementIds.bdGradCtrl_positionX) as HTMLInputElement
-const _ctrlProp_positionYRef = $(ElementIds.bdGradCtrl_positionY) as HTMLInputElement
-const _ctrlProp_widthRef = $(ElementIds.bdGradCtrl_width) as HTMLInputElement
-const _ctrlProp_heightRef = $(ElementIds.bdGradCtrl_height) as HTMLInputElement
-const _ctrlProp_sizeRef = $(ElementIds.bdGradCtrl_size) as HTMLInputElement
-const _ctrlProp_angleRef = $(ElementIds.bdGradCtrl_angle) as HTMLInputElement
-const _ctrlProp_repeatRef = $(ElementIds.bdGradCtrl_repeat) as HTMLInputElement
+const _ref_ctrlProp_colorStops = $(ElementIds.bdGradCtrl_colorStops) as HTMLUListElement
+const _ref_ctrlProp_type = $(ElementIds.bdGradCtrl_type) as CComboBox.CElement
+const _ref_ctrlProp_colorSpace = $(ElementIds.bdGradCtrl_colorSpace) as CComboBox.CElement
+const _ref_ctrlProp_hueInterpolation = $(ElementIds.bdGradCtrl_hueInterpolation) as CComboBox.CElement
+const _ref_ctrlProp_radialShape = $(ElementIds.bdGradCtrl_radialShape) as CComboBox.CElement
+const _ref_ctrlProp_positionX = $(ElementIds.bdGradCtrl_positionX) as HTMLInputElement
+const _ref_ctrlProp_positionY = $(ElementIds.bdGradCtrl_positionY) as HTMLInputElement
+const _ref_ctrlProp_width = $(ElementIds.bdGradCtrl_width) as HTMLInputElement
+const _ref_ctrlProp_height = $(ElementIds.bdGradCtrl_height) as HTMLInputElement
+const _ref_ctrlProp_size = $(ElementIds.bdGradCtrl_size) as HTMLInputElement
+const _ref_ctrlProp_angle = $(ElementIds.bdGradCtrl_angle) as HTMLInputElement
+const _ref_ctrlProp_repeat = $(ElementIds.bdGradCtrl_repeat) as HTMLInputElement
 
 // ctrlPropGrp = control property group
-const _ctrlPropGrp_positionXYRef = $(ElementIds.bdGradCtrl_positionXY) as HTMLDivElement
-const _ctrlPropGrp_widthHeightRef = $(ElementIds.bdGradCtrl_widthHeight) as HTMLDivElement
+const _ref_ctrlPropGrp_positionXY = $(ElementIds.bdGradCtrl_positionXY) as HTMLDivElement
+const _ref_ctrlPropGrp_widthHeight = $(ElementIds.bdGradCtrl_widthHeight) as HTMLDivElement
 
 // ctrlPropLbl = control property label
-const _ctrlPropLbl_hueInterpolationRef = $$<HTMLLabelElement>(
+const _ref_ctrlPropLbl_hueInterpolation = $$<HTMLLabelElement>(
 	`label[for=${CSS.escape(ElementIds.bdGradCtrl_hueInterpolation)}]`
 )!
-const _ctrlPropLbl_radialShapeRef = $$<HTMLLabelElement>(
+const _ref_ctrlPropLbl_radialShape = $$<HTMLLabelElement>(
 	`label[for=${CSS.escape(ElementIds.bdGradCtrl_radialShape)}]`
 )!
-const _ctrlPropLbl_sizeRef = $$<HTMLLabelElement>(
+const _ref_ctrlPropLbl_size = $$<HTMLLabelElement>(
 	`label[for=${CSS.escape(ElementIds.bdGradCtrl_size)}]`
 )!
-const _ctrlPropLbl_angleRef = $$<HTMLLabelElement>(
+const _ref_ctrlPropLbl_angle = $$<HTMLLabelElement>(
 	`label[for=${CSS.escape(ElementIds.bdGradCtrl_angle)}]`
 )!
 
 // act = action
-const _act_copyRef = $(ElementIds.bdGradAct_copy) as MenuItemElement
-const _act_deleteRef = $(ElementIds.bdGradAct_delete) as MenuItemElement
-const _act_moveRef = $(ElementIds.bdGradAct_move) as SubMenuItemElement
-const _act_moveTopRef = $(ElementIds.bdGradAct_moveTop) as MenuItemElement
-const _act_moveBottomRef = $(ElementIds.bdGradAct_moveBottom) as MenuItemElement
-const _act_newTop = $(ElementIds.bdGradAct_newTop) as MenuItemElement
-const _act_newBottom = $(ElementIds.bdGradAct_newBottom) as MenuItemElement
+const _ref_act_copy = $(ElementIds.bdGradAct_copy) as CMenu.CItem.CElement
+const _ref_act_delete = $(ElementIds.bdGradAct_delete) as CMenu.CItem.CElement
+const _ref_act_move = $(ElementIds.bdGradAct_move) as CMenu.CSubItem.CElement
+const _ref_act_moveTop = $(ElementIds.bdGradAct_moveTop) as CMenu.CItem.CElement
+const _ref_act_moveBottom = $(ElementIds.bdGradAct_moveBottom) as CMenu.CItem.CElement
+const _ref_act_newTop = $(ElementIds.bdGradAct_newTop) as CMenu.CItem.CElement
+const _ref_act_newBottom = $(ElementIds.bdGradAct_newBottom) as CMenu.CItem.CElement
 
 // grad = gradient
-const _grad_add = $(ElementIds.bdGrad_add) as ButtonElement
-const _grad_copy = $(ElementIds.bdGrad_copy) as IconButtonElement
-const _grad_save = $(ElementIds.bdGrad_save) as IconButtonElement
+const _ref_grad_add = $(ElementIds.bdGrad_add) as CButton.CElement
+const _ref_grad_copy = $(ElementIds.bdGrad_copy) as CButton.CIcon.CElement
+const _ref_grad_save = $(ElementIds.bdGrad_save) as CButton.CIcon.CElement
 
-const _toastCopiedRef = $(ElementIds.toa_copied) as ToastElement
-const _toastSavedRef = $(ElementIds.toa_saved) as ToastElement
-const _previewBoxRef = $(ElementIds.bd_preview) as HTMLDivElement
-const _gradientsRef = $(ElementIds.bd_gradients) as HTMLUListElement
-const _actionsMenuRef = $(ElementIds.bdGrad_actionsMenu) as MenuElement
-const _controlPopoverRef = $(ElementIds.bdGrad_controlPopover) as MenuElement
-const _gradientBodyRef = $$<TooltipElement>(`.${CSSClasses.bodyGradients}`)!
-const _actionButtonRefs = () => $$$<HTMLButtonElement>(
+const _ref_toastCopied = $(ElementIds.toa_copied) as CToast.CElement
+const _ref_toastSaved = $(ElementIds.toa_saved) as CToast.CElement
+const _ref_previewBox = $(ElementIds.bd_preview) as HTMLDivElement
+const _ref_gradients = $(ElementIds.bd_gradients) as HTMLUListElement
+const _ref_actionsMenu = $(ElementIds.bdGrad_actionsMenu) as CMenu.CElement
+const _ref_controlPopover = $(ElementIds.bdGrad_controlPopover) as CMenu.CElement
+const _ref_gradientBody = $$<CTooltip.CElement>(`.${CSSClasses.bodyGradients}`)!
+const _refs_actionButton = () => $$$<CButton.CElement>(
 	`.${CSSClasses.bodyGradients} [data-command="${Commands.grad_openActions}"]`
 )
-const _editButtonRefs = () => $$$<HTMLButtonElement>(
+const _refs_editButton = () => $$$<CButton.CElement>(
 	`.${CSSClasses.bodyGradients} [data-command="${Commands.grad_edit}"]`
 )
-const _ctrlStop_pickColorRefs = () => $$$<TextFieldButtonElement>(
+const _refs_ctrlStop_pickColor = () => $$$<CTextField.CButton.CElement>(
 	`[data-command=${CSS.escape(Commands.gradStop_pickColor)}]`
 )
-const _ctrlStop_actionRefs = () => $$$<TextFieldButtonElement>(
+const _refs_ctrlStop_action = () => $$$<CTextField.CButton.CElement>(
 	`[data-command=${CSS.escape(Commands.gradStop_actions)}]`
 )
 let _selectedStopIndex = 0
@@ -184,78 +184,78 @@ function _updateGradientControlView(updateStops = true): void {
 	const colorStopList = gradient.stops
 	const shape = gradient.shape
 	const type = gradient.type
-	const sizeInputRefs: (HTMLInputElement | null | undefined)[] = []
-	const colorInputRefs: (HTMLInputElement | null | undefined)[] = []
-	const sizeSliderRefs: (HTMLInputElement | null | undefined)[] = []
-	const colorButtonRefs: (HTMLButtonElement | null | undefined)[] = []
+	const refs_sizeInput: (HTMLInputElement | null | undefined)[] = []
+	const refs_colorInput: (HTMLInputElement | null | undefined)[] = []
+	const refs_sizeSlider: (HTMLInputElement | null | undefined)[] = []
+	const refs_colorButton: (CButton.CElement | null | undefined)[] = []
 
 	function updateProperties(): void {
-		_ctrlProp_typeRef            .value = gradient.type
-		_ctrlProp_colorSpaceRef      .value = gradient.colorMethod
-		_ctrlProp_hueInterpolationRef.value = gradient.hueMethod
-		_ctrlProp_radialShapeRef     .value = gradient.shape
-		_ctrlProp_positionXRef       .value = gradient.positionX + ''
-		_ctrlProp_positionYRef       .value = gradient.positionY + ''
-		_ctrlProp_widthRef           .value = gradient.width + ''
-		_ctrlProp_heightRef          .value = gradient.height + ''
-		_ctrlProp_sizeRef            .value = gradient.size + ''
-		_ctrlProp_angleRef           .value = gradient.angle + ''
-		_ctrlProp_repeatRef          .checked = gradient.repeat
+		_ref_ctrlProp_type            .value = gradient.type
+		_ref_ctrlProp_colorSpace      .value = gradient.colorMethod
+		_ref_ctrlProp_hueInterpolation.value = gradient.hueMethod
+		_ref_ctrlProp_radialShape     .value = gradient.shape
+		_ref_ctrlProp_positionX       .value = gradient.positionX + ''
+		_ref_ctrlProp_positionY       .value = gradient.positionY + ''
+		_ref_ctrlProp_width           .value = gradient.width + ''
+		_ref_ctrlProp_height          .value = gradient.height + ''
+		_ref_ctrlProp_size            .value = gradient.size + ''
+		_ref_ctrlProp_angle           .value = gradient.angle + ''
+		_ref_ctrlProp_repeat          .checked = gradient.repeat
 
 		const hidden = new Set<HTMLElement>()
 		if (![
 			PolarColorSpace.hsl, PolarColorSpace.hwb,
 			PolarColorSpace.lch, PolarColorSpace.oklch
 		].includes(gradient.colorMethod as PolarColorSpace)) {
-			hidden.add(_ctrlProp_hueInterpolationRef)
-			hidden.add(_ctrlPropLbl_hueInterpolationRef)
+			hidden.add(_ref_ctrlProp_hueInterpolation)
+			hidden.add(_ref_ctrlPropLbl_hueInterpolation)
 		}
 
 		if (type !== GradientType.radial) {
-			hidden.add(_ctrlProp_radialShapeRef)
-			hidden.add(_ctrlPropLbl_radialShapeRef)
-			hidden.add(_ctrlPropGrp_widthHeightRef)
-			hidden.add(_ctrlProp_sizeRef.parentElement!)
-			hidden.add(_ctrlPropLbl_sizeRef)
+			hidden.add(_ref_ctrlProp_radialShape)
+			hidden.add(_ref_ctrlPropLbl_radialShape)
+			hidden.add(_ref_ctrlPropGrp_widthHeight)
+			hidden.add(_ref_ctrlProp_size.parentElement!)
+			hidden.add(_ref_ctrlPropLbl_size)
 		}
 		else {
 			if (shape !== RadialGradientShape.circle) {
-				hidden.add(_ctrlProp_sizeRef.parentElement!)
-				hidden.add(_ctrlPropLbl_sizeRef)
+				hidden.add(_ref_ctrlProp_size.parentElement!)
+				hidden.add(_ref_ctrlPropLbl_size)
 			}
 
 			if (shape !== RadialGradientShape.ellipse) {
-				hidden.add(_ctrlPropGrp_widthHeightRef)
+				hidden.add(_ref_ctrlPropGrp_widthHeight)
 			}
 		}
 
 		if (![GradientType.conic, GradientType.linear].includes(type)) {
-			hidden.add(_ctrlProp_angleRef.parentElement!)
-			hidden.add(_ctrlPropLbl_angleRef)
+			hidden.add(_ref_ctrlProp_angle.parentElement!)
+			hidden.add(_ref_ctrlPropLbl_angle)
 		}
 
 		if (![GradientType.conic, GradientType.radial].includes(type)) {
-			hidden.add(_ctrlPropGrp_positionXYRef)
+			hidden.add(_ref_ctrlPropGrp_positionXY)
 		}
 
 		const allowAnimation = isAnimationAllowed()
 		for (const ref of [
-			_ctrlPropGrp_positionXYRef,
-			_ctrlPropGrp_widthHeightRef,
-			_ctrlPropLbl_radialShapeRef,
-			_ctrlPropLbl_hueInterpolationRef,
-			_ctrlPropLbl_sizeRef,
-			_ctrlPropLbl_angleRef,
-			_ctrlProp_hueInterpolationRef,
-			_ctrlProp_radialShapeRef,
-			_ctrlProp_sizeRef.parentElement!,
-			_ctrlProp_angleRef.parentElement!,
+			_ref_ctrlPropGrp_positionXY,
+			_ref_ctrlPropGrp_widthHeight,
+			_ref_ctrlPropLbl_radialShape,
+			_ref_ctrlPropLbl_hueInterpolation,
+			_ref_ctrlPropLbl_size,
+			_ref_ctrlPropLbl_angle,
+			_ref_ctrlProp_hueInterpolation,
+			_ref_ctrlProp_radialShape,
+			_ref_ctrlProp_size.parentElement!,
+			_ref_ctrlProp_angle.parentElement!,
 		]) {
 			if (hidden.has(ref)) {continue}
 
 			const isGroup = (
-				ref === _ctrlPropGrp_widthHeightRef
-				|| ref === _ctrlPropGrp_positionXYRef
+				ref === _ref_ctrlPropGrp_widthHeight
+				|| ref === _ref_ctrlPropGrp_positionXY
 			)
 			const isInvisible = !ref.checkVisibility()
 			if (isGroup) {
@@ -279,17 +279,17 @@ function _updateGradientControlView(updateStops = true): void {
 	}
 
 	function stopSizeTextOnInput(ev: Event): void {
-		const target = ev.currentTarget as HTMLInputElement
-		const datasetIndex = target.dataset.index
+		const ref_target = ev.currentTarget as HTMLInputElement
+		const datasetIndex = ref_target.dataset.index
 		if (!datasetIndex) {return}
 
 		const colorStopList = GradientStore.value.selected.value.stops
 		const index = Number.parseInt(datasetIndex)
-		const value = Math_clamp(safeNumber(Number.parseFloat(target.value)), 0, 100)
-		const slider = sizeSliderRefs[index as unknown as number]
+		const value = Math_clamp(safeNumber(Number.parseFloat(ref_target.value)), 0, 100)
+		const slider = refs_sizeSlider[index as unknown as number]
 		const stopGradient = colorStopList[index as unknown as number]
 		if (slider) {
-			updateSliderRefValue(slider, value)
+			CSlider.setValue(slider, value)
 		}
 		if (stopGradient) {
 			stopGradient.size = value
@@ -298,20 +298,20 @@ function _updateGradientControlView(updateStops = true): void {
 	}
 
 	function stopSizeTextOnBlur(ev: Event): void {
-		const target = ev.currentTarget as HTMLInputElement
-		const value = Math_clamp(safeNumber(Number.parseFloat(target.value)), 0, 100)
-		target.value = value + '%'
+		const ref_target = ev.currentTarget as HTMLInputElement
+		const value = Math_clamp(safeNumber(Number.parseFloat(ref_target.value)), 0, 100)
+		ref_target.value = value + '%'
 	}
 
 	function stopSizeSliderOnInput(ev: Event): void {
-		const target = ev.currentTarget as HTMLInputElement
-		const datasetIndex = target.dataset.index
+		const ref_target = ev.currentTarget as HTMLInputElement
+		const datasetIndex = ref_target.dataset.index
 		if (!datasetIndex) {return}
 
 		const colorStopList = GradientStore.value.selected.value.stops
 		const index = Number.parseInt(datasetIndex)
-		const value = Math_clamp(safeNumber(target.valueAsNumber), 0, 100)
-		const input = sizeInputRefs[index as unknown as number]
+		const value = Math_clamp(safeNumber(ref_target.valueAsNumber), 0, 100)
+		const input = refs_sizeInput[index as unknown as number]
 		const stopGradient = colorStopList[index as unknown as number]
 		if (input) {
 			input.value = value + '%'
@@ -323,24 +323,24 @@ function _updateGradientControlView(updateStops = true): void {
 	}
 
 	function stopColorOnInput(ev: Event): void {
-		const target = ev.currentTarget as HTMLInputElement
-		const datasetIndex = target.dataset.index
+		const ref_target = ev.currentTarget as HTMLInputElement
+		const datasetIndex = ref_target.dataset.index
 		if (!datasetIndex) {return}
 
 		const colorStopList = GradientStore.value.selected.value.stops
 		const index = Number.parseInt(datasetIndex)
 		const stopGradient = colorStopList[index]
-		const buttonRef = colorButtonRefs[index]
-		const value = ('#' + target
+		const ref_btn = refs_colorButton[index]
+		const value = ('#' + ref_target
 			.value
 			.replace(/[^0-9A-Fa-f]/g, '')
 			.padEnd(6, '0')
 			.toUpperCase()
 			.substring(0, 8)
 		)
-		if (buttonRef) {
+		if (ref_btn) {
 			requestAnimationFrame(() =>
-				buttonRef.style.setProperty('color', value)
+				ref_btn.style.setProperty('color', value)
 			)
 		}
 		if (stopGradient) {
@@ -350,8 +350,8 @@ function _updateGradientControlView(updateStops = true): void {
 	}
 
 	function stopColorOnBlur(ev: Event): void {
-		const target = ev.currentTarget as HTMLInputElement
-		target.value = ('#' + target
+		const ref_target = ev.currentTarget as HTMLInputElement
+		ref_target.value = ('#' + ref_target
 			.value
 			.replace(/[^0-9A-Fa-f]/g, '')
 			.padEnd(6, '0')
@@ -370,121 +370,124 @@ function _updateGradientControlView(updateStops = true): void {
 		// don't know how to add event in `_initEvents()`
 		const updateControlEvents = (
 			i: number,
-			sizeInputRef?: HTMLInputElement | null,
-			sizeSliderRef?: SliderElement | null,
-			colorInputRef?: HTMLInputElement | null,
-			colorButtonRef?: TextFieldButtonElement | null
+			ref_sizeInput?: HTMLInputElement | null,
+			ref_sizeSlider?: CSlider.CElement | null,
+			ref_colorInput?: HTMLInputElement | null,
+			ref_colorButton?: CTextField.CButton.CElement | null
 		) => {
 			const colorStop = colorStopList[i]
 			if (colorStop) {
-				if (sizeInputRef) {
-					sizeInputRef.value = colorStop.size + '%'
+				if (ref_sizeInput) {
+					ref_sizeInput.value = colorStop.size + '%'
 				}
 
-				if (sizeSliderRef) {
-					updateSliderRefValue(sizeSliderRef, colorStop.size)
+				if (ref_sizeSlider) {
+					CSlider.setValue(ref_sizeSlider, colorStop.size)
 				}
 
-				if (colorInputRef) {
-					colorInputRef.value = colorStop.color
+				if (ref_colorInput) {
+					ref_colorInput.value = colorStop.color
 				}
 
-				if (colorButtonRef) {
-					colorButtonRef.style.setProperty('color', colorStop.color)
+				if (ref_colorButton) {
+					ref_colorButton.style.setProperty('color', colorStop.color)
 				}
 			}
 
-			sizeInputRef?.removeEventListener('blur', stopSizeTextOnBlur)
-			sizeInputRef?.addEventListener('blur', stopSizeTextOnBlur)
+			ref_sizeInput?.removeEventListener('blur', stopSizeTextOnBlur)
+			ref_sizeInput?.addEventListener('blur', stopSizeTextOnBlur)
 
-			sizeInputRef?.setAttribute('data-index', i + '')
-			sizeInputRef?.removeEventListener('input', stopSizeTextOnInput)
-			sizeInputRef?.addEventListener('input', stopSizeTextOnInput)
-			if (!sizeInputRefs[i]) {
-				sizeInputRefs[i] = sizeInputRef
+			ref_sizeInput?.setAttribute('data-index', i + '')
+			ref_sizeInput?.removeEventListener('input', stopSizeTextOnInput)
+			ref_sizeInput?.addEventListener('input', stopSizeTextOnInput)
+			if (!refs_sizeInput[i]) {
+				refs_sizeInput[i] = ref_sizeInput
 			}
 
-			colorInputRef?.setAttribute('data-index', i + '')
-			colorInputRef?.removeEventListener('input', stopColorOnInput)
-			colorInputRef?.addEventListener('input', stopColorOnInput)
-			colorInputRef?.removeEventListener('blur', stopColorOnBlur)
-			colorInputRef?.addEventListener('blur', stopColorOnBlur)
-			if (!colorInputRefs[i]) {
-				colorInputRefs[i] = colorInputRef
+			ref_colorInput?.setAttribute('data-index', i + '')
+			ref_colorInput?.removeEventListener('input', stopColorOnInput)
+			ref_colorInput?.addEventListener('input', stopColorOnInput)
+			ref_colorInput?.removeEventListener('blur', stopColorOnBlur)
+			ref_colorInput?.addEventListener('blur', stopColorOnBlur)
+			if (!refs_colorInput[i]) {
+				refs_colorInput[i] = ref_colorInput
 			}
 
-			sizeSliderRef?.setAttribute('data-index', i + '')
-			sizeSliderRef?.removeEventListener('input', stopSizeSliderOnInput)
-			sizeSliderRef?.addEventListener('input', stopSizeSliderOnInput)
-			if (!sizeSliderRefs[i]) {
-				sizeSliderRefs[i] = sizeSliderRef
+			ref_sizeSlider?.setAttribute('data-index', i + '')
+			ref_sizeSlider?.removeEventListener('input', stopSizeSliderOnInput)
+			ref_sizeSlider?.addEventListener('input', stopSizeSliderOnInput)
+			if (!refs_sizeSlider[i]) {
+				refs_sizeSlider[i] = ref_sizeSlider
 			}
 
-			if (!colorButtonRefs[i]) {
-				colorButtonRefs[i] = colorButtonRef
+			if (!refs_colorButton[i]) {
+				refs_colorButton[i] = ref_colorButton
 			}
 		}
-		const gradientStopsRefs = $$$<HTMLLIElement>(`#${CSS.escape(ElementIds.bdGradCtrl_colorStops)}>li`)
+		const refs_gradientStops = $$$<HTMLLIElement>(`#${CSS.escape(ElementIds.bdGradCtrl_colorStops)}>li`)
 
-		for (let i = 0; i < gradientStopsRefs.length; i++) {
-			const ref = gradientStopsRefs.item(i)
+		for (let i = 0; i < refs_gradientStops.length; i++) {
+			const ref = refs_gradientStops.item(i)
 			if (i > colorStopList.length-1) {
 				ref.remove()
 				continue
 			}
 
-			const sizeInputRef = $$<HTMLInputElement>('.' + CSSGroup.stopSizeInput, ref)
-			const sizeSliderRef = $$<SliderElement>(`.${SliderClasses.slider}`, ref)
-			const colorInputRef = $$<HTMLInputElement>('.' + CSSGroup.stopColorInput, ref)
-			const colorButtonRef = $$<TextFieldButtonElement>(`[data-command="${Commands.gradStop_pickColor}"]`, ref)
-			updateControlEvents(i, sizeInputRef, sizeSliderRef, colorInputRef, colorButtonRef)
+			const ref_sizeInput = $$<HTMLInputElement>('.' + CSSGroup.stopSizeInput, ref)
+			const ref_sizeSlider = $$<CSlider.CElement>(`.${CSlider.Classes.slider}`, ref)
+			const ref_colorInput = $$<HTMLInputElement>('.' + CSSGroup.stopColorInput, ref)
+			const ref_colorButton = $$<CTextField.CButton.CElement>(`[data-command="${Commands.gradStop_pickColor}"]`, ref)
+			updateControlEvents(i, ref_sizeInput, ref_sizeSlider, ref_colorInput, ref_colorButton)
 		}
 
-		for (let i = 0; i < colorStopList.length - gradientStopsRefs.length; i++) {
-			const index = gradientStopsRefs.length + i
-			const li = document.createElement('li')
-			const div = document.createElement('div')
-			const sizeTextfield = createTextFieldRef({TextFieldRefs: {input(ref) {
+		for (let i = 0; i < colorStopList.length - refs_gradientStops.length; i++) {
+			const index = refs_gradientStops.length + i
+			const ref_li = document.createElement('li')
+			const ref_div = document.createElement('div')
+			const ref_sizeTextfield = CTextField.create({TextField: {refs: {input(ref) {
 				ref.classList.add(CSSGroup.stopSizeInput)
 				updateControlEvents(index, ref, null, null)
-			}}})
-			const colorTextfield = createTextFieldRef({
-				TextFieldRefs: {input(ref) {
+			}}}})
+			const ref_colorTextfield = CTextField.create({TextField: {
+				refs: {input(ref) {
 					ref.classList.add(CSSGroup.stopColorInput)
 					updateControlEvents(index, null, null, ref)
 				}},
-				TextFieldTrailing: [
-					createTextFieldButtonRef({
-						ButtonChildren: [createIconRef({
-							IconCode: IconCodes.circle,
-							IconFilled: true
-						})],
-						ButtonRefs: {button(ref) {
+				trailing: [
+					CTextField.CButton.create({Button: {
+						refs: {button(ref) {
 							ref.setAttribute('data-command', Commands.gradStop_pickColor)
 							ref.setAttribute('data-tooltip', 'Pick color')
 							ref.setAttribute('popovertarget', ElementIds.bdGradStop_colorPicker)
 							ref.popoverTargetAction = 'show'
 							updateControlEvents(index, null, null, null, ref)
-						}}
-					}),
-					createTextFieldButtonRef({
-						ButtonChildren: [createIconRef({IconCode: IconCodes.moreHorizontal})],
-						ButtonRefs: {button(ref) {
+						}},
+						children: [CIcon.create({Icon: {
+							code: IconCodes.circle,
+							filled: true
+						}})]
+					}}),
+					CTextField.CButton.create({Button: {
+						children: [CIcon.create({Icon: {code: IconCodes.moreHorizontal}})],
+						refs: {button(ref) {
 							ref.setAttribute('data-command', Commands.gradStop_actions)
 							ref.setAttribute('popovertarget', ElementIds.bdGradStop_actions)
 							ref.popoverTargetAction = 'show'
 							ref.setAttribute('data-tooltip', 'More')
 						}}
-					}),
+					}}),
 				]
-			})
-			const slider = createSliderRef({SliderMin: 0, SliderMax: 100})
-			registerSliderRef(slider)
-			updateControlEvents(index, null, slider, null)
+			}})
+			const ref_slider = CSlider.create({Slider: {
+				min: 0,
+				max: 100
+			}})
+			CSlider.register(ref_slider)
+			updateControlEvents(index, null, ref_slider, null)
 
-			div.append(sizeTextfield, colorTextfield)
-			li.append(div, slider)
-			_ctrlProp_colorStopsRef.append(li)
+			ref_div.append(ref_sizeTextfield, ref_colorTextfield)
+			ref_li.append(ref_div, ref_slider)
+			_ref_ctrlProp_colorStops.append(ref_li)
 		}
 	}
 
@@ -496,9 +499,9 @@ function _updateGradientControlView(updateStops = true): void {
 
 function _updateGradientListView(): void {
 	const gradients = GradientStore.value.gradients
-	const gradientsRefs = $$$<HTMLLIElement>(`#${CSS.escape(ElementIds.bd_gradients)}>li`)
-	for (let i = 0; i < gradientsRefs.length; i++) {
-		const ref = gradientsRefs[i]
+	const refs_gradients = $$$<HTMLLIElement>(`#${CSS.escape(ElementIds.bd_gradients)}>li`)
+	for (let i = 0; i < refs_gradients.length; i++) {
+		const ref = refs_gradients[i]
 		if (i > gradients.length-1) {
 			ref.remove()
 			continue
@@ -507,44 +510,44 @@ function _updateGradientListView(): void {
 		const grad = gradients[i]
 		if (!grad) {continue}
 
-		const previewRef = $$<HTMLDivElement>(
+		const ref_preview = $$<HTMLDivElement>(
 			`[data-command="${CSS.escape(Commands.grad_edit)}"]>div`, ref
 		)
-		previewRef?.style.setProperty('background', gradientToCSSText(
+		ref_preview?.style.setProperty('background', gradientToCSSText(
 			{...grad.value, angle: 90, type: GradientType.linear},
 			ColorSpace.hex,
 			false
 		))
 	}
 
-	for (let i = 0; i < gradients.length - gradientsRefs.length; i++) {
-		const grad = gradients[gradientsRefs.length + i]
+	for (let i = 0; i < gradients.length - refs_gradients.length; i++) {
+		const grad = gradients[refs_gradients.length + i]
 		if (!grad) {continue}
 
-		const li = document.createElement('li')
-		const button = createButtonRef({ButtonChildren: [
-			(() => {
-				const div = document.createElement('div')
-				div.style.setProperty('background', gradientToCSSText(
-					{...grad.value, angle: 90, type: GradientType.linear},
-					ColorSpace.hex,
-					false
-				))
-				return div
-			})()
-		]})
-		button.setAttribute('data-command', Commands.grad_edit)
-		button.setAttribute('popovertarget', ElementIds.bdGrad_controlPopover)
-		button.setAttribute('popovertargetaction', 'show')
+		const ref_li = document.createElement('li')
+		const ref_button = CButton.create({Button: { children: [(() => {
+			const div = document.createElement('div')
+			div.style.setProperty('background', gradientToCSSText(
+				{...grad.value, angle: 90, type: GradientType.linear},
+				ColorSpace.hex,
+				false
+			))
+			return div
+		})()]}})
+		ref_button.setAttribute('data-command', Commands.grad_edit)
+		ref_button.setAttribute('popovertarget', ElementIds.bdGrad_controlPopover)
+		ref_button.setAttribute('popovertargetaction', 'show')
 
-		const iconButton = createIconButtonRef({IconButtonIcon: {IconCode: IconCodes.moreHorizontal}})
-		iconButton.setAttribute('data-command', Commands.grad_openActions)
-		iconButton.setAttribute('popovertarget', ElementIds.bdGrad_actionsMenu)
-		iconButton.setAttribute('popovertargetaction', 'show')
-		iconButton.setAttribute('data-tooltip', 'Actions')
-		iconButton.setAttribute('aria-label', 'Actions')
-		li.append(button, iconButton)
-		_gradientsRef.append(li)
+		const ref_iconBtn = CButton.CIcon.create({
+			IconButton: {Icon: {code: IconCodes.moreHorizontal}},
+		})
+		ref_iconBtn.setAttribute('data-command', Commands.grad_openActions)
+		ref_iconBtn.setAttribute('popovertarget', ElementIds.bdGrad_actionsMenu)
+		ref_iconBtn.setAttribute('popovertargetaction', 'show')
+		ref_iconBtn.setAttribute('data-tooltip', 'Actions')
+		ref_iconBtn.setAttribute('aria-label', 'Actions')
+		ref_li.append(ref_button, ref_iconBtn)
+		_ref_gradients.append(ref_li)
 	}
 }
 
@@ -559,20 +562,20 @@ function _initEvents(): void {
 	const updateGradient = (updater: (state: GradientItem) => void) => {
 		GradientStore.value.selected.update(updater)
 	}
-	let stopColorInputRef: HTMLInputElement | null | undefined = null
-	let stopColorPickerButtonRef: HTMLButtonElement | null | undefined = null
+	let ref_stopColorInput: HTMLInputElement | null | undefined = null
+	let ref_stopColorPickerButton: CButton.CElement | null | undefined = null
 
 	function controlProperties(): void {
-		_ctrlProp_colorSpaceRef.addEventListener('change', () => {
-			const value = _ctrlProp_colorSpaceRef.value as PolarColorSpace
+		_ref_ctrlProp_colorSpace.addEventListener('change', () => {
+			const value = _ref_ctrlProp_colorSpace.value as PolarColorSpace
 			if (!isValidEnumValue(value, PolarColorSpace)) {return}
 
 			updateGradient(v => v.colorMethod = value)
 			_updateGradientControlView(false)
 		})
 
-		_ctrlProp_typeRef.addEventListener('change', () => {
-			const value = _ctrlProp_typeRef.value as GradientType
+		_ref_ctrlProp_type.addEventListener('change', () => {
+			const value = _ref_ctrlProp_type.value as GradientType
 			if (!isValidEnumValue(value, GradientType)) {return}
 
 			updateGradient(v => {
@@ -598,109 +601,109 @@ function _initEvents(): void {
 			_updateGradientControlView(false)
 		})
 
-		_ctrlProp_radialShapeRef.addEventListener('change', () => {
-			const value = _ctrlProp_radialShapeRef.value as RadialGradientShape
+		_ref_ctrlProp_radialShape.addEventListener('change', () => {
+			const value = _ref_ctrlProp_radialShape.value as RadialGradientShape
 			if (!isValidEnumValue(value, RadialGradientShape)) {return}
 
 			updateGradient(v => v.shape = value)
 			_updateGradientControlView(false)
 		})
 
-		_ctrlProp_hueInterpolationRef.addEventListener('change', () => {
-			const value = _ctrlProp_hueInterpolationRef.value as HueInterpolationMethod
+		_ref_ctrlProp_hueInterpolation.addEventListener('change', () => {
+			const value = _ref_ctrlProp_hueInterpolation.value as HueInterpolationMethod
 			if (!isValidEnumValue(value, HueInterpolationMethod)) {return}
 
 			updateGradient(v => v.hueMethod = value)
 			_updateGradientControlView(false)
 		})
 
-		_ctrlProp_repeatRef.addEventListener('change', () => {
-			updateGradient(v => v.repeat = _ctrlProp_repeatRef.checked)
+		_ref_ctrlProp_repeat.addEventListener('change', () => {
+			updateGradient(v => v.repeat = _ref_ctrlProp_repeat.checked)
 		})
 
-		_ctrlProp_positionXRef.addEventListener('input', () => {
-			const value = safeNumber(Number.parseFloat(_ctrlProp_positionXRef.value))
+		_ref_ctrlProp_positionX.addEventListener('input', () => {
+			const value = safeNumber(Number.parseFloat(_ref_ctrlProp_positionX.value))
 			updateGradient(v => v.positionX = value)
 		})
 
-		_ctrlProp_positionYRef.addEventListener('input', () => {
-			const value = safeNumber(Number.parseFloat(_ctrlProp_positionYRef.value))
+		_ref_ctrlProp_positionY.addEventListener('input', () => {
+			const value = safeNumber(Number.parseFloat(_ref_ctrlProp_positionY.value))
 			updateGradient(v => v.positionY = value)
 		})
 
-		_ctrlProp_widthRef.addEventListener('input', () => {
-			const value = safeNumber(Number.parseFloat(_ctrlProp_widthRef.value))
+		_ref_ctrlProp_width.addEventListener('input', () => {
+			const value = safeNumber(Number.parseFloat(_ref_ctrlProp_width.value))
 			updateGradient(v => v.width = value)
 		})
 
-		_ctrlProp_heightRef.addEventListener('input', () => {
-			const value = safeNumber(Number.parseFloat(_ctrlProp_heightRef.value))
+		_ref_ctrlProp_height.addEventListener('input', () => {
+			const value = safeNumber(Number.parseFloat(_ref_ctrlProp_height.value))
 			updateGradient(v => v.height = value)
 		})
 
-		_ctrlProp_sizeRef.addEventListener('input', () => {
-			const value = safeNumber(Number.parseFloat(_ctrlProp_sizeRef.value))
+		_ref_ctrlProp_size.addEventListener('input', () => {
+			const value = safeNumber(Number.parseFloat(_ref_ctrlProp_size.value))
 			updateGradient(v => v.size = value)
 		})
 
-		_ctrlProp_angleRef.addEventListener('input', () => {
-			const value = safeNumber(Number.parseFloat(_ctrlProp_angleRef.value))
+		_ref_ctrlProp_angle.addEventListener('input', () => {
+			const value = safeNumber(Number.parseFloat(_ref_ctrlProp_angle.value))
 			updateGradient(v => v.angle = value)
 		})
 	}
 
 	function controlStops(): void {
-		_ctrlStop_colorPickerRef.addEventListener(ColorPickerEvents.input, () => {
+		_ref_ctrlStop_colorPicker.addEventListener(CColorPicker.Events.input, () => {
 			if (_selectedStopIndex <= -1) {return}
 
 			const stop = GradientStore.value.selected.value.stops[_selectedStopIndex]
 			if (!stop) {return}
 
-			const color = getColorPickerRefValue(_ctrlStop_colorPickerRef).toUpperCase() as HEXColor
+			const color = CColorPicker.getValue(_ref_ctrlStop_colorPicker).toUpperCase() as HEXColor
 			stop.color = color
 			GradientStore.value.selected.notify()
 			requestAnimationFrame(() => {
-				stopColorPickerButtonRef?.style.setProperty('color', color)
-				if (stopColorInputRef) {
-					stopColorInputRef.value = color
+				ref_stopColorPickerButton?.style.setProperty('color', color)
+				if (ref_stopColorInput) {
+					ref_stopColorInput.value = color
 				}
 			})
 		})
 
-		_ctrlStop_actionsRef.addEventListener('toggle', (ev) => {
+		_ref_ctrlStop_actions.addEventListener('toggle', (ev) => {
 			const isOpen = (ev as ToggleEvent).newState === 'open'
 			if (isOpen) {return}
 
-			for (const ref of _ctrlStop_actionRefs()) {
-				updateIconButtonRef(ref, {
-					ButtonFocused: false
+			for (const ref of _refs_ctrlStop_action()) {
+				CButton.CIcon.update(ref, {
+					Button: {focused: false}
 				})
 				ref.setAttribute('popovertargetaction', 'show')
 			}
 		})
 
-		_ctrlStop_colorPickerRef.addEventListener('toggle', (ev) => {
+		_ref_ctrlStop_colorPicker.addEventListener('toggle', (ev) => {
 			const isOpen = (ev as ToggleEvent).newState === 'open'
 			if (isOpen) {return}
 
-			for (const ref of _ctrlStop_pickColorRefs()) {
-				updateIconButtonRef(ref, {
-					ButtonFocused: false
+			for (const ref of _refs_ctrlStop_pickColor()) {
+				CButton.CIcon.update(ref, {
+					Button: {focused: false}
 				})
 				ref.setAttribute('popovertargetaction', 'show')
 			}
 		})
 
-		_ctrlStop_addRef.addEventListener('click', () => {
+		_ref_ctrlStop_add.addEventListener('click', () => {
 			_addColorStop()
 		})
 
-		_ctrlStop_sortRef.addEventListener('click', () => {
+		_ref_ctrlStop_sort.addEventListener('click', () => {
 			_sortStopColors()
 		})
 
-		_ctrlStopAct_deleteRef.addEventListener('click', () => {
-			_ctrlStop_actionsRef.hidePopover()
+		_ref_ctrlStopAct_delete.addEventListener('click', () => {
+			_ref_ctrlStop_actions.hidePopover()
 			const gradient = GradientStore.value.selected
 			const stops = gradient.value.stops
 			if (!stops[_selectedStopIndex]) {return}
@@ -710,40 +713,40 @@ function _initEvents(): void {
 			_updateGradientControlView()
 		})
 
-		_ctrlStopAct_moveBottomRef.addEventListener('click', () => {
-			_ctrlStop_actionsRef.hidePopover()
+		_ref_ctrlStopAct_moveBottom.addEventListener('click', () => {
+			_ref_ctrlStop_actions.hidePopover()
 			_moveColorStop(_selectedStopIndex + 1)
 		})
 
-		_ctrlStopAct_moveTopRef.addEventListener('click', () => {
-			_ctrlStop_actionsRef.hidePopover()
+		_ref_ctrlStopAct_moveTop.addEventListener('click', () => {
+			_ref_ctrlStop_actions.hidePopover()
 			_moveColorStop(Math.max(0, _selectedStopIndex - 1))
 		})
 
-		_ctrlStopAct_newTopRef.addEventListener('click', () => {
-			_ctrlStop_actionsRef.hidePopover()
+		_ref_ctrlStopAct_newTop.addEventListener('click', () => {
+			_ref_ctrlStop_actions.hidePopover()
 			_addColorStop(_selectedStopIndex)
 		})
 
-		_ctrlStopAct_newBottomRef.addEventListener('click', () => {
-			_ctrlStop_actionsRef.hidePopover()
+		_ref_ctrlStopAct_newBottom.addEventListener('click', () => {
+			_ref_ctrlStop_actions.hidePopover()
 			_addColorStop(_selectedStopIndex + 1)
 		})
 	}
 
 	function gradientActions(): void {
-		_act_copyRef.addEventListener('click', () => {
-			_actionsMenuRef.hidePopover()
+		_ref_act_copy.addEventListener('click', () => {
+			_ref_actionsMenu.hidePopover()
 			const text = gradientToCSSText(
 				GradientStore.value.selected.value, SettingsStore.value.colorSpace, true
 			)
 			navigator.clipboard.writeText(text).then(() => {
-				_toastCopiedRef.showPopover()
+				_ref_toastCopied.showPopover()
 			})
 		})
 
-		_act_deleteRef.addEventListener('click', () => {
-			_actionsMenuRef.hidePopover()
+		_ref_act_delete.addEventListener('click', () => {
+			_ref_actionsMenu.hidePopover()
 			const gradients = GradientStore.value.gradients
 			if (!gradients[_selectedGradientIndex]) {return}
 
@@ -752,52 +755,51 @@ function _initEvents(): void {
 			_updateGradientListView()
 		})
 
-		_act_moveTopRef.addEventListener('click', () => {
-			_actionsMenuRef.hidePopover()
+		_ref_act_moveTop.addEventListener('click', () => {
+			_ref_actionsMenu.hidePopover()
 			_moveGradient(Math.max(0, _selectedGradientIndex - 1))
 		})
 
-		_act_moveBottomRef.addEventListener('click', () => {
-			_actionsMenuRef.hidePopover()
+		_ref_act_moveBottom.addEventListener('click', () => {
+			_ref_actionsMenu.hidePopover()
 			_moveGradient(_selectedGradientIndex + 1)
 		})
 
-		_act_newTop.addEventListener('click', () => {
-			_actionsMenuRef.hidePopover()
+		_ref_act_newTop.addEventListener('click', () => {
+			_ref_actionsMenu.hidePopover()
 			_addGradient(Math.max(0, _selectedGradientIndex - 1))
 		})
 
-		_act_newBottom.addEventListener('click', () => {
-			_actionsMenuRef.hidePopover()
+		_ref_act_newBottom.addEventListener('click', () => {
+			_ref_actionsMenu.hidePopover()
 			_addGradient(_selectedGradientIndex + 1)
 		})
 	}
 
 	function init(): void {
-		_controlPopoverRef.addEventListener('click', (ev) => {
-			const buttonRef = document.activeElement as HTMLButtonElement
-			if (!isTargetValidElement(_gradientBodyRef, buttonRef)) {return}
+		_ref_controlPopover.addEventListener('click', (ev) => {
+			const ref_btn = document.activeElement as CButton.CElement
+			if (!isTargetValidElement(_ref_gradientBody, ref_btn)) {return}
 
-			const command = buttonRef.dataset.command as Commands
+			const command = ref_btn.dataset.command as Commands
 			if (!command || !isValidEnumValue(command, Commands)) {return}
 
 			const stops = GradientStore.value.selected.value.stops
-
 			const getButtonId = () => {
-				let id = buttonRef.id
+				let id = ref_btn.id
 				if (!id) {
-					buttonRef.id = (id = createElementId())
+					ref_btn.id = (id = createElementId())
 				}
 				return id
 			}
 
 			const hasStopIndex = () => {
-				const liRef = buttonRef.closest('li')
+				const liRef = ref_btn.closest('li')
 				if (!liRef) {
 					return false
 				}
 
-				const stopsLIRefs = _ctrlProp_colorStopsRef.children
+				const stopsLIRefs = _ref_ctrlProp_colorStops.children
 				let i = -1
 				for (; i < stopsLIRefs.length; i++) {
 					if (stopsLIRefs[i] === liRef) {
@@ -821,27 +823,26 @@ function _initEvents(): void {
 				}
 
 				const id = getButtonId()
-				updateColorPickerRef(_ctrlStop_colorPickerRef, {
-					ColorPickerValue: stops[_selectedStopIndex].color,
-					PopoverAnchorBy: id
+				CColorPicker.update(_ref_ctrlStop_colorPicker, {
+					ColorPicker: {value: stops[_selectedStopIndex].color},
+					Popover: {anchorBy: id}
 				})
 
 				// wait for open
 				setTimeout(() => {
-					if (!isPopoverRefOpen(_ctrlStop_colorPickerRef)) {return}
+					if (!CPopover.isOpen(_ref_ctrlStop_colorPicker)) {return}
 
-					const liRef = buttonRef.closest('li')
-					stopColorInputRef = liRef?.querySelector<HTMLInputElement>(
+					const liRef = ref_btn.closest('li')
+					ref_stopColorInput = liRef?.querySelector<HTMLInputElement>(
 						'.' + CSSGroup.stopColorInput
 					)
-					stopColorPickerButtonRef = liRef?.querySelector<HTMLButtonElement>(
+					ref_stopColorPickerButton = liRef?.querySelector<CButton.CElement>(
 						`[data-command=${CSS.escape(Commands.gradStop_pickColor)}]`
 					)
-					repositionPopoverRef(_ctrlStop_colorPickerRef)
-					for (const ref of _ctrlStop_pickColorRefs()) {
+					CPopover.reposition(_ref_ctrlStop_colorPicker)
+					for (const ref of _refs_ctrlStop_pickColor()) {
 						const isEqual = id === ref.id
-						updateButtonRef(ref, {ButtonFocused: isEqual})
-
+						CButton.update(ref, {Button: {focused: isEqual}})
 						ref.setAttribute('popovertargetaction', isEqual? 'hide' : 'show')
 					}
 				})
@@ -852,51 +853,50 @@ function _initEvents(): void {
 				}
 
 				const id = getButtonId()
-				updateMenuRef(_ctrlStop_actionsRef, {
-					PopoverAnchorBy: id
+				CMenu.update(_ref_ctrlStop_actions, {
+					Popover: {anchorBy: id}
 				})
 
 				// wait for open
 				setTimeout(() => {
-					if (!isPopoverRefOpen(_ctrlStop_actionsRef)) {return}
+					if (!CPopover.isOpen(_ref_ctrlStop_actions)) {return}
 
-					_ctrlStopAct_deleteRef.disabled = stops.length <= 2
-					_ctrlStopAct_moveTopRef.disabled = _selectedStopIndex <= 0
-					_ctrlStopAct_moveBottomRef.disabled = _selectedStopIndex >= stops.length - 1
-					repositionPopoverRef(_ctrlStop_actionsRef)
-					for (const ref of _ctrlStop_actionRefs()) {
+					_ref_ctrlStopAct_delete.disabled = stops.length <= 2
+					_ref_ctrlStopAct_moveTop.disabled = _selectedStopIndex <= 0
+					_ref_ctrlStopAct_moveBottom.disabled = _selectedStopIndex >= stops.length - 1
+					CPopover.reposition(_ref_ctrlStop_actions)
+					for (const ref of _refs_ctrlStop_action()) {
 						const isEqual = id === ref.id
-						updateButtonRef(ref, {ButtonFocused: isEqual})
-
+						CButton.update(ref, {Button: {focused: isEqual}})
 						ref.setAttribute('popovertargetaction', isEqual? 'hide' : 'show')
 					}
 				})
 			} break }
 		})
 
-		_gradientBodyRef.addEventListener('click', (ev) => {
-			const buttonRef = document.activeElement as HTMLButtonElement
-			if (!isTargetValidElement(_gradientBodyRef, buttonRef)) {return}
+		_ref_gradientBody.addEventListener('click', (ev) => {
+			const ref_btn = document.activeElement as CButton.CElement
+			if (!isTargetValidElement(_ref_gradientBody, ref_btn)) {return}
 
-			const command = buttonRef.dataset.command as Commands
+			const command = ref_btn.dataset.command as Commands
 			if (!command || !isValidEnumValue(command, Commands)) {return}
 
 			const getButtonId = () => {
-				let id = buttonRef.id
+				let id = ref_btn.id
 				if (!id) {
-					buttonRef.id = (id = createElementId())
+					ref_btn.id = (id = createElementId())
 				}
 
 				return id
 			}
 
 			const getGradientItem = () => {
-				const liRef = buttonRef.closest('li')
+				const liRef = ref_btn.closest('li')
 				if (!liRef) {
 					return undefined
 				}
 
-				const gradientLIRefs = _gradientsRef.children
+				const gradientLIRefs = _ref_gradients.children
 				let i = 0
 				for (; i < gradientLIRefs.length; i++) {
 					if (gradientLIRefs[i] === liRef) {
@@ -918,17 +918,17 @@ function _initEvents(): void {
 				}
 
 				GradientStore.update(v => v.selected = gradientItem)
-				updatePopoverRef(_controlPopoverRef, {PopoverAnchorBy: id})
+				CPopover.update(_ref_controlPopover, {Popover: {anchorBy: id}})
 
 				// wait for open
 				setTimeout(() => {
-					if (!isPopoverRefOpen(_controlPopoverRef)) {return}
+					if (!CPopover.isOpen(_ref_controlPopover)) {return}
 
 					_updateGradientControlView()
-					repositionPopoverRef(_controlPopoverRef)
-					for (const ref of _editButtonRefs()) {
+					CPopover.reposition(_ref_controlPopover)
+					for (const ref of _refs_editButton()) {
 						const isEqual = id === ref.id
-						updateButtonRef(ref, {ButtonFocused: isEqual})
+						CButton.update(ref, {Button: {focused: isEqual}})
 
 						ref.setAttribute('popovertargetaction', isEqual? 'hide' : 'show')
 					}
@@ -942,24 +942,24 @@ function _initEvents(): void {
 				}
 
 				GradientStore.update(v => v.selected = gradientItem)
-				updateMenuRef(_actionsMenuRef, {PopoverAnchorBy: id})
+				CMenu.update(_ref_actionsMenu, {Popover: {anchorBy: id}})
 
 				// wait for open
 				setTimeout(() => {
-					if (!isPopoverRefOpen(_actionsMenuRef)) {return}
+					if (!CPopover.isOpen(_ref_actionsMenu)) {return}
 
 					const value = GradientStore.value
 					const gradients = value.gradients
 					const gradientsLength = gradients.length
 					const isOnlyOne = gradientsLength <= 1
-					_act_moveTopRef.disabled = _selectedGradientIndex === 0
-					_act_moveBottomRef.disabled = _selectedGradientIndex === gradientsLength - 1
-					_act_deleteRef.disabled = isOnlyOne
-					_act_moveRef.disabled = isOnlyOne
-					repositionPopoverRef(_actionsMenuRef)
-					for (const ref of _actionButtonRefs()) {
+					_ref_act_moveTop.disabled = _selectedGradientIndex === 0
+					_ref_act_moveBottom.disabled = _selectedGradientIndex === gradientsLength - 1
+					_ref_act_delete.disabled = isOnlyOne
+					_ref_act_move.disabled = isOnlyOne
+					CPopover.reposition(_ref_actionsMenu)
+					for (const ref of _refs_actionButton()) {
 						const isEqual = id === ref.id
-						updateIconButtonRef(ref, {ButtonFocused: isEqual})
+						CButton.CIcon.update(ref, {Button: {focused: isEqual}})
 
 						ref.setAttribute('popovertargetaction', isEqual? 'hide' : 'show')
 					}
@@ -967,60 +967,60 @@ function _initEvents(): void {
 			} break }
 		})
 
-		_actionsMenuRef.addEventListener('toggle', (ev) => {
+		_ref_actionsMenu.addEventListener('toggle', (ev) => {
 			const isOpen = (ev as ToggleEvent).newState === 'open'
 			if (isOpen) {return}
 
-			for (const ref of _actionButtonRefs()) {
-				updateIconButtonRef(ref, {
-					ButtonFocused: false
+			for (const ref of _refs_actionButton()) {
+				CButton.CIcon.update(ref, {
+					Button: {focused: false}
 				})
 				ref.setAttribute('popovertargetaction', 'show')
 			}
 		})
 
-		_controlPopoverRef.addEventListener('toggle', (ev) => {
+		_ref_controlPopover.addEventListener('toggle', (ev) => {
 			const isOpen = (ev as ToggleEvent).newState === 'open'
 			if (isOpen) {return}
 
-			for (const ref of _editButtonRefs()) {
-				updateButtonRef(ref, {
-					ButtonFocused: false
+			for (const ref of _refs_editButton()) {
+				CButton.update(ref, {
+					Button: {focused: false}
 				})
 				ref.setAttribute('popovertargetaction', 'show')
 			}
 		})
 
-		_controlPopoverRef.addEventListener('focusin', (ev) => {
+		_ref_controlPopover.addEventListener('focusin', (ev) => {
 			const target = ev.target
 			if (target instanceof HTMLInputElement) {
 				target.select()
 			}
 		})
 
-		_controlPopoverRef.addEventListener('focusout', (ev) => {
+		_ref_controlPopover.addEventListener('focusout', (ev) => {
 			const target = ev.target as HTMLInputElement
 			if (target instanceof HTMLInputElement && target.type === 'number'){
 				target.valueAsNumber = target.valueAsNumber
 			}
 		})
 
-		_grad_add.addEventListener('click', () => {
+		_ref_grad_add.addEventListener('click', () => {
 			_addGradient()
 		})
 
-		_grad_copy.addEventListener('click', () => {
+		_ref_grad_copy.addEventListener('click', () => {
 			const gradientText = []
 			for (const gradient of GradientStore.value.gradients) {
 				gradientText.push(gradientToCSSText(gradient.value, SettingsStore.value.colorSpace, true))
 			}
 
 			navigator.clipboard.writeText(gradientText.join(',\n')).then(() => {
-				_toastCopiedRef.showPopover()
+				_ref_toastCopied.showPopover()
 			})
 		})
 
-		_grad_save.addEventListener('click', () => {
+		_ref_grad_save.addEventListener('click', () => {
 			const grad = {
 				id: generateSavedGradientId(),
 				gradients: [...GradientStore.value.gradients.map(v =>
@@ -1028,7 +1028,7 @@ function _initEvents(): void {
 				)]
 			}
 			SavedGradients.update(v => v.gradients = [grad, ...v.gradients])
-			_toastSavedRef.showPopover()
+			_ref_toastSaved.showPopover()
 			saveGradientDB(grad.id, grad.gradients)
 		})
 	}
@@ -1046,7 +1046,7 @@ function _updatePreviewBoxRefView(): void {
 	}
 
 	requestAnimationFrame(() => {
-		_previewBoxRef.style.setProperty('background', gradients.join(','))
+		_ref_previewBox.style.setProperty('background', gradients.join(','))
 	})
 }
 
@@ -1062,7 +1062,7 @@ function _subscribeGradientPreviewRefView(v: Readonly<GradientItem>): void {
 			// hell yeah, query. At least I make selector faster though...
 			$$<HTMLDivElement>(
 				`li:nth-child(${index+1})>[data-command="${CSS.escape(Commands.grad_edit)}"]>div`,
-				_gradientsRef
+				_ref_gradients
 			)?.style.setProperty(
 				'background',
 				gradientToCSSText({...v, angle: 90, type: GradientType.linear}, ColorSpace.hex, false)

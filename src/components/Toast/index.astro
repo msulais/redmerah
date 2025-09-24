@@ -1,8 +1,8 @@
 ---
 import List from '@/components/List/index.astro'
-import { ListVariant } from '@/components/List'
+import { CList } from '@/components/List'
 import { joinClassList } from '@/utils/attributes'
-import { ToastClasses, ToastPosition, type ToastProps } from '.'
+import { CToast, type ToastProps } from '.'
 import './index.scss'
 
 type Props = ToastProps
@@ -11,27 +11,29 @@ const {
 	popover = 'auto',
 	ToastAutoclose = true,
 	ToastCloseDelay = 5000,
-	ToastPosition: position = ToastPosition.topCenter,
+	ToastPosition: position = CToast.Position.topCenter,
 	ToastContentAttr,
 	...other
 } = Astro.props
 const {
 	'class': contentClass,
-	ListVariant: contentVariant = ListVariant.transparent,
+	ListVariant: contentVariant = CList.Variant.transparent,
 	...toastOther
 } = ToastContentAttr ?? {}
+
+const cls = CToast.Classes
 ---
 
 <div
 	popover={popover}
-	class={joinClassList(ToastClasses.toast, className)}
+	class={joinClassList(cls.toast, className)}
 	data-c-toast-position={position}
 	data-c-toast-close-delay={ToastCloseDelay}
 	data-c-toast-autoclose={ToastAutoclose? '' : undefined}
 	{...other}>
 	<List
 		ListVariant={contentVariant}
-		class={joinClassList(ToastClasses.content, contentClass)}
+		class={joinClassList(cls.content, contentClass)}
 		{...toastOther}>
 		<slot />
 		<slot name="leading" slot="leading"/>
@@ -40,6 +42,6 @@ const {
 	</List>
 </div>
 <script>
-	import { registerToastRef } from '.'
-	registerToastRef()
+	import { CToast } from '.'
+	CToast.register()
 </script>

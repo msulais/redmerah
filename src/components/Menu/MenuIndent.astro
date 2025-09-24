@@ -1,10 +1,6 @@
 ---
 import { joinClassList } from '@/utils/attributes'
-
-import {
-	MenuClasses,
-	type MenuIndentProps
-} from '.'
+import {CMenu, type MenuIndentProps} from '.'
 import './index.scss'
 
 type Props = MenuIndentProps
@@ -12,6 +8,10 @@ const {
 	'class': className,
 	...other
 } = Astro.props
----
 
-<div class={joinClassList(MenuClasses.indent, className)} {...other}></div>
+const cls = CMenu.Classes
+---
+<div
+	class={joinClassList(cls.indent, className)}
+	{...other}
+/>

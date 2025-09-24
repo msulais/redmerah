@@ -6,7 +6,7 @@ import { ElementIds } from '../_scripts/_shared/_ids'
 import Dialog from '@/components/Dialog/index.astro'
 import Button from '@/components/Button/index.astro'
 import LinkButton from '@/components/Button/LinkButton.astro'
-import { ButtonVariant } from '@/components/Button/'
+import { CButton } from '@/components/Button/'
 import { Links } from '../_scripts/_shared/_enums'
 import { pxToRem } from '@/utils/css'
 ---
@@ -38,11 +38,11 @@ import { pxToRem } from '@/utils/css'
 	<Fragment slot="header">Browser Not Supported</Fragment>
 	<p>NetworkInformation API not fully supported in your browser. Some features may not function correctly.</p>
 	<form method="dialog" slot="footer" style="display:contents">
-		<Button ButtonVariant={ButtonVariant.tonal}>Close</Button>
+		<Button ButtonVariant={CButton.Variant.tonal}>Close</Button>
 		<LinkButton
 			href={Links.compatibility}
 			LinkButtonNewTab
-			LinkButtonVariant={ButtonVariant.filled}>
+			LinkButtonVariant={CButton.Variant.filled}>
 			Check browser
 		</LinkButton>
 	</form>

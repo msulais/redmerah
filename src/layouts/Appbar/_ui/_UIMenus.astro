@@ -1,7 +1,6 @@
 ---
 import { ElementIds, ID, RadioGroupNames } from '../_scripts/_enums'
 import ColorPicker from '@/components/ColorPicker/index.astro'
-import { MenuPosition } from '@/components/Menu'
 import Menu from '@/components/Menu/index.astro'
 import SubMenu from '@/components/Menu/SubMenu.astro'
 import SubMenuItem from '@/components/Menu/SubMenuItem.astro'
@@ -12,6 +11,7 @@ import Icon from '@/components/Icon/index.astro'
 import { PlatformAnimationMode, PlatformThemeMode } from '@/enums/platforms'
 import { AppCSSColors } from '@/enums/app-data'
 import { IconCodes } from '@/enums/icons'
+import { FlyoutPosition } from '@/enums/position'
 ---
 
 <Menu id={ID + ElementIds.appbarSettingsMenu} PopoverAnchorBy={ID + ElementIds.appbarSettingsButton}>
@@ -98,7 +98,7 @@ import { IconCodes } from '@/enums/icons'
 	ColorPickerValue='#0093FF'
 	ColorPickerDisabledOpacity
 	ColorPickerHueOnly
-	PopoverPosition={MenuPosition.centerCenterRightTop}
+	PopoverPosition={FlyoutPosition.centerCenterRightTop}
 	PopoverAnchorBy={ID + ElementIds.appbarSettingsButton}
 	id={ID + ElementIds.appbarColorPicker}
 	aria-labelledby={ID + ElementIds.appbarSettingsAccentButton}

@@ -5,15 +5,14 @@ import { CSSClasses } from "../../_styles/_css"
 import { isTargetValidElement } from "@/utils/element"
 import { Commands } from "../_shared/_commands"
 import { createElementId } from "@/utils/ids"
-import { updateMenuRef, type MenuElement, type MenuItemElement } from "@/components/Menu"
+import { CMenu } from "@/components/Menu"
 import { ElementIds } from "../_shared/_ids"
-import { isPopoverRefOpen } from "@/components/Popover"
-import { repositionPopoverRef } from "@/components/Popover"
-import { createButtonRef, updateButtonRef } from "@/components/Button"
+import { CPopover } from "@/components/Popover"
+import { CButton } from "@/components/Button"
 import { gradientToCSSText } from "./_gradient-utils"
 import { ColorSpace } from "../_shared/_enums"
 import { SettingsStore } from "./_settings"
-import type { ToastElement } from "@/components/Toast"
+import { CToast } from "@/components/Toast"
 import { removeGradientDB } from "./_database"
 
 export type SavedGradientsType = {
@@ -27,13 +26,13 @@ export const SavedGradients = new ObservableStore<SavedGradientsType>({
 	gradients: []
 })
 
-const _toastCopiedRef = $(ElementIds.toa_copied) as ToastElement
-const _savedGradientListRef = $$<HTMLUListElement>('.' + CSSClasses.bodySavedGradient)
-const _actionMenuRef = $(ElementIds.bdSv_menu) as MenuElement
-const _gradientItemRefs = () => $$$<HTMLButtonElement>(`[data-command="${CSS.escape(Commands.grad_use)}"]`)
-const _actionViewRef = $(ElementIds.bdSv_view) as MenuItemElement
-const _actionCopyRef = $(ElementIds.bdSv_copy) as MenuItemElement
-const _actionDeleteRef = $(ElementIds.bdSv_delete) as MenuItemElement
+const _ref_toastCopied = $(ElementIds.toa_copied) as CToast.CElement
+const _ref_savedGradientList = $$<HTMLUListElement>('.' + CSSClasses.bodySavedGradient)
+const _ref_actionMenu = $(ElementIds.bdSv_menu) as CMenu.CElement
+const _refs_gradientItem = () => $$$<CButton.CElement>(`[data-command="${CSS.escape(Commands.grad_use)}"]`)
+const _ref_actionView = $(ElementIds.bdSv_view) as CMenu.CItem.CElement
+const _ref_actionCopy = $(ElementIds.bdSv_copy) as CMenu.CItem.CElement
+const _ref_actionDelete = $(ElementIds.bdSv_delete) as CMenu.CItem.CElement
 let _selectedGradientIndex = 0
 let _idIndex = 0
 
@@ -55,52 +54,48 @@ function _subscribeGradientsChanges(v: SavedGradientsType): void {
 function _subscribeGradientsRefView(v: SavedGradientsType): void {
 	const children: HTMLLIElement[] = []
 	for (const gradient of v.gradients) {
-		const li = document.createElement('li')
-		const button = createButtonRef({
-			ButtonChildren: [
-				(() => {
-					const span = document.createElement('span')
-					const g: string[] = []
-					for (const layer of gradient.gradients) {
-						g.push(gradientToCSSText(layer, ColorSpace.hex, false))
-					}
-					span.style.setProperty('background', g.join(','))
-					return span
-				})()
-			]
-		})
-		button.setAttribute('data-command', Commands.grad_use)
-		button.setAttribute('popovertarget', ElementIds.bdSv_menu)
-		button.setAttribute('popovertargetaction', 'show')
-		li.append(button)
-		children.push(li)
+		const ref_li = document.createElement('li')
+		const ref_button = CButton.create({Button: {children: [(() => {
+			const span = document.createElement('span')
+			const g: string[] = []
+			for (const layer of gradient.gradients) {
+				g.push(gradientToCSSText(layer, ColorSpace.hex, false))
+			}
+			span.style.setProperty('background', g.join(','))
+			return span
+		})()]}})
+		ref_button.setAttribute('data-command', Commands.grad_use)
+		ref_button.setAttribute('popovertarget', ElementIds.bdSv_menu)
+		ref_button.setAttribute('popovertargetaction', 'show')
+		ref_li.append(ref_button)
+		children.push(ref_li)
 	}
-	_savedGradientListRef?.replaceChildren(...children)
+	_ref_savedGradientList?.replaceChildren(...children)
 }
 
 function _initEvents(): void {
-	_savedGradientListRef?.addEventListener('click', (ev) => {
-		const buttonRef = document.activeElement as HTMLButtonElement
-		if (!isTargetValidElement(_savedGradientListRef, buttonRef)) {return}
+	_ref_savedGradientList?.addEventListener('click', (ev) => {
+		const ref_btn = document.activeElement as CButton.CElement
+		if (!isTargetValidElement(_ref_savedGradientList, ref_btn)) {return}
 
 		const getButtonId = () => {
-			let id = buttonRef.id
+			let id = ref_btn.id
 			if (!id) {
-				buttonRef.id = (id = createElementId())
+				ref_btn.id = (id = createElementId())
 			}
 			return id
 		}
 
 		const hasGradientIndex = () => {
-			const liRef = buttonRef.closest('li')
-			if (!liRef) {
+			const ref_li = ref_btn.closest('li')
+			if (!ref_li) {
 				return false
 			}
 
-			const gradLIRefs = _savedGradientListRef.children
+			const refs_liGrad = _ref_savedGradientList.children
 			let i = -1
-			for (; i < gradLIRefs.length; i++) {
-				if (gradLIRefs[i] === liRef) {
+			for (; i < refs_liGrad.length; i++) {
+				if (refs_liGrad[i] === ref_li) {
 					break
 				}
 			}
@@ -114,7 +109,7 @@ function _initEvents(): void {
 			return true
 		}
 
-		const command = buttonRef.dataset.command as Commands
+		const command = ref_btn.dataset.command as Commands
 		switch (command) {
 		case Commands.grad_use: {
 			if (!hasGradientIndex()) {
@@ -122,39 +117,38 @@ function _initEvents(): void {
 			}
 
 			const id = getButtonId()
-			updateMenuRef(_actionMenuRef, {
-				PopoverAnchorBy: id
+			CMenu.update(_ref_actionMenu, {
+				Popover: {anchorBy: id}
 			})
 
 			// wait for open
 			setTimeout(() => {
-				if (!isPopoverRefOpen(_actionMenuRef)) {return}
+				if (!CPopover.isOpen(_ref_actionMenu)) {return}
 
-				repositionPopoverRef(_actionMenuRef)
-				for (const ref of _gradientItemRefs()) {
+				CPopover.reposition(_ref_actionMenu)
+				for (const ref of _refs_gradientItem()) {
 					const isEqual = id === ref.id
-					updateButtonRef(ref, {ButtonFocused: isEqual})
-
+					CButton.update(ref, {Button: {focused: isEqual}})
 					ref.setAttribute('popovertargetaction', isEqual? 'hide' : 'show')
 				}
 			})
 		} break }
 	})
 
-	_actionMenuRef.addEventListener('toggle', (ev) => {
+	_ref_actionMenu.addEventListener('toggle', (ev) => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
 		if (isOpen) {return}
 
-		for (const ref of _gradientItemRefs()) {
-			updateButtonRef(ref, {
-				ButtonFocused: false
+		for (const ref of _refs_gradientItem()) {
+			CButton.update(ref, {
+				Button: {focused: false}
 			})
 			ref.setAttribute('popovertargetaction', 'show')
 		}
 	})
 
-	_actionViewRef.addEventListener('click', () => {
-		_actionMenuRef.hidePopover()
+	_ref_actionView.addEventListener('click', () => {
+		_ref_actionMenu.hidePopover()
 		const gradient = SavedGradients.value.gradients[_selectedGradientIndex]?.gradients
 		if (!gradient) {return}
 
@@ -170,8 +164,8 @@ function _initEvents(): void {
 		GradientStore.update(v => v.gradients = arr)
 	})
 
-	_actionCopyRef.addEventListener('click', () => {
-		_actionMenuRef.hidePopover()
+	_ref_actionCopy.addEventListener('click', () => {
+		_ref_actionMenu.hidePopover()
 		const gradient = SavedGradients.value.gradients[_selectedGradientIndex]?.gradients
 		if (!gradient) {return}
 
@@ -181,12 +175,12 @@ function _initEvents(): void {
 		}
 
 		navigator.clipboard.writeText(gradientText.join(',\n')).then(() => {
-			_toastCopiedRef.showPopover()
+			_ref_toastCopied.showPopover()
 		})
 	})
 
-	_actionDeleteRef.addEventListener('click', () => {
-		_actionMenuRef.hidePopover()
+	_ref_actionDelete.addEventListener('click', () => {
+		_ref_actionMenu.hidePopover()
 		const gradientId = SavedGradients.value.gradients[_selectedGradientIndex]?.id
 		if (!gradientId) {return}
 

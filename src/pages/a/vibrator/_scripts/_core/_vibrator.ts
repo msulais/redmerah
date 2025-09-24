@@ -1,10 +1,10 @@
-import type { ButtonElement, IconButtonElement } from "@/components/Button"
+import { CButton } from "@/components/Button"
 import { ElementIds } from "../_shared/_ids"
 import { $ } from "./_dom-utils"
 import { ObservableStore } from "@/utils/store"
 import { DEFAULT_VIBRATION_PATTERN } from "../_shared/_constant"
 import { showInputMessage, updateListElement } from "@/utils/element"
-import type { DialogElement } from "@/components/Dialog"
+import { CDialog } from "@/components/Dialog"
 import { isNumberDefined } from "@/utils/number"
 import { saveStorageItem } from "./_database"
 
@@ -16,13 +16,13 @@ export const VibratorStore = new ObservableStore<VibratorStoreType>({
 	pattern: DEFAULT_VIBRATION_PATTERN
 })
 
-const _listRef = $(ElementIds.bd_list) as HTMLUListElement
-const _vibrateRef = $(ElementIds.bd_vibrate) as ButtonElement
-const _stopRef = $(ElementIds.bd_stop) as ButtonElement
-const _editRef = $(ElementIds.bd_edit) as IconButtonElement
-const _editDialogRef = $(ElementIds.bd_editDialog) as DialogElement
-const _saveRef = $(ElementIds.bd_save) as ButtonElement
-const _inputRef = $(ElementIds.bd_input) as HTMLInputElement
+const _ref_list = $(ElementIds.bd_list) as HTMLUListElement
+const _ref_vibrate = $(ElementIds.bd_vibrate) as CButton.CElement
+const _ref_stop = $(ElementIds.bd_stop) as CButton.CElement
+const _ref_edit = $(ElementIds.bd_edit) as CButton.CIcon.CElement
+const _ref_editDialog = $(ElementIds.bd_editDialog) as CDialog.CElement
+const _ref_save = $(ElementIds.bd_save) as CButton.CElement
+const _ref_input = $(ElementIds.bd_input) as HTMLInputElement
 
 function _subsPatternChanges(v: VibratorStoreType, o: VibratorStoreType): void {
 	const pattern = v.pattern
@@ -36,7 +36,7 @@ function _subsPatternView(v: VibratorStoreType, o: VibratorStoreType): void {
 	if (pattern === o.pattern) {return}
 
 	updateListElement<HTMLLIElement, number>(
-		_listRef, pattern,
+		_ref_list, pattern,
 		() => document.createElement('li'),
 		(el, data) => el.textContent = data.toString()
 	)
@@ -50,21 +50,21 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_vibrateRef.addEventListener('click', () => {
+	_ref_vibrate.addEventListener('click', () => {
 		navigator.vibrate(VibratorStore.value.pattern)
 	})
 
-	_stopRef.addEventListener('click', () => {
+	_ref_stop.addEventListener('click', () => {
 		navigator.vibrate([])
 	})
 
-	_editRef.addEventListener('click', () => {
-		_inputRef.value = VibratorStore.value.pattern.join(', ')
-		_editDialogRef.showModal()
+	_ref_edit.addEventListener('click', () => {
+		_ref_input.value = VibratorStore.value.pattern.join(', ')
+		_ref_editDialog.showModal()
 	})
 
-	_saveRef.addEventListener('click', ev => {
-		const pattern = _inputRef
+	_ref_save.addEventListener('click', ev => {
+		const pattern = _ref_input
 			.value
 			.replace(/[^\d,]/g, '')
 			.split(',')
@@ -72,7 +72,7 @@ function _initEvents(): void {
 			.filter(v => isNumberDefined(v))
 
 		if (pattern.length <= 0) {
-			showInputMessage(_inputRef, 'Vibration pattern invalid or empty')
+			showInputMessage(_ref_input, 'Vibration pattern invalid or empty')
 			ev.preventDefault()
 			return
 		}
@@ -80,8 +80,8 @@ function _initEvents(): void {
 		VibratorStore.update(v => v.pattern = pattern)
 	})
 
-	_inputRef.addEventListener('input', () => {
-		showInputMessage(_inputRef, '')
+	_ref_input.addEventListener('input', () => {
+		showInputMessage(_ref_input, '')
 	})
 
 }

@@ -5,7 +5,7 @@ import Drawer from '@/components/Drawer/index.astro'
 import DrawerButton from '@/components/Drawer/DrawerButton.astro'
 import IconButton from '@/components/Button/IconButton.astro'
 import SideBarButton from '@/components/SideBar/SideBarButton.astro'
-import { ButtonVariant } from '@/components/Button'
+import { CButton } from '@/components/Button'
 import { IconCodes } from '@/enums/icons'
 import { CSSClasses } from '../_styles/_css'
 import { Pages } from '../_scripts/_shared/_enums'
@@ -87,7 +87,7 @@ const items: {
 				'font-size': pxToRem(20) + 'rem',
 				'line-height': pxToRem(20) + 'rem'
 			}}}
-			ButtonVariant={DEFAULT_PAGE === v.page ? ButtonVariant.tonal : undefined}>
+			ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.tonal : undefined}>
 			<Fragment slot="leading">{v.emoji}</Fragment>
 			{v.name}
 		</SideBarButton>)}
@@ -111,7 +111,7 @@ const items: {
 		}}
 		data-page={v.page}
 		DrawerButtonSelected={DEFAULT_PAGE === v.page}
-		ButtonVariant={DEFAULT_PAGE === v.page ? ButtonVariant.tonal : undefined}>
+		ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.tonal : undefined}>
 		<span
 			style={{
 				'font-size': pxToRem(20) + 'rem',

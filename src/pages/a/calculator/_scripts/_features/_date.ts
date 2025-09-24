@@ -2,13 +2,13 @@ import { ObservableStore } from "@/utils/store"
 import { DateOperation } from "../_shared/_enums"
 import { ElementIds } from "../_shared/_ids"
 import { $, $$ } from "../_core/_dom-utils"
-import { DatePickerEvents, getDatePickerRefValue, updateDatePickerRef, type DatePickerElement } from "@/components/DatePicker"
+import { CDatePicker } from "@/components/DatePicker"
 import { dateDiffInDays, isDateEqual_YMD } from "@/utils/datetime"
-import { ButtonVariant, updateButtonRef } from "@/components/Button"
+import { CButton } from "@/components/Button"
 import { isValidEnumValue } from "@/utils/object"
 import { safeNumber } from "@/utils/number"
 import { saveStorageItem } from "../_core/_database"
-import type { ComboBoxElement } from "@/components/ComboBox"
+import { CComboBox } from "@/components/ComboBox"
 import { DEFAULT_DATE_INPUT_DAYS, DEFAULT_DATE_INPUT_MONTHS, DEFAULT_DATE_INPUT_YEAR, DEFAULT_DATE_INPUT_FROM, DEFAULT_DATE_INPUT_TO, DEFAULT_DATE_OPERATION, DEFAULT_DATE_OUTPUT } from "../_shared/_constant"
 
 export type DateStoreType = Readonly<{
@@ -30,31 +30,31 @@ export const DateStore = new ObservableStore<DateStoreType>({
 	operation: DEFAULT_DATE_OPERATION,
 	output: DEFAULT_DATE_OUTPUT
 })
-const _operationRef = $(ElementIds.pgDate_operation) as ComboBoxElement
-const _datePickerFromRef = $(ElementIds.pgDate_fromPicker) as DatePickerElement
-const _datePickerToRef = $(ElementIds.pgDate_toPicker) as DatePickerElement
-const _buttonFromRef = $(ElementIds.pgDate_fromBtn) as HTMLButtonElement
-const _buttonToRef = $(ElementIds.pgDate_toBtn) as HTMLButtonElement
-const _spanFromRef = $$(`#${ElementIds.pgDate_fromBtn}>span`) as HTMLSpanElement
-const _spanToRef = $$(`#${ElementIds.pgDate_toBtn}>span`) as HTMLSpanElement
-const _inputYearsRef = $(ElementIds.pgDate_years) as HTMLInputElement
-const _inputMonthsRef = $(ElementIds.pgDate_months) as HTMLInputElement
-const _inputDaysRef = $(ElementIds.pgDate_days) as HTMLInputElement
-const _operationDiffRef = $(ElementIds.pgDate_diff) as HTMLDivElement
-const _operationAddSubRef = $(ElementIds.pgDate_addSub) as HTMLDivElement
-const _dateOutputRef = $(ElementIds.pgDate_output) as HTMLOutputElement
-let _timeCalculateId: number | null | NodeJS.Timeout = null
-let _timeYearsId: number | null | NodeJS.Timeout = null
-let _timeMonthsId: number | null | NodeJS.Timeout = null
-let _timeDaysId: number | null | NodeJS.Timeout = null
+const _ref_operation = $(ElementIds.pgDate_operation) as CComboBox.CElement
+const _ref_datePickerFrom = $(ElementIds.pgDate_fromPicker) as CDatePicker.CElement
+const _ref_datePickerTo = $(ElementIds.pgDate_toPicker) as CDatePicker.CElement
+const _ref_buttonFrom = $(ElementIds.pgDate_fromBtn) as CButton.CElement
+const _ref_buttonTo = $(ElementIds.pgDate_toBtn) as CButton.CElement
+const _ref_spanFrom = $$(`#${ElementIds.pgDate_fromBtn}>span`) as HTMLSpanElement
+const _ref_spanTo = $$(`#${ElementIds.pgDate_toBtn}>span`) as HTMLSpanElement
+const _ref_inputYears = $(ElementIds.pgDate_years) as HTMLInputElement
+const _ref_inputMonths = $(ElementIds.pgDate_months) as HTMLInputElement
+const _ref_inputDays = $(ElementIds.pgDate_days) as HTMLInputElement
+const _ref_operationDiff = $(ElementIds.pgDate_diff) as HTMLDivElement
+const _ref_operationAddSub = $(ElementIds.pgDate_addSub) as HTMLDivElement
+const _ref_dateOutput = $(ElementIds.pgDate_output) as HTMLOutputElement
+let _time_calculate: number | null | NodeJS.Timeout = null
+let _time_years: number | null | NodeJS.Timeout = null
+let _time_months: number | null | NodeJS.Timeout = null
+let _time_days: number | null | NodeJS.Timeout = null
 
 function _calculate(): void {
-	if (_timeCalculateId !== null) {
-		clearTimeout(_timeCalculateId)
+	if (_time_calculate !== null) {
+		clearTimeout(_time_calculate)
 	}
 
-	_timeCalculateId = setTimeout(() => {
-		_timeCalculateId = null
+	_time_calculate = setTimeout(() => {
+		_time_calculate = null
 
 		let output = ''
 		const store = DateStore.value
@@ -115,23 +115,23 @@ function _subsInputYearsChanges(v: DateStoreType, o: DateStoreType): void {
 	if (years === o.inputYears) return
 
 	_calculate()
-	if (_timeYearsId !== null) {
-		clearTimeout(_timeYearsId)
+	if (_time_years !== null) {
+		clearTimeout(_time_years)
 	}
 
-	_timeYearsId = setTimeout(() => {
-		_timeYearsId = null
+	_time_years = setTimeout(() => {
+		_time_years = null
 		saveStorageItem('calc:date/input-years', years)
 	}, 250)
 }
 
 function _subsInputYearsView(v: DateStoreType): void {
 	if (
-		v.inputYears === _inputYearsRef.valueAsNumber
-		|| _inputYearsRef === document.activeElement
+		v.inputYears === _ref_inputYears.valueAsNumber
+		|| _ref_inputYears === document.activeElement
 	) return;
 
-	_inputYearsRef.valueAsNumber = v.inputYears
+	_ref_inputYears.valueAsNumber = v.inputYears
 }
 
 function _subsInputMonthsChanges(v: DateStoreType, o: DateStoreType): void {
@@ -139,23 +139,23 @@ function _subsInputMonthsChanges(v: DateStoreType, o: DateStoreType): void {
 	if (monts === o.inputMonths) return
 
 	_calculate()
-	if (_timeMonthsId !== null) {
-		clearTimeout(_timeMonthsId)
+	if (_time_months !== null) {
+		clearTimeout(_time_months)
 	}
 
-	_timeMonthsId = setTimeout(() => {
-		_timeMonthsId = null
+	_time_months = setTimeout(() => {
+		_time_months = null
 		saveStorageItem('calc:date/input-months', monts)
 	}, 250)
 }
 
 function _subsInputMonthsView(v: DateStoreType): void {
 	if (
-		v.inputMonths === _inputMonthsRef.valueAsNumber
-		|| _inputMonthsRef === document.activeElement
+		v.inputMonths === _ref_inputMonths.valueAsNumber
+		|| _ref_inputMonths === document.activeElement
 	) return;
 
-	_inputMonthsRef.valueAsNumber = v.inputMonths
+	_ref_inputMonths.valueAsNumber = v.inputMonths
 }
 
 function _subsInputDaysChanges(v: DateStoreType, o: DateStoreType): void {
@@ -163,23 +163,23 @@ function _subsInputDaysChanges(v: DateStoreType, o: DateStoreType): void {
 	if (days === o.inputDays) return
 
 	_calculate()
-	if (_timeDaysId !== null) {
-		clearTimeout(_timeDaysId)
+	if (_time_days !== null) {
+		clearTimeout(_time_days)
 	}
 
-	_timeDaysId = setTimeout(() => {
-		_timeDaysId = null
+	_time_days = setTimeout(() => {
+		_time_days = null
 		saveStorageItem('calc:date/input-days', days)
 	}, 250)
 }
 
 function _subsInputDaysView(v: DateStoreType): void {
 	if (
-		v.inputDays === _inputDaysRef.valueAsNumber
-		|| _inputDaysRef === document.activeElement
+		v.inputDays === _ref_inputDays.valueAsNumber
+		|| _ref_inputDays === document.activeElement
 	) return;
 
-	_inputDaysRef.valueAsNumber = v.inputDays
+	_ref_inputDays.valueAsNumber = v.inputDays
 }
 
 function _subsInputDateFromChanges(v: DateStoreType, o: DateStoreType): void {
@@ -194,10 +194,10 @@ function _subsInputDateFromView(v: DateStoreType, o: DateStoreType): void {
 	const date = v.inputFrom
 	if (isDateEqual_YMD(date, o.inputFrom)) return
 
-	updateDatePickerRef(_datePickerFromRef, {
-		DatePickerValue: date
+	CDatePicker.update(_ref_datePickerFrom, {
+		DatePicker: {value: date}
 	})
-	_spanFromRef.textContent = date.toLocaleDateString('en', {
+	_ref_spanFrom.textContent = date.toLocaleDateString('en', {
 		year: 'numeric',
 		month: 'long',
 		day: 'numeric'
@@ -216,10 +216,10 @@ function _subsInputDateToView(v: DateStoreType, o: DateStoreType): void {
 	const date = v.inputTo
 	if (isDateEqual_YMD(date, o.inputTo)) return
 
-	updateDatePickerRef(_datePickerToRef, {
-		DatePickerValue: date
+	CDatePicker.update(_ref_datePickerTo, {
+		DatePicker: {value: date}
 	})
-	_spanToRef.textContent = date.toLocaleDateString('en', {
+	_ref_spanTo.textContent = date.toLocaleDateString('en', {
 		year: 'numeric',
 		month: 'long',
 		day: 'numeric'
@@ -238,25 +238,25 @@ function _subsOperationView(v: DateStoreType, o: DateStoreType): void {
 	const operation = v.operation
 	if (operation === o.operation) return
 
-	_operationRef.value = operation
+	_ref_operation.value = operation
 	switch (operation) {
 	case DateOperation.add:
 	case DateOperation.subtract:
-		_operationAddSubRef.style.setProperty('display', 'grid')
-		_operationDiffRef.style.setProperty('display', 'none')
+		_ref_operationAddSub.style.setProperty('display', 'grid')
+		_ref_operationDiff.style.setProperty('display', 'none')
 		break
 	case DateOperation.difference:
-		_operationAddSubRef.style.setProperty('display', 'none')
-		_operationDiffRef.style.setProperty('display', 'contents')
+		_ref_operationAddSub.style.setProperty('display', 'none')
+		_ref_operationDiff.style.setProperty('display', 'contents')
 		break
 	}
 }
 
 function _subsOutputView(v: DateStoreType): void {
 	const output = v.output
-	if (output === _dateOutputRef.textContent) return
+	if (output === _ref_dateOutput.textContent) return
 
-	_dateOutputRef.textContent = output
+	_ref_dateOutput.textContent = output
 }
 
 function _initDates(): void {
@@ -283,64 +283,64 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_datePickerFromRef.addEventListener(DatePickerEvents.change, () => DateStore.update(v =>
-		v.inputFrom = getDatePickerRefValue(_datePickerFromRef)!
+	_ref_datePickerFrom.addEventListener(CDatePicker.Events.change, () => DateStore.update(v =>
+		v.inputFrom = CDatePicker.getValue(_ref_datePickerFrom)!
 	))
 
-	_datePickerFromRef.addEventListener('beforetoggle', ev => {
+	_ref_datePickerFrom.addEventListener('beforetoggle', ev => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
-		updateButtonRef(_buttonFromRef, {
-			ButtonVariant: isOpen? ButtonVariant.outlined : ButtonVariant.tonal
+		CButton.update(_ref_buttonFrom, {
+			Button: {variant: isOpen? CButton.Variant.outlined : CButton.Variant.tonal}
 		})
 	})
 
-	_datePickerToRef.addEventListener(DatePickerEvents.change, () => DateStore.update(v =>
-		v.inputTo = getDatePickerRefValue(_datePickerToRef)!
+	_ref_datePickerTo.addEventListener(CDatePicker.Events.change, () => DateStore.update(v =>
+		v.inputTo = CDatePicker.getValue(_ref_datePickerTo)!
 	))
 
-	_datePickerToRef.addEventListener('beforetoggle', ev => {
+	_ref_datePickerTo.addEventListener('beforetoggle', ev => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
-		updateButtonRef(_buttonToRef, {
-			ButtonVariant: isOpen? ButtonVariant.outlined : ButtonVariant.tonal
+		CButton.update(_ref_buttonTo, {
+			Button: {variant: isOpen? CButton.Variant.outlined : CButton.Variant.tonal}
 		})
 	})
 
-	_operationRef.addEventListener('change', () => {
-		const value = _operationRef.value as DateOperation
+	_ref_operation.addEventListener('change', () => {
+		const value = _ref_operation.value as DateOperation
 		if (!isValidEnumValue(value, DateOperation)) return
 
 		DateStore.update(v => v.operation = value)
 	})
 
-	_inputYearsRef.addEventListener('input', () => {
-		const value = Math.floor(safeNumber(_inputYearsRef.valueAsNumber, DateStore.value.inputYears))
+	_ref_inputYears.addEventListener('input', () => {
+		const value = Math.floor(safeNumber(_ref_inputYears.valueAsNumber, DateStore.value.inputYears))
 
 		DateStore.update(v => v.inputYears = value)
 	})
 
-	_inputMonthsRef.addEventListener('input', () => {
-		const value = Math.floor(safeNumber(_inputMonthsRef.valueAsNumber, DateStore.value.inputMonths))
+	_ref_inputMonths.addEventListener('input', () => {
+		const value = Math.floor(safeNumber(_ref_inputMonths.valueAsNumber, DateStore.value.inputMonths))
 
 		DateStore.update(v => v.inputMonths = value)
 	})
 
-	_inputDaysRef.addEventListener('input', () => {
-		const value = Math.floor(safeNumber(_inputDaysRef.valueAsNumber, DateStore.value.inputDays))
+	_ref_inputDays.addEventListener('input', () => {
+		const value = Math.floor(safeNumber(_ref_inputDays.valueAsNumber, DateStore.value.inputDays))
 
 		DateStore.update(v => v.inputDays = value)
 	})
 
-	_operationAddSubRef.addEventListener('focusout', ev => {
+	_ref_operationAddSub.addEventListener('focusout', ev => {
 		const value = DateStore.value
 		switch (ev.target) {
-		case _inputYearsRef:
-			_inputYearsRef.valueAsNumber = value.inputYears
+		case _ref_inputYears:
+			_ref_inputYears.valueAsNumber = value.inputYears
 			break
-		case _inputMonthsRef:
-			_inputMonthsRef.valueAsNumber = value.inputMonths
+		case _ref_inputMonths:
+			_ref_inputMonths.valueAsNumber = value.inputMonths
 			break
-		case _inputDaysRef:
-			_inputDaysRef.valueAsNumber = value.inputDays
+		case _ref_inputDays:
+			_ref_inputDays.valueAsNumber = value.inputDays
 			break
 		}
 	})

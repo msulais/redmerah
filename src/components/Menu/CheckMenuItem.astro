@@ -1,12 +1,8 @@
 ---
 import { AppCSSColors } from '@/enums/app-data'
 import { joinClassList } from '@/utils/attributes'
-
-import { ButtonClasses } from '../Button'
-import {
-	type CheckMenuItemProps,
-	MenuClasses
-} from '.'
+import { CButton } from '../Button'
+import {type CheckMenuItemProps, CMenu} from '.'
 import './index.scss'
 
 type Props = CheckMenuItemProps
@@ -24,16 +20,18 @@ const {'class': inputClass  , checked: inputChecked = CheckMenuItemChecked, disa
 const {'class': leadingClass, ...leadingOther} = CheckMenuItemLeadingAttr ?? {}
 const {'class': iconClass   , ...iconOther   } = CheckMenuItemIconAttr    ?? {}
 const {'class': contentClass, ...contentOther} = CheckMenuItemContentAttr ?? {}
+
+const cls = CMenu.Classes
 ---
 
 <label
-	class={joinClassList(ButtonClasses.button, MenuClasses.item, MenuClasses.checkItem, className)}
+	class={joinClassList(CButton.Classes.button, cls.item, cls.checkItem, className)}
 	{...other}>
-	<div class={joinClassList(MenuClasses.checkItemLeading, leadingClass)} {...leadingOther}>
-		<slot name="leading"/>
-	</div>
+	<div
+		class={joinClassList(cls.checkItemLeading, leadingClass)}
+		{...leadingOther}><slot name="leading"/></div>
 	<input
-		class={joinClassList(MenuClasses.checkItemInput, inputClass)}
+		class={joinClassList(cls.checkItemInput, inputClass)}
 		checked={inputChecked}
 		type={inputType}
 		autocomplete={inputAutocomplete}
@@ -42,13 +40,13 @@ const {'class': contentClass, ...contentOther} = CheckMenuItemContentAttr ?? {}
 		{...inputOther}
 	/>
 	<svg
-		class={joinClassList(MenuClasses.checkItemIcon, iconClass)}
+		class={joinClassList(cls.checkItemIcon, iconClass)}
 		xmlns="http://www.w3.org/2000/svg"
 		viewBox="0 -960 960 960"
 		{...iconOther}>
 		<path fill={`rgb(${AppCSSColors.accent})`} d="m389-369 299-299q10.91-11 25.45-11Q728-679 739-668t11 25.58q0 14.58-10.61 25.19L415-292q-10.91 11-25.45 11Q375-281 364-292L221-435q-11-11-11-25.5t11-25.5q11-11 25.67-11 14.66 0 25.33 11l117 117Z"/>
 	</svg>
-	<div class={joinClassList(MenuClasses.checkItemContent, contentClass)} {...contentOther}>
-		<slot />
-	</div>
+	<div
+		class={joinClassList(cls.checkItemContent, contentClass)}
+		{...contentOther}><slot /></div>
 </label>

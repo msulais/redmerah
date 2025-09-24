@@ -5,7 +5,7 @@ import IconButton from '@/components/Button/IconButton.astro'
 import { ElementIds } from '../_scripts/_shared/_ids'
 import { CSSClasses } from '../_styles/_css'
 import { IconCodes } from '@/enums/icons'
-import { ButtonVariant } from '@/components/Button'
+import { CButton } from '@/components/Button'
 import videoFile from '@/assets/video/271161_small.mp4'
 ---
 
@@ -36,7 +36,7 @@ import videoFile from '@/assets/video/271161_small.mp4'
 		slot="trailing"
 		IconButtonCode={IconCodes.dismiss}
 		aria-label="Abort loading"
-		ButtonVariant={ButtonVariant.tonal}
+		ButtonVariant={CButton.Variant.tonal}
 		id={ElementIds.toa_loadingAbort}
 	/>
 </Toast>

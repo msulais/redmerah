@@ -6,7 +6,7 @@ import Drawer from '@/components/Drawer/index.astro'
 import DrawerButton from '@/components/Drawer/DrawerButton.astro'
 import Button from '@/components/Button/index.astro'
 import SideBarButton from '@/components/SideBar/SideBarButton.astro'
-import { ButtonVariant } from '@/components/Button'
+import { CButton } from '@/components/Button'
 import { IconCodes } from '@/enums/icons'
 import { CSSClasses } from '../_styles/_css'
 import { Pages } from '../_scripts/_shared/_enums'
@@ -46,7 +46,7 @@ const items: {
 			aria-selected={DEFAULT_PAGE === v.page}
 			aria-controls={v.controls}
 			SideBarButtonSelected={DEFAULT_PAGE === v.page}
-			ButtonVariant={DEFAULT_PAGE === v.page ? ButtonVariant.tonal : undefined}>
+			ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.tonal : undefined}>
 			<Icon
 				slot="leading"
 				IconCode={v.icon}
@@ -71,7 +71,7 @@ const items: {
 		aria-controls={v.controls}
 		data-page={v.page}
 		DrawerButtonSelected={DEFAULT_PAGE === v.page}
-		ButtonVariant={DEFAULT_PAGE === v.page ? ButtonVariant.tonal : undefined}>
+		ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.tonal : undefined}>
 		<Icon
 			IconCode={v.icon}
 		/>

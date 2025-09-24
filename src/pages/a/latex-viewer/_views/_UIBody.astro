@@ -9,7 +9,7 @@ import Tooltip from '@/components/Tooltip/index.astro'
 import { CSSClasses } from '../_styles/_css'
 import { IconCodes } from '@/enums/icons'
 import { ElementIds } from '../_scripts/_shared/_ids'
-import { ButtonVariant } from '@/components/Button'
+import { CButton } from '@/components/Button'
 import { DEFAULT_LATEX_TEXT } from '../_scripts/_shared/_constant'
 import { Commands } from '../_scripts/_shared/_commands'
 import { pxToRem } from '@/utils/css'
@@ -18,7 +18,7 @@ import { pxToRem } from '@/utils/css'
 <main class={CSSClasses.body}>
 	<Button id={ElementIds.bd_add}
 		style={{'margin-left': pxToRem(16) + 'rem'}}
-		ButtonVariant={ButtonVariant.filled}>
+		ButtonVariant={CButton.Variant.filled}>
 		<Icon IconCode={IconCodes.add}/>
 		New equation
 	</Button>
@@ -35,7 +35,7 @@ import { pxToRem } from '@/utils/css'
 			<Tooltip>
 				<Button
 					data-command={Commands.eq_new}
-					ButtonVariant={ButtonVariant.outlined}>
+					ButtonVariant={CButton.Variant.outlined}>
 					<Icon IconCode={IconCodes.add}/>
 					New equation
 				</Button>
@@ -78,7 +78,7 @@ import { pxToRem } from '@/utils/css'
 		rows={10}
 	/>
 	<form style="display:contents" method="dialog" slot="footer">
-		<Button ButtonVariant={ButtonVariant.tonal}>Close</Button>
-		<Button id={ElementIds.bd_mathMLCopy} ButtonVariant={ButtonVariant.filled}>Copy</Button>
+		<Button ButtonVariant={CButton.Variant.tonal}>Close</Button>
+		<Button id={ElementIds.bd_mathMLCopy} ButtonVariant={CButton.Variant.filled}>Copy</Button>
 	</form>
 </Dialog>

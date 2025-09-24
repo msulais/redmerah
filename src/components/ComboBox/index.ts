@@ -1,114 +1,110 @@
 import { isValidEnumValue } from "@/utils/object"
-import { ButtonClasses } from "../Button"
+import { CButton as GCButton } from "../Button"
+import { $children, $classlist, $create, $is_array, $is_false, $set_attr } from "../utils"
 
-type ComboBoxProps = astroHTML.JSX.SelectHTMLAttributes & {
-	ComboBoxVariant?: ComboBoxVariant
-}
+export namespace CComboBox {
+	export type CElement = HTMLSelectElement
 
-type ComboBoxOptionProps = astroHTML.JSX.OptionHTMLAttributes
+	export type UpdateOptions = {
+		ComboBox?: {
+			variant?: Variant
+			children?: (string | Node)[] | boolean
+			refs?: {
+				combobox?(ref: CElement): unknown
+			}
+		}
+	}
 
-type ComboBoxElement = HTMLSelectElement
+	export enum Classes {
+		combobox = 'c-combobox',
+		option = combobox + '-option'
+	}
 
-type ComboBoxOptionElement = HTMLOptionElement
+	export enum Attributes {
+		variant = 'data-c-combobox-variant'
+	}
 
-type ComboBoxUpdateOptions = {
-	ComboBoxVariant?: ComboBoxVariant
-	ComboBoxChildren?: (string | Node)[] | boolean
-	ComboBoxRefs?: {
-		combobox?(ref: ComboBoxElement): unknown
+	export enum Variant {
+		filled = 'filled',
+		outlined = 'outlined',
+		tonal = 'tonal',
+		transparent = 'transparent',
+	}
+
+	export function create(options?: UpdateOptions): CElement {
+		const ref_combobox = $create('select')
+		return update(ref_combobox, options)
+	}
+
+	export function update(ref_combobox: CElement, options?: UpdateOptions): CElement {
+		const opt = options?.ComboBox
+		$classlist(ref_combobox, Classes.combobox)
+
+		if (!ref_combobox.hasAttribute('autocomplete')) {
+			$set_attr(ref_combobox, 'autocomplete', 'off')
+		}
+
+		const opt_variant = opt?.variant
+		if (opt_variant && isValidEnumValue(opt_variant, Variant)) {
+			$set_attr(ref_combobox, Attributes.variant, opt_variant)
+		}
+
+		// children
+		const opt_children = opt?.children
+		if ($is_false(opt_children)) {
+			$children(ref_combobox)
+		}
+		else if ($is_array(opt_children)) {
+			$children(ref_combobox, ...opt_children)
+		}
+
+		const refs = opt?.refs
+		refs?.combobox?.(ref_combobox)
+		return ref_combobox
+	}
+
+	export namespace COption {
+		export type CElement = HTMLOptionElement
+
+		export type UpdateOptions = {
+			Option?: {
+				children?: (string | Node)[] | boolean
+				refs?: {
+					option?(ref: CElement): unknown
+				}
+			}
+		}
+
+		export function create(options?: UpdateOptions): CElement {
+			const ref_option = $create('option')
+			return update(ref_option, options)
+		}
+
+		export function update(
+			ref_option: CElement,
+			options?: UpdateOptions
+		): CElement {
+			const opt = options?.Option
+			$classlist(ref_option, GCButton.Classes.button, Classes.option)
+
+			// children
+			const opt_children = opt?.children
+			if ($is_false(opt_children)) {
+				$children(ref_option)
+			}
+			else if ($is_array(opt_children)) {
+				$children(ref_option, ...opt_children)
+			}
+
+			const refs = opt?.refs
+			refs?.option?.(ref_option)
+			return ref_option
+		}
 	}
 }
 
-type ComboBoxOptionUpdateOptions = {
-	ComboBoxOptionChildren?: (string | Node)[] | boolean
-	ComboBoxOptionRefs?: {
-		option?(ref: ComboBoxOptionElement): unknown
-	}
-}
+export type ComboBoxOptionProps = astroHTML.JSX.OptionHTMLAttributes
 
-enum ComboBoxClasses {
-	combobox = 'c-combobox',
-	option = combobox + '-option'
-}
-
-enum ComboBoxAttributes {
-	variant = 'data-c-combobox-variant'
-}
-
-enum ComboBoxVariant {
-	filled = 'filled',
-	outlined = 'outlined',
-	tonal = 'tonal',
-	transparent = 'transparent',
-}
-
-function createComboBoxRef(options?: ComboBoxUpdateOptions): ComboBoxElement {
-	const comboBoxRef = document.createElement('select')
-	return updateComboBoxRef(comboBoxRef, options)
-}
-
-function updateComboBoxRef(comboBoxRef: ComboBoxElement, options?: ComboBoxUpdateOptions): ComboBoxElement {
-	comboBoxRef.classList.add(ComboBoxClasses.combobox)
-	if (!comboBoxRef.hasAttribute('autocomplete')) {
-		comboBoxRef.setAttribute('autocomplete', 'off')
-	}
-
-	const variantOption = options?.ComboBoxVariant
-	if (variantOption && isValidEnumValue(variantOption, ComboBoxVariant)) {
-		comboBoxRef.setAttribute(ComboBoxAttributes.variant, variantOption)
-	}
-
-	// children
-	const childrenOption = options?.ComboBoxChildren
-	if (childrenOption === false) {
-		comboBoxRef.replaceChildren()
-	}
-	else if (childrenOption && childrenOption !== true) {
-		comboBoxRef.replaceChildren(...childrenOption)
-	}
-
-	const refs = options?.ComboBoxRefs
-	refs?.combobox?.(comboBoxRef)
-	return comboBoxRef
-}
-
-function createComboBoxOptionRef(options?: ComboBoxOptionUpdateOptions): ComboBoxOptionElement {
-	const optionRef = document.createElement('option')
-	return updateComboBoxOptionRef(optionRef, options)
-}
-
-function updateComboBoxOptionRef(
-	optionRef: ComboBoxOptionElement,
-	options?: ComboBoxOptionUpdateOptions
-): ComboBoxOptionElement {
-	optionRef.classList.add(ButtonClasses.button, ComboBoxClasses.option)
-
-	// children
-	const childrenOption = options?.ComboBoxOptionChildren
-	if (childrenOption === false) {
-		optionRef.replaceChildren()
-	}
-	else if (childrenOption && childrenOption !== true) {
-		optionRef.replaceChildren(...childrenOption)
-	}
-
-	const refs = options?.ComboBoxOptionRefs
-	refs?.option?.(optionRef)
-	return optionRef
-}
-
-export {
-	type ComboBoxProps,
-	type ComboBoxElement,
-	type ComboBoxUpdateOptions,
-	type ComboBoxOptionProps,
-	type ComboBoxOptionElement,
-	type ComboBoxOptionUpdateOptions,
-	ComboBoxAttributes,
-	ComboBoxClasses,
-	ComboBoxVariant,
-	createComboBoxRef,
-	updateComboBoxRef,
-	createComboBoxOptionRef,
-	updateComboBoxOptionRef
+export type ComboBoxProps = astroHTML.JSX.SelectHTMLAttributes & {
+	ComboBoxVariant?: CComboBox.Variant
 }

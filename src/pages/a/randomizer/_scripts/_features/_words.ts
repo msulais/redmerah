@@ -3,7 +3,7 @@ import { WordsRandomizerCase } from "../_shared/_enums"
 import { DEFAULT_WORDS_CASE, DEFAULT_WORDS_COUNT, DEFAULT_WORDS_LIST_ID, DEFAULT_WORDS_OUTPUT, DEFAULT_WORDS_PREFIX, DEFAULT_WORDS_REPEAT, DEFAULT_WORDS_SEPARATOR, DEFAULT_WORDS_SUFFIX } from "../_shared/_constant"
 import { ElementIds } from "../_shared/_ids"
 import { $ } from "../_core/_dom-utils"
-import type { ComboBoxElement } from "@/components/ComboBox"
+import { CComboBox } from "@/components/ComboBox"
 import { ListsStore } from "../_core/_lists"
 import { Math_clamp } from "@/utils/math"
 import { safeNumber } from "@/utils/number"
@@ -34,15 +34,15 @@ export const WordsStore = new ObservableStore<WordsStoreType>({
 	output: DEFAULT_WORDS_OUTPUT
 })
 
-const _listRef = $(ElementIds.pgWrd_list) as ComboBoxElement
-const _countRef = $(ElementIds.pgWrd_count) as HTMLInputElement
-const _wordCaseRef = $(ElementIds.pgWrd_case) as ComboBoxElement
-const _separatorRef = $(ElementIds.pgWrd_separator) as HTMLInputElement
-const _prefixRef = $(ElementIds.pgWrd_prefix) as HTMLInputElement
-const _suffixRef = $(ElementIds.pgWrd_suffix) as HTMLInputElement
-const _repeatRef = $(ElementIds.pgWrd_repeat) as HTMLInputElement
-const _outputRef = $(ElementIds.pgWrd_output) as HTMLOutputElement
-let _timeStorageId: NodeJS.Timeout | number | undefined
+const _ref_list = $(ElementIds.pgWrd_list) as CComboBox.CElement
+const _ref_count = $(ElementIds.pgWrd_count) as HTMLInputElement
+const _ref_wordCase = $(ElementIds.pgWrd_case) as CComboBox.CElement
+const _ref_separator = $(ElementIds.pgWrd_separator) as HTMLInputElement
+const _ref_prefix = $(ElementIds.pgWrd_prefix) as HTMLInputElement
+const _ref_suffix = $(ElementIds.pgWrd_suffix) as HTMLInputElement
+const _ref_repeat = $(ElementIds.pgWrd_repeat) as HTMLInputElement
+const _ref_output = $(ElementIds.pgWrd_output) as HTMLOutputElement
+let _time_storage: NodeJS.Timeout | number | undefined
 
 export function updateOutput(): void {
 	const store = WordsStore.value
@@ -88,8 +88,8 @@ export function updateOutput(): void {
 }
 
 function _subsStorage(v: WordsStoreType): void {
-	clearTimeout(_timeStorageId)
-	_timeStorageId = setTimeout(() => {
+	clearTimeout(_time_storage)
+	_time_storage = setTimeout(() => {
 		saveStorageItem('words:count', v.count)
 		saveStorageItem('words:list-id', v.listId)
 		saveStorageItem('words:prefix', v.prefix)
@@ -103,26 +103,26 @@ function _subsStorage(v: WordsStoreType): void {
 
 function _subsView(v: WordsStoreType): void {
 	const isActive = (el: Element) => el === document.activeElement
-	if (!isActive(_countRef)) {
-		_countRef.valueAsNumber = v.count
+	if (!isActive(_ref_count)) {
+		_ref_count.valueAsNumber = v.count
 	}
 
-	if (!isActive(_separatorRef)) {
-		_separatorRef.value = v.separator
+	if (!isActive(_ref_separator)) {
+		_ref_separator.value = v.separator
 	}
 
-	if (!isActive(_prefixRef)) {
-		_prefixRef.value = v.prefix
+	if (!isActive(_ref_prefix)) {
+		_ref_prefix.value = v.prefix
 	}
 
-	if (!isActive(_suffixRef)) {
-		_suffixRef.value = v.suffix
+	if (!isActive(_ref_suffix)) {
+		_ref_suffix.value = v.suffix
 	}
 
-	_repeatRef.checked = v.repeat
-	_outputRef.textContent = v.output
-	_wordCaseRef.value = v.wordCase
-	_listRef.value = v.listId.toString()
+	_ref_repeat.checked = v.repeat
+	_ref_output.textContent = v.output
+	_ref_wordCase.value = v.wordCase
+	_ref_list.value = v.listId.toString()
 }
 
 function _initSubscriber(): void {
@@ -131,46 +131,46 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_listRef.addEventListener('change', () => {
-		const id = Number.parseInt(_listRef.value)
+	_ref_list.addEventListener('change', () => {
+		const id = Number.parseInt(_ref_list.value)
 		if (!ListsStore.value.list.some(v => v.id === id)) {return}
 
 		WordsStore.update(v => v.listId = id)
 	})
 
-	_countRef.addEventListener('input', () => {
-		const value = Math_clamp(safeNumber(_countRef.valueAsNumber), 1, Number.MAX_VALUE)
+	_ref_count.addEventListener('input', () => {
+		const value = Math_clamp(safeNumber(_ref_count.valueAsNumber), 1, Number.MAX_VALUE)
 		WordsStore.update(v => v.count = value)
 	})
 
-	_countRef.addEventListener('blur', () => {
-		_countRef.valueAsNumber = WordsStore.value.count
+	_ref_count.addEventListener('blur', () => {
+		_ref_count.valueAsNumber = WordsStore.value.count
 	})
 
-	_wordCaseRef.addEventListener('change', () => {
-		const value = _wordCaseRef.value as WordsRandomizerCase
+	_ref_wordCase.addEventListener('change', () => {
+		const value = _ref_wordCase.value as WordsRandomizerCase
 		if (!isValidEnumValue(value, WordsRandomizerCase)) {return}
 
 		WordsStore.update(v => v.wordCase = value)
 	})
 
-	_separatorRef.addEventListener('input', () => {
-		const value = _separatorRef.value
+	_ref_separator.addEventListener('input', () => {
+		const value = _ref_separator.value
 		WordsStore.update(v => v.separator = value)
 	})
 
-	_prefixRef.addEventListener('input', () => {
-		const value = _prefixRef.value
+	_ref_prefix.addEventListener('input', () => {
+		const value = _ref_prefix.value
 		WordsStore.update(v => v.prefix = value)
 	})
 
-	_suffixRef.addEventListener('input', () => {
-		const value = _suffixRef.value
+	_ref_suffix.addEventListener('input', () => {
+		const value = _ref_suffix.value
 		WordsStore.update(v => v.suffix = value)
 	})
 
-	_repeatRef.addEventListener('change', () => {
-		const value = _repeatRef.checked
+	_ref_repeat.addEventListener('change', () => {
+		const value = _ref_repeat.checked
 		WordsStore.update(v => v.repeat = value)
 	})
 }

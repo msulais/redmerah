@@ -1,10 +1,6 @@
 ---
 import { joinClassList } from '@/utils/attributes'
-
-import {
-	type SideBarButtonProps,
-	SideBarClasses,
-} from '.'
+import {type SideBarButtonProps, CSideBar} from '.'
 import Button from '@/components/Button/index.astro'
 import './index.scss'
 
@@ -19,22 +15,19 @@ const {
 } = Astro.props
 const {'class': leadingClass, ...leadingOther} = SideBarButtonLeadingAttr
 const {'class': contentClass, ...contentOther} = SideBarButtonContentAttr
+
+const cls = CSideBar.Classes
 ---
 
 <Button
-	class={joinClassList(SideBarClasses.button, className)}
+	class={joinClassList(cls.button, className)}
 	data-c-sidebar-button-selected={SideBarButtonSelected? '' : undefined}
 	{...other}>
-	{Astro.slots.has('leading') &&
-		<div
-			class={joinClassList(SideBarClasses.buttonLeading, leadingClass)}
-			{...leadingOther}>
-			<slot name="leading"/>
-		</div>
+	{Astro.slots.has('leading') && <div
+		class={joinClassList(cls.buttonLeading, leadingClass)}
+		{...leadingOther}><slot name="leading"/></div>
 	}
 	<div
-		class={joinClassList(SideBarClasses.buttonContent, contentClass)}
-		{...contentOther}>
-		<slot />
-	</div>
+		class={joinClassList(cls.buttonContent, contentClass)}
+		{...contentOther}><slot /></div>
 </Button>

@@ -20,11 +20,11 @@ export const SettingsStore = new ObservableStore<SettingsStoreType>({
 	animation: DEFAULT_ANIMATION,
 	instantResult: DEFAULT_INSTANT_RESULT
 })
-const _rootRef = document.documentElement
-const _themeRef = $(ElementIds.apSett_themeMenu) as HTMLDivElement
-const _animationRef = $(ElementIds.apSett_animationMenu) as HTMLDivElement
-const _settingsMenuRef = $(ElementIds.apSett_menu) as HTMLDivElement
-const _instantResultRef = $(ElementIds.apSett_instant) as HTMLInputElement
+const _ref_root = document.documentElement
+const _ref_theme = $(ElementIds.apSett_themeMenu) as HTMLDivElement
+const _ref_animation = $(ElementIds.apSett_animationMenu) as HTMLDivElement
+const _ref_settingsMenu = $(ElementIds.apSett_menu) as HTMLDivElement
+const _ref_instantResult = $(ElementIds.apSett_instant) as HTMLInputElement
 
 function _initTheme(): void {
 	const theme = localStorage.getItem(LocalStorageKeys.platformTheme) as PlatformThemeMode
@@ -58,41 +58,41 @@ function _subsAnimationView(v: SettingsStoreType, o: SettingsStoreType): void {
 	const animation = v.animation
 	if (animation === o.animation) return
 
-	_rootRef.setAttribute(RootAttributes.animation, animation)
-	const previousRef = $$(
+	_ref_root.setAttribute(RootAttributes.animation, animation)
+	const ref_previous = $$(
 		`input[name="${CSS.escape(RadioNames.animation)}"]:checked`
 	) as HTMLInputElement
-	const targetRef = $$(
+	const ref_target = $$(
 		`input[name="${CSS.escape(RadioNames.animation)}"][value="${CSS.escape(animation)}"]`
 	) as HTMLInputElement
 
-	if (previousRef === targetRef) {return}
-	if (previousRef) previousRef.checked = false
-	if (targetRef) targetRef.checked = true
+	if (ref_previous === ref_target) {return}
+	if (ref_previous) ref_previous.checked = false
+	if (ref_target) ref_target.checked = true
 }
 
 function _subsThemeView(v: SettingsStoreType, o: SettingsStoreType): void {
 	const theme = v.theme
 	if (theme === o.theme) return
 
-	_rootRef.setAttribute(RootAttributes.theme, theme)
-	const previousRef = $$(
+	_ref_root.setAttribute(RootAttributes.theme, theme)
+	const ref_previous = $$(
 		`input[name="${CSS.escape(RadioNames.theme)}"]:checked`
 	) as HTMLInputElement
-	const targetRef = $$(
+	const ref_target = $$(
 		`input[name="${CSS.escape(RadioNames.theme)}"][value="${CSS.escape(theme)}"]`
 	) as HTMLInputElement
 
-	if (previousRef === targetRef) {return}
-	if (previousRef) previousRef.checked = false
-	if (targetRef) targetRef.checked = true
+	if (ref_previous === ref_target) {return}
+	if (ref_previous) ref_previous.checked = false
+	if (ref_target) ref_target.checked = true
 }
 
 function _subsInstantResultView(v: SettingsStoreType): void {
 	const instant = v.instantResult
-	if (instant === _instantResultRef.checked) {return}
+	if (instant === _ref_instantResult.checked) {return}
 
-	_instantResultRef.checked = instant
+	_ref_instantResult.checked = instant
 }
 
 function _subsInstantResultChanges(v: SettingsStoreType, o: SettingsStoreType): void {
@@ -112,27 +112,27 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_themeRef.addEventListener('change', ev => {
+	_ref_theme.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as PlatformThemeMode
 		if (!value || !isValidEnumValue(value, PlatformThemeMode)) {return}
 
-		_settingsMenuRef.hidePopover()
+		_ref_settingsMenu.hidePopover()
 		SettingsStore.update(v => v.theme = value)
 	})
 
-	_animationRef.addEventListener('change', ev => {
+	_ref_animation.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as PlatformAnimationMode
 		if (!value || !isValidEnumValue(value, PlatformAnimationMode)) {return}
 
-		_settingsMenuRef.hidePopover()
+		_ref_settingsMenu.hidePopover()
 		SettingsStore.update(v => v.animation = value)
 	})
 
-	_instantResultRef.addEventListener('change', () => {
-		_settingsMenuRef.hidePopover()
-		SettingsStore.update(v => v.instantResult = _instantResultRef.checked)
+	_ref_instantResult.addEventListener('change', () => {
+		_ref_settingsMenu.hidePopover()
+		SettingsStore.update(v => v.instantResult = _ref_instantResult.checked)
 	})
 }
 

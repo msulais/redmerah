@@ -9,12 +9,12 @@ import { DEFAULT_ANIMATION, DEFAULT_BACKGROUND_COLOR, DEFAULT_COLOR, DEFAULT_ENC
 import { $, $$ } from "./_dom-utils"
 import { EncodingMode, ErrorCorrectionLevel, QRVersion } from "../_shared/_enums"
 import type { HEXColor } from "@/types/color"
-import type { MenuItemElement, SubMenuElement } from "@/components/Menu"
-import type { DialogElement } from "@/components/Dialog"
-import type { ButtonElement } from "@/components/Button"
+import { CMenu } from "@/components/Menu"
+import { CDialog } from "@/components/Dialog"
+import { CButton } from "@/components/Button"
 import { safeNumber } from "@/utils/number"
 import { Math_clamp } from "@/utils/math"
-import { ColorPickerEvents, getColorPickerRefValue, updateColorPickerRef, type ColorPickerElement } from "@/components/ColorPicker"
+import { CColorPicker } from "@/components/ColorPicker"
 import { subsSettingsStore } from "../_features/_generate"
 import { saveStorageItem } from "./_database"
 
@@ -39,26 +39,26 @@ export const SettingsStore = new ObservableStore<SettingsStoreType>({
 	margin: DEFAULT_MARGIN,
 	version: DEFAULT_VERSION
 })
-const _rootRef = document.documentElement
-const _colorDialogRef = $(ElementIds.apSett_colorDialog) as DialogElement
-const _colorBtnRef = $(ElementIds.apSett_colorBtn) as MenuItemElement
-const _colorSaveRef = $(ElementIds.apSett_colorSave) as ButtonElement
-const _marginSaveRef = $(ElementIds.apSett_marginSave) as ButtonElement
-const _marginInputRef = $(ElementIds.apSett_marginInput) as HTMLInputElement
-const _themeRef = $(ElementIds.apSett_themeMenu) as HTMLDivElement
-const _animationRef = $(ElementIds.apSett_animationMenu) as HTMLDivElement
-const _settingsMenuRef = $(ElementIds.apSett_menu) as HTMLDivElement
-const _marginRef = $(ElementIds.apSett_marginBtn) as MenuItemElement
-const _marginDialogRef = $(ElementIds.apSett_marginDialog) as DialogElement
-const _pickerForeRef = $(ElementIds.apSett_colorForePicker) as ColorPickerElement
-const _pickerForeBtnRef = $(ElementIds.apSett_colorForePickerBtn) as ColorPickerElement
-const _pickerBackBtnRef = $(ElementIds.apSett_colorBackPickerBtn2) as ColorPickerElement
-const _pickerBackRef = $(ElementIds.apSett_colorBackPicker) as ColorPickerElement
-const _previewForegroundRef = $(ElementIds.apSett_colorPreviewForeground) as HTMLElement
-const _previewBackgroundRef = $(ElementIds.apSett_colorPreviewBackground) as HTMLDivElement
-const _versionMenuRef = $(ElementIds.apSett_versionMenu) as SubMenuElement
-const _encodingMenuRef = $(ElementIds.apSett_encodingMenu) as SubMenuElement
-const _correctionMenuRef = $(ElementIds.apSett_correctionMenu) as SubMenuElement
+const _ref_root = document.documentElement
+const _ref_colorDialog = $(ElementIds.apSett_colorDialog) as CDialog.CElement
+const _ref_colorBtn = $(ElementIds.apSett_colorBtn) as CMenu.CItem.CElement
+const _ref_colorSave = $(ElementIds.apSett_colorSave) as CButton.CElement
+const _ref_marginSave = $(ElementIds.apSett_marginSave) as CButton.CElement
+const _ref_marginInput = $(ElementIds.apSett_marginInput) as HTMLInputElement
+const _ref_theme = $(ElementIds.apSett_themeMenu) as HTMLDivElement
+const _ref_animation = $(ElementIds.apSett_animationMenu) as HTMLDivElement
+const _ref_settingsMenu = $(ElementIds.apSett_menu) as HTMLDivElement
+const _ref_margin = $(ElementIds.apSett_marginBtn) as CMenu.CItem.CElement
+const _ref_marginDialog = $(ElementIds.apSett_marginDialog) as CDialog.CElement
+const _ref_pickerFore = $(ElementIds.apSett_colorForePicker) as CColorPicker.CElement
+const _ref_pickerForeBtn = $(ElementIds.apSett_colorForePickerBtn) as CColorPicker.CElement
+const _ref_pickerBackBtn = $(ElementIds.apSett_colorBackPickerBtn2) as CColorPicker.CElement
+const _ref_pickerBack = $(ElementIds.apSett_colorBackPicker) as CColorPicker.CElement
+const _ref_previewForeground = $(ElementIds.apSett_colorPreviewForeground) as HTMLElement
+const _ref_previewBackground = $(ElementIds.apSett_colorPreviewBackground) as HTMLDivElement
+const _ref_versionMenu = $(ElementIds.apSett_versionMenu) as CMenu.CSub.CElement
+const _ref_encodingMenu = $(ElementIds.apSett_encodingMenu) as CMenu.CSub.CElement
+const _ref_correctionMenu = $(ElementIds.apSett_correctionMenu) as CMenu.CSub.CElement
 
 function _subsAnimationChanges(v: SettingsStoreType, o: SettingsStoreType): void {
 	const animation = v.animation
@@ -78,34 +78,34 @@ function _subsAnimationView(v: SettingsStoreType, o: SettingsStoreType): void {
 	const animation = v.animation
 	if (animation === o.animation) return
 
-	_rootRef.setAttribute(RootAttributes.animation, animation)
-	const previousRef = $$(
+	_ref_root.setAttribute(RootAttributes.animation, animation)
+	const ref_previous = $$(
 		`input[name="${CSS.escape(RadioNames.animation)}"]:checked`
 	) as HTMLInputElement
-	const targetRef = $$(
+	const ref_target = $$(
 		`input[name="${CSS.escape(RadioNames.animation)}"][value="${CSS.escape(animation)}"]`
 	) as HTMLInputElement
 
-	if (previousRef === targetRef) {return}
-	if (previousRef) previousRef.checked = false
-	if (targetRef) targetRef.checked = true
+	if (ref_previous === ref_target) {return}
+	if (ref_previous) ref_previous.checked = false
+	if (ref_target) ref_target.checked = true
 }
 
 function _subsThemeView(v: SettingsStoreType, o: SettingsStoreType): void {
 	const theme = v.theme
 	if (theme === o.theme) return
 
-	_rootRef.setAttribute(RootAttributes.theme, theme)
-	const previousRef = $$(
+	_ref_root.setAttribute(RootAttributes.theme, theme)
+	const ref_previous = $$(
 		`input[name="${CSS.escape(RadioNames.theme)}"]:checked`
 	) as HTMLInputElement
-	const targetRef = $$(
+	const ref_target = $$(
 		`input[name="${CSS.escape(RadioNames.theme)}"][value="${CSS.escape(theme)}"]`
 	) as HTMLInputElement
 
-	if (previousRef === targetRef) {return}
-	if (previousRef) previousRef.checked = false
-	if (targetRef) targetRef.checked = true
+	if (ref_previous === ref_target) {return}
+	if (ref_previous) ref_previous.checked = false
+	if (ref_target) ref_target.checked = true
 }
 
 function _subsBackgroundColorChanges(v: SettingsStoreType, o: SettingsStoreType): void {
@@ -126,16 +126,16 @@ function _subsEncodingModeView(v: SettingsStoreType, o: SettingsStoreType): void
 	const encoding = v.encodingMode
 	if (encoding === o.encodingMode) return
 
-	const previousRef = $$(
+	const ref_previous = $$(
 		`input[name="${CSS.escape(RadioNames.encoding)}"]:checked`
 	) as HTMLInputElement
-	const targetRef = $$(
+	const ref_target = $$(
 		`input[name="${CSS.escape(RadioNames.encoding)}"][value="${CSS.escape(encoding)}"]`
 	) as HTMLInputElement
 
-	if (previousRef === targetRef) {return}
-	if (previousRef) previousRef.checked = false
-	if (targetRef) targetRef.checked = true
+	if (ref_previous === ref_target) {return}
+	if (ref_previous) ref_previous.checked = false
+	if (ref_target) ref_target.checked = true
 }
 
 function _subsEncodingModeChanges(v: SettingsStoreType, o: SettingsStoreType): void {
@@ -149,16 +149,16 @@ function _subsECLView(v: SettingsStoreType, o: SettingsStoreType): void {
 	const ecl = v.errorCorrectionLevel
 	if (ecl === o.errorCorrectionLevel) return
 
-	const previousRef = $$(
+	const ref_previous = $$(
 		`input[name="${CSS.escape(RadioNames.correction)}"]:checked`
 	) as HTMLInputElement
-	const targetRef = $$(
+	const ref_target = $$(
 		`input[name="${CSS.escape(RadioNames.correction)}"][value="${CSS.escape(ecl)}"]`
 	) as HTMLInputElement
 
-	if (previousRef === targetRef) {return}
-	if (previousRef) previousRef.checked = false
-	if (targetRef) targetRef.checked = true
+	if (ref_previous === ref_target) {return}
+	if (ref_previous) ref_previous.checked = false
+	if (ref_target) ref_target.checked = true
 }
 
 function _subsECLChanges(v: SettingsStoreType, o: SettingsStoreType): void {
@@ -179,16 +179,16 @@ function _subsVersionView(v: SettingsStoreType, o: SettingsStoreType): void {
 	const version = v.version
 	if (version === o.version) return
 
-	const previousRef = $$(
+	const ref_previous = $$(
 		`input[name="${CSS.escape(RadioNames.version)}"]:checked`
 	) as HTMLInputElement
-	const targetRef = $$(
+	const ref_target = $$(
 		`input[name="${CSS.escape(RadioNames.version)}"][value="${CSS.escape(version)}"]`
 	) as HTMLInputElement
 
-	if (previousRef === targetRef) {return}
-	if (previousRef) previousRef.checked = false
-	if (targetRef) targetRef.checked = true
+	if (ref_previous === ref_target) {return}
+	if (ref_previous) ref_previous.checked = false
+	if (ref_target) ref_target.checked = true
 }
 
 function _subsVersionChanges(v: SettingsStoreType, o: SettingsStoreType): void {
@@ -216,90 +216,90 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_themeRef.addEventListener('change', ev => {
+	_ref_theme.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as PlatformThemeMode
 		if (!value || !isValidEnumValue(value, PlatformThemeMode)) {return}
 
-		_settingsMenuRef.hidePopover()
+		_ref_settingsMenu.hidePopover()
 		SettingsStore.update(v => v.theme = value)
 	})
 
-	_animationRef.addEventListener('change', ev => {
+	_ref_animation.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as PlatformAnimationMode
 		if (!value || !isValidEnumValue(value, PlatformAnimationMode)) {return}
 
-		_settingsMenuRef.hidePopover()
+		_ref_settingsMenu.hidePopover()
 		SettingsStore.update(v => v.animation = value)
 	})
 
-	_marginRef.addEventListener('click', () => {
-		_settingsMenuRef.hidePopover()
-		_marginInputRef.value = SettingsStore.value.margin + ''
-		_marginDialogRef.showModal()
+	_ref_margin.addEventListener('click', () => {
+		_ref_settingsMenu.hidePopover()
+		_ref_marginInput.value = SettingsStore.value.margin + ''
+		_ref_marginDialog.showModal()
 	})
 
-	_marginSaveRef.addEventListener('click', () => {
-		const margin = Math_clamp(safeNumber(_marginInputRef.valueAsNumber), 0, Number.POSITIVE_INFINITY)
+	_ref_marginSave.addEventListener('click', () => {
+		const margin = Math_clamp(safeNumber(_ref_marginInput.valueAsNumber), 0, Number.POSITIVE_INFINITY)
 		SettingsStore.update(v => v.margin = margin)
 	})
 
-	_colorBtnRef.addEventListener('click', () => {
+	_ref_colorBtn.addEventListener('click', () => {
 		const settings = SettingsStore.value
-		_settingsMenuRef.hidePopover()
-		_pickerForeBtnRef.textContent = settings.color
-		_pickerBackBtnRef.textContent = settings.backgroundColor
-		_previewForegroundRef.style.setProperty('fill', settings.color)
-		_previewBackgroundRef.style.setProperty('background-color', settings.backgroundColor)
-		updateColorPickerRef(_pickerBackRef, {
-			ColorPickerValue: SettingsStore.value.backgroundColor
+		_ref_settingsMenu.hidePopover()
+		_ref_pickerForeBtn.textContent = settings.color
+		_ref_pickerBackBtn.textContent = settings.backgroundColor
+		_ref_previewForeground.style.setProperty('fill', settings.color)
+		_ref_previewBackground.style.setProperty('background-color', settings.backgroundColor)
+		CColorPicker.update(_ref_pickerBack, {
+			ColorPicker: {value: SettingsStore.value.backgroundColor}
 		})
-		updateColorPickerRef(_pickerForeRef, {
-			ColorPickerValue: SettingsStore.value.color
+		CColorPicker.update(_ref_pickerFore, {
+			ColorPicker: {value: SettingsStore.value.color}
 		})
-		_colorDialogRef.showModal()
+		_ref_colorDialog.showModal()
 	})
 
-	_pickerForeRef.addEventListener(ColorPickerEvents.input, () => {
-		const color = getColorPickerRefValue(_pickerForeRef)
+	_ref_pickerFore.addEventListener(CColorPicker.Events.input, () => {
+		const color = CColorPicker.getValue(_ref_pickerFore)
 		requestAnimationFrame(() => {
-			_previewForegroundRef.style.setProperty('fill', color)
+			_ref_previewForeground.style.setProperty('fill', color)
 		})
 	})
 
-	_pickerBackRef.addEventListener(ColorPickerEvents.input, () => {
-		const color = getColorPickerRefValue(_pickerBackRef)
+	_ref_pickerBack.addEventListener(CColorPicker.Events.input, () => {
+		const color = CColorPicker.getValue(_ref_pickerBack)
 		requestAnimationFrame(() => {
-			_previewBackgroundRef.style.setProperty('background-color', color)
+			_ref_previewBackground.style.setProperty('background-color', color)
 		})
 	})
 
-	_pickerForeRef.addEventListener('beforetoggle', (ev) => {
+	_ref_pickerFore.addEventListener('beforetoggle', (ev) => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
 		if (isOpen) {return}
 
-		_pickerForeBtnRef.textContent = getColorPickerRefValue(_pickerForeRef)
+		_ref_pickerForeBtn.textContent = CColorPicker.getValue(_ref_pickerFore)
 	})
 
-	_pickerBackRef.addEventListener('beforetoggle', (ev) => {
+	_ref_pickerBack.addEventListener('beforetoggle', (ev) => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
 		if (isOpen) {return}
 
-		_pickerBackBtnRef.textContent = getColorPickerRefValue(_pickerBackRef)
+		_ref_pickerBackBtn.textContent = CColorPicker.getValue(_ref_pickerBack)
 	})
 
-	_colorSaveRef.addEventListener('click', () => {
-		const backgroundColor = getColorPickerRefValue(_pickerBackRef)
-		const foregroundColor = getColorPickerRefValue(_pickerForeRef)
+	_ref_colorSave.addEventListener('click', () => {
+		const backgroundColor = CColorPicker.getValue(_ref_pickerBack)
+		const foregroundColor = CColorPicker.getValue(_ref_pickerFore)
 		SettingsStore.update(v => {
 			v.backgroundColor = backgroundColor
 			v.color = foregroundColor
 		})
 	})
 
-	_versionMenuRef.addEventListener('change', (ev) => {
-		_settingsMenuRef.hidePopover()
+	_ref_versionMenu.addEventListener('change', (ev) => {
+		_ref_settingsMenu.hidePopover()
 
 		const target = ev.target as HTMLInputElement
 		const value = target.value
@@ -316,8 +316,8 @@ function _initEvents(): void {
 		}
 	})
 
-	_encodingMenuRef.addEventListener('change', (ev) => {
-		_settingsMenuRef.hidePopover()
+	_ref_encodingMenu.addEventListener('change', (ev) => {
+		_ref_settingsMenu.hidePopover()
 		const target = ev.target as HTMLInputElement
 		const value = target.value as EncodingMode
 		if (!isValidEnumValue(value, EncodingMode)) {return}
@@ -325,8 +325,8 @@ function _initEvents(): void {
 		SettingsStore.update(v => v.encodingMode = value)
 	})
 
-	_correctionMenuRef.addEventListener('change', (ev) => {
-		_settingsMenuRef.hidePopover()
+	_ref_correctionMenu.addEventListener('change', (ev) => {
+		_ref_settingsMenu.hidePopover()
 		const target = ev.target as HTMLInputElement
 		const value = target.value as ErrorCorrectionLevel
 		if (!isValidEnumValue(value, ErrorCorrectionLevel)) {return}

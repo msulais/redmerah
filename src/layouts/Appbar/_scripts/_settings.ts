@@ -1,51 +1,63 @@
 import { ElementIds, ID, RadioGroupNames } from "./_enums"
-import { updateIconButtonRef } from "@/components/Button"
+import { CButton } from "@/components/Button"
 import { isValidEnumValue } from "@/utils/object"
 import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
 import { LocalStorageKeys } from "@/enums/storage"
 import { RootAttributes } from "@/enums/attributes"
 import { generateColorPalette, hexToRgb, isColorValid } from "@/utils/color"
 import { GlobalElementIds } from "@/enums/ids"
-import { ColorPickerAttributes, ColorPickerEvents, updateColorPickerRef } from "@/components/ColorPicker"
+import { CColorPicker } from "@/components/ColorPicker"
 import type { RGBColor, HEXColor } from "@/types/color"
 
 const $ = (id: string) => document.getElementById(id)
 const $$ = (selector: string, from = document) => from.querySelector(selector)
-const _rootRef = document.documentElement
+const _ref_root = document.documentElement
+const _ref_btn = $(ID + ElementIds.appbarSettingsButton) as HTMLButtonElement
+const _ref_menu = $(ID + ElementIds.appbarSettingsMenu) as HTMLDivElement
+const _ref_animationMenu = $(ID + ElementIds.appbarSettingsAnimationMenu) as HTMLDivElement
+const _ref_themeMenu = $(ID + ElementIds.appbarSettingsThemeMenu) as HTMLDivElement
+const _ref_colorPicker = $(ID + ElementIds.appbarColorPicker) as HTMLDivElement
+const _ref_accentBtn = $(ID + ElementIds.appbarSettingsAccentButton) as HTMLButtonElement
+const _ref_accentColor = $(GlobalElementIds.colorAccent) as HTMLStyleElement
+let _time_accent: number | NodeJS.Timeout | null = null
+
+function _rgbToCSS (rgb: RGBColor) {
+	return `${Math.round(rgb.r * 0xff)}, ${Math.round(rgb.g * 0xff)}, ${Math.round(rgb.b * 0xff)}`
+}
 
 function _initSettings(): void {
 	function initTheme(): void {
 		const theme = localStorage.getItem(LocalStorageKeys.platformTheme)
 		if (!theme || !isValidEnumValue(theme, PlatformThemeMode)) return
 
-		_rootRef.setAttribute(RootAttributes.theme, theme)
-		const previous = $$(
+		_ref_root.setAttribute(RootAttributes.theme, theme)
+		const ref_previous = $$(
 			`input[name="${CSS.escape(RadioGroupNames.settingsTheme)}"]:checked`
 		) as HTMLInputElement
-		const target = $$(
+		const ref_target = $$(
 			`input[name="${CSS.escape(RadioGroupNames.settingsTheme)}"][value="${CSS.escape(theme)}"]`
 		) as HTMLInputElement
 
-		if (previous === target) return
-		if (previous) previous.checked = false
-		if (target) target.checked = true
+		if (ref_previous === ref_target) return
+		if (ref_previous) ref_previous.checked = false
+		if (ref_target) ref_target.checked = true
 	}
 
 	function initAnimation(): void {
 		const animation = localStorage.getItem(LocalStorageKeys.platformAnimation)
 		if (!animation || !isValidEnumValue(animation, PlatformAnimationMode)) return
 
-		_rootRef.setAttribute(RootAttributes.animation, animation)
-		const previous = $$(
+		_ref_root.setAttribute(RootAttributes.animation, animation)
+		const ref_previous = $$(
 			`input[name="${CSS.escape(RadioGroupNames.settingsAnimation)}"]:checked`
 		) as HTMLInputElement
-		const target = $$(
+		const ref_target = $$(
 			`input[name="${CSS.escape(RadioGroupNames.settingsAnimation)}"][value="${CSS.escape(animation)}"]`
 		) as HTMLInputElement
 
-		if (previous === target) return
-		if (previous) previous.checked = false
-		if (target) target.checked = true
+		if (ref_previous === ref_target) return
+		if (ref_previous) ref_previous.checked = false
+		if (ref_target) ref_target.checked = true
 	}
 
 	function initAccentColor(): void {
@@ -53,13 +65,9 @@ function _initSettings(): void {
 		if (!accent || !isColorValid(accent)) return
 
 		const rgbToCSS = (rgb: RGBColor) => `${Math.round(rgb.r * 0xff)}, ${Math.round(rgb.g * 0xff)}, ${Math.round(rgb.b * 0xff)}`
-		const accentColorElement = $(GlobalElementIds.colorAccent) as HTMLStyleElement
-		const colorPickerRef = $(ID + ElementIds.appbarColorPicker) as HTMLDivElement
 		const palette = generateColorPalette(accent as HEXColor)
-		accentColorElement.innerHTML = `:root{--g-color-accent-light: ${rgbToCSS(hexToRgb(palette.color))};--g-color-accent-dark: ${rgbToCSS(hexToRgb(palette.colorDark))};--g-color-on-accent-light: ${rgbToCSS(hexToRgb(palette.onColor))};--g-color-on-accent-dark: ${rgbToCSS(hexToRgb(palette.onColorDark))};}`;
-		updateColorPickerRef(colorPickerRef, {
-			ColorPickerValue: accent as HEXColor
-		})
+		_ref_accentColor.innerHTML = `:root{--g-color-accent-light: ${rgbToCSS(hexToRgb(palette.color))};--g-color-accent-dark: ${rgbToCSS(hexToRgb(palette.colorDark))};--g-color-on-accent-light: ${rgbToCSS(hexToRgb(palette.onColor))};--g-color-on-accent-dark: ${rgbToCSS(hexToRgb(palette.onColorDark))};}`;
+		CColorPicker.update(_ref_colorPicker, {ColorPicker: {value: accent as HEXColor}})
 	}
 
 	initTheme()
@@ -67,59 +75,49 @@ function _initSettings(): void {
 	initAccentColor()
 }
 
-function _initSettingsMenu(): void {
-	const rgbToCSS = (rgb: RGBColor) => `${Math.round(rgb.r * 0xff)}, ${Math.round(rgb.g * 0xff)}, ${Math.round(rgb.b * 0xff)}`
-	const buttonRef = $(ID + ElementIds.appbarSettingsButton) as HTMLButtonElement
-	const menuRef = $(ID + ElementIds.appbarSettingsMenu) as HTMLDivElement
-	const animationMenuRef = $(ID + ElementIds.appbarSettingsAnimationMenu) as HTMLDivElement
-	const themeMenuRef = $(ID + ElementIds.appbarSettingsThemeMenu) as HTMLDivElement
-	const colorPickerRef = $(ID + ElementIds.appbarColorPicker) as HTMLDivElement
-	const accentButtonRef = $(ID + ElementIds.appbarSettingsAccentButton) as HTMLButtonElement
-	const accentColorElement = $(GlobalElementIds.colorAccent) as HTMLStyleElement
-	let timeAccentId: number | NodeJS.Timeout | null = null
-
-	menuRef.addEventListener('click', () => {
+function _initEvents(): void {
+	_ref_menu.addEventListener('click', () => {
 		switch (document.activeElement) {
-		case accentButtonRef:
-			menuRef.hidePopover()
+		case _ref_accentBtn:
+			_ref_menu.hidePopover()
 			break
 		}
 	})
 
-	menuRef.addEventListener('toggle', ev => {
+	_ref_menu.addEventListener('toggle', ev => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
-		updateIconButtonRef(buttonRef, {
-			ButtonFocused: isOpen
+		CButton.CIcon.update(_ref_btn, {
+			Button: { focused: isOpen }
 		})
 	})
 
-	animationMenuRef.addEventListener('change', ev => {
+	_ref_animationMenu.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value
 		if (!value || !isValidEnumValue(value, PlatformAnimationMode)) return
 
 		localStorage.setItem(LocalStorageKeys.platformAnimation, value)
-		_rootRef.setAttribute(RootAttributes.animation, value)
-		menuRef.hidePopover()
+		_ref_root.setAttribute(RootAttributes.animation, value)
+		_ref_menu.hidePopover()
 	})
 
-	themeMenuRef.addEventListener('change', ev => {
+	_ref_themeMenu.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value
 		if (!value || !isValidEnumValue(value, PlatformThemeMode)) return
 
 		localStorage.setItem(LocalStorageKeys.platformTheme, value)
-		_rootRef.setAttribute(RootAttributes.theme, value)
-		menuRef.hidePopover()
+		_ref_root.setAttribute(RootAttributes.theme, value)
+		_ref_menu.hidePopover()
 	})
 
-	colorPickerRef.addEventListener(ColorPickerEvents.input, () => {
-		if (timeAccentId !== null) clearTimeout(timeAccentId)
+	_ref_colorPicker.addEventListener(CColorPicker.Events.input, () => {
+		if (_time_accent !== null) clearTimeout(_time_accent)
 
-		timeAccentId = setTimeout(() => {
-			const accent = colorPickerRef.getAttribute(ColorPickerAttributes.value)! as HEXColor
+		_time_accent = setTimeout(() => {
+			const accent = CColorPicker.getValue(_ref_colorPicker)! as HEXColor
 			const palette = generateColorPalette(accent)
-			accentColorElement.innerHTML = `:root{--g-color-accent-light: ${rgbToCSS(hexToRgb(palette.color))};--g-color-accent-dark: ${rgbToCSS(hexToRgb(palette.colorDark))};--g-color-on-accent-light: ${rgbToCSS(hexToRgb(palette.onColor))};--g-color-on-accent-dark: ${rgbToCSS(hexToRgb(palette.onColorDark))};}`;
+			_ref_accentColor.innerHTML = `:root{--g-color-accent-light: ${_rgbToCSS(hexToRgb(palette.color))};--g-color-accent-dark: ${_rgbToCSS(hexToRgb(palette.colorDark))};--g-color-on-accent-light: ${_rgbToCSS(hexToRgb(palette.onColor))};--g-color-on-accent-dark: ${_rgbToCSS(hexToRgb(palette.onColorDark))};}`;
 			localStorage.setItem(LocalStorageKeys.platformAccentColor, accent)
 		}, 50)
 	})
@@ -127,5 +125,5 @@ function _initSettingsMenu(): void {
 
 export default () => {
 	_initSettings()
-	_initSettingsMenu()
+	_initEvents()
 }

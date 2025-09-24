@@ -26,8 +26,8 @@ import { IconCodes } from '@/enums/icons'
 import { ElementIds } from '../_scripts/_shared/_ids'
 import { RadioNames } from '../_scripts/_shared/_input-names'
 import { DEFAULT_ANIMATION, DEFAULT_LISTS, DEFAULT_THEME, DEFAULT_INSTANT_RESULT, APP } from '../_scripts/_shared/_constant'
-import { ButtonVariant } from '@/components/Button'
-import { ListVariant } from '@/components/List'
+import { CButton } from '@/components/Button'
+import { CList } from '@/components/List'
 import { pxToRem } from '@/utils/css'
 import { CSSClasses } from '../_styles/_css'
 import { Commands } from '../_scripts/_shared/_commands'
@@ -95,7 +95,7 @@ const themes: {
 	<Fragment slot="headline">{APP.name}</Fragment>
 	<Tooltip slot="trailing">
 		<Button
-			ButtonVariant={ButtonVariant.filled}
+			ButtonVariant={CButton.Variant.filled}
 			class={CSSClasses.generateBtn}
 			id={ElementIds.ap_generator}>
 			<Icon IconCode={IconCodes.arrowSync}/>
@@ -236,7 +236,7 @@ const themes: {
 				<List
 					class={CSSClasses.listItem}
 					ListTagName="li"
-					ListVariant={ListVariant.tonal}
+					ListVariant={CList.Variant.tonal}
 					ListTrailingAttr={{style: {
 						display: 'flex',
 						alignItems: 'center',
@@ -271,9 +271,9 @@ const themes: {
 		</ul>
 	</Tooltip>
 	<form slot="footer" method="dialog" style="display:contents">
-		<Button ButtonVariant={ButtonVariant.tonal}>Close</Button>
+		<Button ButtonVariant={CButton.Variant.tonal}>Close</Button>
 		<Button
-			ButtonVariant={ButtonVariant.filled}
+			ButtonVariant={CButton.Variant.filled}
 			id={ElementIds.apSett_listNew}>New</Button>
 	</form>
 </Dialog>
@@ -304,9 +304,9 @@ const themes: {
 		marginTop: pxToRem(8) + 'rem'
 	}}>Each item separated by semicolon (;), tab or new line.</p>
 	<form slot="footer" method="dialog" style="display:contents">
-		<Button ButtonVariant={ButtonVariant.tonal}>Cancel</Button>
+		<Button ButtonVariant={CButton.Variant.tonal}>Cancel</Button>
 		<Button
-			ButtonVariant={ButtonVariant.filled}
+			ButtonVariant={CButton.Variant.filled}
 			id={ElementIds.apSett_listSave}>Save</Button>
 	</form>
 </Dialog>
@@ -320,7 +320,7 @@ const themes: {
 			borderColor: `rgb(${AppCSSColors.accent})`
 		}}
 		id={ElementIds.apSett_listDeleteItem}
-		ListVariant={ListVariant.outlined}>
+		ListVariant={CList.Variant.outlined}>
 		<Icon
 			IconCode={IconCodes.textBulletListLtr}
 			IconFilled
@@ -329,9 +329,9 @@ const themes: {
 		/>
 	</List>
 	<form slot="footer" method="dialog" style="display:contents">
-		<Button ButtonVariant={ButtonVariant.tonal}>Cancel</Button>
+		<Button ButtonVariant={CButton.Variant.tonal}>Cancel</Button>
 		<Button
-			ButtonVariant={ButtonVariant.filled}
+			ButtonVariant={CButton.Variant.filled}
 			id={ElementIds.apSett_listDelete}>Delete</Button>
 	</form>
 </Dialog>
@@ -349,9 +349,9 @@ const themes: {
 		CheckBoxChecked
 		CheckBoxInputAttr={{id: ElementIds.ap_copyColorsHsl}}>HSL</CheckBox>
 	<form slot="footer" method="dialog" style="display:contents">
-		<Button ButtonVariant={ButtonVariant.tonal}>Cancel</Button>
+		<Button ButtonVariant={CButton.Variant.tonal}>Cancel</Button>
 		<Button
-			ButtonVariant={ButtonVariant.filled}
+			ButtonVariant={CButton.Variant.filled}
 			id={ElementIds.ap_copyColorsBtn}>Copy</Button>
 	</form>
 </Dialog>

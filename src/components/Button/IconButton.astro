@@ -1,10 +1,7 @@
 ---
 import { joinClassList } from '@/utils/attributes'
 
-import {
-	ButtonClasses,
-	type IconButtonProps
-} from '.'
+import {CButton, type IconButtonProps} from '.'
 import Icon from '@/components/Icon/index.astro'
 import Button from './index.astro'
 import './index.scss'
@@ -23,9 +20,10 @@ const {
 	IconCode,
 	...iconOther
 } = IconButtonIconAttr
+const cls = CButton.Classes
 ---
 <Button
-	class={joinClassList(ButtonClasses.icon, className)}
+	class={joinClassList(cls.icon, className)}
 	{...other}>
 	<Icon
 		IconCode={IconCode ?? IconButtonCode}

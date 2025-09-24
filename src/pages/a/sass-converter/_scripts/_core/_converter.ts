@@ -2,10 +2,10 @@ import { ObservableStore } from "@/utils/store"
 import { DEFAULT_SASS_TEXT, DEFAULT_SCSS_TEXT } from "../_shared/_constant"
 import { $ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
-import { type ButtonElement } from "@/components/Button"
+import { CButton } from "@/components/Button"
 import { Math_clamp } from "@/utils/math"
-import type { MenuItemElement, SubMenuElement } from "@/components/Menu"
-import type { ToastElement } from "@/components/Toast"
+import { CMenu } from "@/components/Menu"
+import { CToast } from "@/components/Toast"
 import { downloadFile, pickFile, readFileAsText } from "@/utils/file"
 import { isTargetValidElement } from "@/utils/element"
 import { SettingsStore } from "./_settings"
@@ -24,44 +24,44 @@ export const ConverterStore = new ObservableStore<ConverterStoreType>({
 	scss: DEFAULT_SCSS_TEXT
 })
 
-const _inputContainerRef = $(ElementIds.bd_inputContainer) as HTMLDivElement
-const _sliderRef = $(ElementIds.bd_slider) as HTMLDivElement
-const _moreMenuRef = $(ElementIds.apMore_menu) as HTMLDivElement
-const _resetSCSSRef = $(ElementIds.apMore_resetSCSS) as MenuItemElement
-const _resetSASSRef = $(ElementIds.apMore_resetSASS) as MenuItemElement
-const _openFileRef = $(ElementIds.apMore_open) as MenuItemElement
+const _ref_inputContainer = $(ElementIds.bd_inputContainer) as HTMLDivElement
+const _ref_slider = $(ElementIds.bd_slider) as HTMLDivElement
+const _ref_moreMenu = $(ElementIds.apMore_menu) as HTMLDivElement
+const _ref_resetSCSS = $(ElementIds.apMore_resetSCSS) as CMenu.CItem.CElement
+const _ref_resetSASS = $(ElementIds.apMore_resetSASS) as CMenu.CItem.CElement
+const _ref_openFile = $(ElementIds.apMore_open) as CMenu.CItem.CElement
 
 // dow = download
-const _dow_menuRef = $(ElementIds.apMore_downloadMenu) as SubMenuElement
-const _dow_scssRef = $(ElementIds.apMore_downloadSCSS) as MenuItemElement
-const _dow_sassRef = $(ElementIds.apMore_downloadSASS) as MenuItemElement
-const _dow_cssRef = $(ElementIds.apMore_downloadCSS) as MenuItemElement
+const _ref_dow_menu = $(ElementIds.apMore_downloadMenu) as CMenu.CSub.CElement
+const _ref_dow_scss = $(ElementIds.apMore_downloadSCSS) as CMenu.CItem.CElement
+const _ref_dow_sass = $(ElementIds.apMore_downloadSASS) as CMenu.CItem.CElement
+const _ref_dow_css = $(ElementIds.apMore_downloadCSS) as CMenu.CItem.CElement
 
 // cp =  copy
-const _cp_menuRef = $(ElementIds.apMore_copyMenu) as SubMenuElement
-const _cp_scssRef = $(ElementIds.apMore_copySCSS) as MenuItemElement
-const _cp_sassRef = $(ElementIds.apMore_copySASS) as MenuItemElement
-const _cp_cssRef = $(ElementIds.apMore_copyCSS) as MenuItemElement
+const _ref_cp_menu = $(ElementIds.apMore_copyMenu) as CMenu.CSub.CElement
+const _ref_cp_scss = $(ElementIds.apMore_copySCSS) as CMenu.CItem.CElement
+const _ref_cp_sass = $(ElementIds.apMore_copySASS) as CMenu.CItem.CElement
+const _ref_cp_css = $(ElementIds.apMore_copyCSS) as CMenu.CItem.CElement
 
 // toa = toast
-const _toa_copiedRef = $(ElementIds.bdToas_copied) as ToastElement
-const _toa_noFileRef = $(ElementIds.bdToas_noFile) as ToastElement
-const _toa_readErrorRef = $(ElementIds.bdToas_readError) as ToastElement
+const _ref_toa_copied = $(ElementIds.bdToas_copied) as CToast.CElement
+const _ref_toa_noFile = $(ElementIds.bdToas_noFile) as CToast.CElement
+const _ref_toa_readError = $(ElementIds.bdToas_readError) as CToast.CElement
 
 // inp = input
-const _inp_scssRef = $(ElementIds.bd_scss) as HTMLTextAreaElement
-const _inp_sassRef = $(ElementIds.bd_sass) as HTMLTextAreaElement
+const _ref_inp_scss = $(ElementIds.bd_scss) as HTMLTextAreaElement
+const _ref_inp_sass = $(ElementIds.bd_sass) as HTMLTextAreaElement
 
 // out = output
-const _out_cssRef = $(ElementIds.bd_css) as HTMLTextAreaElement
+const _ref_out_css = $(ElementIds.bd_css) as HTMLTextAreaElement
 
-let _timeUpdateId: NodeJS.Timeout | number | undefined
-let _timeSCSSId: NodeJS.Timeout | number | undefined
-let _timeSASSId: NodeJS.Timeout | number | undefined
+let _time_update: NodeJS.Timeout | number | undefined
+let _time_SCSS: NodeJS.Timeout | number | undefined
+let _time_SASS: NodeJS.Timeout | number | undefined
 
 export function updateCSSOutput(): void {
-	clearTimeout(_timeUpdateId)
-	_timeUpdateId = setTimeout(() => {
+	clearTimeout(_time_update)
+	_time_update = setTimeout(() => {
 		const store = ConverterStore.value
 		const settings = SettingsStore.value
 		const mode = settings.inputMode
@@ -71,8 +71,8 @@ export function updateCSSOutput(): void {
 			style: minify? 'compressed' : 'expanded',
 			syntax: mode === InputMode.sass? 'indented' : 'scss',
 		})
-		.then((v) => _out_cssRef.value = v.css)
-		.catch(() => _out_cssRef.value = '')
+		.then((v) => _ref_out_css.value = v.css)
+		.catch(() => _ref_out_css.value = '')
 	}, 100)
 }
 
@@ -80,16 +80,16 @@ function _subsSCSSChanges(v: ConverterStoreType, o: ConverterStoreType): void {
 	const scss = v.scss
 	if (scss === o.scss) {return}
 
-	clearTimeout(_timeSCSSId)
-	_timeSCSSId = setTimeout(() => {
+	clearTimeout(_time_SCSS)
+	_time_SCSS = setTimeout(() => {
 		saveStorageItem('input:scss', scss)
 	}, 100)
 }
 
 function _subsSCSSView(v: ConverterStoreType, o: ConverterStoreType): void {
 	const scss = v.scss
-	if (scss !== _inp_scssRef.value) {
-		_inp_scssRef.value = scss
+	if (scss !== _ref_inp_scss.value) {
+		_ref_inp_scss.value = scss
 	}
 
 	if (scss === o.scss) {return}
@@ -101,16 +101,16 @@ function _subsSASSChanges(v: ConverterStoreType, o: ConverterStoreType): void {
 	const sass = v.sass
 	if (sass === o.sass) {return}
 
-	clearTimeout(_timeSASSId)
-	_timeSASSId = setTimeout(() => {
+	clearTimeout(_time_SASS)
+	_time_SASS = setTimeout(() => {
 		saveStorageItem('input:sass', sass)
 	}, 100)
 }
 
 function _subsSASSView(v: ConverterStoreType, o: ConverterStoreType): void {
 	const sass = v.sass
-	if (sass !== _inp_sassRef.value) {
-		_inp_sassRef.value = sass
+	if (sass !== _ref_inp_sass.value) {
+		_ref_inp_sass.value = sass
 	}
 
 	if (sass === o.sass) {return}
@@ -132,7 +132,7 @@ function _initEvents(): void {
 		let x: number | null = null
 		const onPointerUp = (ev: PointerEvent) => {
 			isDragging = false
-			_sliderRef.releasePointerCapture(ev.pointerId)
+			_ref_slider.releasePointerCapture(ev.pointerId)
 		}
 
 		window.addEventListener('resize', () => {
@@ -141,35 +141,35 @@ function _initEvents(): void {
 			screenWidth = document.body.clientWidth
 			requestAnimationFrame(() => {
 				x = Math_clamp(x!, 300, screenWidth - 300)
-				_inputContainerRef.style.setProperty('min-width', pxToRem(x) + 'rem')
-				_inputContainerRef.style.setProperty('max-width', pxToRem(x) + 'rem')
+				_ref_inputContainer.style.setProperty('min-width', pxToRem(x) + 'rem')
+				_ref_inputContainer.style.setProperty('max-width', pxToRem(x) + 'rem')
 			})
 		})
 
-		_sliderRef.addEventListener('pointerdown', (ev) => {
+		_ref_slider.addEventListener('pointerdown', (ev) => {
 			isDragging = true
 			screenWidth = document.body.clientWidth
-			_sliderRef.setPointerCapture(ev.pointerId)
+			_ref_slider.setPointerCapture(ev.pointerId)
 		})
 
-		_sliderRef.addEventListener('pointermove', ev => {
+		_ref_slider.addEventListener('pointermove', ev => {
 			if (!isDragging) {return}
 
 			requestAnimationFrame(() => {
 				const paddingLeft = 10
 				x = Math_clamp(ev.clientX - paddingLeft, 300, screenWidth - 300)
-				_inputContainerRef.style.setProperty('min-width', pxToRem(x) + 'rem')
-				_inputContainerRef.style.setProperty('max-width', pxToRem(x) + 'rem')
+				_ref_inputContainer.style.setProperty('min-width', pxToRem(x) + 'rem')
+				_ref_inputContainer.style.setProperty('max-width', pxToRem(x) + 'rem')
 			})
 		})
 
-		_sliderRef.addEventListener('pointerup', onPointerUp)
-		_sliderRef.addEventListener('pointercancel', onPointerUp)
+		_ref_slider.addEventListener('pointerup', onPointerUp)
+		_ref_slider.addEventListener('pointercancel', onPointerUp)
 
-		_sliderRef.addEventListener('dblclick', () => {
+		_ref_slider.addEventListener('dblclick', () => {
 			x = null
-			_inputContainerRef.style.removeProperty('min-width')
-			_inputContainerRef.style.removeProperty('max-width')
+			_ref_inputContainer.style.removeProperty('min-width')
+			_ref_inputContainer.style.removeProperty('max-width')
 		})
 	}
 
@@ -177,35 +177,35 @@ function _initEvents(): void {
 		let timeMarkdownId: NodeJS.Timeout | number | null = null
 		let timeCSSId: NodeJS.Timeout | number | null = null
 
-		_inp_scssRef.addEventListener('input', () => {
+		_ref_inp_scss.addEventListener('input', () => {
 			if (timeMarkdownId !== null) {
 				clearTimeout(timeMarkdownId)
 			}
 
 			timeMarkdownId = setTimeout(() => {
 				timeMarkdownId = null
-				ConverterStore.update(v => v.scss = _inp_scssRef.value)
+				ConverterStore.update(v => v.scss = _ref_inp_scss.value)
 			}, 100)
 		})
 
-		_inp_sassRef.addEventListener('input', () => {
+		_ref_inp_sass.addEventListener('input', () => {
 			if (timeCSSId !== null) {
 				clearTimeout(timeCSSId)
 			}
 
 			timeCSSId = setTimeout(() => {
 				timeCSSId = null
-				ConverterStore.update(v => v.sass = _inp_sassRef.value)
+				ConverterStore.update(v => v.sass = _ref_inp_sass.value)
 			}, 100)
 		})
 	}
 
 	function actions(): void {
-		_openFileRef.addEventListener('click', () => {
-			_moreMenuRef.hidePopover()
+		_ref_openFile.addEventListener('click', () => {
+			_ref_moreMenu.hidePopover()
 			pickFile('text/*', true).then(async (files) => {
 				if (files == null || files.length == 0) {
-					_toa_noFileRef.showPopover()
+					_ref_toa_noFile.showPopover()
 					return
 				}
 
@@ -218,7 +218,7 @@ function _initEvents(): void {
 						text += await readFileAsText(file)
 					}
 				} catch {
-					_toa_readErrorRef.showPopover()
+					_ref_toa_readError.showPopover()
 					return
 				}
 
@@ -226,59 +226,59 @@ function _initEvents(): void {
 			})
 		})
 
-		_resetSCSSRef.addEventListener('click', () => {
-			_moreMenuRef.hidePopover()
+		_ref_resetSCSS.addEventListener('click', () => {
+			_ref_moreMenu.hidePopover()
 			ConverterStore.update(v => v.scss = DEFAULT_SCSS_TEXT)
 		})
 
-		_resetSASSRef.addEventListener('click', () => {
-			_moreMenuRef.hidePopover()
+		_ref_resetSASS.addEventListener('click', () => {
+			_ref_moreMenu.hidePopover()
 			ConverterStore.update(v => v.sass = DEFAULT_SASS_TEXT)
 		})
 
-		_cp_menuRef.addEventListener('click', () => {
-			const btnRef = document.activeElement as ButtonElement
-			if (!isTargetValidElement(_cp_menuRef, btnRef)) {return}
+		_ref_cp_menu.addEventListener('click', () => {
+			const ref_btn = document.activeElement as CButton.CElement
+			if (!isTargetValidElement(_ref_cp_menu, ref_btn)) {return}
 
-			const close = () => _moreMenuRef.hidePopover()
+			const close = () => _ref_moreMenu.hidePopover()
 			const copy = (text: string) => (navigator
 				.clipboard
 				.writeText(text)
-				.then(() => _toa_copiedRef.showPopover())
+				.then(() => _ref_toa_copied.showPopover())
 			)
-			switch (btnRef) {
-			case _cp_scssRef:
+			switch (ref_btn) {
+			case _ref_cp_scss:
 				close()
-				copy(_inp_scssRef.value)
+				copy(_ref_inp_scss.value)
 				break
-			case _cp_cssRef:
+			case _ref_cp_css:
 				close()
-				copy(_out_cssRef.value)
+				copy(_ref_out_css.value)
 				break
-			case _cp_sassRef:
+			case _ref_cp_sass:
 				close()
-				copy(_inp_sassRef.value)
+				copy(_ref_inp_sass.value)
 				break
 			}
 		})
 
-		_dow_menuRef.addEventListener('click', () => {
-			const btnRef = document.activeElement as ButtonElement
-			if (!isTargetValidElement(_dow_menuRef, btnRef)) {return}
+		_ref_dow_menu.addEventListener('click', () => {
+			const ref_btn = document.activeElement as CButton.CElement
+			if (!isTargetValidElement(_ref_dow_menu, ref_btn)) {return}
 
-			const close = () => _moreMenuRef.hidePopover()
-			switch (btnRef) {
-			case _dow_scssRef:
+			const close = () => _ref_moreMenu.hidePopover()
+			switch (ref_btn) {
+			case _ref_dow_scss:
 				close()
-				downloadFile(new Blob([_inp_scssRef.value]), 'style.scss')
+				downloadFile(new Blob([_ref_inp_scss.value]), 'style.scss')
 				break
-			case _dow_sassRef:
+			case _ref_dow_sass:
 				close()
-				downloadFile(new Blob([_inp_sassRef.value]), 'style.sass')
+				downloadFile(new Blob([_ref_inp_sass.value]), 'style.sass')
 				break
-			case _dow_cssRef:
+			case _ref_dow_css:
 				close()
-				downloadFile(new Blob([_out_cssRef.value]), 'style.css')
+				downloadFile(new Blob([_ref_out_css.value]), 'style.css')
 				break
 			}
 		})

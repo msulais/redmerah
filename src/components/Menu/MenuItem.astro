@@ -1,10 +1,6 @@
 ---
 import { joinClassList } from '@/utils/attributes'
-
-import {
-	MenuClasses,
-	type MenuItemProps
-} from '.'
+import {CMenu, type MenuItemProps} from '.'
 import Button from '@/components/Button/index.astro'
 import './index.scss'
 
@@ -14,11 +10,11 @@ const {
 	role,
 	...other
 } = Astro.props
+
+const cls = CMenu.Classes
 ---
 
 <Button
-	class={joinClassList(MenuClasses.item, className)}
+	class={joinClassList(cls.item, className)}
 	role={role ?? "menuitem"}
-	{...other}>
-	<slot/>
-</Button>
+	{...other}><slot/></Button>

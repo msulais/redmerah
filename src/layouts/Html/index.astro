@@ -11,7 +11,7 @@ import '@/styles/variables.scss'
 import '@/styles/index.scss'
 import { IconCodes } from '@/enums/icons'
 import { AppCSSColors } from '@/enums/app-data'
-import { ButtonVariant } from '@/components/Button'
+import { CButton } from '@/components/Button'
 import { pxToRem } from '@/utils/css'
 
 type Props = {
@@ -69,8 +69,8 @@ const colorToCSS = (hex: HEXColor) => {
 			</Fragment>
 			<p>This web app heavily utilizes the <a style={`border-bottom:${pxToRem(1)}rem solid rgb(${AppCSSColors.accent})`} href="https://developer.mozilla.org/en-US/docs/Web/API/Popover_API">Popover API</a>, which may not be fully supported by your browser. Some features might not function as expected. Please consider using a modern browser for the best experience.</p>
 			<form slot="footer" style="display:contents" method="dialog">
-				<Button ButtonVariant={ButtonVariant.tonal}>Close</Button>
-				<LinkButton LinkButtonNewTab autofocus LinkButtonVariant={ButtonVariant.filled} href="https://developer.mozilla.org/en-US/docs/Web/API/Popover_API#browser_compatibility">Check browser</LinkButton>
+				<Button ButtonVariant={CButton.Variant.tonal}>Close</Button>
+				<LinkButton LinkButtonNewTab autofocus LinkButtonVariant={CButton.Variant.filled} href="https://developer.mozilla.org/en-US/docs/Web/API/Popover_API#browser_compatibility">Check browser</LinkButton>
 			</form>
 		</Dialog>
 		<script src="./_popover-api-check.ts" />

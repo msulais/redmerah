@@ -1,10 +1,6 @@
 ---
 import { joinClassList } from '@/utils/attributes'
-
-import {
-	type DrawerProps,
-	DrawerClasses
-} from '.'
+import {type DrawerProps, CDrawer} from '.'
 import './index.scss'
 
 type Props = DrawerProps
@@ -21,29 +17,25 @@ const {'class': containerClass, ...containerOther} = DrawerContainerAttr ?? {}
 const {'class': headerClass   , ...headerOther   } = DrawerHeaderAttr    ?? {}
 const {'class': contentClass  , ...contentOther  } = DrawerContentAttr   ?? {}
 const {'class': footerClass   , ...footerOther   } = DrawerFooterAttr    ?? {}
+
+const cls = CDrawer.Classes
 ---
 
 <div
-	class={joinClassList(DrawerClasses.drawer, className)}
+	class={joinClassList(cls.drawer, className)}
 	popover={popover}
 	{...other}>
 	<div
-		class={joinClassList(DrawerClasses.container, containerClass)}
+		class={joinClassList(cls.container, containerClass)}
 		{...containerOther}>
 		<div
-			class={joinClassList(DrawerClasses.header, headerClass)}
-			{...headerOther}>
-			<slot name="header"/>
-		</div>
+			class={joinClassList(cls.header, headerClass)}
+			{...headerOther}><slot name="header"/></div>
 		<div
-			class={joinClassList(DrawerClasses.content, contentClass)}
-			{...contentOther}>
-			<slot/>
-		</div>
+			class={joinClassList(cls.content, contentClass)}
+			{...contentOther}><slot/></div>
 		<div
-			class={joinClassList(DrawerClasses.footer, footerClass)}
-			{...footerOther}>
-			<slot name="footer"/>
-		</div>
+			class={joinClassList(cls.footer, footerClass)}
+			{...footerOther}><slot name="footer"/></div>
 	</div>
 </div>

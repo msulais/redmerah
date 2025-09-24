@@ -8,7 +8,7 @@ import { RadioNames } from "../_shared/_input-names"
 import { DEFAULT_ANIMATION, DEFAULT_PICKER_MODE, DEFAULT_THEME } from "../_shared/_constant"
 import { $, $$, $$$ } from "./_dom-utils"
 import { ColorPickerMode } from "../_shared/_enums"
-import type { ComboBoxElement } from "@/components/ComboBox"
+import { CComboBox } from "@/components/ComboBox"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEasing } from "@/enums/animation"
 import { saveStorageItem } from "./_database"
@@ -24,11 +24,11 @@ export const SettingsStore = new ObservableStore<SettingsStoreType>({
 	animation : DEFAULT_ANIMATION,
 	pickerMode: DEFAULT_PICKER_MODE
 })
-const _rootRef = document.documentElement
-const _themeRef = $(ElementIds.apSett_themeMenu) as HTMLDivElement
-const _animationRef = $(ElementIds.apSett_animationMenu) as HTMLDivElement
-const _settingsMenuRef = $(ElementIds.apSett_menu) as HTMLDivElement
-const _pickerModeRef = $(ElementIds.bd_pickerMode) as ComboBoxElement
+const _ref_root = document.documentElement
+const _ref_theme = $(ElementIds.apSett_themeMenu) as HTMLDivElement
+const _ref_animation = $(ElementIds.apSett_animationMenu) as HTMLDivElement
+const _ref_settingsMenu = $(ElementIds.apSett_menu) as HTMLDivElement
+const _ref_pickerMode = $(ElementIds.bd_pickerMode) as CComboBox.CElement
 
 function _subscribeAnimationChanges(v: SettingsStoreType, o: SettingsStoreType): void {
 	const animation = v.animation
@@ -48,34 +48,34 @@ function _subscribeAnimationRefView(v: SettingsStoreType, o: SettingsStoreType):
 	const animation = v.animation
 	if (animation === o.animation) return
 
-	_rootRef.setAttribute(RootAttributes.animation, animation)
-	const previousRef = $$(
+	_ref_root.setAttribute(RootAttributes.animation, animation)
+	const ref_previous = $$(
 		`input[name="${CSS.escape(RadioNames.animation)}"]:checked`
 	) as HTMLInputElement
-	const targetRef = $$(
+	const ref_target = $$(
 		`input[name="${CSS.escape(RadioNames.animation)}"][value="${CSS.escape(animation)}"]`
 	) as HTMLInputElement
 
-	if (previousRef === targetRef) {return}
-	if (previousRef) previousRef.checked = false
-	if (targetRef) targetRef.checked = true
+	if (ref_previous === ref_target) {return}
+	if (ref_previous) ref_previous.checked = false
+	if (ref_target) ref_target.checked = true
 }
 
 function _subscribeThemeRefView(v: SettingsStoreType, o: SettingsStoreType): void {
 	const theme = v.theme
 	if (theme === o.theme) return
 
-	_rootRef.setAttribute(RootAttributes.theme, theme)
-	const previousRef = $$(
+	_ref_root.setAttribute(RootAttributes.theme, theme)
+	const ref_previous = $$(
 		`input[name="${CSS.escape(RadioNames.theme)}"]:checked`
 	) as HTMLInputElement
-	const targetRef = $$(
+	const ref_target = $$(
 		`input[name="${CSS.escape(RadioNames.theme)}"][value="${CSS.escape(theme)}"]`
 	) as HTMLInputElement
 
-	if (previousRef === targetRef) {return}
-	if (previousRef) previousRef.checked = false
-	if (targetRef) targetRef.checked = true
+	if (ref_previous === ref_target) {return}
+	if (ref_previous) ref_previous.checked = false
+	if (ref_target) ref_target.checked = true
 }
 
 function _subscribePickerModeRefView(v: SettingsStoreType, o: SettingsStoreType): void {
@@ -83,7 +83,7 @@ function _subscribePickerModeRefView(v: SettingsStoreType, o: SettingsStoreType)
 	if (pickerMode === o.pickerMode) {return}
 
 	let hasMode = false
-	_pickerModeRef.value = pickerMode
+	_ref_pickerMode.value = pickerMode
 	for (const ref of $$$<HTMLDivElement>('[data-picker-mode]')) {
 		if (!hasMode && ref.dataset.pickerMode === pickerMode) {
 			ref.hidden = false
@@ -121,26 +121,26 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_themeRef.addEventListener('change', ev => {
+	_ref_theme.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as PlatformThemeMode
 		if (!value || !isValidEnumValue(value, PlatformThemeMode)) {return}
 
-		_settingsMenuRef.hidePopover()
+		_ref_settingsMenu.hidePopover()
 		SettingsStore.update(v => v.theme = value)
 	})
 
-	_animationRef.addEventListener('change', ev => {
+	_ref_animation.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as PlatformAnimationMode
 		if (!value || !isValidEnumValue(value, PlatformAnimationMode)) {return}
 
-		_settingsMenuRef.hidePopover()
+		_ref_settingsMenu.hidePopover()
 		SettingsStore.update(v => v.animation = value)
 	})
 
-	_pickerModeRef.addEventListener('change', () => {
-		const value = _pickerModeRef.value as ColorPickerMode
+	_ref_pickerMode.addEventListener('change', () => {
+		const value = _ref_pickerMode.value as ColorPickerMode
 		if (!isValidEnumValue(value, ColorPickerMode)) {return}
 
 		SettingsStore.update(v => v.pickerMode = value)

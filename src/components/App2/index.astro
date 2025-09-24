@@ -1,13 +1,12 @@
 ---
 import { joinClassList } from '@/utils/attributes'
 
-import {
-	AppClasses,
-	type AppProps
-} from '.'
+import {CApp, type AppProps} from '.'
 import './index.scss'
 
 type Props = AppProps
+
+const cls = CApp.Classes
 const {
 	'class': className,
 	AppTagName          = 'div',
@@ -25,30 +24,31 @@ const {'class': bodyClass        , ...bodyOther        } = AppBodyAttr
 const {'class': containerClass   , ...containerOther   } = AppContainerAttr
 const {'class': leftSideBarClass , ...leftSideBarOther } = AppLeftSideBarAttr
 const {'class': rightSideBarClass, ...rightSideBarOther} = AppRightSideBarAttr
-
 const AppDynamic = AppTagName as 'div'
 ---
 
-<AppDynamic class={joinClassList(AppClasses.app, className)} {...other}>
+<AppDynamic
+	class={joinClassList(cls.app, className)}
+	{...other}>
 	<div
-		class={joinClassList(AppClasses.leftSideBar, leftSideBarClass)}
+		class={joinClassList(cls.leftSideBar, leftSideBarClass)}
 		{...leftSideBarOther}><slot name='left-sidebar'/></div>
 	<div
-		class={joinClassList(AppClasses.container, containerClass)}
+		class={joinClassList(cls.container, containerClass)}
 		{...containerOther}>
 		<div
-			class={joinClassList(AppClasses.appBar, appBarClass)}
+			class={joinClassList(cls.appBar, appBarClass)}
 			{...appBarOther}><slot name='appbar'/></div>
 		<div
-			class={joinClassList(AppClasses.body)}
+			class={joinClassList(cls.body)}
 			{...bodyOther}>
 			<slot/>
 		</div>
 		<div
-			class={joinClassList(AppClasses.bottomBar, bottomBarClass)}
+			class={joinClassList(cls.bottomBar, bottomBarClass)}
 			{...bottomBarOther}><slot name='bottombar'/></div>
 	</div>
 	<div
-		class={joinClassList(AppClasses.rightSideBar, rightSideBarClass)}
+		class={joinClassList(cls.rightSideBar, rightSideBarClass)}
 		{...rightSideBarOther}><slot name='right-sidebar'/></div>
 </AppDynamic>

@@ -1,42 +1,42 @@
-import { updateIconButtonRef } from "@/components/Button"
+import { CButton } from "@/components/Button"
 import { ElementIds } from "../_shared/_ids"
 import { $ } from "./_dom-utils"
-import type { MenuItemElement } from "@/components/Menu"
-import type { DialogElement } from "@/components/Dialog"
+import { CMenu } from "@/components/Menu"
+import { CDialog } from "@/components/Dialog"
 import { APP } from "../_shared/_constant"
 
-const _infoMenuRef = $(ElementIds.apInf_menu) as HTMLDivElement
-const _infoButtonRef = $(ElementIds.apInf_btn) as HTMLButtonElement
-const _settingsMenuRef = $(ElementIds.apSett_menu) as HTMLDivElement
-const _settingsButtonRef = $(ElementIds.apSett_button) as HTMLButtonElement
-const _shareButtonRef = $(ElementIds.apInf_shareBtn) as HTMLButtonElement
-const _helpBtnRef = $(ElementIds.apInf_help) as MenuItemElement
-const _helpDialogRef = $(ElementIds.apInf_helpDialog) as DialogElement
+const _ref_infoMenu = $(ElementIds.apInf_menu) as HTMLDivElement
+const _ref_infoBtn = $(ElementIds.apInf_btn) as CButton.CElement
+const _ref_settingsMenu = $(ElementIds.apSett_menu) as HTMLDivElement
+const _ref_settingsBtn = $(ElementIds.apSett_button) as CButton.CElement
+const _ref_shareButton = $(ElementIds.apInf_shareBtn) as CButton.CElement
+const _ref_helpBtn = $(ElementIds.apInf_help) as CMenu.CItem.CElement
+const _ref_helpDialog = $(ElementIds.apInf_helpDialog) as CDialog.CElement
 
 function _initEvents(): void {
-	_helpBtnRef.addEventListener('click', () => {
-		_helpDialogRef.showModal()
+	_ref_helpBtn.addEventListener('click', () => {
+		_ref_helpDialog.showModal()
 	})
 
-	_shareButtonRef.addEventListener('click', () => {
-		_infoMenuRef.hidePopover()
+	_ref_shareButton.addEventListener('click', () => {
+		_ref_infoMenu.hidePopover()
 		navigator.share({
 			text: APP.name,
 			url: document.URL
 		})
 	})
 
-	_infoMenuRef.addEventListener('beforetoggle', ev => {
+	_ref_infoMenu.addEventListener('beforetoggle', ev => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
-		updateIconButtonRef(_infoButtonRef, {
-			ButtonFocused: isOpen
+		CButton.CIcon.update(_ref_infoBtn, {
+			Button: {focused: isOpen}
 		})
 	})
 
-	_settingsMenuRef.addEventListener('beforetoggle', ev => {
+	_ref_settingsMenu.addEventListener('beforetoggle', ev => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
-		updateIconButtonRef(_settingsButtonRef, {
-			ButtonFocused: isOpen
+		CButton.CIcon.update(_ref_settingsBtn, {
+			Button: {focused: isOpen}
 		})
 	})
 }

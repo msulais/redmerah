@@ -1,149 +1,145 @@
-type AppBarProps = astroHTML.JSX.HTMLAttributes & {
+import { $classlist, $query, $is_false, $children, $is_array, $create, $is_node } from "../utils"
+
+export namespace CAppBar {
+	export type CElement<T extends HTMLElement = HTMLElement> = T
+	export type AppBarUpdateOptions<T extends CElement<HTMLElement>> = {
+		AppBar?: {
+			children?: (Node | string)[] | boolean
+			leading ?: (Node | string)[] | boolean
+			headline?: (Node | string)[] | boolean
+			trailing?: (Node | string)[] | boolean
+			refs?: {
+				appBar  ?(ref: T                 ): unknown
+				flex    ?(ref: HTMLDivElement    ): unknown
+				leading ?(ref: HTMLDivElement    ): unknown
+				trailing?(ref: HTMLDivElement    ): unknown
+				content ?(ref: HTMLDivElement    ): unknown
+				headline?(ref: HTMLHeadingElement): unknown
+			}
+		}
+	}
+
+	export enum Classes {
+		appbar   = 'c-appbar2',
+		leading  = appbar + '-leading',
+		trailing = appbar + '-trailing',
+		content  = appbar + '-content',
+		headline = appbar + '-headline',
+		flex = appbar + '-flex'
+	}
+
+	export function create<T extends CElement<HTMLElement>>(
+		options?: AppBarUpdateOptions<T> & {AppBarTagName?: keyof HTMLElementTagNameMap}
+	): T {
+		const ref_appBar = document.createElement(options?.AppBarTagName ?? 'header')
+		return update(ref_appBar, options) as T
+	}
+
+	export function update<T extends CElement<HTMLElement>>(
+		ref_appBar: T,
+		options?: AppBarUpdateOptions<T>
+	): T {
+		const opt = options?.AppBar
+		const refs = opt?.refs
+		$classlist(ref_appBar, Classes.appbar)
+
+		// leading
+		const opt_leading = opt?.leading
+		let ref_leading = $query<HTMLDivElement>(`.${Classes.leading}`, ref_appBar)
+		if ($is_false(opt_leading)) {
+			$children(ref_leading)
+		}
+		else if ($is_array(opt_leading)) {
+			if (!ref_leading) {
+				ref_leading = $create('div')
+				$classlist(ref_leading, Classes.leading)
+			}
+
+			$children(ref_leading, ...opt_leading)
+		}
+
+		// content
+		let ref_content = $query<HTMLDivElement>(`.${Classes.content}`, ref_appBar)
+		if (!ref_content) {
+			ref_content = $create('div')
+			$classlist(ref_content, Classes.content)
+		}
+
+		// content -> headline
+		const opt_headline = opt?.headline
+		let ref_headline = $query<HTMLHeadingElement>(`.${Classes.headline}`, ref_content)
+		if ($is_false(opt_headline)) {
+			$children(ref_headline)
+		}
+		else if ($is_array(opt_headline)) {
+			if (!ref_headline) {
+				ref_headline = $create('h2')
+				$classlist(ref_headline, Classes.headline)
+			}
+
+			$children(ref_headline, ...opt_headline)
+		}
+
+		// content -> children
+		const children: (Node | string)[] = []
+		for (const node of ref_content.childNodes) {
+			if (ref_headline && node === ref_headline) continue
+
+			children.push(node)
+		}
+
+		const opt_children = opt?.children
+		if ($is_false(opt_children)) {
+			children.length = 0
+		}
+		else if ($is_array(opt_children)) {
+			children.length = 0
+			children.push(...opt_children)
+		}
+
+		$children(ref_content, ...[ref_headline, ...children].filter($is_node) as Node[])
+
+		// flex
+		let ref_flex = $query<HTMLDivElement>(`.${Classes.flex}`, ref_appBar)
+		if (!ref_flex) {
+			ref_flex = $create('div')
+			$classlist(ref_flex, Classes.flex)
+		}
+
+		// trailing
+		const opt_trailing = opt?.trailing
+		let ref_trailing = $query<HTMLDivElement>(`.${Classes.trailing}`, ref_appBar)
+		if ($is_false(opt_trailing)) {
+			$children(ref_trailing)
+		}
+		else if ($is_array(opt_trailing)) {
+			if (!ref_trailing) {
+				ref_trailing = $create('div')
+				$classlist(ref_trailing, Classes.trailing)
+			}
+
+			$children(ref_trailing, ...opt_trailing)
+		}
+
+		$children(
+			ref_appBar,
+			...[ref_leading, ref_content, ref_flex, ref_trailing].filter($is_node) as Node[]
+		)
+		refs?.appBar?.(ref_appBar)
+		refs?.content?.(ref_content)
+		refs?.flex?.(ref_flex)
+		if (ref_leading) refs?.leading?.(ref_leading)
+		if (ref_headline) refs?.headline?.(ref_headline)
+		if (ref_trailing) refs?.trailing?.(ref_trailing)
+		return ref_appBar
+	}
+}
+
+export type AppBarProps = astroHTML.JSX.HTMLAttributes & {
 	AppBarTagName     ?: string
 	AppBarContentAttr ?: astroHTML.JSX.HTMLAttributes
 	AppBarLeadingAttr ?: astroHTML.JSX.HTMLAttributes
 	AppBarTrailingAttr?: astroHTML.JSX.HTMLAttributes
 	AppBarHeadingAttr ?: astroHTML.JSX.HTMLAttributes
 	AppBarFlexAttr    ?: astroHTML.JSX.HTMLAttributes
-}
-
-type AppBarElement<T extends HTMLElement> = T
-
-type AppBarUpdateOptions<T extends AppBarElement<HTMLElement>> = {
-	AppBarChildren?: (Node | string)[] | boolean
-	AppBarLeading ?: (Node | string)[] | boolean
-	AppBarHeadline?: (Node | string)[] | boolean
-	AppBarTrailing?: (Node | string)[] | boolean
-	AppBarRefs?: {
-		appBar  ?(ref: T                 ): unknown
-		flex    ?(ref: HTMLDivElement    ): unknown
-		leading ?(ref: HTMLDivElement    ): unknown
-		trailing?(ref: HTMLDivElement    ): unknown
-		content ?(ref: HTMLDivElement    ): unknown
-		headline?(ref: HTMLHeadingElement): unknown
-	}
-}
-
-enum AppBarClasses {
-	appbar   = 'c-appbar2',
-	leading  = appbar + '-leading',
-	trailing = appbar + '-trailing',
-	content  = appbar + '-content',
-	headline = appbar + '-headline',
-	flex = appbar + '-flex'
-}
-
-function createAppBarRef<T extends AppBarElement<HTMLElement>>(
-	options?: AppBarUpdateOptions<T> & {AppBarTagName?: keyof HTMLElementTagNameMap}
-): T {
-	const appBarRef = document.createElement(options?.AppBarTagName ?? 'header')
-	return updateAppBarRef(appBarRef, options) as T
-}
-
-function updateAppBarRef<T extends AppBarElement<HTMLElement>>(
-	appBarRef: T,
-	options?: AppBarUpdateOptions<T>
-): T {
-	const refs = options?.AppBarRefs
-	appBarRef.classList.add(AppBarClasses.appbar)
-
-	// leading
-	const leadingOption = options?.AppBarLeading
-	let leadingRef = appBarRef.querySelector(`.${AppBarClasses.leading}`) as HTMLDivElement | null
-	if (leadingOption === false) {
-		leadingRef?.replaceChildren()
-	}
-	else if (leadingOption !== undefined && leadingOption !== true) {
-		if (!leadingRef) {
-			leadingRef = document.createElement('div')
-			leadingRef.classList.add(AppBarClasses.leading)
-		}
-
-		leadingRef.replaceChildren(...leadingOption)
-	}
-
-	// content
-	let contentRef = appBarRef.querySelector(`.${AppBarClasses.content}`) as HTMLDivElement | null
-	if (!contentRef) {
-		contentRef = document.createElement('div')
-		contentRef.classList.add(AppBarClasses.content)
-	}
-
-	// content -> headline
-	const headlineOption = options?.AppBarHeadline
-	let headlineRef = contentRef.querySelector(`.${AppBarClasses.headline}`) as HTMLHeadingElement | null
-	if (headlineOption === false) {
-		headlineRef?.replaceChildren()
-	}
-	else if (headlineOption !== undefined && headlineOption !== true) {
-		if (!headlineRef) {
-			headlineRef = document.createElement('h2')
-			headlineRef.classList.add(AppBarClasses.headline)
-		}
-
-		headlineRef.replaceChildren(...headlineOption)
-	}
-
-	// content -> children
-	const children: (Node | string)[] = []
-	for (const node of contentRef.childNodes) {
-		if (headlineRef && node === headlineRef) continue
-
-		children.push(node)
-	}
-
-	const childrenOption = options?.AppBarChildren
-	if (childrenOption === false) {
-		children.length = 0
-	}
-	else if (childrenOption !== undefined && childrenOption !== true) {
-		children.length = 0
-		children.push(...childrenOption)
-	}
-
-	contentRef.replaceChildren(...[headlineRef, ...children].filter(
-		v => typeof v === 'string' || v instanceof Node
-	))
-
-	// flex
-	let flexRef = appBarRef.querySelector(`.${AppBarClasses.flex}`) as HTMLDivElement | null
-	if (!flexRef) {
-		flexRef = document.createElement('div')
-		flexRef.classList.add(AppBarClasses.flex)
-	}
-
-	// trailing
-	const trailingOption = options?.AppBarTrailing
-	let trailingRef = appBarRef.querySelector(`.${AppBarClasses.trailing}`) as HTMLDivElement | null
-	if (trailingOption === false) {
-		trailingRef?.replaceChildren()
-	}
-	else if (trailingOption !== undefined && trailingOption !== true) {
-		if (!trailingRef) {
-			trailingRef = document.createElement('div')
-			trailingRef.classList.add(AppBarClasses.trailing)
-		}
-
-		trailingRef.replaceChildren(...trailingOption)
-	}
-
-	appBarRef.replaceChildren(...[leadingRef, contentRef, flexRef, trailingRef].filter(
-		v => typeof v === 'string' || v instanceof Node
-	))
-	refs?.appBar?.(appBarRef)
-	refs?.content?.(contentRef)
-	refs?.flex?.(flexRef)
-	if (leadingRef) refs?.leading?.(leadingRef)
-	if (headlineRef) refs?.headline?.(headlineRef)
-	if (trailingRef) refs?.trailing?.(trailingRef)
-	return appBarRef
-}
-
-export {
-	type AppBarProps,
-	type AppBarUpdateOptions,
-	type AppBarElement,
-	AppBarClasses,
-	createAppBarRef,
-	updateAppBarRef
 }

@@ -9,7 +9,7 @@ import Toast from '@/components/Toast/index.astro'
 import { CSSClasses } from "../_styles/_css"
 import { ElementIds } from '../_scripts/_shared/_ids'
 import { IconCodes } from '@/enums/icons'
-import { ButtonVariant } from '@/components/Button'
+import { CButton } from '@/components/Button'
 import { pxToRem } from '@/utils/css'
 ---
 
@@ -35,7 +35,7 @@ import { pxToRem } from '@/utils/css'
 			There was a problem preventing the screen from staying on. This might be because of a browser error, a permission block, or battery saver being active.
 		</p>
 		<form style="display:contents" slot="footer" method="dialog">
-			<Button ButtonVariant={ButtonVariant.filled}>Close</Button>
+			<Button ButtonVariant={CButton.Variant.filled}>Close</Button>
 		</form>
 	</Dialog>
 	<Toast id={ElementIds.toa_copied}>

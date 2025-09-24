@@ -6,7 +6,7 @@ import { CSSClasses } from '../_styles/_css'
 import { IconCodes } from '@/enums/icons'
 import { ElementIds } from '../_scripts/_shared/_ids'
 import { DEFAULT_SCSS_TEXT, DEFAULT_CSS_TEXT, DEFAULT_TEXT_WRAP, DEFAULT_SASS_TEXT, DEFAULT_INPUT_MODE } from '../_scripts/_shared/_constant'
-import { ButtonVariant } from '@/components/Button'
+import { CButton } from '@/components/Button'
 import { InputMode } from '../_scripts/_shared/_enums'
 ---
 
@@ -16,14 +16,14 @@ import { InputMode } from '../_scripts/_shared/_enums'
 			<Button
 				id={ElementIds.bdTab_scss}
 				ButtonVariant={DEFAULT_INPUT_MODE === InputMode.scss
-					? ButtonVariant.filled
-					: ButtonVariant.outlined
+					? CButton.Variant.filled
+					: CButton.Variant.outlined
 				}>SCSS</Button>
 			<Button
 				id={ElementIds.bdTab_sass}
 				ButtonVariant={DEFAULT_INPUT_MODE === InputMode.sass
-					? ButtonVariant.filled
-					: ButtonVariant.outlined}>SASS</Button>
+					? CButton.Variant.filled
+					: CButton.Variant.outlined}>SASS</Button>
 		</div>
 		<textarea
 			style={DEFAULT_INPUT_MODE === InputMode.sass? "display:none" : undefined}
@@ -43,7 +43,7 @@ import { InputMode } from '../_scripts/_shared/_enums'
 	<div id={ElementIds.bd_slider} class={CSSClasses.bodySlider}/>
 	<div>
 		<div>
-			<Button id={ElementIds.bdTab_css} ButtonVariant={ButtonVariant.filled}>CSS</Button>
+			<Button id={ElementIds.bdTab_css} ButtonVariant={CButton.Variant.filled}>CSS</Button>
 		</div>
 		<textarea
 			id={ElementIds.bd_css}

@@ -7,7 +7,7 @@ import TextFieldButton from '@/components/TextField/TextFieldButton.astro'
 import Toast from '@/components/Toast/index.astro'
 import { EMOJIS_ACTIVITIES, EMOJIS_ANIMAL_AND_NATURE, EMOJIS_FLAGS, EMOJIS_FOOD_AND_DRINK, EMOJIS_OBJECT, EMOJIS_PERSON_AND_BODY, EMOJIS_PERSON_AND_BODY_DARK_SKIN_TONE, EMOJIS_PERSON_AND_BODY_LIGHT_SKIN_TONE, EMOJIS_PERSON_AND_BODY_MEDIUM_DARK_SKIN_TONE, EMOJIS_PERSON_AND_BODY_MEDIUM_LIGHT_SKIN_TONE, EMOJIS_PERSON_AND_BODY_MEDIUM_SKIN_TONE, EMOJIS_SMILEY_AND_EMOTION, EMOJIS_SYMBOLS, EMOJIS_TRAVEL_AND_PLACES } from "@/constants/emoji"
 import { CSSClasses } from '../_styles/_css'
-import { ButtonClasses, ButtonVariant } from '@/components/Button'
+import { CButton } from '@/components/Button'
 import { IconCodes } from '@/enums/icons'
 import { AppCSSColors } from '@/enums/app-data'
 import { ElementIds } from '../_scripts/_shared/_ids'
@@ -124,7 +124,7 @@ const skinTones: {
 				}}>
 				{skinTones.map(v =>
 					<label
-						class={[ButtonClasses.button, ButtonClasses.icon].join(' ')}
+						class={[CButton.Classes.button, CButton.Classes.icon].join(' ')}
 						aria-label={v.name}
 						data-tooltip={v.name}>
 						<input
@@ -146,7 +146,7 @@ const skinTones: {
 				{new Array(maxEmojiList).fill(0).map((_, i) => {
 					const v = EMOJIS_SMILEY_AND_EMOTION[i]
 					return (<li style={v ? undefined : 'display:none'}><Button
-						ButtonVariant={ButtonVariant.tonal}
+						ButtonVariant={CButton.Variant.tonal}
 						data-tooltip={v?.[1] ?? ''}
 						data-emoji={v?.[0] ?? ''}>{v?.[0] ?? ''}</Button></li>)
 				})}

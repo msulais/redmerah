@@ -1,10 +1,6 @@
 ---
 import { joinClassList } from '@/utils/attributes'
-
-import {
-	ModalClasses,
-	type ModalProps
-} from './index'
+import {CModal, type ModalProps} from './index'
 import './index.scss'
 
 type Props = ModalProps
@@ -33,9 +29,10 @@ const {
 	...contentOther
 } = ModalContentAttr ?? {}
 
+const cls = CModal.Classes
 ---
 <dialog
-	class={joinClassList(ModalClasses.modal, className)}
+	class={joinClassList(cls.modal, className)}
 	data-c-modal-anchorby={ModalAnchorBy}
 	data-c-modal-draggable={ModalDraggable? '' : undefined}
 	data-c-modal-important={ModalImportant? '' : undefined}
@@ -46,20 +43,18 @@ const {
 	data-c-modal-position={ModalPosition}
 	{...other}>
 	<div
-		class={joinClassList(ModalClasses.content, contentClass)}
-		{...contentOther}>
-		<slot />
-	</div>
+		class={joinClassList(cls.content, contentClass)}
+		{...contentOther}><slot /></div>
 
 	{/* Keep below content to avoid auto focus */}
 	<div
-		class={joinClassList(ModalClasses.dragHandle, dragHandleClass)}
+		class={joinClassList(cls.dragHandle, dragHandleClass)}
 		tabindex={dragHandleTabIndex}
 		draggable={dragHandleDraggable}
 		{...dragHandleOther}
 	/>
 </dialog>
 <script>
-	import { registerModalRef } from '.'
-	registerModalRef()
+	import { CModal } from '.'
+	CModal.register()
 </script>

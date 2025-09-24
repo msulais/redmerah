@@ -1,11 +1,6 @@
 ---
 import { joinClassList } from '@/utils/attributes'
-
-import {
-	type IconProps,
-	IconClasses
-} from '.'
-
+import { CIcon, type IconProps } from '.'
 import './index.scss'
 
 type Props = IconProps
@@ -18,11 +13,10 @@ const {
 	translate,
 	...other
 } = Astro.props
+const cls = CIcon.Classes
 ---
 <i
-	class={joinClassList(IconClasses.icon, className)}
+	class={joinClassList(cls.icon, className)}
 	data-c-icon-inline={IconInline? '' : undefined}
 	translate={translate ?? 'no'}
-	{...other}>
-	{String.fromCharCode(IconCode - (IconFilled? 1 : 0))}
-</i>
+	{...other}>{String.fromCharCode(IconCode - (IconFilled? 1 : 0))}</i>

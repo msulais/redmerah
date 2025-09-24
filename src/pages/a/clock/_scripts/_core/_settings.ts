@@ -7,7 +7,7 @@ import { isValidEnumValue } from "@/utils/object"
 import { RootAttributes } from "@/enums/attributes"
 import { RadioNames } from "../_shared/_input-names"
 import { DEFAULT_ANIMATION, DEFAULT_KEEP_AWAKE, DEFAULT_THEME } from "../_shared/_constant"
-import type { DialogElement } from "@/components/Dialog"
+import { CDialog } from "@/components/Dialog"
 import { saveStorageItem } from "./_database"
 
 export type SettingsStoreType = Readonly<{
@@ -21,12 +21,12 @@ export const SettingsStore = new ObservableStore<SettingsStoreType>({
 	animation: DEFAULT_ANIMATION,
 	keepAwake: DEFAULT_KEEP_AWAKE
 })
-const _rootRef = document.documentElement
-const _keepAwakeErrorRef = $(ElementIds.bdDlg_wakeLockError) as DialogElement
-const _keepAwakeBtnRef = $(ElementIds.apSett_keepAwake) as HTMLInputElement
-const _themeRef = $(ElementIds.apSett_themeMenu) as HTMLDivElement
-const _animationRef = $(ElementIds.apSett_animationMenu) as HTMLDivElement
-const _settingsMenuRef = $(ElementIds.apSett_menu) as HTMLDivElement
+const _ref_root = document.documentElement
+const _ref_keepAwakeError = $(ElementIds.bdDlg_wakeLockError) as CDialog.CElement
+const _ref_keepAwakeBtn = $(ElementIds.apSett_keepAwake) as HTMLInputElement
+const _ref_theme = $(ElementIds.apSett_themeMenu) as HTMLDivElement
+const _ref_animation = $(ElementIds.apSett_animationMenu) as HTMLDivElement
+const _ref_settingsMenu = $(ElementIds.apSett_menu) as HTMLDivElement
 let _wakeLock: WakeLockSentinel | null = null
 
 function _subscribeKeepAwakeChanges(v: SettingsStoreType, o: SettingsStoreType): void {
@@ -40,7 +40,7 @@ function _subscribeKeepAwakeChanges(v: SettingsStoreType, o: SettingsStoreType):
 			_wakeLock = v
 		})
 		.catch(() => {
-			_keepAwakeErrorRef.showModal()
+			_ref_keepAwakeError.showModal()
 			_wakeLock = null
 			SettingsStore.update(v => v.keepAwake = false)
 		})
@@ -76,41 +76,41 @@ function _subscribeAnimationRefView(v: SettingsStoreType, o: SettingsStoreType):
 	const animation = v.animation
 	if (animation === o.animation) return
 
-	_rootRef.setAttribute(RootAttributes.animation, animation)
-	const previousRef = $$(
+	_ref_root.setAttribute(RootAttributes.animation, animation)
+	const ref_previous = $$(
 		`input[name="${CSS.escape(RadioNames.animation)}"]:checked`
 	) as HTMLInputElement
-	const targetRef = $$(
+	const ref_target = $$(
 		`input[name="${CSS.escape(RadioNames.animation)}"][value="${CSS.escape(animation)}"]`
 	) as HTMLInputElement
 
-	if (previousRef === targetRef) {return}
-	if (previousRef) previousRef.checked = false
-	if (targetRef) targetRef.checked = true
+	if (ref_previous === ref_target) {return}
+	if (ref_previous) ref_previous.checked = false
+	if (ref_target) ref_target.checked = true
 }
 
 function _subscribeThemeRefView(v: SettingsStoreType, o: SettingsStoreType): void {
 	const theme = v.theme
 	if (theme === o.theme) return
 
-	_rootRef.setAttribute(RootAttributes.theme, theme)
-	const previousRef = $$(
+	_ref_root.setAttribute(RootAttributes.theme, theme)
+	const ref_previous = $$(
 		`input[name="${CSS.escape(RadioNames.theme)}"]:checked`
 	) as HTMLInputElement
-	const targetRef = $$(
+	const ref_target = $$(
 		`input[name="${CSS.escape(RadioNames.theme)}"][value="${CSS.escape(theme)}"]`
 	) as HTMLInputElement
 
-	if (previousRef === targetRef) {return}
-	if (previousRef) previousRef.checked = false
-	if (targetRef) targetRef.checked = true
+	if (ref_previous === ref_target) {return}
+	if (ref_previous) ref_previous.checked = false
+	if (ref_target) ref_target.checked = true
 }
 
 function _subscribeKeepAwakeRefView(v: SettingsStoreType): void {
 	const keepAwake = v.keepAwake
-	if (keepAwake === _keepAwakeBtnRef.checked) return
+	if (keepAwake === _ref_keepAwakeBtn.checked) return
 
-	_keepAwakeBtnRef.checked = keepAwake
+	_ref_keepAwakeBtn.checked = keepAwake
 }
 
 function _initSubscriber(): void {
@@ -123,26 +123,26 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_keepAwakeBtnRef.addEventListener('change', () => {
-		SettingsStore.update(v => v.keepAwake = _keepAwakeBtnRef.checked)
-		_settingsMenuRef.hidePopover()
+	_ref_keepAwakeBtn.addEventListener('change', () => {
+		SettingsStore.update(v => v.keepAwake = _ref_keepAwakeBtn.checked)
+		_ref_settingsMenu.hidePopover()
 	})
 
-	_themeRef.addEventListener('change', ev => {
+	_ref_theme.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as PlatformThemeMode
 		if (!value || !isValidEnumValue(value, PlatformThemeMode)) {return}
 
-		_settingsMenuRef.hidePopover()
+		_ref_settingsMenu.hidePopover()
 		SettingsStore.update(v => v.theme = value as PlatformThemeMode)
 	})
 
-	_animationRef.addEventListener('change', ev => {
+	_ref_animation.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as PlatformAnimationMode
 		if (!value || !isValidEnumValue(value, PlatformAnimationMode)) {return}
 
-		_settingsMenuRef.hidePopover()
+		_ref_settingsMenu.hidePopover()
 		SettingsStore.update(v => v.animation = value as PlatformAnimationMode)
 	})
 }

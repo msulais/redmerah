@@ -11,8 +11,8 @@ export type ClockStoreType = Readonly<{
 export const ClockStore = new ObservableStore<ClockStoreType>({
 	datetime: new Date()
 })
-const _timeRef = $(ElementIds.pgClk_time) as HTMLHeadingElement
-const _dateRef = $(ElementIds.pgClk_date) as HTMLParagraphElement
+const _ref_time = $(ElementIds.pgClk_time) as HTMLHeadingElement
+const _ref_date = $(ElementIds.pgClk_date) as HTMLParagraphElement
 
 function _initDateTime(): void {
 	setInterval(() => {
@@ -26,13 +26,13 @@ function _subscribeDatetimeRefView(v: ClockStoreType, o: ClockStoreType): void {
 	const datetime = v.datetime
 	if (datetime.valueOf() === o.datetime.valueOf()) return
 
-	_timeRef.textContent = datetime.toLocaleTimeString('en', {
+	_ref_time.textContent = datetime.toLocaleTimeString('en', {
 		hour: 'numeric',
 		minute: 'numeric',
 		second: 'numeric',
 		hour12: false
 	})
-	_dateRef.textContent = datetime.toLocaleDateString('en', {year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'})
+	_ref_date.textContent = datetime.toLocaleDateString('en', {year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'})
 }
 
 function _initSubscriber(): void {

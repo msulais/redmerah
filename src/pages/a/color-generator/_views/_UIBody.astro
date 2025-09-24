@@ -1,6 +1,6 @@
 ---
 import { IconCodes } from '@/enums/icons'
-import { ButtonVariant } from '@/components/Button'
+import { CButton } from '@/components/Button'
 import Button from '@/components/Button/index.astro'
 import IconButton from '@/components/Button/IconButton.astro'
 import Icon from '@/components/Icon/index.astro'
@@ -21,7 +21,7 @@ import { pxToRem } from '@/utils/css'
 			gap: pxToRem(4) + 'rem'
 		}}>
 			<Button
-				ButtonVariant={ButtonVariant.filled}
+				ButtonVariant={CButton.Variant.filled}
 				id={ElementIds.bd_pickerBtn}
 				popovertarget={ElementIds.bd_picker}
 				data-tooltip="Pick color">
@@ -30,7 +30,7 @@ import { pxToRem } from '@/utils/css'
 			</Button>
 			<IconButton
 				id={ElementIds.bd_saveBtn}
-				ButtonVariant={ButtonVariant.tonal}
+				ButtonVariant={CButton.Variant.tonal}
 				IconButtonCode={IconCodes.save}
 				aria-label="Save palette"
 				data-tooltip="Save palette"

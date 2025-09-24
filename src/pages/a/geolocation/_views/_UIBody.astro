@@ -5,7 +5,7 @@ import Icon from '@/components/Icon/index.astro'
 import { IconCodes } from '@/enums/icons'
 import { CSSClasses } from '../_styles/_css'
 import { ElementIds } from '../_scripts/_shared/_ids'
-import { ButtonVariant } from '@/components/Button'
+import { CButton } from '@/components/Button'
 import { pxToRem } from '@/utils/css'
 ---
 
@@ -13,7 +13,7 @@ import { pxToRem } from '@/utils/css'
 	<Button
 		id={ElementIds.bd_startPause}
 		style={{'margin-bottom': pxToRem(16) + 'rem'}}
-		ButtonVariant={ButtonVariant.filled}>
+		ButtonVariant={CButton.Variant.filled}>
 		<Icon IconCode={IconCodes.location} IconFilled/>
 		Show my location
 	</Button>

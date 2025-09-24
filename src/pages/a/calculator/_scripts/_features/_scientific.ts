@@ -7,13 +7,13 @@ import { isNumberDefined } from "@/utils/number"
 import { formatOutput } from "../_core/_string-utils"
 import { isValidEnumValue } from "@/utils/object"
 import { DEFAULT_SCIENTIFIC_ANGLE, DEFAULT_SCIENTIFIC_INPUT, DEFAULT_SCIENTIFIC_OUTPUT } from "../_shared/_constant"
-import { ButtonVariant, updateButtonRef } from "@/components/Button"
+import { CButton } from "@/components/Button"
 import { AnimationEasing } from "@/enums/animation"
 import { isAnimationAllowed } from "@/utils/animation"
 import { CSSClasses } from "../../_styles/_css"
-import { IconClasses } from "@/components/Icon"
+import { CIcon } from "@/components/Icon"
 import { saveStorageItem } from "../_core/_database"
-import type { ComboBoxElement } from "@/components/ComboBox"
+import { CComboBox } from "@/components/ComboBox"
 
 export type ScientificStoreType = Readonly<{
 	input: string
@@ -26,26 +26,26 @@ export const ScientificStore = new ObservableStore<ScientificStoreType>({
 	input: DEFAULT_SCIENTIFIC_INPUT,
 	output: DEFAULT_SCIENTIFIC_OUTPUT,
 })
-const _angleRef = $(ElementIds.pgSci_angle) as ComboBoxElement
-const _inputRef = $(ElementIds.pgSci_input) as HTMLInputElement
-const _outputRef = $(ElementIds.pgSci_output) as HTMLInputElement
+const _ref_angle = $(ElementIds.pgSci_angle) as CComboBox.CElement
+const _ref_input = $(ElementIds.pgSci_input) as HTMLInputElement
+const _ref_output = $(ElementIds.pgSci_output) as HTMLInputElement
 
 // fn = function
-const _fn_BtnRef = $(ElementIds.pgSci_fnBtn) as HTMLButtonElement
-const _fn_MenuRef = $(ElementIds.pgSci_fnMenu) as HTMLDivElement
-const _fn_inversRef = $(ElementIds.pgSci_fnInv) as HTMLInputElement
-const _fn_hyperRef = $(ElementIds.pgSci_fnHyper) as HTMLInputElement
+const _ref_fn_Btn = $(ElementIds.pgSci_fnBtn) as CButton.CElement
+const _ref_fn_Menu = $(ElementIds.pgSci_fnMenu) as HTMLDivElement
+const _ref_fn_invers = $(ElementIds.pgSci_fnInv) as HTMLInputElement
+const _ref_fn_hyper = $(ElementIds.pgSci_fnHyper) as HTMLInputElement
 
-let _timeCalculateId: number | null | NodeJS.Timeout = null
-let _timeSaveInputId: number | null | NodeJS.Timeout = null
+let _time_calculate: number | null | NodeJS.Timeout = null
+let _time_saveInput: number | null | NodeJS.Timeout = null
 
 function _calculate(): void {
-	if (_timeCalculateId !== null) {
-		clearTimeout(_timeCalculateId)
+	if (_time_calculate !== null) {
+		clearTimeout(_time_calculate)
 	}
 
-	_timeCalculateId = setTimeout(() => {
-		_timeCalculateId = null
+	_time_calculate = setTimeout(() => {
+		_time_calculate = null
 		const output = calculate(ScientificStore.value.input)
 		const parsedOutput = Number.parseFloat(output)
 		ScientificStore.update(v => v.output = isNumberDefined(parsedOutput)? parsedOutput : null)
@@ -57,7 +57,7 @@ function _subscribeAngleChanges(value: ScientificStoreType, old: ScientificStore
 	if (angle === old.angle) return
 
 	_calculate()
-	_angleRef.value = angle
+	_ref_angle.value = angle
 	saveStorageItem('calc:scientific/angle', angle)
 }
 
@@ -66,43 +66,43 @@ function _subscribeInputChanges(value: ScientificStoreType, old: ScientificStore
 	if (input === old.input) return
 
 	_calculate()
-	if (_timeSaveInputId !== null) {
-		clearTimeout(_timeSaveInputId)
+	if (_time_saveInput !== null) {
+		clearTimeout(_time_saveInput)
 	}
 
-	_timeSaveInputId = setTimeout(() => {
-		_timeSaveInputId = null
+	_time_saveInput = setTimeout(() => {
+		_time_saveInput = null
 		saveStorageItem('calc:scientific/input', input)
 	}, 250)
 }
 
 function _subscribeInputRefView(value: ScientificStoreType) {
 	const input = value.input
-	if (input === _inputRef.value) return
+	if (input === _ref_input.value) return
 
-	_inputRef.value = input
-	scrollInputToEnd(_inputRef)
+	_ref_input.value = input
+	scrollInputToEnd(_ref_input)
 }
 
 function _subscribeOutputRefView(value: ScientificStoreType, old: ScientificStoreType) {
 	const output = value.output
 	const oldOutput = old.output
-	if (output === null) return _outputRef.value = ''
+	if (output === null) return _ref_output.value = ''
 
 	const formattedOutput = formatOutput(output)
 	if (
 		output === oldOutput
-		&& _outputRef.value === formattedOutput
+		&& _ref_output.value === formattedOutput
 	) {return}
 
-	_outputRef.value = formattedOutput
+	_ref_output.value = formattedOutput
 }
 
 function _subscribeAngleRefView(value: ScientificStoreType): void {
 	const angle = value.angle
-	if (angle === _angleRef.value) return
+	if (angle === _ref_angle.value) return
 
-	_angleRef.value = angle
+	_ref_angle.value = angle
 }
 
 function _initSubscriber(): void {
@@ -114,21 +114,21 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_angleRef.addEventListener('change', () => {
-		const value = _angleRef.value as ScientificAngleType
+	_ref_angle.addEventListener('change', () => {
+		const value = _ref_angle.value as ScientificAngleType
 		if (!isValidEnumValue(value, ScientificAngleType)) return
 
 		ScientificStore.update(v => v.angle = value)
 	})
 
-	_fn_MenuRef.addEventListener('toggle', ev => {
+	_ref_fn_Menu.addEventListener('toggle', ev => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
-		_fn_BtnRef.setAttribute('aria-expanded', String(isOpen))
-		updateButtonRef(_fn_BtnRef, {
-			ButtonVariant: isOpen? ButtonVariant.filled : ButtonVariant.tonal
+		_ref_fn_Btn.setAttribute('aria-expanded', String(isOpen))
+		CButton.update(_ref_fn_Btn, {
+			Button: {variant: isOpen? CButton.Variant.filled : CButton.Variant.tonal}
 		})
 
-		const iconRef = _fn_BtnRef.querySelector<HTMLElement>('.' + IconClasses.icon + ":last-child")
+		const iconRef = _ref_fn_Btn.querySelector<HTMLElement>('.' + CIcon.Classes.icon + ":last-child")
 		iconRef?.style.setProperty('transform', isOpen? 'rotate(180deg)' : null)
 		if (isAnimationAllowed()) {
 			iconRef?.animate({
@@ -137,13 +137,13 @@ function _initEvents(): void {
 		}
 	})
 
-	_fn_MenuRef.addEventListener('change', ev => {
+	_ref_fn_Menu.addEventListener('change', ev => {
 		switch (ev.target) {
-		case _fn_inversRef:
-		case _fn_hyperRef:
-			const refs = document.querySelectorAll<HTMLButtonElement>('.' + CSSClasses.bdPageSci_trigonometry)
-			const inv = _fn_inversRef.checked
-			const hyp = _fn_hyperRef.checked
+		case _ref_fn_invers:
+		case _ref_fn_hyper:
+			const refs = document.querySelectorAll<CButton.CElement>('.' + CSSClasses.bdPageSci_trigonometry)
+			const inv = _ref_fn_invers.checked
+			const hyp = _ref_fn_hyper.checked
 			const trigonometry = [
 				(inv? 'a' : '') + 'sin' + (hyp? 'h' : ''),
 				(inv? 'a' : '') + 'cos' + (hyp? 'h' : ''),

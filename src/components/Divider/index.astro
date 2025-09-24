@@ -1,10 +1,6 @@
 ---
 import { joinClassList } from '@/utils/attributes'
-
-import {
-	type DividerProps,
-	DividerClasses
-} from '.'
+import {type DividerProps, CDivider} from '.'
 import './index.scss'
 
 type Props = DividerProps
@@ -12,6 +8,9 @@ const {
 	'class': className,
 	...other
 } = Astro.props
+const cls = CDivider.Classes
 ---
-
-<div class={joinClassList(DividerClasses.divider, className)} {...other}/>
+<div
+	class={joinClassList(cls.divider, className)}
+	{...other}
+/>

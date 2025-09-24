@@ -19,40 +19,40 @@ export const PreviewStore = new ObservableStore<PreviewStoreType>({
 	height: DEFAULT_PREVIEW_HEIGHT,
 	width: DEFAULT_PREVIEW_WIDTH
 })
-const _previewBoxRef = $(ElementIds.bd_preview) as HTMLDivElement
-const _propertyBorderRadiusRef = $(ElementIds.bdProp_borderRadius) as HTMLInputElement
-const _propertyWidthRef = $(ElementIds.bdProp_width) as HTMLInputElement
-const _propertyHeightRef = $(ElementIds.bdProp_height) as HTMLInputElement
-const _propertyClipPathRef = $(ElementIds.bdProp_clipPath) as HTMLInputElement
-let _timeBorderRadiusId: NodeJS.Timeout | number | null = null
-let _timeClipPathId: NodeJS.Timeout | number | null = null
-let _timeWidthId: NodeJS.Timeout | number | null = null
-let _timeHeightId: NodeJS.Timeout | number | null = null
+const _ref_previewBox = $(ElementIds.bd_preview) as HTMLDivElement
+const _ref_propertyBorderRadius = $(ElementIds.bdProp_borderRadius) as HTMLInputElement
+const _ref_propertyWidth = $(ElementIds.bdProp_width) as HTMLInputElement
+const _ref_propertyHeight = $(ElementIds.bdProp_height) as HTMLInputElement
+const _ref_propertyClipPath = $(ElementIds.bdProp_clipPath) as HTMLInputElement
+let _time_borderRadius: NodeJS.Timeout | number | null = null
+let _time_clipPath: NodeJS.Timeout | number | null = null
+let _time_widthId: NodeJS.Timeout | number | null = null
+let _time_heightId: NodeJS.Timeout | number | null = null
 
 function _subscribeBorderRadiusChanges(v: PreviewStoreType, o: PreviewStoreType): void {
 	const borderRadius = v.borderRadius
 	if (borderRadius === o.borderRadius) {return}
 
-	if (_timeBorderRadiusId !== null) {
-		clearTimeout(_timeBorderRadiusId)
+	if (_time_borderRadius !== null) {
+		clearTimeout(_time_borderRadius)
 	}
 
-	_timeBorderRadiusId = setTimeout(() => {
-		_timeBorderRadiusId = null
+	_time_borderRadius = setTimeout(() => {
+		_time_borderRadius = null
 		saveStorageItem('properties:border-radius', borderRadius)
 	}, 500)
 }
 
 function _subscribeBorderRadiusRefView(v: PreviewStoreType, o: PreviewStoreType): void {
 	const borderRadius = v.borderRadius
-	if (borderRadius !== _propertyBorderRadiusRef.valueAsNumber) {
-		_propertyBorderRadiusRef.value = borderRadius + ''
+	if (borderRadius !== _ref_propertyBorderRadius.valueAsNumber) {
+		_ref_propertyBorderRadius.value = borderRadius + ''
 	}
 
 	if (borderRadius === o.borderRadius) {return}
 
 	requestAnimationFrame(() => {
-		_previewBoxRef.style.setProperty('border-radius', pxToRem(borderRadius) + 'rem')
+		_ref_previewBox.style.setProperty('border-radius', pxToRem(borderRadius) + 'rem')
 	})
 }
 
@@ -60,26 +60,26 @@ function _subscribeWidthChanges(v: PreviewStoreType, o: PreviewStoreType): void 
 	const width = v.width
 	if (width === o.width) {return}
 
-	if (_timeWidthId !== null) {
-		clearTimeout(_timeWidthId)
+	if (_time_widthId !== null) {
+		clearTimeout(_time_widthId)
 	}
 
-	_timeWidthId = setTimeout(() => {
-		_timeWidthId = null
+	_time_widthId = setTimeout(() => {
+		_time_widthId = null
 		saveStorageItem('properties:width', width)
 	}, 500)
 }
 
 function _subscribeWidthRefView(v: PreviewStoreType, o: PreviewStoreType): void {
 	const width = v.width
-	if (width !== _propertyWidthRef.valueAsNumber) {
-		_propertyWidthRef.value = width + ''
+	if (width !== _ref_propertyWidth.valueAsNumber) {
+		_ref_propertyWidth.value = width + ''
 	}
 
 	if (width === o.width) {return}
 
 	requestAnimationFrame(() => {
-		_previewBoxRef.style.setProperty('min-width', pxToRem(width) + 'rem')
+		_ref_previewBox.style.setProperty('min-width', pxToRem(width) + 'rem')
 	})
 }
 
@@ -87,26 +87,26 @@ function _subscribeHeightChanges(v: PreviewStoreType, o: PreviewStoreType): void
 	const height = v.height
 	if (height === o.height) {return}
 
-	if (_timeHeightId !== null) {
-		clearTimeout(_timeHeightId)
+	if (_time_heightId !== null) {
+		clearTimeout(_time_heightId)
 	}
 
-	_timeHeightId = setTimeout(() => {
-		_timeHeightId = null
+	_time_heightId = setTimeout(() => {
+		_time_heightId = null
 		saveStorageItem('properties:height', height)
 	}, 500)
 }
 
 function _subscribeHeightRefView(v: PreviewStoreType, o: PreviewStoreType): void {
 	const height = v.height
-	if (height !== _propertyHeightRef.valueAsNumber) {
-		_propertyHeightRef.value = height + ''
+	if (height !== _ref_propertyHeight.valueAsNumber) {
+		_ref_propertyHeight.value = height + ''
 	}
 
 	if (height === o.height) {return}
 
 	requestAnimationFrame(() => {
-		_previewBoxRef.style.setProperty('min-height', pxToRem(height) + 'rem')
+		_ref_previewBox.style.setProperty('min-height', pxToRem(height) + 'rem')
 	})
 }
 
@@ -114,47 +114,47 @@ function _subscribeClipPathChanges(v: PreviewStoreType, o: PreviewStoreType): vo
 	const clipPath = v.clipPath
 	if (clipPath === o.clipPath) {return}
 
-	if (_timeClipPathId !== null) {
-		clearTimeout(_timeClipPathId)
+	if (_time_clipPath !== null) {
+		clearTimeout(_time_clipPath)
 	}
 
-	_timeClipPathId = setTimeout(() => {
-		_timeClipPathId = null
+	_time_clipPath = setTimeout(() => {
+		_time_clipPath = null
 		saveStorageItem('properties:clip-path', clipPath)
 	}, 500)
 }
 
 function _subscribeClipPathRefView(v: PreviewStoreType, o: PreviewStoreType): void {
 	const clipPath = v.clipPath
-	if (clipPath !== _propertyClipPathRef.value) {
-		_propertyClipPathRef.value = clipPath
+	if (clipPath !== _ref_propertyClipPath.value) {
+		_ref_propertyClipPath.value = clipPath
 	}
 
 	if (clipPath === o.clipPath) {return}
 
 	requestAnimationFrame(() => {
-		_previewBoxRef.style.setProperty('clip-path', clipPath)
+		_ref_previewBox.style.setProperty('clip-path', clipPath)
 	})
 }
 
 function _initEvents(): void {
-	_propertyBorderRadiusRef.addEventListener('input', () => {
-		const value = safeNumber(_propertyBorderRadiusRef.valueAsNumber)
+	_ref_propertyBorderRadius.addEventListener('input', () => {
+		const value = safeNumber(_ref_propertyBorderRadius.valueAsNumber)
 		PreviewStore.update(v => v.borderRadius = value)
 	})
 
-	_propertyWidthRef.addEventListener('input', () => {
-		const value = safeNumber(_propertyWidthRef.valueAsNumber)
+	_ref_propertyWidth.addEventListener('input', () => {
+		const value = safeNumber(_ref_propertyWidth.valueAsNumber)
 		PreviewStore.update(v => v.width = value)
 	})
 
-	_propertyHeightRef.addEventListener('input', () => {
-		const value = safeNumber(_propertyHeightRef.valueAsNumber)
+	_ref_propertyHeight.addEventListener('input', () => {
+		const value = safeNumber(_ref_propertyHeight.valueAsNumber)
 		PreviewStore.update(v => v.height = value)
 	})
 
-	_propertyClipPathRef.addEventListener('input', () => {
-		PreviewStore.update(v => v.clipPath = _propertyClipPathRef.value)
+	_ref_propertyClipPath.addEventListener('input', () => {
+		PreviewStore.update(v => v.clipPath = _ref_propertyClipPath.value)
 	})
 }
 

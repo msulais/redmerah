@@ -1,41 +1,38 @@
-type TextAreaFieldProps = astroHTML.JSX.TextareaHTMLAttributes
+import { $classlist, $create } from "../utils"
 
-type TextAreaFieldElement = HTMLTextAreaElement
+export namespace CTextAreaField {
+	export type CElement = HTMLTextAreaElement
+	export type UpdateOption = {
+		TextAreaField?: {
+			value?: string
+			refs?: {
+				textareafield?: (ref: CElement) => unknown
+			}
+		}
+	}
 
-type TextAreaFieldUpdateOption = {
-	TextAreaFieldValue?: string
-	TextAreaFieldRefs?: {
-		textareafield?: (ref: TextAreaFieldElement) => unknown
+	export enum Classes {
+		textareafield = 'c-textareafield'
+	}
+
+	export function create(options?: UpdateOption): CElement {
+		const ref_textareafield = $create('textarea')
+		return update(ref_textareafield, options)
+	}
+
+	export function update(ref_textareafield: CElement, options?: UpdateOption): CElement {
+		const opt = options?.TextAreaField
+		$classlist(ref_textareafield, Classes.textareafield)
+
+		const opt_value = opt?.value
+		if (typeof opt_value === 'string') {
+			ref_textareafield.value = opt_value
+		}
+
+		const refs = opt?.refs
+		refs?.textareafield?.(ref_textareafield)
+		return ref_textareafield
 	}
 }
 
-enum TextAreaFieldClasses {
-	textareafield = 'c-textareafield'
-}
-
-function createTextAreaFieldRef(options?: TextAreaFieldUpdateOption): TextAreaFieldElement {
-	const textAreaFieldRef = document.createElement('textarea')
-	return updateTextAreaFieldRef(textAreaFieldRef, options)
-}
-
-function updateTextAreaFieldRef(
-	textAreaFieldRef: TextAreaFieldElement,
-	options?: TextAreaFieldUpdateOption
-): TextAreaFieldElement {
-	textAreaFieldRef.classList.add(TextAreaFieldClasses.textareafield)
-	const value = options?.TextAreaFieldValue
-	if (typeof value === 'string') {
-		textAreaFieldRef.value = value
-	}
-
-	return textAreaFieldRef
-}
-
-export {
-	type TextAreaFieldProps,
-	type TextAreaFieldElement,
-	type TextAreaFieldUpdateOption,
-	TextAreaFieldClasses,
-	createTextAreaFieldRef,
-	updateTextAreaFieldRef
-}
+export type TextAreaFieldProps = astroHTML.JSX.TextareaHTMLAttributes

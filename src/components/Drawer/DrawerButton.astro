@@ -1,10 +1,6 @@
 ---
 import { joinClassList } from '@/utils/attributes'
-
-import {
-	type DrawerButtonProps,
-	DrawerClasses
-} from '.'
+import {type DrawerButtonProps, CDrawer} from '.'
 import Button from '@/components/Button/index.astro'
 import './index.scss'
 
@@ -15,11 +11,11 @@ const {
 	DrawerButtonSelected,
 	...other
 } = Astro.props
+
+const cls = CDrawer.Classes
 ---
 
 <Button
-	class={joinClassList(DrawerClasses.button, className)}
+	class={joinClassList(cls.button, className)}
 	data-c-drawer-button-selected={DrawerButtonSelected? '' : undefined}
-	{...other}>
-	<slot/>
-</Button>
+	{...other}><slot/></Button>

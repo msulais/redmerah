@@ -1,10 +1,6 @@
 ---
 import { joinClassList } from '@/utils/attributes'
-
-import {
-	PopoverClasses,
-	type PopoverProps
-} from '.'
+import {CPopover, type PopoverProps} from '.'
 import './index.scss'
 
 type Props = PopoverProps
@@ -25,9 +21,10 @@ const {
 const {'class': dragHandleClass, draggable: dragHandleDraggable = 'false', ...dragHandleOther} = PopoverDragHandleAttr
 const {'class': contentClass   , ...contentOther   } = PopoverContentAttr
 
+const cls = CPopover.Classes
 ---
 <div
-	class={joinClassList(PopoverClasses.popover, className)}
+	class={joinClassList(cls.popover, className)}
 	popover={popover ?? 'auto'}
 	data-c-popover-anchorby={PopoverAnchorBy}
 	data-c-popover-draggable={PopoverDraggable? '' : undefined}
@@ -36,20 +33,18 @@ const {'class': contentClass   , ...contentOther   } = PopoverContentAttr
 	data-c-popover-position={PopoverPosition}
 	{...other}>
 	<div
-		class={joinClassList(PopoverClasses.content, contentClass)}
-		{...contentOther}>
-		<slot />
-	</div>
+		class={joinClassList(cls.content, contentClass)}
+		{...contentOther}><slot /></div>
 
 	{/* Keep below content to avoid auto focus */}
 	<div
-		class={joinClassList(PopoverClasses.dragHandle, dragHandleClass)}
+		class={joinClassList(cls.dragHandle, dragHandleClass)}
 		draggable={dragHandleDraggable}
 		tabindex="0"
 		{...dragHandleOther}
 	/>
 </div>
 <script>
-	import { registerPopoverRef } from '.'
-	registerPopoverRef()
+	import { CPopover } from '.'
+	CPopover.register()
 </script>

@@ -1,27 +1,26 @@
 ---
 import { joinClassList } from '@/utils/attributes'
-
-import { type SubMenuProps, MenuClasses } from '.'
+import { type SubMenuProps, CMenu } from '.'
 import Menu from './index.astro'
 import './index.scss'
-import { PopoverPosition } from '../Popover'
 import { pxToRem } from '@/utils/css'
+import { FlyoutPosition } from '@/enums/position'
 
 type Props = SubMenuProps
 const {
 	'class': className,
 	PopoverGap = pxToRem(-4),
 	popover = 'manual',
-	PopoverPosition: position = PopoverPosition.rightCenterToBottom,
+	PopoverPosition: position = FlyoutPosition.rightCenterToBottom,
 	...other
 } = Astro.props
+
+const cls = CMenu.Classes
 ---
 
 <Menu
-	class={joinClassList(MenuClasses.submenu, className)}
+	class={joinClassList(cls.submenu, className)}
 	PopoverPosition={position}
 	PopoverGap={PopoverGap}
 	popover={popover}
-	{...other}>
-	<slot />
-</Menu>
+	{...other}><slot /></Menu>

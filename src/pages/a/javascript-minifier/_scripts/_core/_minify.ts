@@ -6,10 +6,10 @@ import { DEFAULT_JAVASCRIPT_INPUT_TEXT } from "../_shared/_constant"
 import { minify } from "terser"
 import { SettingsStore } from "./_settings"
 import { AppCSSColors } from "@/enums/app-data"
-import type { MenuItemElement } from "@/components/Menu"
+import { CMenu } from "@/components/Menu"
 import { isTargetValidElement } from "@/utils/element"
 import { downloadFile, pickFile, readFileAsText } from "@/utils/file"
-import type { ToastElement } from "@/components/Toast"
+import { CToast } from "@/components/Toast"
 import { Math_clamp } from "@/utils/math"
 import { saveStorageItem } from "./_database"
 import { pxToRem } from "@/utils/css"
@@ -22,19 +22,19 @@ export const MinifyStore = new ObservableStore<MinifyStoreType>({
 	input: DEFAULT_JAVASCRIPT_INPUT_TEXT
 })
 
-const _moreMenuRef = $(ElementIds.apMore_menu) as HTMLDivElement
-const _inputRef = $(ElementIds.bd_input) as HTMLTextAreaElement
-const _inputContainerRef = $(ElementIds.bd_inputContainer) as HTMLDivElement
-const _outputRef = $(ElementIds.bd_output) as HTMLTextAreaElement
-const _sliderRef = $(ElementIds.bd_slider) as HTMLDivElement
-const _openFileRef = $(ElementIds.apMore_open) as MenuItemElement
-const _resetInputRef = $(ElementIds.apMore_reset) as MenuItemElement
-const _copyOutputRef = $(ElementIds.apMore_copy) as MenuItemElement
-const _downloadOutputRef = $(ElementIds.apMore_download) as MenuItemElement
-const _toastCopiedRef = $(ElementIds.toa_copied) as ToastElement
-const _toastNoFileRef = $(ElementIds.toa_noFile) as ToastElement
-const _toastReadErrorRef = $(ElementIds.toa_readError) as ToastElement
-let _timeUpdateOutputId: NodeJS.Timeout | number | null = null
+const _ref_moreMenu = $(ElementIds.apMore_menu) as HTMLDivElement
+const _ref_input = $(ElementIds.bd_input) as HTMLTextAreaElement
+const _ref_inputContainer = $(ElementIds.bd_inputContainer) as HTMLDivElement
+const _ref_output = $(ElementIds.bd_output) as HTMLTextAreaElement
+const _ref_slider = $(ElementIds.bd_slider) as HTMLDivElement
+const _ref_openFile = $(ElementIds.apMore_open) as CMenu.CItem.CElement
+const _ref_resetInput = $(ElementIds.apMore_reset) as CMenu.CItem.CElement
+const _ref_copyOutput = $(ElementIds.apMore_copy) as CMenu.CItem.CElement
+const _ref_downloadOutput = $(ElementIds.apMore_download) as CMenu.CItem.CElement
+const _ref_toastCopied = $(ElementIds.toa_copied) as CToast.CElement
+const _ref_toastNoFile = $(ElementIds.toa_noFile) as CToast.CElement
+const _ref_toastReadError = $(ElementIds.toa_readError) as CToast.CElement
+let _time_updateOutput: NodeJS.Timeout | number | null = null
 
 function _subscribeInputChanges(v: MinifyStoreType, o: MinifyStoreType): void {
 	const settings = SettingsStore.value
@@ -53,21 +53,21 @@ function _subscribeInputChanges(v: MinifyStoreType, o: MinifyStoreType): void {
 		if (settings.beautify) {
 			output = beautify(output)
 		}
-		_outputRef.value = output
-		_outputRef.style.removeProperty('color')
-		_copyOutputRef.disabled = _downloadOutputRef.disabled = false
+		_ref_output.value = output
+		_ref_output.style.removeProperty('color')
+		_ref_copyOutput.disabled = _ref_downloadOutput.disabled = false
 	}).catch((er) => {
-		_copyOutputRef.disabled = _downloadOutputRef.disabled = true
-		_outputRef.style.setProperty('color', `rgb(${AppCSSColors.error})`)
-		_outputRef.value = er + ''
+		_ref_copyOutput.disabled = _ref_downloadOutput.disabled = true
+		_ref_output.style.setProperty('color', `rgb(${AppCSSColors.error})`)
+		_ref_output.value = er + ''
 	})
 }
 
 function _subscribeInputView(v: MinifyStoreType): void {
 	const input = v.input
-	if (input === _inputRef.value) {return}
+	if (input === _ref_input.value) {return}
 
-	_inputRef.value = input
+	_ref_input.value = input
 }
 
 function _initSubscriber(): void {
@@ -82,7 +82,7 @@ function _initEvents(): void {
 		let x: number | null = null
 		const onPointerUp = (ev: PointerEvent) => {
 			isDragging = false
-			_sliderRef.releasePointerCapture(ev.pointerId)
+			_ref_slider.releasePointerCapture(ev.pointerId)
 		}
 
 		window.addEventListener('resize', () => {
@@ -91,60 +91,60 @@ function _initEvents(): void {
 			screenWidth = document.body.clientWidth
 			requestAnimationFrame(() => {
 				x = Math_clamp(x!, 300, screenWidth - 300)
-				_inputContainerRef.style.setProperty('min-width', pxToRem(x) + 'rem')
-				_inputContainerRef.style.setProperty('max-width', pxToRem(x) + 'rem')
+				_ref_inputContainer.style.setProperty('min-width', pxToRem(x) + 'rem')
+				_ref_inputContainer.style.setProperty('max-width', pxToRem(x) + 'rem')
 			})
 		})
 
-		_sliderRef.addEventListener('pointerdown', (ev) => {
+		_ref_slider.addEventListener('pointerdown', (ev) => {
 			isDragging = true
 			screenWidth = document.body.clientWidth
-			_sliderRef.setPointerCapture(ev.pointerId)
+			_ref_slider.setPointerCapture(ev.pointerId)
 		})
 
-		_sliderRef.addEventListener('pointermove', ev => {
+		_ref_slider.addEventListener('pointermove', ev => {
 			if (!isDragging) {return}
 
 			requestAnimationFrame(() => {
 				const paddingLeft = 10
 				x = Math_clamp(ev.clientX - paddingLeft, 300, screenWidth - 300)
-				_inputContainerRef.style.setProperty('min-width', pxToRem(x) + 'rem')
-				_inputContainerRef.style.setProperty('max-width', pxToRem(x) + 'rem')
+				_ref_inputContainer.style.setProperty('min-width', pxToRem(x) + 'rem')
+				_ref_inputContainer.style.setProperty('max-width', pxToRem(x) + 'rem')
 			})
 		})
 
-		_sliderRef.addEventListener('pointerup', onPointerUp)
-		_sliderRef.addEventListener('pointercancel', onPointerUp)
+		_ref_slider.addEventListener('pointerup', onPointerUp)
+		_ref_slider.addEventListener('pointercancel', onPointerUp)
 
-		_sliderRef.addEventListener('dblclick', () => {
+		_ref_slider.addEventListener('dblclick', () => {
 			x = null
-			_inputContainerRef.style.removeProperty('min-width')
-			_inputContainerRef.style.removeProperty('max-width')
+			_ref_inputContainer.style.removeProperty('min-width')
+			_ref_inputContainer.style.removeProperty('max-width')
 		})
 	}
 
 	function init(): void {
-		_inputRef.addEventListener('input', () => {
-			if (_timeUpdateOutputId !== null) {
-				clearTimeout(_timeUpdateOutputId)
+		_ref_input.addEventListener('input', () => {
+			if (_time_updateOutput !== null) {
+				clearTimeout(_time_updateOutput)
 			}
 
-			_timeUpdateOutputId = setTimeout(() => {
-				_timeUpdateOutputId = null
-				MinifyStore.update(v => v.input = _inputRef.value)
+			_time_updateOutput = setTimeout(() => {
+				_time_updateOutput = null
+				MinifyStore.update(v => v.input = _ref_input.value)
 			}, 100)
 		})
 
-		_moreMenuRef.addEventListener('click', () => {
-			const buttonRef = document.activeElement as HTMLButtonElement
-			if (!isTargetValidElement(_moreMenuRef, buttonRef)) {return}
+		_ref_moreMenu.addEventListener('click', () => {
+			const ref_btn = document.activeElement as HTMLButtonElement
+			if (!isTargetValidElement(_ref_moreMenu, ref_btn)) {return}
 
-			const close = () => _moreMenuRef.hidePopover()
-			switch (buttonRef) {
-			case _openFileRef:
+			const close = () => _ref_moreMenu.hidePopover()
+			switch (ref_btn) {
+			case _ref_openFile:
 				pickFile('text/javascript', true).then(async (files) => {
 					if (files == null || files.length == 0) {
-						_toastNoFileRef.showPopover()
+						_ref_toastNoFile.showPopover()
 						return
 					}
 
@@ -157,7 +157,7 @@ function _initEvents(): void {
 							text += await readFileAsText(file)
 						}
 					} catch {
-						_toastReadErrorRef.showPopover()
+						_ref_toastReadError.showPopover()
 						return
 					}
 
@@ -165,17 +165,17 @@ function _initEvents(): void {
 				})
 				close()
 				break
-			case _resetInputRef:
+			case _ref_resetInput:
 				MinifyStore.update(v => v.input = DEFAULT_JAVASCRIPT_INPUT_TEXT)
 				close()
 				break
-			case _downloadOutputRef:
-				downloadFile(new Blob([_outputRef.value]), 'output.min.js')
+			case _ref_downloadOutput:
+				downloadFile(new Blob([_ref_output.value]), 'output.min.js')
 				close()
 				break
-			case _copyOutputRef:
-				navigator.clipboard.writeText(_outputRef.value).then(() => {
-					_toastCopiedRef.showPopover()
+			case _ref_copyOutput:
+				navigator.clipboard.writeText(_ref_output.value).then(() => {
+					_ref_toastCopied.showPopover()
 				})
 				close()
 			}

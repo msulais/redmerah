@@ -1,217 +1,200 @@
-import {
-	updateButtonRef,
-	updateLinkButtonRef,
-	type ButtonElement,
-	type ButtonProps,
-	type ButtonUpdateOptions,
-	type LinkButtonElement,
-	type LinkButtonProps,
-	type LinkButtonUpdateOptions
-} from "@/components/Button"
+import { CButton as GCButton, type ButtonProps, type LinkButtonProps } from "../Button"
+import { $children, $classlist, $create, $is_array, $is_bool, $is_false, $query, $toggle_attr } from "../utils"
 
-type DrawerProps = astroHTML.JSX.HTMLAttributes & {
+export namespace CDrawer {
+	export type CElement = HTMLDivElement
+	export type UpdateOptions = {
+		Drawer?: {
+			children?: (string | Node)[] | boolean
+			header  ?: (string | Node)[] | boolean
+			footer  ?: (string | Node)[] | boolean
+			refs    ?: {
+				drawer   ?(ref: CElement ): unknown
+				container?(ref: HTMLDivElement): unknown
+				header   ?(ref: HTMLDivElement): unknown
+				content  ?(ref: HTMLDivElement): unknown
+				footer   ?(ref: HTMLDivElement): unknown
+			}
+		}
+	}
+
+	export enum Classes {
+		drawer    = 'c-drawer',
+		container = drawer + '-container',
+		header    = drawer + '-header',
+		content   = drawer + '-content',
+		footer    = drawer + '-footer',
+		button    = drawer + '-button'
+	}
+
+	enum Attributes {
+		selected = 'data-c-drawer-button-selected'
+	}
+
+	export function open(ref_drawer: CElement): void {
+		ref_drawer.showPopover()
+	}
+
+	export function close(ref_drawer: CElement): void {
+		ref_drawer.hidePopover()
+	}
+
+	export function isOpen(ref_drawer: CElement): boolean {
+		return ref_drawer.matches(':popover-open')
+	}
+
+	export function create(options?: UpdateOptions): CElement {
+		const ref_drawer = $create('div')
+		return update(ref_drawer, options)
+	}
+
+	export function update(ref_drawer: CElement, options?: UpdateOptions): CElement {
+		const opt = options?.Drawer
+		const refs = opt?.refs
+		$classlist(ref_drawer, Classes.drawer)
+		ref_drawer.popover = 'auto'
+
+		// container
+		let ref_container = $query<HTMLDivElement>(`.${Classes.container}`, ref_drawer)
+		if (!ref_container) {
+			ref_container = $create('div')
+			$classlist(ref_container, Classes.container)
+		}
+
+		// container -> header
+		let ref_header = $query<HTMLDivElement>(`.${Classes.header}`, ref_container)
+		if (!ref_header) {
+			ref_header = $create('div')
+			$classlist(ref_header, Classes.header)
+		}
+
+		const opt_header = opt?.header
+		if ($is_false(opt_header)) {
+			$children(ref_header)
+		}
+		else if ($is_array(opt_header)) {
+			$children(ref_header, ...opt_header)
+		}
+
+		// container -> content
+		let ref_content = $query<HTMLDivElement>(`.${Classes.content}`, ref_container)
+		if (!ref_content) {
+			ref_content = $create('div')
+			$classlist(ref_content, Classes.content)
+		}
+
+		const opt_children = opt?.children
+		if ($is_false(opt_children)) {
+			$children(ref_content)
+		}
+		else if ($is_array(opt_children)) {
+			$children(ref_content, ...opt_children)
+		}
+
+		// container -> footer
+		let ref_footer = $query<HTMLDivElement>(`.${Classes.footer}`, ref_container)
+		if (!ref_footer) {
+			ref_footer = $create('div')
+			$classlist(ref_footer, Classes.footer)
+		}
+
+		const opt_footer = opt?.footer
+		if ($is_false(opt_footer)) {
+			$children(ref_footer)
+		}
+		else if ($is_array(opt_footer)) {
+			$children(ref_footer, ...opt_footer)
+		}
+
+		$children(ref_container, ref_header, ref_content, ref_footer)
+		$children(ref_drawer, ref_container)
+		refs?.drawer?.(ref_drawer)
+		refs?.container?.(ref_container)
+		refs?.header?.(ref_header)
+		refs?.content?.(ref_content)
+		refs?.footer?.(ref_footer)
+		return ref_drawer
+	}
+
+	export namespace CButton {
+		export type CElement = GCButton.CElement
+		export type UpdateOptions = GCButton.UpdateOptions & {
+			DrawerButton?: {
+				selected?: boolean
+				refs    ?: {
+					button?(ref: CElement): unknown
+				}
+			}
+		}
+
+		export function create(options?: UpdateOptions): CElement {
+			const ref_button = $create('button')
+			return update(ref_button, options)
+		}
+
+		export function update(ref_drawerbutton: CElement, options?: UpdateOptions): CElement {
+			const opt = options?.DrawerButton
+			const refs = opt?.refs
+			GCButton.update(ref_drawerbutton, options)
+			$classlist(ref_drawerbutton, Classes.button)
+
+			const opt_selected = opt?.selected
+			if ($is_bool(opt_selected)) {
+				$toggle_attr(ref_drawerbutton, Attributes.selected, opt_selected)
+			}
+
+			refs?.button?.(ref_drawerbutton)
+			return ref_drawerbutton
+		}
+	}
+
+	export namespace CLink {
+		export type CElement = GCButton.CLink.CElement
+		export type UpdateOptions = GCButton.CLink.UpdateOptions & {
+			DrawerLink?: {
+				selected?: boolean
+				refs    ?: {
+					link?(ref: CElement): unknown
+				}
+			}
+		}
+
+		export function create(options?: UpdateOptions): CElement {
+			const ref_drawerlink = $create('a')
+			return update(ref_drawerlink, options)
+		}
+
+		export function update(
+			ref_linkdrawer: CElement,
+			options?: UpdateOptions
+		): CElement {
+			const opt = options?.DrawerLink
+			const refs = opt?.refs
+			GCButton.CLink.update(ref_linkdrawer, options)
+			$classlist(ref_linkdrawer, Classes.button)
+
+			const opt_selected = opt?.selected
+			if ($is_bool(opt_selected)) {
+				$toggle_attr(ref_linkdrawer, Attributes.selected, opt_selected)
+			}
+
+			refs?.link?.(ref_linkdrawer)
+			return ref_linkdrawer
+		}
+	}
+}
+
+export type DrawerProps = astroHTML.JSX.HTMLAttributes & {
 	DrawerContainerAttr?: astroHTML.JSX.HTMLAttributes
 	DrawerHeaderAttr   ?: astroHTML.JSX.HTMLAttributes
 	DrawerContentAttr  ?: astroHTML.JSX.HTMLAttributes
 	DrawerFooterAttr   ?: astroHTML.JSX.HTMLAttributes
 }
 
-type DrawerElement = HTMLDivElement
-type DrawerButtonElement = ButtonElement
-type LinkDrawerButtonElement = LinkButtonElement
-
-type DrawerButtonProps = ButtonProps & {
+export type DrawerButtonProps = ButtonProps & {
 	DrawerButtonSelected?: boolean
 }
 
-type LinkDrawerButtonProps = LinkButtonProps & {
+export type LinkDrawerButtonProps = LinkButtonProps & {
 	LinkDrawerButtonSelected?: boolean
-}
-
-type DrawerButtonUpdateOptions = ButtonUpdateOptions & {
-	DrawerButtonSelected?: boolean
-	DrawerButtonRefs    ?: {
-		button?(ref: DrawerButtonElement): unknown
-	}
-}
-
-type LinkDrawerButtonUpdateOptions = LinkButtonUpdateOptions & {
-	DrawerButtonSelected?: boolean
-	DrawerButtonRefs    ?: {
-		link?(ref: LinkDrawerButtonElement): unknown
-	}
-}
-
-type DrawerUpdateOptions = {
-	DrawerChildren?: (string | Node)[] | boolean
-	DrawerHeader  ?: (string | Node)[] | boolean
-	DrawerFooter  ?: (string | Node)[] | boolean
-	DrawerRefs    ?: {
-		drawer   ?(ref: DrawerElement ): unknown
-		container?(ref: HTMLDivElement): unknown
-		header   ?(ref: HTMLDivElement): unknown
-		content  ?(ref: HTMLDivElement): unknown
-		footer   ?(ref: HTMLDivElement): unknown
-	}
-}
-
-enum DrawerClasses {
-	drawer    = 'c-drawer',
-	container = drawer + '-container',
-	header    = drawer + '-header',
-	content   = drawer + '-content',
-	footer    = drawer + '-footer',
-	button    = drawer + '-button'
-}
-
-enum DrawerButtonAttributes {
-	selected = 'data-c-drawer-button-selected'
-}
-
-function openDrawerRef(drawerRef: DrawerElement): void {
-	drawerRef.showPopover()
-}
-
-function closeDrawerRef(drawerRef: DrawerElement): void {
-	drawerRef.hidePopover()
-}
-
-function isDrawerRefOpen(drawerRef: DrawerElement): boolean {
-	return drawerRef.matches(':popover-open')
-}
-
-function createDrawerRef(options?: DrawerUpdateOptions): DrawerElement {
-	const drawerRef = document.createElement('div')
-	return updateDrawerRef(drawerRef, options)
-}
-
-function updateDrawerRef(drawerRef: DrawerElement, options?: DrawerUpdateOptions): DrawerElement {
-	const refs = options?.DrawerRefs
-	drawerRef.classList.add(DrawerClasses.drawer)
-	drawerRef.popover = 'auto'
-
-	// container
-	let containerRef = drawerRef.querySelector<HTMLDivElement>(`.${DrawerClasses.container}`)
-	if (!containerRef) {
-		containerRef = document.createElement('div')
-		containerRef.classList.add(DrawerClasses.container)
-	}
-
-	// container -> header
-	let headerRef = containerRef.querySelector<HTMLDivElement>(`.${DrawerClasses.header}`)
-	if (!headerRef) {
-		headerRef = document.createElement('div')
-		headerRef.classList.add(DrawerClasses.header)
-	}
-
-	const headerOption = options?.DrawerHeader
-	if (headerOption === false) {
-		headerRef.replaceChildren()
-	}
-	else if (headerOption !== undefined && headerOption !== true) {
-		headerRef.replaceChildren(...headerOption)
-	}
-
-	// container -> content
-	let contentRef = containerRef.querySelector<HTMLDivElement>(`.${DrawerClasses.content}`)
-	if (!contentRef) {
-		contentRef = document.createElement('div')
-		contentRef.classList.add(DrawerClasses.content)
-	}
-
-	const childrenOption = options?.DrawerChildren
-	if (childrenOption === false) {
-		contentRef.replaceChildren()
-	}
-	else if (childrenOption !== undefined && childrenOption !== true) {
-		contentRef.replaceChildren(...childrenOption)
-	}
-
-	// container -> footer
-	let footerRef = containerRef.querySelector<HTMLDivElement>(`.${DrawerClasses.footer}`)
-	if (!footerRef) {
-		footerRef = document.createElement('div')
-		footerRef.classList.add(DrawerClasses.footer)
-	}
-
-	const footerOption = options?.DrawerFooter
-	if (footerOption === false) {
-		footerRef.replaceChildren()
-	}
-	else if (footerOption !== undefined && footerOption !== true) {
-		footerRef.replaceChildren(...footerOption)
-	}
-
-	containerRef.replaceChildren(headerRef, contentRef, footerRef)
-	drawerRef.replaceChildren(containerRef)
-	refs?.drawer?.(drawerRef)
-	refs?.container?.(containerRef)
-	refs?.header?.(headerRef)
-	refs?.content?.(contentRef)
-	refs?.footer?.(footerRef)
-	return drawerRef
-}
-
-function createDrawerButtonRef(options?: DrawerButtonUpdateOptions): DrawerButtonElement {
-	const buttonRef = document.createElement('button')
-	return updateDrawerButtonRef(buttonRef, options)
-}
-
-function updateDrawerButtonRef(drawerButtonRef: DrawerButtonElement, options?: DrawerButtonUpdateOptions): DrawerButtonElement {
-	const refs = options?.DrawerButtonRefs
-	updateButtonRef(drawerButtonRef, options)
-	drawerButtonRef.classList.add(DrawerClasses.button)
-
-	const selectedOption = options?.DrawerButtonSelected
-	if (selectedOption !== undefined) {
-		drawerButtonRef.toggleAttribute(DrawerButtonAttributes.selected, selectedOption)
-	}
-
-	refs?.button?.(drawerButtonRef)
-	return drawerButtonRef
-}
-
-function createLinkDrawerButtonRef(options?: LinkDrawerButtonUpdateOptions): LinkDrawerButtonElement {
-	const linkRef = document.createElement('a')
-	return updateLinkDrawerButtonRef(linkRef, options)
-}
-
-function updateLinkDrawerButtonRef(
-	linkDrawerButtonRef: LinkDrawerButtonElement,
-	options?: LinkDrawerButtonUpdateOptions
-): LinkDrawerButtonElement {
-	const refs = options?.DrawerButtonRefs
-	updateLinkButtonRef(linkDrawerButtonRef, options)
-	linkDrawerButtonRef.classList.add(DrawerClasses.button)
-
-	const selectedOption = options?.DrawerButtonSelected
-	if (selectedOption !== undefined) {
-		linkDrawerButtonRef.toggleAttribute(DrawerButtonAttributes.selected, selectedOption)
-	}
-
-	refs?.link?.(linkDrawerButtonRef)
-	return linkDrawerButtonRef
-}
-
-export {
-	type DrawerProps,
-	type DrawerButtonProps,
-	type DrawerUpdateOptions,
-	type DrawerButtonUpdateOptions,
-	type LinkDrawerButtonProps,
-	type LinkDrawerButtonUpdateOptions,
-	type DrawerElement,
-	type DrawerButtonElement,
-	type LinkDrawerButtonElement,
-	DrawerClasses,
-	DrawerButtonAttributes,
-	openDrawerRef,
-	closeDrawerRef,
-	isDrawerRefOpen,
-	createDrawerRef,
-	updateDrawerRef,
-	createDrawerButtonRef,
-	updateDrawerButtonRef,
-	createLinkDrawerButtonRef,
-	updateLinkDrawerButtonRef
 }

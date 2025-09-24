@@ -4,16 +4,16 @@ import { ObservableStore } from "@/utils/store"
 import { DEFAULT_COLOR, DEFAULT_COLOR_IN_CMYK, DEFAULT_COLOR_IN_HSL, DEFAULT_COLOR_IN_HSV, DEFAULT_COLOR_IN_HWB, DEFAULT_COLOR_IN_RGB } from "../_shared/_constant"
 import { cmykToRgb, colorContrastPercentage, colorToRgb, hslToHsv, hslToRgb, hsvToHex, hsvToHsl, hsvToHwb, hsvToRgb, hwbToHsv, hwbToRgb, rgbToCmyk, rgbToColor, rgbToHex, rgbToHsl, rgbToHsv } from "@/utils/color"
 import { safeNumber } from "@/utils/number"
-import type { TooltipElement } from "@/components/Tooltip"
+import { CTooltip } from "@/components/Tooltip"
 import { CSSClasses } from "../../_styles/_css"
 import { Math_clamp } from "@/utils/math"
 import type { CMYKColor, HEXColor, HSLColor, HSVColor, HWBColor, RGBColor } from "@/types/color"
-import type { ButtonElement } from "@/components/Button"
+import { CButton } from "@/components/Button"
 import { pickFile } from "@/utils/file"
 import { isTargetValidElement } from "@/utils/element"
 import { Commands } from "../_shared/_commands"
 import { ColorSpace } from "../_shared/_enums"
-import type { ToastElement } from "@/components/Toast"
+import { CToast } from "@/components/Toast"
 import { saveStorageItem } from "./_database"
 import { pxToRem } from "@/utils/css"
 
@@ -35,62 +35,62 @@ export const PickerStore = new ObservableStore<PickerStoreType>({
 	rgb: DEFAULT_COLOR_IN_RGB
 })
 
-const _previewRef = $(ElementIds.bd_preview) as HTMLOutputElement
-const _inputsRef = $$<TooltipElement>('.' + CSSClasses.bodyInputs)
-const _toastCopiedRef = $(ElementIds.toa_copied) as ToastElement
+const _ref_preview = $(ElementIds.bd_preview) as HTMLOutputElement
+const _ref_inputs = $$<CTooltip.CElement>('.' + CSSClasses.bodyInputs)
+const _ref_toastCopied = $(ElementIds.toa_copied) as CToast.CElement
 
 // inp = input
-const _inp_hexRef = $(ElementIds.bdInp_hex) as HTMLInputElement
-const _inp_rgbRef = $(ElementIds.bdInp_rgb) as HTMLInputElement
-const _inp_hslRef = $(ElementIds.bdInp_hsl) as HTMLInputElement
-const _inp_hsvRef = $(ElementIds.bdInp_hsv) as HTMLInputElement
-const _inp_hwbRef = $(ElementIds.bdInp_hwb) as HTMLInputElement
-const _inp_cmykRef = $(ElementIds.bdInp_cmyk) as HTMLInputElement
+const _ref_inp_hex = $(ElementIds.bdInp_hex) as HTMLInputElement
+const _ref_inp_rgb = $(ElementIds.bdInp_rgb) as HTMLInputElement
+const _ref_inp_hsl = $(ElementIds.bdInp_hsl) as HTMLInputElement
+const _ref_inp_hsv = $(ElementIds.bdInp_hsv) as HTMLInputElement
+const _ref_inp_hwb = $(ElementIds.bdInp_hwb) as HTMLInputElement
+const _ref_inp_cmyk = $(ElementIds.bdInp_cmyk) as HTMLInputElement
 
 // pic = picker
-const _pic_imageImageRef = $(ElementIds.bdPick_imageButton) as ButtonElement
-const _pic_imageCanvasRef = $(ElementIds.bdPick_imageCanvas) as HTMLCanvasElement
-const _pic_imageWrapperRef = $(ElementIds.bdPick_imageWrapper) as HTMLDivElement
-const _pic_rectangleRectRef = $(ElementIds.bdPick_rectangleRect) as HTMLDivElement
-const _pic_rectangleHueRef = $(ElementIds.bdPick_rectangleHue) as HTMLInputElement
-const _pic_rectangleHslRectRef = $(ElementIds.bdPick_rectangleHslRect) as HTMLDivElement
-const _pic_rectangleHslHueRef = $(ElementIds.bdPick_rectangleHslHue) as HTMLInputElement
-const _pic_spectrumRectRef = $(ElementIds.bdPick_spectrumRect) as HTMLDivElement
-const _pic_spectrumHueRef = $(ElementIds.bdPick_spectrumHue) as HTMLInputElement
-const _pic_rgbRedRef = $(ElementIds.bdPick_rgbRed) as HTMLInputElement
-const _pic_rgbLabelRedRef = $$(`[for="${CSS.escape(ElementIds.bdPick_rgbRed)}"]`) as HTMLLabelElement
-const _pic_rgbGreenRef = $(ElementIds.bdPick_rgbGreen) as HTMLInputElement
-const _pic_rgbLabelGreenRef = $$(`[for="${CSS.escape(ElementIds.bdPick_rgbGreen)}"]`) as HTMLLabelElement
-const _pic_rgbBlueRef = $(ElementIds.bdPick_rgbBlue) as HTMLInputElement
-const _pic_rgbLabelBlueRef = $$(`[for="${CSS.escape(ElementIds.bdPick_rgbBlue)}"]`) as HTMLLabelElement
-const _pic_hslHueRef = $(ElementIds.bdPick_hslHue) as HTMLInputElement
-const _pic_hslLabelHueRef = $$(`[for="${CSS.escape(ElementIds.bdPick_hslHue)}"]`) as HTMLLabelElement
-const _pic_hslSaturationRef = $(ElementIds.bdPick_hslSaturation) as HTMLInputElement
-const _pic_hslLabelSaturationRef = $$(`[for="${CSS.escape(ElementIds.bdPick_hslSaturation)}"]`) as HTMLLabelElement
-const _pic_hslLightnessRef = $(ElementIds.bdPick_hslLightness) as HTMLInputElement
-const _pic_hslLabelLightnessRef = $$(`[for="${CSS.escape(ElementIds.bdPick_hslLightness)}"]`) as HTMLLabelElement
-const _pic_cmykCyanRef = $(ElementIds.bdPick_cmykCyan) as HTMLInputElement
-const _pic_cmykLabelCyanRef = $$(`[for="${CSS.escape(ElementIds.bdPick_cmykCyan)}"]`) as HTMLLabelElement
-const _pic_cmykMagentaRef = $(ElementIds.bdPick_cmykMagenta) as HTMLInputElement
-const _pic_cmykLabelMagentaRef = $$(`[for="${CSS.escape(ElementIds.bdPick_cmykMagenta)}"]`) as HTMLLabelElement
-const _pic_cmykYellowRef = $(ElementIds.bdPick_cmykYellow) as HTMLInputElement
-const _pic_cmykLabelYellowRef = $$(`[for="${CSS.escape(ElementIds.bdPick_cmykYellow)}"]`) as HTMLLabelElement
-const _pic_cmykKeyRef = $(ElementIds.bdPick_cmykKey) as HTMLInputElement
-const _pic_cmykLabelKeyRef = $$(`[for="${CSS.escape(ElementIds.bdPick_cmykKey)}"]`) as HTMLLabelElement
-const _pic_hexRef = $(ElementIds.bdPick_hex) as HTMLInputElement
-const _pic_hexLabelRef = $$(`[for="${CSS.escape(ElementIds.bdPick_hex)}"]`) as HTMLLabelElement
-const _pic_hsvHueRef = $(ElementIds.bdPick_hsvHue) as HTMLInputElement
-const _pic_hsvLabelHueRef = $$(`[for="${CSS.escape(ElementIds.bdPick_hsvHue)}"]`) as HTMLLabelElement
-const _pic_hsvSaturationRef = $(ElementIds.bdPick_hsvSaturation) as HTMLInputElement
-const _pic_hsvLabelSaturationRef = $$(`[for="${CSS.escape(ElementIds.bdPick_hsvSaturation)}"]`) as HTMLLabelElement
-const _pic_hsvValueRef = $(ElementIds.bdPick_hsvValue) as HTMLInputElement
-const _pic_hsvLabelValueRef = $$(`[for="${CSS.escape(ElementIds.bdPick_hsvValue)}"]`) as HTMLLabelElement
-const _pic_hwbHueRef = $(ElementIds.bdPick_hwbHue) as HTMLInputElement
-const _pic_hwbLabelHueRef = $$(`[for="${CSS.escape(ElementIds.bdPick_hwbHue)}"]`) as HTMLLabelElement
-const _pic_hwbWhitenessRef = $(ElementIds.bdPick_hwbWhiteness) as HTMLInputElement
-const _pic_hwbLabelWhitenessRef = $$(`[for="${CSS.escape(ElementIds.bdPick_hwbWhiteness)}"]`) as HTMLLabelElement
-const _pic_hwbBlacknessRef = $(ElementIds.bdPick_hwbBlackness) as HTMLInputElement
-const _pic_hwbLabelBlacknessRef = $$(`[for="${CSS.escape(ElementIds.bdPick_hwbBlackness)}"]`) as HTMLLabelElement
+const _ref_pic_imageImage = $(ElementIds.bdPick_imageButton) as CButton.CElement
+const _ref_pic_imageCanvas = $(ElementIds.bdPick_imageCanvas) as HTMLCanvasElement
+const _ref_pic_imageWrapper = $(ElementIds.bdPick_imageWrapper) as HTMLDivElement
+const _ref_pic_rectangleRect = $(ElementIds.bdPick_rectangleRect) as HTMLDivElement
+const _ref_pic_rectangleHue = $(ElementIds.bdPick_rectangleHue) as HTMLInputElement
+const _ref_pic_rectangleHslRect = $(ElementIds.bdPick_rectangleHslRect) as HTMLDivElement
+const _ref_pic_rectangleHslHue = $(ElementIds.bdPick_rectangleHslHue) as HTMLInputElement
+const _ref_pic_spectrumRect = $(ElementIds.bdPick_spectrumRect) as HTMLDivElement
+const _ref_pic_spectrumHue = $(ElementIds.bdPick_spectrumHue) as HTMLInputElement
+const _ref_pic_rgbRed = $(ElementIds.bdPick_rgbRed) as HTMLInputElement
+const _ref_pic_rgbLabelRed = $$(`[for="${CSS.escape(ElementIds.bdPick_rgbRed)}"]`) as HTMLLabelElement
+const _ref_pic_rgbGreen = $(ElementIds.bdPick_rgbGreen) as HTMLInputElement
+const _ref_pic_rgbLabelGreen = $$(`[for="${CSS.escape(ElementIds.bdPick_rgbGreen)}"]`) as HTMLLabelElement
+const _ref_pic_rgbBlue = $(ElementIds.bdPick_rgbBlue) as HTMLInputElement
+const _ref_pic_rgbLabelBlue = $$(`[for="${CSS.escape(ElementIds.bdPick_rgbBlue)}"]`) as HTMLLabelElement
+const _ref_pic_hslHue = $(ElementIds.bdPick_hslHue) as HTMLInputElement
+const _ref_pic_hslLabelHue = $$(`[for="${CSS.escape(ElementIds.bdPick_hslHue)}"]`) as HTMLLabelElement
+const _ref_pic_hslSaturation = $(ElementIds.bdPick_hslSaturation) as HTMLInputElement
+const _ref_pic_hslLabelSaturation = $$(`[for="${CSS.escape(ElementIds.bdPick_hslSaturation)}"]`) as HTMLLabelElement
+const _ref_pic_hslLightness = $(ElementIds.bdPick_hslLightness) as HTMLInputElement
+const _ref_pic_hslLabelLightness = $$(`[for="${CSS.escape(ElementIds.bdPick_hslLightness)}"]`) as HTMLLabelElement
+const _ref_pic_cmykCyan = $(ElementIds.bdPick_cmykCyan) as HTMLInputElement
+const _ref_pic_cmykLabelCyan = $$(`[for="${CSS.escape(ElementIds.bdPick_cmykCyan)}"]`) as HTMLLabelElement
+const _ref_pic_cmykMagenta = $(ElementIds.bdPick_cmykMagenta) as HTMLInputElement
+const _ref_pic_cmykLabelMagenta = $$(`[for="${CSS.escape(ElementIds.bdPick_cmykMagenta)}"]`) as HTMLLabelElement
+const _ref_pic_cmykYellow = $(ElementIds.bdPick_cmykYellow) as HTMLInputElement
+const _ref_pic_cmykLabelYellow = $$(`[for="${CSS.escape(ElementIds.bdPick_cmykYellow)}"]`) as HTMLLabelElement
+const _ref_pic_cmykKey = $(ElementIds.bdPick_cmykKey) as HTMLInputElement
+const _ref_pic_cmykLabelKey = $$(`[for="${CSS.escape(ElementIds.bdPick_cmykKey)}"]`) as HTMLLabelElement
+const _ref_pic_hex = $(ElementIds.bdPick_hex) as HTMLInputElement
+const _ref_pic_hexLabel = $$(`[for="${CSS.escape(ElementIds.bdPick_hex)}"]`) as HTMLLabelElement
+const _ref_pic_hsvHue = $(ElementIds.bdPick_hsvHue) as HTMLInputElement
+const _ref_pic_hsvLabelHue = $$(`[for="${CSS.escape(ElementIds.bdPick_hsvHue)}"]`) as HTMLLabelElement
+const _ref_pic_hsvSaturation = $(ElementIds.bdPick_hsvSaturation) as HTMLInputElement
+const _ref_pic_hsvLabelSaturation = $$(`[for="${CSS.escape(ElementIds.bdPick_hsvSaturation)}"]`) as HTMLLabelElement
+const _ref_pic_hsvValue = $(ElementIds.bdPick_hsvValue) as HTMLInputElement
+const _ref_pic_hsvLabelValue = $$(`[for="${CSS.escape(ElementIds.bdPick_hsvValue)}"]`) as HTMLLabelElement
+const _ref_pic_hwbHue = $(ElementIds.bdPick_hwbHue) as HTMLInputElement
+const _ref_pic_hwbLabelHue = $$(`[for="${CSS.escape(ElementIds.bdPick_hwbHue)}"]`) as HTMLLabelElement
+const _ref_pic_hwbWhiteness = $(ElementIds.bdPick_hwbWhiteness) as HTMLInputElement
+const _ref_pic_hwbLabelWhiteness = $$(`[for="${CSS.escape(ElementIds.bdPick_hwbWhiteness)}"]`) as HTMLLabelElement
+const _ref_pic_hwbBlackness = $(ElementIds.bdPick_hwbBlackness) as HTMLInputElement
+const _ref_pic_hwbLabelBlackness = $$(`[for="${CSS.escape(ElementIds.bdPick_hwbBlackness)}"]`) as HTMLLabelElement
 
 function _updatePickerRefsView(color: PickerStoreType): void {
 	const isFocus = (el: Element) => el.matches(':focus')
@@ -106,7 +106,7 @@ function _updatePickerRefsView(color: PickerStoreType): void {
 	const style = (ref: HTMLElement, property: string, value: string) => ref.style.setProperty(property, value)
 	requestAnimationFrame(() => {
 		RECTANGLE_RECT: {
-			const ref = _pic_rectangleRectRef
+			const ref = _ref_pic_rectangleRect
 			style(ref, '--color', hex)
 			style(ref, '--hue', hsv.h * 360 + '')
 			style(ref, '--border-color', contrast(rgb))
@@ -116,7 +116,7 @@ function _updatePickerRefsView(color: PickerStoreType): void {
 			style(ref, '--position-y', (1-hsv.v) * 100 + '%')
 		}
 		RECTANGLE_HUE: {
-			const ref = _pic_rectangleHueRef
+			const ref = _ref_pic_rectangleHue
 			style(ref, '--color', `hsl(${round(hsl.h * 360)},100%,50%)`)
 			style(ref, '--border-color', contrast(hslToRgb({h: hsl.h, s: 1, l: .5})))
 			if (isFocus(ref)) {break RECTANGLE_HUE}
@@ -124,7 +124,7 @@ function _updatePickerRefsView(color: PickerStoreType): void {
 			ref.value = round(hsv.h * 360) + ''
 		}
 		RECTANGLE_HSL_RECT: {
-			const ref = _pic_rectangleHslRectRef
+			const ref = _ref_pic_rectangleHslRect
 			style(ref, '--color', hex)
 			style(ref, '--hue', hsl.h * 360 + '')
 			style(ref, '--border-color', contrast(rgb))
@@ -134,7 +134,7 @@ function _updatePickerRefsView(color: PickerStoreType): void {
 			style(ref, '--position-y', (1-hsl.l) * 100 + '%')
 		}
 		RECTANGLE_HSL_HUE: {
-			const ref = _pic_rectangleHslHueRef
+			const ref = _ref_pic_rectangleHslHue
 			style(ref, '--color', `hsl(${round(hsl.h * 360)},100%,50%)`)
 			style(ref, '--border-color', contrast(hslToRgb({h: hsl.h, s: 1, l: .5})))
 			if (isFocus(ref)) {break RECTANGLE_HSL_HUE}
@@ -142,7 +142,7 @@ function _updatePickerRefsView(color: PickerStoreType): void {
 			ref.value = round(hsl.h * 360) + ''
 		}
 		SPECTRUM_RECT: {
-			const ref = _pic_spectrumRectRef
+			const ref = _ref_pic_spectrumRect
 			style(ref, '--color', hsvToHex({...hsv, v: 1}))
 			style(ref, '--border-color', contrast(hsvToRgb({...hsv, v: 1})))
 			if (isFocus(ref)) {break SPECTRUM_RECT}
@@ -151,7 +151,7 @@ function _updatePickerRefsView(color: PickerStoreType): void {
 			style(ref, '--position-y', (1-hsv.s) * 100 + '%')
 		}
 		SPECTRUM_HUE: {
-			const ref = _pic_spectrumHueRef
+			const ref = _ref_pic_spectrumHue
 			style(ref, '--max-value-color', hsvToHex({...hsv, v: 1}))
 			style(ref, '--color', hex)
 			style(ref, '--border-color', contrast(rgb))
@@ -160,159 +160,159 @@ function _updatePickerRefsView(color: PickerStoreType): void {
 			ref.value = (1 - hsv.v) * 100 + ''
 		}
 		RGB_RED: {
-			const ref = _pic_rgbRedRef
+			const ref = _ref_pic_rgbRed
 			style(ref, '--color', `rgb(${round(rgb.r * 0xff)},0,0)`)
 			style(ref, '--border-color', contrast({...rgb, g: 0, b: 0}))
-			_pic_rgbLabelRedRef.textContent = `Red: ${round(rgb.r * 0xff)} (${round(rgb.r * 100)}%)`
+			_ref_pic_rgbLabelRed.textContent = `Red: ${round(rgb.r * 0xff)} (${round(rgb.r * 100)}%)`
 			if (isFocus(ref)) {break RGB_RED}
 
 			ref.value = round(rgb.r * 0xff) + ''
 		}
 		RGB_GREEN: {
-			const ref = _pic_rgbGreenRef
+			const ref = _ref_pic_rgbGreen
 			style(ref, '--color', `rgb(0,${round(rgb.g * 0xff)},0)`)
 			style(ref, '--border-color', contrast({...rgb, r: 0, b: 0}))
-			_pic_rgbLabelGreenRef.textContent = `Green: ${round(rgb.g * 0xff)} (${round(rgb.g * 100)}%)`
+			_ref_pic_rgbLabelGreen.textContent = `Green: ${round(rgb.g * 0xff)} (${round(rgb.g * 100)}%)`
 			if (isFocus(ref)) {break RGB_GREEN}
 
 			ref.value = round(rgb.g * 0xff) + ''
 		}
 		RGB_BLUE: {
-			const ref = _pic_rgbBlueRef
+			const ref = _ref_pic_rgbBlue
 			style(ref, '--color', `rgb(0,0,${round(rgb.b * 0xff)})`)
 			style(ref, '--border-color', contrast({...rgb, r: 0, g: 0}))
-			_pic_rgbLabelBlueRef.textContent = `Blue: ${round(rgb.b * 0xff)} (${round(rgb.b * 100)}%)`
+			_ref_pic_rgbLabelBlue.textContent = `Blue: ${round(rgb.b * 0xff)} (${round(rgb.b * 100)}%)`
 			if (isFocus(ref)) {break RGB_BLUE}
 
 			ref.value = round(rgb.b * 0xff) + ''
 		}
 		HSL_HUE: {
-			const ref = _pic_hslHueRef
+			const ref = _ref_pic_hslHue
 			style(ref, '--color', `hsl(${round(hsl.h * 360)},100%,50%)`)
 			style(ref, '--border-color', contrast(hslToRgb({...hsl, s: 1, l: 0.5})))
-			_pic_hslLabelHueRef.textContent = `Hue: ${round(hsl.h * 360)}° (${round(hsl.h * 100)}%)`
+			_ref_pic_hslLabelHue.textContent = `Hue: ${round(hsl.h * 360)}° (${round(hsl.h * 100)}%)`
 			if (isFocus(ref)) {break HSL_HUE}
 
 			ref.value = round(hsl.h * 360) + ''
 		}
 		HSL_SATURATION: {
-			const ref = _pic_hslSaturationRef
+			const ref = _ref_pic_hslSaturation
 			style(ref, '--hue', round(hsl.h * 360) + '')
 			style(ref, '--color', `hsl(${round(hsl.h * 360)},${round(hsl.s * 100)}%,50%)`)
 			style(ref, '--border-color', contrast(hslToRgb({...hsl, l: 0.5})))
-			_pic_hslLabelSaturationRef.textContent = `Saturation: ${round(hsl.s * 100)}%`
+			_ref_pic_hslLabelSaturation.textContent = `Saturation: ${round(hsl.s * 100)}%`
 			if (isFocus(ref)) {break HSL_SATURATION}
 
 			ref.value = round(hsl.s * 100) + ''
 		}
 		HUE_LIGHTNESS: {
-			const ref = _pic_hslLightnessRef
+			const ref = _ref_pic_hslLightness
 			style(ref, '--color', `hsl(0,0%,${round(hsl.l * 100)}%)`)
 			style(ref, '--border-color', contrast(hslToRgb({...hsl, h: 0, s: 0})))
-			_pic_hslLabelLightnessRef.textContent = `Lightness: ${round(hsl.l * 100)}%`
+			_ref_pic_hslLabelLightness.textContent = `Lightness: ${round(hsl.l * 100)}%`
 			if (isFocus(ref)) {break HUE_LIGHTNESS}
 
 			ref.value = round(hsl.l * 100) + ''
 		}
 		CMYK_CYAN: {
-			const ref = _pic_cmykCyanRef
+			const ref = _ref_pic_cmykCyan
 			style(ref, '--color', `hsl(180,100%,${cmyk.c * 50}%)`)
 			style(ref, '--border-color', contrast(hslToRgb({h: 180 / 360, s: 1, l: cmyk.c * 0.5})))
-			_pic_cmykLabelCyanRef.textContent = `Cyan: ${round(cmyk.c * 100)}%`
+			_ref_pic_cmykLabelCyan.textContent = `Cyan: ${round(cmyk.c * 100)}%`
 			if (isFocus(ref)) {break CMYK_CYAN}
 
 			ref.value = round(cmyk.c * 100) + ''
 		}
 		CMYK_MAGENTA: {
-			const ref = _pic_cmykMagentaRef
+			const ref = _ref_pic_cmykMagenta
 			style(ref, '--color', `hsl(300,100%,${cmyk.m * 50}%)`)
 			style(ref, '--border-color', contrast(hslToRgb({h: 300 / 360, s: 1, l: cmyk.m * 0.5})))
-			_pic_cmykLabelMagentaRef.textContent = `Magenta: ${round(cmyk.m * 100)}%`
+			_ref_pic_cmykLabelMagenta.textContent = `Magenta: ${round(cmyk.m * 100)}%`
 			if (isFocus(ref)) {break CMYK_MAGENTA}
 
 			ref.value = round(cmyk.m * 100) + ''
 		}
 		CMYK_YELLOW: {
-			const ref = _pic_cmykYellowRef
+			const ref = _ref_pic_cmykYellow
 			style(ref, '--color', `hsl(60,100%,${cmyk.y * 50}%)`)
 			style(ref, '--border-color', contrast(hslToRgb({h: 60 / 360, s: 1, l: cmyk.y * 0.5})))
-			_pic_cmykLabelYellowRef.textContent = `Yellow: ${round(cmyk.y * 100)}%`
+			_ref_pic_cmykLabelYellow.textContent = `Yellow: ${round(cmyk.y * 100)}%`
 			if (isFocus(ref)) {break CMYK_YELLOW}
 
 			ref.value = round(cmyk.y * 100) + ''
 		}
 		CMYK_KEY: {
-			const ref = _pic_cmykKeyRef
+			const ref = _ref_pic_cmykKey
 			style(ref, '--color', `hsl(0,0%,${(1-cmyk.k) * 100}%)`)
 			style(ref, '--border-color', contrast(hslToRgb({h: 0, s: 0, l: (1-cmyk.k)})))
-			_pic_cmykLabelKeyRef.textContent = `Key/Black: ${round(cmyk.k * 100)}%`
+			_ref_pic_cmykLabelKey.textContent = `Key/Black: ${round(cmyk.k * 100)}%`
 			if (isFocus(ref)) {break CMYK_KEY}
 
 			ref.value = round(cmyk.k * 100) + ''
 		}
 		HEX: {
-			const ref = _pic_hexRef
+			const ref = _ref_pic_hex
 			style(ref, '--color', hex)
 			style(ref, '--border-color', contrast(rgb))
-			_pic_hexLabelRef.textContent = `Hex: ${hex} (${value})`
+			_ref_pic_hexLabel.textContent = `Hex: ${hex} (${value})`
 			if (isFocus(ref)) {break HEX}
 
 			ref.value = value + ''
 		}
 		HSV_HUE: {
-			const ref = _pic_hsvHueRef
+			const ref = _ref_pic_hsvHue
 			style(ref, '--color', hsvToHex({...hsv, s: 1, v: 1}))
 			style(ref, '--border-color', contrast(hsvToRgb({...hsv, s: 1, v: 1})))
-			_pic_hsvLabelHueRef.textContent = `Hue: ${round(hsv.h * 360)}° (${round(hsv.h * 100)}%)`
+			_ref_pic_hsvLabelHue.textContent = `Hue: ${round(hsv.h * 360)}° (${round(hsv.h * 100)}%)`
 			if (isFocus(ref)) {break HSV_HUE}
 
 			ref.value = round(hsv.h * 360) + ''
 		}
 		HSV_SATURATION: {
-			const ref = _pic_hsvSaturationRef
+			const ref = _ref_pic_hsvSaturation
 			style(ref, '--hue', round(hsv.h * 360) + '')
 			style(ref, '--color', hsvToHex({...hsv, v: 1}))
 			style(ref, '--border-color', contrast(hsvToRgb({...hsv, v: 1})))
-			_pic_hsvLabelSaturationRef.textContent = `Saturation: ${round(hsv.s * 100)}%`
+			_ref_pic_hsvLabelSaturation.textContent = `Saturation: ${round(hsv.s * 100)}%`
 			if (isFocus(ref)) {break HSV_SATURATION}
 
 			ref.value = round(hsv.s * 100) + ''
 		}
 		HSV_VALUE: {
-			const ref = _pic_hsvValueRef
+			const ref = _ref_pic_hsvValue
 			style(ref, '--max-value-color', hsvToHex({...hsv, v: 1}))
 			style(ref, '--color', hex)
 			style(ref, '--border-color', contrast(rgb))
-			_pic_hsvLabelValueRef.textContent = `Value: ${round(hsv.v * 100)}%`
+			_ref_pic_hsvLabelValue.textContent = `Value: ${round(hsv.v * 100)}%`
 			if (isFocus(ref)) {break HSV_VALUE}
 
 			ref.value = round(hsv.v * 100) + ''
 		}
 		HWB_HUE: {
-			const ref = _pic_hwbHueRef
+			const ref = _ref_pic_hwbHue
 			style(ref, '--color', `hwb(${round(hwb.h * 360)} 0% 0%)`)
 			style(ref, '--border-color', contrast(hwbToRgb({...hwb, w: 0, b: 0})))
-			_pic_hwbLabelHueRef.textContent = `Hue: ${round(hwb.h * 360)}° (${round(hwb.h * 100)}%)`
+			_ref_pic_hwbLabelHue.textContent = `Hue: ${round(hwb.h * 360)}° (${round(hwb.h * 100)}%)`
 			if (isFocus(ref)) {break HWB_HUE}
 
 			ref.value = round(hwb.h * 360) + ''
 		}
 		HWB_WHITENESS: {
-			const ref = _pic_hwbWhitenessRef
+			const ref = _ref_pic_hwbWhiteness
 			style(ref, '--hue', round(hwb.h * 360) + '')
 			style(ref, '--color', `hwb(${round(hwb.h * 360)} ${round(hwb.w * 100)}% 0%)`)
 			style(ref, '--border-color', contrast(hwbToRgb({...hwb, b: 0})))
-			_pic_hwbLabelWhitenessRef.textContent = `Whiteness: ${round(hwb.w * 100)}%`
+			_ref_pic_hwbLabelWhiteness.textContent = `Whiteness: ${round(hwb.w * 100)}%`
 			if (isFocus(ref)) {break HWB_WHITENESS}
 
 			ref.value = round(hwb.w * 100) + ''
 		}
 		HWB_BLACKNESS: {
-			const ref = _pic_hwbBlacknessRef
+			const ref = _ref_pic_hwbBlackness
 			style(ref, '--hue', round(hwb.h * 360) + '')
 			style(ref, '--color', `hwb(${round(hwb.h * 360)} 0% ${round(hwb.b * 100)}%)`)
 			style(ref, '--border-color', contrast(hwbToRgb({...hwb, w: 0})))
-			_pic_hwbLabelBlacknessRef.textContent = `Blackness: ${round(hwb.b * 100)}%`
+			_ref_pic_hwbLabelBlackness.textContent = `Blackness: ${round(hwb.b * 100)}%`
 			if (isFocus(ref)) {break HWB_BLACKNESS}
 
 			ref.value = round(hwb.b * 100) + ''
@@ -323,44 +323,44 @@ function _updatePickerRefsView(color: PickerStoreType): void {
 function _updateInputRefsView(color: PickerStoreType): void {
 	const isFocus = (el: Element) => el.matches(':focus')
 	const round = (v: number) => Math.round(v)
-	if (!isFocus(_inp_hexRef)) {
-		_inp_hexRef.value = color.hex.toUpperCase()
+	if (!isFocus(_ref_inp_hex)) {
+		_ref_inp_hex.value = color.hex.toUpperCase()
 	}
-	if (!isFocus(_inp_rgbRef)) {
+	if (!isFocus(_ref_inp_rgb)) {
 		const rgb = color.rgb
-		_inp_rgbRef.value = [
+		_ref_inp_rgb.value = [
 			round(rgb.r * 0xff),
 			round(rgb.g * 0xff),
 			round(rgb.b * 0xff),
 		].join(', ')
 	}
-	if (!isFocus(_inp_hslRef)) {
+	if (!isFocus(_ref_inp_hsl)) {
 		const hsl = color.hsl
-		_inp_hslRef.value = [
+		_ref_inp_hsl.value = [
 			round(hsl.h * 360) + '°',
 			round(hsl.s * 100) + '%',
 			round(hsl.l * 100) + '%',
 		].join(', ')
 	}
-	if (!isFocus(_inp_hsvRef)) {
+	if (!isFocus(_ref_inp_hsv)) {
 		const hsv = color.hsv
-		_inp_hsvRef.value = [
+		_ref_inp_hsv.value = [
 			round(hsv.h * 360) + '°',
 			round(hsv.s * 100) + '%',
 			round(hsv.v * 100) + '%',
 		].join(', ')
 	}
-	if (!isFocus(_inp_hwbRef)) {
+	if (!isFocus(_ref_inp_hwb)) {
 		const hwb = color.hwb
-		_inp_hwbRef.value = [
+		_ref_inp_hwb.value = [
 			round(hwb.h * 360) + '°',
 			round(hwb.w * 100) + '%',
 			round(hwb.b * 100) + '%',
 		].join(', ')
 	}
-	if (!isFocus(_inp_cmykRef)) {
+	if (!isFocus(_ref_inp_cmyk)) {
 		const cmyk = color.cmyk
-		_inp_cmykRef.value = [
+		_ref_inp_cmyk.value = [
 			round(cmyk.c * 100) + '%',
 			round(cmyk.m * 100) + '%',
 			round(cmyk.y * 100) + '%',
@@ -373,7 +373,7 @@ function _subscribeColorRefView(v: PickerStoreType, o: PickerStoreType): void {
 	if (v.hex === o.hex) {return}
 
 	requestAnimationFrame(() => {
-		_previewRef.style.setProperty('background-color', v.hex)
+		_ref_preview.style.setProperty('background-color', v.hex)
 		_updateInputRefsView(v)
 		_updatePickerRefsView(v)
 	})
@@ -392,8 +392,8 @@ function _initSubscriber(): void {
 
 function _initEvents(): void {
 	function inputs(): void {
-		_inp_hexRef.addEventListener('input', () => {
-			const value = safeNumber(Number.parseInt(_inp_hexRef.value.replace(/[^0-9A-Fa-f]/g, ''), 16))
+		_ref_inp_hex.addEventListener('input', () => {
+			const value = safeNumber(Number.parseInt(_ref_inp_hex.value.replace(/[^0-9A-Fa-f]/g, ''), 16))
 			const rgb = colorToRgb(value)
 			const hex = rgbToHex(rgb)
 			const hsv = rgbToHsv(rgb)
@@ -405,8 +405,8 @@ function _initEvents(): void {
 			})
 		})
 
-		_inp_rgbRef.addEventListener('input', () => {
-			const v = _inp_rgbRef
+		_ref_inp_rgb.addEventListener('input', () => {
+			const v = _ref_inp_rgb
 				.value
 				.replace(/[^0-9,.]/gs, '')
 				.split(',')
@@ -426,8 +426,8 @@ function _initEvents(): void {
 			})
 		})
 
-		_inp_hslRef.addEventListener('input', () => {
-			const v = _inp_hslRef
+		_ref_inp_hsl.addEventListener('input', () => {
+			const v = _ref_inp_hsl
 				.value
 				.replace(/[^0-9,.]/gs, '')
 				.split(',')
@@ -447,8 +447,8 @@ function _initEvents(): void {
 			})
 		})
 
-		_inp_hsvRef.addEventListener('input', () => {
-			const v = _inp_hsvRef
+		_ref_inp_hsv.addEventListener('input', () => {
+			const v = _ref_inp_hsv
 				.value
 				.replace(/[^0-9,.]/gs, '')
 				.split(',')
@@ -468,8 +468,8 @@ function _initEvents(): void {
 			})
 		})
 
-		_inp_hwbRef.addEventListener('input', () => {
-			const v = _inp_hwbRef
+		_ref_inp_hwb.addEventListener('input', () => {
+			const v = _ref_inp_hwb
 				.value
 				.replace(/[^0-9,.]/gs, '')
 				.split(',')
@@ -489,8 +489,8 @@ function _initEvents(): void {
 			})
 		})
 
-		_inp_cmykRef.addEventListener('input', () => {
-			const v = _inp_cmykRef
+		_ref_inp_cmyk.addEventListener('input', () => {
+			const v = _ref_inp_cmyk
 				.value
 				.replace(/[^0-9,.]/gs, '')
 				.split(',')
@@ -514,7 +514,7 @@ function _initEvents(): void {
 	function pickers(): void {
 		function rectangle(): void {
 			let isDragging = false
-			let rect: DOMRect = _pic_rectangleRectRef.getBoundingClientRect()
+			let rect: DOMRect = _ref_pic_rectangleRect.getBoundingClientRect()
 			const updateColor = (clientX: number, clientY: number) => {
 				const x = Math_clamp((clientX - rect.left) / rect.width * 100, 0, 100)
 				const y = Math_clamp((clientY - rect.top) / rect.height * 100, 0, 100)
@@ -528,31 +528,31 @@ function _initEvents(): void {
 					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
 				})
 				requestAnimationFrame(() => {
-					_pic_rectangleRectRef.style.setProperty('--position-x', x + '%')
-					_pic_rectangleRectRef.style.setProperty('--position-y', y + '%')
+					_ref_pic_rectangleRect.style.setProperty('--position-x', x + '%')
+					_ref_pic_rectangleRect.style.setProperty('--position-y', y + '%')
 				})
 			}
 			const onPointerUp = (ev: PointerEvent) => {
 				isDragging = false
-				_pic_rectangleRectRef.releasePointerCapture(ev.pointerId)
+				_ref_pic_rectangleRect.releasePointerCapture(ev.pointerId)
 			}
-			_pic_rectangleRectRef.addEventListener('pointerdown', (ev) => {
-				_pic_rectangleRectRef.setPointerCapture(ev.pointerId)
-				rect = _pic_rectangleRectRef.getBoundingClientRect()
+			_ref_pic_rectangleRect.addEventListener('pointerdown', (ev) => {
+				_ref_pic_rectangleRect.setPointerCapture(ev.pointerId)
+				rect = _ref_pic_rectangleRect.getBoundingClientRect()
 				isDragging = true
 				updateColor(ev.clientX, ev.clientY)
 			})
 
-			_pic_rectangleRectRef.addEventListener('pointermove', (ev) => {
+			_ref_pic_rectangleRect.addEventListener('pointermove', (ev) => {
 				if (!isDragging) {return}
 				updateColor(ev.clientX, ev.clientY)
 			})
 
-			_pic_rectangleRectRef.addEventListener('pointerup', onPointerUp)
-			_pic_rectangleRectRef.addEventListener('pointercancel', onPointerUp)
+			_ref_pic_rectangleRect.addEventListener('pointerup', onPointerUp)
+			_ref_pic_rectangleRect.addEventListener('pointercancel', onPointerUp)
 
-			_pic_rectangleHueRef.addEventListener('input', () => {
-				const value = Math_clamp(_pic_rectangleHueRef.valueAsNumber, 0, 360)
+			_ref_pic_rectangleHue.addEventListener('input', () => {
+				const value = Math_clamp(_ref_pic_rectangleHue.valueAsNumber, 0, 360)
 				const hsv = {...PickerStore.value.hsv, h: value / 360}
 				const rgb = hsvToRgb(hsv)
 				const hex = rgbToHex(rgb)
@@ -567,7 +567,7 @@ function _initEvents(): void {
 
 		function rectangleHsl(): void {
 			let isDragging = false
-			let rect: DOMRect = _pic_rectangleHslRectRef.getBoundingClientRect()
+			let rect: DOMRect = _ref_pic_rectangleHslRect.getBoundingClientRect()
 			const updateColor = (clientX: number, clientY: number) => {
 				const x = Math_clamp((clientX - rect.left) / rect.width * 100, 0, 100)
 				const y = Math_clamp((clientY - rect.top) / rect.height * 100, 0, 100)
@@ -581,32 +581,32 @@ function _initEvents(): void {
 					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
 				})
 				requestAnimationFrame(() => {
-					_pic_rectangleHslRectRef.style.setProperty('--position-x', x + '%')
-					_pic_rectangleHslRectRef.style.setProperty('--position-y', y + '%')
+					_ref_pic_rectangleHslRect.style.setProperty('--position-x', x + '%')
+					_ref_pic_rectangleHslRect.style.setProperty('--position-y', y + '%')
 				})
 			}
 			const onPointerUp = (ev: PointerEvent) => {
 				isDragging = false
-				_pic_rectangleHslRectRef.releasePointerCapture(ev.pointerId)
+				_ref_pic_rectangleHslRect.releasePointerCapture(ev.pointerId)
 			}
 
-			_pic_rectangleHslRectRef.addEventListener('pointerdown', (ev) => {
-				_pic_rectangleHslRectRef.setPointerCapture(ev.pointerId)
-				rect = _pic_rectangleHslRectRef.getBoundingClientRect()
+			_ref_pic_rectangleHslRect.addEventListener('pointerdown', (ev) => {
+				_ref_pic_rectangleHslRect.setPointerCapture(ev.pointerId)
+				rect = _ref_pic_rectangleHslRect.getBoundingClientRect()
 				isDragging = true
 				updateColor(ev.clientX, ev.clientY)
 			})
 
-			_pic_rectangleHslRectRef.addEventListener('pointermove', (ev) => {
+			_ref_pic_rectangleHslRect.addEventListener('pointermove', (ev) => {
 				if (!isDragging) {return}
 				updateColor(ev.clientX, ev.clientY)
 			})
 
-			_pic_rectangleHslRectRef.addEventListener('pointerup', onPointerUp)
-			_pic_rectangleHslRectRef.addEventListener('pointercancel', onPointerUp)
+			_ref_pic_rectangleHslRect.addEventListener('pointerup', onPointerUp)
+			_ref_pic_rectangleHslRect.addEventListener('pointercancel', onPointerUp)
 
-			_pic_rectangleHslHueRef.addEventListener('input', () => {
-				const value = Math_clamp(_pic_rectangleHslHueRef.valueAsNumber, 0, 360)
+			_ref_pic_rectangleHslHue.addEventListener('input', () => {
+				const value = Math_clamp(_ref_pic_rectangleHslHue.valueAsNumber, 0, 360)
 				const hsl = {...PickerStore.value.hsl, h: value / 360}
 				const rgb = hslToRgb(hsl)
 				const hex = rgbToHex(rgb)
@@ -621,7 +621,7 @@ function _initEvents(): void {
 
 		function spectrum(): void {
 			let isDragging = false
-			let rect: DOMRect = _pic_spectrumRectRef.getBoundingClientRect()
+			let rect: DOMRect = _ref_pic_spectrumRect.getBoundingClientRect()
 			const updateColor = (clientX: number, clientY: number) => {
 				const x = Math_clamp((clientX - rect.left) / rect.width * 100, 0, 100)
 				const y = Math_clamp((clientY - rect.top) / rect.height * 100, 0, 100)
@@ -635,32 +635,32 @@ function _initEvents(): void {
 					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
 				})
 				requestAnimationFrame(() => {
-					_pic_spectrumRectRef.style.setProperty('--position-x', x + '%')
-					_pic_spectrumRectRef.style.setProperty('--position-y', y + '%')
+					_ref_pic_spectrumRect.style.setProperty('--position-x', x + '%')
+					_ref_pic_spectrumRect.style.setProperty('--position-y', y + '%')
 				})
 			}
 			const onPointerUp = (ev: PointerEvent) => {
 				isDragging = false
-				_pic_spectrumRectRef.releasePointerCapture(ev.pointerId)
+				_ref_pic_spectrumRect.releasePointerCapture(ev.pointerId)
 			}
 
-			_pic_spectrumRectRef.addEventListener('pointerdown', (ev) => {
-				_pic_spectrumRectRef.setPointerCapture(ev.pointerId)
-				rect = _pic_spectrumRectRef.getBoundingClientRect()
+			_ref_pic_spectrumRect.addEventListener('pointerdown', (ev) => {
+				_ref_pic_spectrumRect.setPointerCapture(ev.pointerId)
+				rect = _ref_pic_spectrumRect.getBoundingClientRect()
 				isDragging = true
 				updateColor(ev.clientX, ev.clientY)
 			})
 
-			_pic_spectrumRectRef.addEventListener('pointermove', (ev) => {
+			_ref_pic_spectrumRect.addEventListener('pointermove', (ev) => {
 				if (!isDragging) {return}
 				updateColor(ev.clientX, ev.clientY)
 			})
 
-			_pic_spectrumRectRef.addEventListener('pointerup', onPointerUp)
-			_pic_spectrumRectRef.addEventListener('pointercancel', onPointerUp)
+			_ref_pic_spectrumRect.addEventListener('pointerup', onPointerUp)
+			_ref_pic_spectrumRect.addEventListener('pointercancel', onPointerUp)
 
-			_pic_spectrumHueRef.addEventListener('input', () => {
-				const value = Math_clamp(_pic_spectrumHueRef.valueAsNumber, 0, 100)
+			_ref_pic_spectrumHue.addEventListener('input', () => {
+				const value = Math_clamp(_ref_pic_spectrumHue.valueAsNumber, 0, 100)
 				const hsv = {...PickerStore.value.hsv, v: 1 - (value / 100)}
 				const rgb = hsvToRgb(hsv)
 				const hex = rgbToHex(rgb)
@@ -674,8 +674,8 @@ function _initEvents(): void {
 		}
 
 		function sliderRgb(): void {
-			_pic_rgbRedRef.addEventListener('input', () => {
-				const value = Math_clamp(_pic_rgbRedRef.valueAsNumber, 0, 0xff)
+			_ref_pic_rgbRed.addEventListener('input', () => {
+				const value = Math_clamp(_ref_pic_rgbRed.valueAsNumber, 0, 0xff)
 				const rgb = {...PickerStore.value.rgb, r: value / 0xff}
 				const hsl = rgbToHsl(rgb)
 				const hex = rgbToHex(rgb)
@@ -687,8 +687,8 @@ function _initEvents(): void {
 				})
 			})
 
-			_pic_rgbGreenRef.addEventListener('input', () => {
-				const value = Math_clamp(_pic_rgbGreenRef.valueAsNumber, 0, 0xff)
+			_ref_pic_rgbGreen.addEventListener('input', () => {
+				const value = Math_clamp(_ref_pic_rgbGreen.valueAsNumber, 0, 0xff)
 				const rgb = {...PickerStore.value.rgb, g: value / 0xff}
 				const hsl = rgbToHsl(rgb)
 				const hex = rgbToHex(rgb)
@@ -700,8 +700,8 @@ function _initEvents(): void {
 				})
 			})
 
-			_pic_rgbBlueRef.addEventListener('input', () => {
-				const value = Math_clamp(_pic_rgbBlueRef.valueAsNumber, 0, 0xff)
+			_ref_pic_rgbBlue.addEventListener('input', () => {
+				const value = Math_clamp(_ref_pic_rgbBlue.valueAsNumber, 0, 0xff)
 				const rgb = {...PickerStore.value.rgb, b: value / 0xff}
 				const hsl = rgbToHsl(rgb)
 				const hex = rgbToHex(rgb)
@@ -715,8 +715,8 @@ function _initEvents(): void {
 		}
 
 		function sliderHsl(): void {
-			_pic_hslHueRef.addEventListener('input', () => {
-				const value = Math_clamp(_pic_hslHueRef.valueAsNumber, 0, 360)
+			_ref_pic_hslHue.addEventListener('input', () => {
+				const value = Math_clamp(_ref_pic_hslHue.valueAsNumber, 0, 360)
 				const hsl = {...PickerStore.value.hsl, h: value / 360}
 				const rgb = hslToRgb(hsl)
 				const hex = rgbToHex(rgb)
@@ -727,8 +727,8 @@ function _initEvents(): void {
 					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
 				})
 			})
-			_pic_hslSaturationRef.addEventListener('input', () => {
-				const value = Math_clamp(_pic_hslSaturationRef.valueAsNumber, 0, 100)
+			_ref_pic_hslSaturation.addEventListener('input', () => {
+				const value = Math_clamp(_ref_pic_hslSaturation.valueAsNumber, 0, 100)
 				const hsl = {...PickerStore.value.hsl, s: value / 100}
 				const rgb = hslToRgb(hsl)
 				const hex = rgbToHex(rgb)
@@ -739,8 +739,8 @@ function _initEvents(): void {
 					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
 				})
 			})
-			_pic_hslLightnessRef.addEventListener('input', () => {
-				const value = Math_clamp(_pic_hslLightnessRef.valueAsNumber, 0, 100)
+			_ref_pic_hslLightness.addEventListener('input', () => {
+				const value = Math_clamp(_ref_pic_hslLightness.valueAsNumber, 0, 100)
 				const hsl = {...PickerStore.value.hsl, l: value / 100}
 				const rgb = hslToRgb(hsl)
 				const hex = rgbToHex(rgb)
@@ -754,8 +754,8 @@ function _initEvents(): void {
 		}
 
 		function sliderCmyk(): void {
-			_pic_cmykCyanRef.addEventListener('input', () => {
-				const value = Math_clamp(_pic_cmykCyanRef.valueAsNumber, 0, 100)
+			_ref_pic_cmykCyan.addEventListener('input', () => {
+				const value = Math_clamp(_ref_pic_cmykCyan.valueAsNumber, 0, 100)
 				const cmyk = {...PickerStore.value.cmyk, c: value / 100}
 				const rgb = cmykToRgb(cmyk)
 				const hex = rgbToHex(rgb)
@@ -766,8 +766,8 @@ function _initEvents(): void {
 					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
 				})
 			})
-			_pic_cmykMagentaRef.addEventListener('input', () => {
-				const value = Math_clamp(_pic_cmykMagentaRef.valueAsNumber, 0, 100)
+			_ref_pic_cmykMagenta.addEventListener('input', () => {
+				const value = Math_clamp(_ref_pic_cmykMagenta.valueAsNumber, 0, 100)
 				const cmyk = {...PickerStore.value.cmyk, m: value / 100}
 				const rgb = cmykToRgb(cmyk)
 				const hex = rgbToHex(rgb)
@@ -778,8 +778,8 @@ function _initEvents(): void {
 					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
 				})
 			})
-			_pic_cmykYellowRef.addEventListener('input', () => {
-				const value = Math_clamp(_pic_cmykYellowRef.valueAsNumber, 0, 100)
+			_ref_pic_cmykYellow.addEventListener('input', () => {
+				const value = Math_clamp(_ref_pic_cmykYellow.valueAsNumber, 0, 100)
 				const cmyk = {...PickerStore.value.cmyk, y: value / 100}
 				const rgb = cmykToRgb(cmyk)
 				const hex = rgbToHex(rgb)
@@ -790,8 +790,8 @@ function _initEvents(): void {
 					v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
 				})
 			})
-			_pic_cmykKeyRef.addEventListener('input', () => {
-				const value = Math_clamp(_pic_cmykKeyRef.valueAsNumber, 0, 100)
+			_ref_pic_cmykKey.addEventListener('input', () => {
+				const value = Math_clamp(_ref_pic_cmykKey.valueAsNumber, 0, 100)
 				const cmyk = {...PickerStore.value.cmyk, k: value / 100}
 				const rgb = cmykToRgb(cmyk)
 				const hex = rgbToHex(rgb)
@@ -805,8 +805,8 @@ function _initEvents(): void {
 		}
 
 		function sliderHex(): void {
-			_pic_hexRef.addEventListener('input', () => {
-				const value = Math_clamp(_pic_hexRef.valueAsNumber, 0, 0xffffff)
+			_ref_pic_hex.addEventListener('input', () => {
+				const value = Math_clamp(_ref_pic_hex.valueAsNumber, 0, 0xffffff)
 				const rgb = colorToRgb(value)
 				const hex = rgbToHex(rgb)
 				const hsv = rgbToHsv(rgb)
@@ -820,8 +820,8 @@ function _initEvents(): void {
 		}
 
 		function sliderHsv(): void {
-			_pic_hsvHueRef.addEventListener('input', () => {
-				const value = Math_clamp(_pic_hsvHueRef.valueAsNumber, 0, 360)
+			_ref_pic_hsvHue.addEventListener('input', () => {
+				const value = Math_clamp(_ref_pic_hsvHue.valueAsNumber, 0, 360)
 				const hsv = {...PickerStore.value.hsv, h: value / 360}
 				const rgb = hsvToRgb(hsv)
 				const hex = rgbToHex(rgb)
@@ -833,8 +833,8 @@ function _initEvents(): void {
 				})
 			})
 
-			_pic_hsvSaturationRef.addEventListener('input', () => {
-				const value = Math_clamp(_pic_hsvSaturationRef.valueAsNumber, 0, 100)
+			_ref_pic_hsvSaturation.addEventListener('input', () => {
+				const value = Math_clamp(_ref_pic_hsvSaturation.valueAsNumber, 0, 100)
 				const hsv = {...PickerStore.value.hsv, s: value / 100}
 				const rgb = hsvToRgb(hsv)
 				const hex = rgbToHex(rgb)
@@ -846,8 +846,8 @@ function _initEvents(): void {
 				})
 			})
 
-			_pic_hsvValueRef.addEventListener('input', () => {
-				const value = Math_clamp(_pic_hsvValueRef.valueAsNumber, 0, 100)
+			_ref_pic_hsvValue.addEventListener('input', () => {
+				const value = Math_clamp(_ref_pic_hsvValue.valueAsNumber, 0, 100)
 				const hsv = {...PickerStore.value.hsv, v: value / 100}
 				const rgb = hsvToRgb(hsv)
 				const hex = rgbToHex(rgb)
@@ -861,8 +861,8 @@ function _initEvents(): void {
 		}
 
 		function sliderHwb(): void {
-			_pic_hwbHueRef.addEventListener('input', () => {
-				const value = Math_clamp(_pic_hwbHueRef.valueAsNumber, 0, 360)
+			_ref_pic_hwbHue.addEventListener('input', () => {
+				const value = Math_clamp(_ref_pic_hwbHue.valueAsNumber, 0, 360)
 				const hwb = {...PickerStore.value.hwb, h: value / 360}
 				const rgb = hwbToRgb(hwb)
 				const hex = rgbToHex(rgb)
@@ -874,8 +874,8 @@ function _initEvents(): void {
 				})
 			})
 
-			_pic_hwbWhitenessRef.addEventListener('input', () => {
-				const value = Math_clamp(_pic_hwbWhitenessRef.valueAsNumber, 0, 100)
+			_ref_pic_hwbWhiteness.addEventListener('input', () => {
+				const value = Math_clamp(_ref_pic_hwbWhiteness.valueAsNumber, 0, 100)
 				const hwb = {...PickerStore.value.hwb, w: value / 100}
 				hwb.b = Math_clamp(hwb.b, 0, 1 - hwb.w)
 				const rgb = hwbToRgb(hwb)
@@ -888,8 +888,8 @@ function _initEvents(): void {
 				})
 			})
 
-			_pic_hwbBlacknessRef.addEventListener('input', () => {
-				const value = Math_clamp(_pic_hwbBlacknessRef.valueAsNumber, 0, 100)
+			_ref_pic_hwbBlackness.addEventListener('input', () => {
+				const value = Math_clamp(_ref_pic_hwbBlackness.valueAsNumber, 0, 100)
 				const hwb = {...PickerStore.value.hwb, b: value / 100}
 				hwb.w = Math_clamp(hwb.w, 0, 1 - hwb.b)
 				const rgb = hwbToRgb(hwb)
@@ -915,35 +915,35 @@ function _initEvents(): void {
 	}
 
 	function init(): void {
-		_inputsRef?.addEventListener('focusout', (ev) => {
+		_ref_inputs?.addEventListener('focusout', (ev) => {
 			if (!(ev.target instanceof HTMLInputElement)) {return}
 
 			_updateInputRefsView(PickerStore.value)
 		})
 
-		_inputsRef?.addEventListener('click', () => {
-			const targetRef = document.activeElement as HTMLButtonElement
-			if (!isTargetValidElement(_inputsRef, targetRef)) {return}
+		_ref_inputs?.addEventListener('click', () => {
+			const ref_target = document.activeElement as CButton.CElement
+			if (!isTargetValidElement(_ref_inputs, ref_target)) {return}
 
-			const dataset = targetRef.dataset
+			const dataset = ref_target.dataset
 			const command = dataset.command as Commands
 			switch (command) {
 			case Commands.copyColor: {
 				const colorSpace = dataset.colorSpace as ColorSpace
 				let text = ''
 				sw2: switch (colorSpace) {
-				case ColorSpace.hex : text = _inp_hexRef .value; break sw2
-				case ColorSpace.rgb : text = _inp_rgbRef .value; break sw2
-				case ColorSpace.hsl : text = _inp_hslRef .value; break sw2
-				case ColorSpace.hsv : text = _inp_hsvRef .value; break sw2
-				case ColorSpace.hwb : text = _inp_hwbRef .value; break sw2
-				case ColorSpace.cmyk: text = _inp_cmykRef.value; break sw2
+				case ColorSpace.hex : text = _ref_inp_hex .value; break sw2
+				case ColorSpace.rgb : text = _ref_inp_rgb .value; break sw2
+				case ColorSpace.hsl : text = _ref_inp_hsl .value; break sw2
+				case ColorSpace.hsv : text = _ref_inp_hsv .value; break sw2
+				case ColorSpace.hwb : text = _ref_inp_hwb .value; break sw2
+				case ColorSpace.cmyk: text = _ref_inp_cmyk.value; break sw2
 				}
 
 				if (text.trim().length === 0) {break}
 
 				navigator.clipboard.writeText(text).then(() => {
-					_toastCopiedRef.showPopover()
+					_ref_toastCopied.showPopover()
 				})
 			} break }
 		})
@@ -961,22 +961,22 @@ function _initImageColorPicker(): void {
 	let posY: number = 0 // 0-100
 	let image = new Image()
 	let isDragging = false
-	let rect: DOMRect = _pic_imageCanvasRef.getBoundingClientRect()
+	let rect: DOMRect = _ref_pic_imageCanvas.getBoundingClientRect()
 
 	function onPointerUp(ev: PointerEvent){
 		isDragging = false
-		_pic_spectrumRectRef.releasePointerCapture(ev.pointerId)
+		_ref_pic_spectrumRect.releasePointerCapture(ev.pointerId)
 	}
 
 	function initObserver(): void {
 		const observer = new ResizeObserver(() => {
-			_pic_imageWrapperRef.style.setProperty(
+			_ref_pic_imageWrapper.style.setProperty(
 				'max-height',
-				pxToRem(_pic_imageCanvasRef.getBoundingClientRect().height) + 'rem'
+				pxToRem(_ref_pic_imageCanvas.getBoundingClientRect().height) + 'rem'
 			)
 		})
 
-		observer.observe(_pic_imageCanvasRef, {box: 'border-box'})
+		observer.observe(_ref_pic_imageCanvas, {box: 'border-box'})
 	}
 
 	function initEvents(): void {
@@ -985,12 +985,12 @@ function _initImageColorPicker(): void {
 			posY = Math_clamp((y - rect.top) / rect.height * 100, 0, 100)
 			updateColor(pickColor())
 			requestAnimationFrame(() => {
-				_pic_imageWrapperRef.style.setProperty('--position-x', posX + '%')
-				_pic_imageWrapperRef.style.setProperty('--position-y', posY + '%')
+				_ref_pic_imageWrapper.style.setProperty('--position-x', posX + '%')
+				_ref_pic_imageWrapper.style.setProperty('--position-y', posY + '%')
 			})
 		}
 
-		_pic_imageImageRef.addEventListener('click', () => {
+		_ref_pic_imageImage.addEventListener('click', () => {
 			pickFile('image/*', false).then((files) => {
 				if (!files || files?.length == 0) return;
 
@@ -1004,21 +1004,21 @@ function _initImageColorPicker(): void {
 			})
 		})
 
-		_pic_imageCanvasRef.addEventListener('pointerdown', ev => {
-			_pic_imageCanvasRef.setPointerCapture(ev.pointerId)
-			rect = _pic_imageCanvasRef.getBoundingClientRect()
+		_ref_pic_imageCanvas.addEventListener('pointerdown', ev => {
+			_ref_pic_imageCanvas.setPointerCapture(ev.pointerId)
+			rect = _ref_pic_imageCanvas.getBoundingClientRect()
 			isDragging = true
 			updatePosition(ev.clientX, ev.clientY)
 		})
 
-		_pic_imageCanvasRef.addEventListener('pointermove', (ev) => {
+		_ref_pic_imageCanvas.addEventListener('pointermove', (ev) => {
 			if (!isDragging) {return}
 
 			updatePosition(ev.clientX, ev.clientY)
 		})
 
-		_pic_imageCanvasRef.addEventListener('pointerup', onPointerUp)
-		_pic_imageCanvasRef.addEventListener('pointercancel', onPointerUp)
+		_ref_pic_imageCanvas.addEventListener('pointerup', onPointerUp)
+		_ref_pic_imageCanvas.addEventListener('pointercancel', onPointerUp)
 	}
 
 	function updateColor(rgb: RGBColor): void {
@@ -1031,15 +1031,15 @@ function _initImageColorPicker(): void {
 			v.rgb = rgb; v.hex = hex; v.hsv = hsv; v.hsl = hsl; v.cmyk = cmyk; v.hwb = hwb
 		})
 		requestAnimationFrame(() => {
-			_pic_imageWrapperRef.style.setProperty('--color', rgbToHex(rgb))
-			_pic_imageWrapperRef.style.setProperty('--border-color', contrast(rgb))
+			_ref_pic_imageWrapper.style.setProperty('--color', rgbToHex(rgb))
+			_ref_pic_imageWrapper.style.setProperty('--border-color', contrast(rgb))
 		})
 	}
 
 	function pickColor(): RGBColor {
 		const data = ctx.getImageData(
-			posX / 100 * _pic_imageCanvasRef.width,
-			posY / 100 * _pic_imageCanvasRef.height,
+			posX / 100 * _ref_pic_imageCanvas.width,
+			posY / 100 * _ref_pic_imageCanvas.height,
 			1, 1
 		).data
 		return {
@@ -1050,18 +1050,18 @@ function _initImageColorPicker(): void {
 	}
 
 	function initCanvas(): void {
-		ctx = _pic_imageCanvasRef.getContext('2d', {
+		ctx = _ref_pic_imageCanvas.getContext('2d', {
 			willReadFrequently: true
 		})!
 		image.onload = () => {
-			_pic_imageCanvasRef.width = image.naturalWidth
-			_pic_imageCanvasRef.height = image.naturalHeight
+			_ref_pic_imageCanvas.width = image.naturalWidth
+			_ref_pic_imageCanvas.height = image.naturalHeight
 			ctx.drawImage(image, 0, 0)
-			_pic_imageWrapperRef.removeAttribute('data-no-image')
+			_ref_pic_imageWrapper.removeAttribute('data-no-image')
 			updateColor(pickColor())
-			_pic_imageWrapperRef.style.setProperty(
+			_ref_pic_imageWrapper.style.setProperty(
 				'max-height',
-				pxToRem(_pic_imageCanvasRef.getBoundingClientRect().height) + 'rem'
+				pxToRem(_ref_pic_imageCanvas.getBoundingClientRect().height) + 'rem'
 			)
 		}
 	}

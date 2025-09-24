@@ -1,10 +1,6 @@
 ---
 import { joinClassList } from '@/utils/attributes'
-
-import {
-	MenuClasses,
-	type SubMenuItemProps
-} from '.'
+import {CMenu, type SubMenuItemProps} from '.'
 import MenuItem from './MenuItem.astro'
 import './index.scss'
 
@@ -13,14 +9,14 @@ const {
 	'class': className,
 	...other
 } = Astro.props
+
+const cls = CMenu.Classes
 ---
 
 <MenuItem
-	class={joinClassList(MenuClasses.submenuItem, className)}
-	{...other}>
-	<slot />
-</MenuItem>
+	class={joinClassList(cls.submenuItem, className)}
+	{...other}><slot /></MenuItem>
 <script>
-	import { registerSubMenuItemRef } from '.'
-	registerSubMenuItemRef()
+	import { CMenu } from '.'
+	CMenu.CSubItem.register()
 </script>

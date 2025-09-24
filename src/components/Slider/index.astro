@@ -1,6 +1,6 @@
 ---
 import { joinClassList } from '@/utils/attributes'
-import { SliderClasses, type SliderProps } from '.'
+import { CSlider, type SliderProps } from '.'
 import './index.scss'
 
 type Props = SliderProps
@@ -12,10 +12,12 @@ const {
 	autocomplete = 'off',
 	...other
 } = Astro.props
+
+const cls = CSlider.Classes
 ---
 
 <input
-	class={joinClassList(SliderClasses.slider, className)}
+	class={joinClassList(cls.slider, className)}
 	type="range"
 	value={value}
 	min={min}
@@ -24,6 +26,6 @@ const {
 	{...other}
 />
 <script>
-	import { registerSliderRef } from "."
-	registerSliderRef()
+	import { CSlider } from "."
+	CSlider.register()
 </script>

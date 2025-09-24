@@ -3,7 +3,7 @@ import Button from "@/components/Button/index.astro"
 import Icon from "@/components/Icon/index.astro"
 import Tooltip from "@/components/Tooltip/index.astro"
 import { CSSClasses } from '../_styles/_css'
-import { ButtonVariant } from "@/components/Button"
+import { CButton } from "@/components/Button"
 import { IconCodes } from "@/enums/icons"
 import { ElementIds } from "../_scripts/_shared/_ids"
 ---
@@ -21,7 +21,7 @@ import { ElementIds } from "../_scripts/_shared/_ids"
 			<li data-tooltip="Purple: #FF00FF" style="background-color:#FF00FF"/>
 		</ul>
 	</Tooltip>
-	<Button ButtonVariant={ButtonVariant.filled} id={ElementIds.bd_start}>
+	<Button ButtonVariant={CButton.Variant.filled} id={ElementIds.bd_start}>
 		<Icon IconCode={IconCodes.play} IconFilled/>
 		Start test
 	</Button>

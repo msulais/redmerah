@@ -1,17 +1,17 @@
 import { ObservableStore } from "@/utils/store"
 import { $, $$, $$$ } from "../_core/_dom-utils"
 import { ElementIds } from "../_shared/_ids"
-import { type ButtonElement, type IconButtonElement } from "@/components/Button"
-import { IconClasses, updateIconRef, type IconElement } from "@/components/Icon"
+import { CButton } from "@/components/Button"
+import { CIcon } from "@/components/Icon"
 import { isTargetValidElement } from "@/utils/element"
 import { AppCSSColors } from "@/enums/app-data"
 import { AnimationEasing } from "@/enums/animation"
 import { isAnimationAllowed } from "@/utils/animation"
 import { IconCodes } from "@/enums/icons"
-import { SideBarClasses } from "@/components/SideBar2"
+import { CSideBar } from "@/components/SideBar2"
 import { Pages } from "../_shared/_enums"
-import { DrawerClasses } from "@/components/Drawer"
-import type { DialogElement } from "@/components/Dialog"
+import { CDrawer } from "@/components/Drawer"
+import { CDialog } from "@/components/Dialog"
 import { safeNumber } from "@/utils/number"
 import { saveStorageItem } from "../_core/_database"
 import { DEFAULT_TIMER_RUNNING, DEFAULT_TIMER_SECONDS } from "../_shared/_constant"
@@ -28,23 +28,23 @@ export const TimerStore = new ObservableStore<TimerStoreType>({
 	timerInSeconds: DEFAULT_TIMER_SECONDS,
 	currentSeconds: DEFAULT_TIMER_SECONDS,
 })
-const _pageRef = $(ElementIds.pg_timer) as HTMLDivElement
+const _ref_page = $(ElementIds.pg_timer) as HTMLDivElement
 const _audioRef = $(ElementIds.pgTm_audio) as HTMLAudioElement
-const _doneDialogRef = $(ElementIds.pgTm_doneDialog) as DialogElement
+const _doneDialogRef = $(ElementIds.pgTm_doneDialog) as CDialog.CElement
 const _doneTimeInfoRef = $(ElementIds.pgTm_doneTime) as HTMLParagraphElement
 const _doneDateRef = $(ElementIds.pgTm_doneDate) as HTMLParagraphElement
-const _playPauseButtonRef = $(ElementIds.pgTm_playPause) as ButtonElement
+const _playPauseButtonRef = $(ElementIds.pgTm_playPause) as CButton.CElement
 const _timerViewRef = $(ElementIds.pgTm_time) as HTMLHeadingElement
-const _editDialogRef = $(ElementIds.pgTm_editDialog) as DialogElement
+const _editDialogRef = $(ElementIds.pgTm_editDialog) as CDialog.CElement
 const _editHoursRef = $(ElementIds.pgTm_hours) as HTMLInputElement
 const _editMinutesRef = $(ElementIds.pgTm_minutes) as HTMLInputElement
 const _editSecondsRef = $(ElementIds.pgTm_seconds) as HTMLInputElement
-const _editSaveButtonRef = $(ElementIds.pgTm_save) as ButtonElement
-const _playPauseIconRef = $$(`.${IconClasses.icon}`, _playPauseButtonRef) as IconElement
-const _playPauseTextRef = $$(`span:not(.${IconClasses.icon})`, _playPauseButtonRef) as HTMLSpanElement
-const _editResetButtonRef = $(ElementIds.pgTm_editReset) as IconButtonElement
-const _editResetIconRef = $$(`#${ElementIds.pgTm_editReset}>.${IconClasses.icon}`) as IconElement
-const _navigationButtonIconRefs = $$$(`:is(.${SideBarClasses.button},.${DrawerClasses.button})[data-page=${Pages.timer}] .${IconClasses.icon}`)
+const _editSaveButtonRef = $(ElementIds.pgTm_save) as CButton.CElement
+const _playPauseIconRef = $$(`.${CIcon.Classes.icon}`, _playPauseButtonRef) as CIcon.CElement
+const _playPauseTextRef = $$(`span:not(.${CIcon.Classes.icon})`, _playPauseButtonRef) as HTMLSpanElement
+const _editResetButtonRef = $(ElementIds.pgTm_editReset) as CButton.CIcon.CElement
+const _editResetIconRef = $$(`#${ElementIds.pgTm_editReset}>.${CIcon.Classes.icon}`) as CIcon.CElement
+const _navigationButtonIconRefs = $$$(`:is(.${CSideBar.Classes.button},.${CDrawer.Classes.button})[data-page=${Pages.timer}] .${CIcon.Classes.icon}`)
 let intervalRunningId: number | NodeJS.Timeout | null = null
 
 function _doneAlert(): void {
@@ -89,9 +89,11 @@ function _subscribeRunningRefView(v: TimerStoreType, o: TimerStoreType): void {
 
 	const btnRect = _playPauseButtonRef.getBoundingClientRect()
 	_playPauseTextRef.textContent = running? 'Pause' : 'Start'
-	updateIconRef(_playPauseIconRef, {
-		IconCode: running? IconCodes.pause : IconCodes.play,
-		IconFilled: true
+	CIcon.update(_playPauseIconRef, {
+		Icon: {
+			code: running? IconCodes.pause : IconCodes.play,
+			filled: true
+		}
 	})
 
 	for (const ref of _navigationButtonIconRefs) {
@@ -102,8 +104,10 @@ function _subscribeRunningRefView(v: TimerStoreType, o: TimerStoreType): void {
 	if (!running) {
 		_timerViewRef.style.removeProperty('color')
 		_editResetButtonRef.style.removeProperty('display')
-		updateIconRef(_editResetIconRef, {
-			IconCode: v.timerInSeconds === v.currentSeconds? IconCodes.edit : IconCodes.history
+		CIcon.update(_editResetIconRef, {
+			Icon: {
+				code: v.timerInSeconds === v.currentSeconds? IconCodes.edit : IconCodes.history
+			}
 		})
 		_editResetButtonRef.setAttribute('data-tooltip', v.timerInSeconds === v.currentSeconds? 'Edit timer' : 'Reset timer')
 	}
@@ -208,12 +212,12 @@ function _showEditModal(): void {
 }
 
 function _initEvents(): void {
-	_pageRef.addEventListener('click', () => {
-		const buttonRef = document.activeElement
-		if (!isTargetValidElement(_pageRef, buttonRef)) return
+	_ref_page.addEventListener('click', () => {
+		const ref_btn = document.activeElement
+		if (!isTargetValidElement(_ref_page, ref_btn)) return
 
 		const value = TimerStore.value
-		switch (buttonRef) {
+		switch (ref_btn) {
 		case _playPauseButtonRef:
 			TimerStore.update(v => {
 				const running = v.running
@@ -227,8 +231,8 @@ function _initEvents(): void {
 			} else {
 				TimerStore.update(v => v.currentSeconds = v.timerInSeconds)
 				_editResetButtonRef.setAttribute('data-tooltip', 'Edit timer')
-				updateIconRef(_editResetIconRef, {
-					IconCode: IconCodes.edit
+				CIcon.update(_editResetIconRef, {
+					Icon: {code: IconCodes.edit}
 				})
 
 				if (isAnimationAllowed()) {

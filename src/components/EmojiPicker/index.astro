@@ -12,11 +12,7 @@ import {
 } from '@/constants/emoji'
 import { joinClassList } from '@/utils/attributes'
 import { IconCodes } from '@/enums/icons'
-
-import {
-	type EmojiPickerProps,
-	EmojiPickerClasses
-} from '.'
+import {type EmojiPickerProps, CEmojiPicker} from '.'
 import IconButton from '@/components/Button/IconButton.astro'
 import Button from '@/components/Button/index.astro'
 import Popover from '@/components/Popover/index.astro'
@@ -25,7 +21,7 @@ import Icon from '@/components/Icon/index.astro'
 import Tooltip from '@/components/Tooltip/index.astro'
 import TextField from '@/components/TextField/index.astro'
 import TextFieldButton from '@/components/TextField/TextFieldButton.astro'
-import { ButtonVariant } from '@/components/Button'
+import { CButton } from '@/components/Button'
 import './index.scss'
 
 type Props = EmojiPickerProps
@@ -57,37 +53,37 @@ const {'class': tabsClass, role: tabsRole = 'tablist', ...tabsOther} = EmojiPick
 const {'class': formClass, ...formOther} = EmojiPickerFormAttr ?? {}
 const {'class': searchClass, TextFieldInputAttr: searchInputAttr, ...searchOther} = EmojiPickerSearchAttr ?? {}
 const {placeholder: searchInputPlaceholder = 'Search emoji', required: searchInputRequired = true, ...searchInputOther} = searchInputAttr ?? {}
-const {'class': searchButtonClass, ButtonVariant: searchButtonVariant = ButtonVariant.tonal, ...searchButtonOther} = EmojiPickerSearchButtonAttr ?? {}
+const {'class': searchButtonClass, ButtonVariant: searchButtonVariant = CButton.Variant.tonal, ...searchButtonOther} = EmojiPickerSearchButtonAttr ?? {}
 const {'class': searchButtonIconClass, IconCode: searchButtonIconCode = IconCodes.search, ...searchButtonIconOther} = EmojiPickerSearchButtonIconAttr ?? {}
 const {'class': contentClass, ...contentOther} = EmojiPickerContentAttr ?? {}
 const {'class': dividerClass, ...dividerOther} = EmojiPickerDividerAttr ?? {}
 const {'class': titleClass, ...titleOther} = EmojiPickerTitleAttr ?? {}
+
+const cls = CEmojiPicker.Classes
 ---
 
 <Popover
-	class={joinClassList(EmojiPickerClasses.emojipicker, className)}
+	class={joinClassList(cls.emojipicker, className)}
 	data-c-emojipicker-autoclose={EmojiPickerAutoClose? '' : undefined}
 	{...other}>
 	<Tooltip
-		class={joinClassList(EmojiPickerClasses.tooltip, tooltipClass)}
+		class={joinClassList(cls.tooltip, tooltipClass)}
 		{...tooltipOther}>
 		<div
-			class={joinClassList(EmojiPickerClasses.header, headerClass)}
+			class={joinClassList(cls.header, headerClass)}
 			{...headerOther}>
 			<span
-				class={joinClassList(EmojiPickerClasses.headerText, headerTextClass)}
-				{...headerTextOther}>
-				Emoji
-			</span>
+				class={joinClassList(cls.headerText, headerTextClass)}
+				{...headerTextOther}>Emoji</span>
 			<IconButton
 				data-tooltip="Close"
-				class={joinClassList(EmojiPickerClasses.headerButton, headerButtonClass)}
+				class={joinClassList(cls.headerButton, headerButtonClass)}
 				IconButtonCode={headerButtonCode}
 				{...headerButtonOther}
 			/>
 		</div>
 		<div
-			class={joinClassList(EmojiPickerClasses.tabs, tabsClass)}
+			class={joinClassList(cls.tabs, tabsClass)}
 			role={tabsRole}
 			{...tabsOther}>
 			{[
@@ -111,16 +107,16 @@ const {'class': titleClass, ...titleOther} = EmojiPickerTitleAttr ?? {}
 					IconButtonCode = v[0] as number,
 					IconButtonFilled = i === 2,
 					hidden = i < 2,
-					ButtonVariant: variant = i === 2? ButtonVariant.tonal : undefined,
+					ButtonVariant: variant = i === 2? CButton.Variant.tonal : undefined,
 					role = 'tab',
 					...other
 				} = (EmojiPickerTabAttr[i] ?? {}) as any
 				return <IconButton
 					hidden={hidden}
 					class={joinClassList(
-						EmojiPickerClasses.tab,
-						i === 0? EmojiPickerClasses.tabRecent : undefined,
-						i === 1? EmojiPickerClasses.tabSearch : undefined,
+						cls.tab,
+						i === 0? cls.tabRecent : undefined,
+						i === 1? cls.tabSearch : undefined,
 						className
 					)}
 					role={role}
@@ -135,10 +131,10 @@ const {'class': titleClass, ...titleOther} = EmojiPickerTitleAttr ?? {}
 			})}
 		</div>
 		<form
-			class={joinClassList(EmojiPickerClasses.form, formClass)}
+			class={joinClassList(cls.form, formClass)}
 			{...formOther}>
 			<TextField
-				class={joinClassList(EmojiPickerClasses.search, searchClass)}
+				class={joinClassList(cls.search, searchClass)}
 				TextFieldInputAttr={{
 					placeholder: searchInputPlaceholder,
 					required: searchInputRequired,
@@ -147,12 +143,12 @@ const {'class': titleClass, ...titleOther} = EmojiPickerTitleAttr ?? {}
 				{...searchOther}>
 				<TextFieldButton
 					slot="trailing"
-					class={joinClassList(EmojiPickerClasses.searchButton, searchButtonClass)}
+					class={joinClassList(cls.searchButton, searchButtonClass)}
 					ButtonVariant={searchButtonVariant}
 					data-tooltip="Search"
 					{...searchButtonOther}>
 					<Icon
-						class={joinClassList(EmojiPickerClasses.searchButtonIcon, searchButtonIconClass)}
+						class={joinClassList(cls.searchButtonIcon, searchButtonIconClass)}
 						IconCode={searchButtonIconCode}
 						{...searchButtonIconOther}
 					/>
@@ -160,19 +156,15 @@ const {'class': titleClass, ...titleOther} = EmojiPickerTitleAttr ?? {}
 			</TextField>
 		</form>
 		<div
-			class={joinClassList(EmojiPickerClasses.content, contentClass)}
-			{...contentOther}>
-			<slot />
-		</div>
+			class={joinClassList(cls.content, contentClass)}
+			{...contentOther}><slot /></div>
 		<Divider
-			class={joinClassList(EmojiPickerClasses.divider, dividerClass)}
+			class={joinClassList(cls.divider, dividerClass)}
 			{...dividerOther}
 		/>
 		<h3
-			class={joinClassList(EmojiPickerClasses.title, titleClass)}
-			{...titleOther}>
-			Smiley & emotion
-		</h3>
+			class={joinClassList(cls.title, titleClass)}
+			{...titleOther}>Smiley & emotion</h3>
 		{[
 			[],
 			[],
@@ -189,9 +181,9 @@ const {'class': titleClass, ...titleOther} = EmojiPickerTitleAttr ?? {}
 			const {'class': className, role = 'tabpanel', hidden = i !== 2, ...other} = EmojiPickerGroup[i] ?? {}
 			return <div
 				class={joinClassList(
-					EmojiPickerClasses.group,
-					i === 0? EmojiPickerClasses.groupRecent : undefined,
-					i === 1? EmojiPickerClasses.groupSearch : undefined,
+					cls.group,
+					i === 0? cls.groupRecent : undefined,
+					i === 1? cls.groupSearch : undefined,
 					className
 				)}
 				role={role}
@@ -200,7 +192,7 @@ const {'class': titleClass, ...titleOther} = EmojiPickerTitleAttr ?? {}
 				{v.map((d, j) => {
 					const {'class': className, 'data-tooltip': tooltip = d[1], ...other} = EmojiPickerEmoji[i]?.[j] ?? {}
 					return <Button
-						class={joinClassList(EmojiPickerClasses.emoji, className)}
+						class={joinClassList(cls.emoji, className)}
 						data-tooltip={tooltip}
 						{...other}>
 						{d[0]}
@@ -211,6 +203,6 @@ const {'class': titleClass, ...titleOther} = EmojiPickerTitleAttr ?? {}
 	</Tooltip>
 </Popover>
 <script>
-	import { registerEmojiPickerRef } from '.'
-	registerEmojiPickerRef()
+	import { CEmojiPicker } from '.'
+	CEmojiPicker.register()
 </script>

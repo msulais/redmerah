@@ -1,11 +1,11 @@
 import { ObservableStore } from "@/utils/store"
 import { ElementIds } from "../_shared/_ids"
-import { updateButtonRef, type ButtonElement, type IconButtonElement } from "@/components/Button"
+import { CButton } from "@/components/Button"
 import { $ } from "./_dom-utils"
 import { pickFile } from "@/utils/file"
-import type { MenuElement, MenuItemElement } from "@/components/Menu"
-import type { DialogElement } from "@/components/Dialog"
-import type { ToastElement } from "@/components/Toast"
+import { CMenu } from "@/components/Menu"
+import { CDialog } from "@/components/Dialog"
+import { CToast } from "@/components/Toast"
 
 export enum MediaType {
 	audio,
@@ -23,23 +23,23 @@ export const MediaStore = new ObservableStore<MediaStoreType>({
 	type: MediaType.video
 })
 
-const _open_btnRef = $(ElementIds.apOpen_btn) as ButtonElement
-const _open_menuRef = $(ElementIds.apOpen_menu) as MenuElement
-const _open_deviceRef = $(ElementIds.apOpen_device) as MenuItemElement
-const _open_linkRef = $(ElementIds.apOpen_link) as MenuItemElement
-const _open_linkDialogRef = $(ElementIds.apOpen_linkDialog) as DialogElement
-const _open_linkInputRef = $(ElementIds.apOpen_linkInput) as HTMLInputElement
-const _open_linkInsertRef = $(ElementIds.apOpen_linkInsert) as ButtonElement
-const _media_imageRef = $(ElementIds.bd_image) as HTMLImageElement
-const _media_audioRef = $(ElementIds.bd_audio) as HTMLAudioElement
-const _media_videoRef = $(ElementIds.bd_video) as HTMLVideoElement
+const _ref_open_btn = $(ElementIds.apOpen_btn) as CButton.CElement
+const _ref_open_menu = $(ElementIds.apOpen_menu) as CMenu.CElement
+const _ref_open_device = $(ElementIds.apOpen_device) as CMenu.CItem.CElement
+const _ref_open_link = $(ElementIds.apOpen_link) as CMenu.CItem.CElement
+const _ref_open_linkDialog = $(ElementIds.apOpen_linkDialog) as CDialog.CElement
+const _ref_open_linkInput = $(ElementIds.apOpen_linkInput) as HTMLInputElement
+const _ref_open_linkInsert = $(ElementIds.apOpen_linkInsert) as CButton.CElement
+const _ref_media_image = $(ElementIds.bd_image) as HTMLImageElement
+const _ref_media_audio = $(ElementIds.bd_audio) as HTMLAudioElement
+const _ref_media_video = $(ElementIds.bd_video) as HTMLVideoElement
 
 // toa = toast
-const _toa_invalidRef = $(ElementIds.toa_invalid) as ToastElement
-const _toa_noFileRef = $(ElementIds.toa_noFile) as ToastElement
-const _toa_errorRef = $(ElementIds.toa_error) as ToastElement
-const _toa_loadingRef = $(ElementIds.toa_loading) as ToastElement
-const _toa_loadingAbortRef = $(ElementIds.toa_loadingAbort) as IconButtonElement
+const _ref_toa_invalid = $(ElementIds.toa_invalid) as CToast.CElement
+const _ref_toa_noFile = $(ElementIds.toa_noFile) as CToast.CElement
+const _ref_toa_error = $(ElementIds.toa_error) as CToast.CElement
+const _ref_toa_loading = $(ElementIds.toa_loading) as CToast.CElement
+const _ref_toa_loadingAbort = $(ElementIds.toa_loadingAbort) as CButton.CIcon.CElement
 
 let _isAborted = false
 let _abortCtrl = new AbortController()
@@ -58,7 +58,7 @@ async function _updateMediaFromBlob(blob: Blob): Promise<void> {
 	}
 
 	if (mediaType === null) {
-		_toa_invalidRef.showPopover()
+		_ref_toa_invalid.showPopover()
 		return
 	}
 
@@ -75,19 +75,19 @@ function _subsView(v: MediaStoreType, o: MediaStoreType): void {
 	const src = URL.createObjectURL(blob)
 	switch (v.type) {
 	case MediaType.audio:
-		_media_imageRef.hidden = _media_videoRef.hidden = true
-		_media_audioRef.hidden = false
-		_media_audioRef.src = src
+		_ref_media_image.hidden = _ref_media_video.hidden = true
+		_ref_media_audio.hidden = false
+		_ref_media_audio.src = src
 		break
 	case MediaType.video:
-		_media_imageRef.hidden = _media_audioRef.hidden = true
-		_media_videoRef.hidden = false
-		_media_videoRef.src = src
+		_ref_media_image.hidden = _ref_media_audio.hidden = true
+		_ref_media_video.hidden = false
+		_ref_media_video.src = src
 		break
 	case MediaType.image:
-		_media_audioRef.hidden = _media_videoRef.hidden = true
-		_media_imageRef.hidden = false
-		_media_imageRef.src = src
+		_ref_media_audio.hidden = _ref_media_video.hidden = true
+		_ref_media_image.hidden = false
+		_ref_media_image.src = src
 		break
 	}
 }
@@ -97,18 +97,18 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_open_menuRef.addEventListener('beforetoggle', ev => {
+	_ref_open_menu.addEventListener('beforetoggle', ev => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
-		updateButtonRef(_open_btnRef, {
-			ButtonFocused: isOpen
+		CButton.update(_ref_open_btn, {
+			Button: {focused: isOpen}
 		})
 	})
 
-	_open_deviceRef.addEventListener("click", () => {
-		_open_menuRef.hidePopover()
+	_ref_open_device.addEventListener("click", () => {
+		_ref_open_menu.hidePopover()
 		pickFile('image/*, video/*, audio/*', false).then(files => {
 			if (files === null || files.length === 0) {
-				_toa_noFileRef.showPopover()
+				_ref_toa_noFile.showPopover()
 				return
 			}
 
@@ -116,26 +116,26 @@ function _initEvents(): void {
 		})
 	})
 
-	_open_linkRef.addEventListener('click', () => {
-		_open_menuRef.hidePopover()
-		_open_linkInputRef.value = ''
-		_open_linkInsertRef.disabled = true
-		_open_linkDialogRef.showModal()
+	_ref_open_link.addEventListener('click', () => {
+		_ref_open_menu.hidePopover()
+		_ref_open_linkInput.value = ''
+		_ref_open_linkInsert.disabled = true
+		_ref_open_linkDialog.showModal()
 	})
 
-	_open_linkInputRef.addEventListener('input', () => {
-		_open_linkInsertRef.disabled = _open_linkInputRef.value.trim().length <= 0
+	_ref_open_linkInput.addEventListener('input', () => {
+		_ref_open_linkInsert.disabled = _ref_open_linkInput.value.trim().length <= 0
 	})
 
-	_open_linkInsertRef.addEventListener('click', () => {
-		const link = _open_linkInputRef.value
-		_toa_loadingRef.showPopover()
+	_ref_open_linkInsert.addEventListener('click', () => {
+		const link = _ref_open_linkInput.value
+		_ref_toa_loading.showPopover()
 		fetch(link, {signal: _abortCtrl.signal})
 		.then((result) => {
 			result.blob()
 			.then((blob) => _updateMediaFromBlob(blob))
 			.catch(() => {
-				_toa_errorRef.showPopover()
+				_ref_toa_error.showPopover()
 			})
 		})
 		.catch(() => {
@@ -144,18 +144,18 @@ function _initEvents(): void {
 				return
 			}
 
-			_toa_errorRef.showPopover()
+			_ref_toa_error.showPopover()
 		})
 		.finally(() => {
-			_toa_loadingRef.hidePopover()
+			_ref_toa_loading.hidePopover()
 			_abortCtrl = new AbortController()
 		})
 	})
 
-	_toa_loadingAbortRef.addEventListener('click', () => {
+	_ref_toa_loadingAbort.addEventListener('click', () => {
 		_isAborted = true
 		_abortCtrl.abort()
-		_toa_loadingRef.hidePopover()
+		_ref_toa_loading.hidePopover()
 	})
 }
 

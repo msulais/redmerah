@@ -8,7 +8,7 @@ import { DEFAULT_VIBRATION_PATTERN } from '../_scripts/_shared/_constant'
 import { IconCodes } from '@/enums/icons'
 import { pxToRem } from '@/utils/css'
 import { CSSClasses } from '../_styles/_css'
-import { ButtonVariant } from '@/components/Button'
+import { CButton } from '@/components/Button'
 import { ElementIds } from '../_scripts/_shared/_ids'
 ---
 
@@ -20,7 +20,7 @@ import { ElementIds } from '../_scripts/_shared/_ids'
 		<IconButton
 			id={ElementIds.bd_edit}
 			aria-label="Edit"
-			ButtonVariant={ButtonVariant.tonal}
+			ButtonVariant={CButton.Variant.tonal}
 			IconButtonCode={IconCodes.edit}
 		/>
 		<div style={{
@@ -30,13 +30,13 @@ import { ElementIds } from '../_scripts/_shared/_ids'
 		}}>
 			<Button
 				id={ElementIds.bd_vibrate}
-				ButtonVariant={ButtonVariant.filled}>
+				ButtonVariant={CButton.Variant.filled}>
 				<Icon IconCode={IconCodes.play} IconFilled/>
 				Vibrate
 			</Button>
 			<Button
 				id={ElementIds.bd_stop}
-				ButtonVariant={ButtonVariant.filled}>
+				ButtonVariant={CButton.Variant.filled}>
 				<Icon IconCode={IconCodes.pause} IconFilled/>
 				Stop
 			</Button>
@@ -50,9 +50,9 @@ import { ElementIds } from '../_scripts/_shared/_ids'
 		placeholder: DEFAULT_VIBRATION_PATTERN.join(', ')
 	}}/>
 	<form method="dialog" slot="footer" style="display:contents">
-		<Button ButtonVariant={ButtonVariant.tonal}>Cancel</Button>
+		<Button ButtonVariant={CButton.Variant.tonal}>Cancel</Button>
 		<Button
-			ButtonVariant={ButtonVariant.filled}
+			ButtonVariant={CButton.Variant.filled}
 			id={ElementIds.bd_save}>Save</Button>
 	</form>
 </Dialog>

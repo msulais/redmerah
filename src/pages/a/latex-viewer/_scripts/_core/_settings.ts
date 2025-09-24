@@ -7,8 +7,8 @@ import { RootAttributes } from "@/enums/attributes"
 import { RadioNames } from "../_shared/_input-names"
 import { DEFAULT_ANIMATION, DEFAULT_PREFIX, DEFAULT_SUFFIX, DEFAULT_TEXT_WRAP, DEFAULT_THEME } from "../_shared/_constant"
 import { $, $$ } from "./_dom-utils"
-import type { DialogElement } from "@/components/Dialog"
-import type { MenuItemElement } from "@/components/Menu"
+import { CDialog } from "@/components/Dialog"
+import { CMenu } from "@/components/Menu"
 import { saveStorageItem } from "./_database"
 
 export type SettingsStoreType = Readonly<{
@@ -26,18 +26,18 @@ export const SettingsStore = new ObservableStore<SettingsStoreType>({
 	suffix: DEFAULT_SUFFIX,
 	textWrap: DEFAULT_TEXT_WRAP
 })
-const _rootRef = document.documentElement
-const _textWrapRef = $(ElementIds.apSett_textWrap) as HTMLInputElement
-const _preSufDialogRef = $(ElementIds.apSett_preSufDialog) as DialogElement
-const _prefixSuffixRef = $(ElementIds.apSett_prefixSuffix) as MenuItemElement
-const _prefixRef = $(ElementIds.apSett_prefix) as HTMLInputElement
-const _suffixRef = $(ElementIds.apSett_suffix) as HTMLInputElement
-const _themeRef = $(ElementIds.apSett_themeMenu) as HTMLDivElement
-const _animationRef = $(ElementIds.apSett_animationMenu) as HTMLDivElement
-const _settingsMenuRef = $(ElementIds.apSett_menu) as HTMLDivElement
-const _latexListRef = $(ElementIds.bd_list) as HTMLUListElement
-let _timePrefixId: NodeJS.Timeout | number | null = null
-let _timeSuffixId: NodeJS.Timeout | number | null = null
+const _ref_root = document.documentElement
+const _ref_textWrap = $(ElementIds.apSett_textWrap) as HTMLInputElement
+const _ref_preSufDialog = $(ElementIds.apSett_preSufDialog) as CDialog.CElement
+const _ref_prefixSuffix = $(ElementIds.apSett_prefixSuffix) as CMenu.CItem.CElement
+const _ref_prefix = $(ElementIds.apSett_prefix) as HTMLInputElement
+const _ref_suffix = $(ElementIds.apSett_suffix) as HTMLInputElement
+const _ref_theme = $(ElementIds.apSett_themeMenu) as HTMLDivElement
+const _ref_animation = $(ElementIds.apSett_animationMenu) as HTMLDivElement
+const _ref_settingsMenu = $(ElementIds.apSett_menu) as HTMLDivElement
+const _ref_latexList = $(ElementIds.bd_list) as HTMLUListElement
+let _time_prefix: NodeJS.Timeout | number | null = null
+let _time_suffix: NodeJS.Timeout | number | null = null
 
 function _subsAnimationChanges(v: SettingsStoreType, o: SettingsStoreType): void {
 	const animation = v.animation
@@ -57,42 +57,42 @@ function _subsAnimationView(v: SettingsStoreType, o: SettingsStoreType): void {
 	const animation = v.animation
 	if (animation === o.animation) return
 
-	_rootRef.setAttribute(RootAttributes.animation, animation)
-	const previousRef = $$(
+	_ref_root.setAttribute(RootAttributes.animation, animation)
+	const ref_previous = $$(
 		`input[name="${CSS.escape(RadioNames.animation)}"]:checked`
 	) as HTMLInputElement
-	const targetRef = $$(
+	const ref_target = $$(
 		`input[name="${CSS.escape(RadioNames.animation)}"][value="${CSS.escape(animation)}"]`
 	) as HTMLInputElement
 
-	if (previousRef === targetRef) {return}
-	if (previousRef) previousRef.checked = false
-	if (targetRef) targetRef.checked = true
+	if (ref_previous === ref_target) {return}
+	if (ref_previous) ref_previous.checked = false
+	if (ref_target) ref_target.checked = true
 }
 
 function _subsThemeView(v: SettingsStoreType, o: SettingsStoreType): void {
 	const theme = v.theme
 	if (theme === o.theme) return
 
-	_rootRef.setAttribute(RootAttributes.theme, theme)
-	const previousRef = $$(
+	_ref_root.setAttribute(RootAttributes.theme, theme)
+	const ref_previous = $$(
 		`input[name="${CSS.escape(RadioNames.theme)}"]:checked`
 	) as HTMLInputElement
-	const targetRef = $$(
+	const ref_target = $$(
 		`input[name="${CSS.escape(RadioNames.theme)}"][value="${CSS.escape(theme)}"]`
 	) as HTMLInputElement
 
-	if (previousRef === targetRef) {return}
-	if (previousRef) previousRef.checked = false
-	if (targetRef) targetRef.checked = true
+	if (ref_previous === ref_target) {return}
+	if (ref_previous) ref_previous.checked = false
+	if (ref_target) ref_target.checked = true
 }
 
 function _subsTextWrapView(v: SettingsStoreType, o: SettingsStoreType): void {
 	const textWrap = v.textWrap
 	if (textWrap === o.textWrap) {return}
 
-	_textWrapRef.checked = textWrap
-	_latexListRef.toggleAttribute('data-text-wrap', textWrap)
+	_ref_textWrap.checked = textWrap
+	_ref_latexList.toggleAttribute('data-text-wrap', textWrap)
 }
 
 function _subsTextWrapChanges(v: SettingsStoreType, o: SettingsStoreType): void {
@@ -104,9 +104,9 @@ function _subsTextWrapChanges(v: SettingsStoreType, o: SettingsStoreType): void 
 
 function _subsPrefixView(v: SettingsStoreType): void {
 	const prefix = v.prefix
-	if (prefix === _prefixRef.value) {return}
+	if (prefix === _ref_prefix.value) {return}
 
-	_prefixRef.value = prefix
+	_ref_prefix.value = prefix
 }
 
 function _subsPrefixChanges(v: SettingsStoreType, o: SettingsStoreType): void {
@@ -118,9 +118,9 @@ function _subsPrefixChanges(v: SettingsStoreType, o: SettingsStoreType): void {
 
 function _subsSuffixView(v: SettingsStoreType): void {
 	const suffix = v.suffix
-	if (suffix === _suffixRef.value) {return}
+	if (suffix === _ref_suffix.value) {return}
 
-	_suffixRef.value = suffix
+	_ref_suffix.value = suffix
 }
 
 function _subsSuffixChanges(v: SettingsStoreType, o: SettingsStoreType): void {
@@ -144,54 +144,54 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_themeRef.addEventListener('change', ev => {
+	_ref_theme.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as PlatformThemeMode
 		if (!value || !isValidEnumValue(value, PlatformThemeMode)) {return}
 
-		_settingsMenuRef.hidePopover()
+		_ref_settingsMenu.hidePopover()
 		SettingsStore.update(v => v.theme = value)
 	})
 
-	_animationRef.addEventListener('change', ev => {
+	_ref_animation.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as PlatformAnimationMode
 		if (!value || !isValidEnumValue(value, PlatformAnimationMode)) {return}
 
-		_settingsMenuRef.hidePopover()
+		_ref_settingsMenu.hidePopover()
 		SettingsStore.update(v => v.animation = value)
 	})
 
-	_prefixSuffixRef.addEventListener('click', () => {
-		_settingsMenuRef.hidePopover()
-		_preSufDialogRef.showModal()
+	_ref_prefixSuffix.addEventListener('click', () => {
+		_ref_settingsMenu.hidePopover()
+		_ref_preSufDialog.showModal()
 	})
 
-	_prefixRef.addEventListener('input', () => {
-		if (_timePrefixId !== null) {
-			clearTimeout(_timePrefixId)
+	_ref_prefix.addEventListener('input', () => {
+		if (_time_prefix !== null) {
+			clearTimeout(_time_prefix)
 		}
 
-		_timePrefixId = setTimeout(() => {
-			_timePrefixId = null
-			SettingsStore.update(v => v.prefix = _prefixRef.value)
+		_time_prefix = setTimeout(() => {
+			_time_prefix = null
+			SettingsStore.update(v => v.prefix = _ref_prefix.value)
 		}, 100)
 	})
 
-	_suffixRef.addEventListener('input', () => {
-		if (_timeSuffixId !== null) {
-			clearTimeout(_timeSuffixId)
+	_ref_suffix.addEventListener('input', () => {
+		if (_time_suffix !== null) {
+			clearTimeout(_time_suffix)
 		}
 
-		_timeSuffixId = setTimeout(() => {
-			_timeSuffixId = null
-			SettingsStore.update(v => v.suffix = _suffixRef.value)
+		_time_suffix = setTimeout(() => {
+			_time_suffix = null
+			SettingsStore.update(v => v.suffix = _ref_suffix.value)
 		}, 100)
 	})
 
-	_textWrapRef.addEventListener('change', () => {
-		_settingsMenuRef.hidePopover()
-		SettingsStore.update(v => v.textWrap = _textWrapRef.checked)
+	_ref_textWrap.addEventListener('change', () => {
+		_ref_settingsMenu.hidePopover()
+		SettingsStore.update(v => v.textWrap = _ref_textWrap.checked)
 	})
 }
 

@@ -8,7 +8,7 @@ import Html from '@/layouts/Html/index.astro'
 import Icon from '@/components/Icon/index.astro'
 import Tooltip from '@/components/Tooltip/index.astro'
 import LinkButton from '@/components/Button/LinkButton.astro'
-import { ButtonVariant } from '@/components/Button'
+import { CButton } from '@/components/Button'
 import Appbar from '@/layouts/Appbar/index.astro'
 import BottomBar from '@/layouts/BottomBar/index.astro'
 import CSS from './_index.module.scss'
@@ -92,7 +92,7 @@ function appColorCustom(color: HEXColor): string {
 					</Tooltip>
 					<p>Discover a suite of powerful apps designed to simplify your tasks and enhance your productivity</p>
 					<LinkButton
-						LinkButtonVariant={ButtonVariant.filled}
+						LinkButtonVariant={CButton.Variant.filled}
 						href={RoutesLinks.apps}
 						style={{width: 'fit-content'}}>
 						Browse apps
@@ -111,12 +111,12 @@ function appColorCustom(color: HEXColor): string {
 						<h3>{v.name}</h3>
 						<p style="flex:1">{v.description}</p>
 						<LinkButton
-							LinkButtonVariant={ButtonVariant.filled}
+							LinkButtonVariant={CButton.Variant.filled}
 							href={v.link}><Icon IconCode={IconCodes.openFolder}/> Open</LinkButton>
 					</li>}</>)}
 				</ul>
 				<LinkButton
-					LinkButtonVariant={ButtonVariant.filled}
+					LinkButtonVariant={CButton.Variant.filled}
 					href={RoutesLinks.apps}>
 					See {APPS.length-3} more apps
 					<Icon IconFilled IconCode={IconCodes.arrowRight}/>

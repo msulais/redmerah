@@ -2,9 +2,9 @@ import { ObservableStore } from "@/utils/store"
 import { ElementIds } from "../_shared/_ids"
 import { $ } from "./_dom-utils"
 import { DEFAULT_UNESCAPE_XML_TEXT } from "../_shared/_constant"
-import type { MenuItemElement } from "@/components/Menu"
+import { CMenu } from "@/components/Menu"
 import { isTargetValidElement } from "@/utils/element"
-import type { ToastElement } from "@/components/Toast"
+import { CToast } from "@/components/Toast"
 import { Math_clamp } from "@/utils/math"
 import { saveStorageItem } from "./_database"
 import { pxToRem } from "@/utils/css"
@@ -17,37 +17,37 @@ export const EscaperStore = new ObservableStore<EscaperStoreType>({
 	unescape: DEFAULT_UNESCAPE_XML_TEXT,
 })
 
-const _moreMenuRef = $(ElementIds.apMore_menu) as HTMLDivElement
-const _inputContainerRef = $(ElementIds.bd_inputContainer) as HTMLDivElement
-const _unescapeRef = $(ElementIds.bd_unescape) as HTMLTextAreaElement
-const _escapeRef = $(ElementIds.bd_escape) as HTMLTextAreaElement
-const _sliderRef = $(ElementIds.bd_slider) as HTMLDivElement
-const _resetInputRef = $(ElementIds.apMore_reset) as MenuItemElement
-const _copyUnescapeRef = $(ElementIds.apMore_copyUnescape) as MenuItemElement
-const _copyEscapeRef = $(ElementIds.apMore_copyEscape) as MenuItemElement
-const _toastCopiedRef = $(ElementIds.toa_copied) as ToastElement
-let _timeStorageId: NodeJS.Timeout | number | undefined
+const _ref_moreMenu = $(ElementIds.apMore_menu) as HTMLDivElement
+const _ref_inputContainer = $(ElementIds.bd_inputContainer) as HTMLDivElement
+const _ref_unescape = $(ElementIds.bd_unescape) as HTMLTextAreaElement
+const _ref_escape = $(ElementIds.bd_escape) as HTMLTextAreaElement
+const _ref_slider = $(ElementIds.bd_slider) as HTMLDivElement
+const _ref_resetInput = $(ElementIds.apMore_reset) as CMenu.CItem.CElement
+const _ref_copyUnescape = $(ElementIds.apMore_copyUnescape) as CMenu.CItem.CElement
+const _ref_copyEscape = $(ElementIds.apMore_copyEscape) as CMenu.CItem.CElement
+const _ref_toastCopied = $(ElementIds.toa_copied) as CToast.CElement
+let _time_storage: NodeJS.Timeout | number | undefined
 let _inputSource: 'escape' | 'unescape' = 'unescape'
 
 function _subscribeInputChanges(v: EscaperStoreType, o: EscaperStoreType): void {
 	const input = v.unescape
 	if (input === o.unescape) {return}
 
-	clearTimeout(_timeStorageId)
-	_timeStorageId = setTimeout(() => {
+	clearTimeout(_time_storage)
+	_time_storage = setTimeout(() => {
 		saveStorageItem('unescape', input)
 	}, 250)
 }
 
 function _subscribeInputView(v: EscaperStoreType): void {
 	const input = v.unescape
-	if (input !== _unescapeRef.value) {
-		_unescapeRef.value = input
+	if (input !== _ref_unescape.value) {
+		_ref_unescape.value = input
 	}
 
 	if (_inputSource === 'escape') {return}
 
-	_escapeRef.value = (
+	_ref_escape.value = (
 		input
 		.replace(/&/g, '&amp;') // must first
 		.replace(/'/g, '&apos;')
@@ -69,7 +69,7 @@ function _initEvents(): void {
 		let x: number | null = null
 		const onPointerUp = (ev: PointerEvent) => {
 			isDragging = false
-			_sliderRef.releasePointerCapture(ev.pointerId)
+			_ref_slider.releasePointerCapture(ev.pointerId)
 		}
 
 		window.addEventListener('resize', () => {
@@ -78,48 +78,47 @@ function _initEvents(): void {
 			screenWidth = document.body.clientWidth
 			requestAnimationFrame(() => {
 				x = Math_clamp(x!, 300, screenWidth - 300)
-				_inputContainerRef.style.setProperty('min-width', pxToRem(x) + 'rem')
-				_inputContainerRef.style.setProperty('max-width', pxToRem(x) + 'rem')
+				_ref_inputContainer.style.setProperty('min-width', pxToRem(x) + 'rem')
+				_ref_inputContainer.style.setProperty('max-width', pxToRem(x) + 'rem')
 			})
 		})
 
-		_sliderRef.addEventListener('pointerdown', (ev) => {
+		_ref_slider.addEventListener('pointerdown', (ev) => {
 			isDragging = true
 			screenWidth = document.body.clientWidth
-			_sliderRef.setPointerCapture(ev.pointerId)
+			_ref_slider.setPointerCapture(ev.pointerId)
 		})
 
-		_sliderRef.addEventListener('pointermove', ev => {
+		_ref_slider.addEventListener('pointermove', ev => {
 			if (!isDragging) {return}
 
 			requestAnimationFrame(() => {
 				const paddingLeft = 10
 				x = Math_clamp(ev.clientX - paddingLeft, 300, screenWidth - 300)
-				_inputContainerRef.style.setProperty('min-width', pxToRem(x) + 'rem')
-				_inputContainerRef.style.setProperty('max-width', pxToRem(x) + 'rem')
+				_ref_inputContainer.style.setProperty('min-width', pxToRem(x) + 'rem')
+				_ref_inputContainer.style.setProperty('max-width', pxToRem(x) + 'rem')
 			})
 		})
 
-		_sliderRef.addEventListener('pointerup', onPointerUp)
-		_sliderRef.addEventListener('pointercancel', onPointerUp)
-
-		_sliderRef.addEventListener('dblclick', () => {
+		_ref_slider.addEventListener('pointerup', onPointerUp)
+		_ref_slider.addEventListener('pointercancel', onPointerUp)
+		_ref_slider.addEventListener('dblclick', () => {
 			x = null
-			_inputContainerRef.style.removeProperty('min-width')
-			_inputContainerRef.style.removeProperty('max-width')
+			_ref_inputContainer.style.removeProperty('min-width')
+			_ref_inputContainer.style.removeProperty('max-width')
 		})
 	}
 
 	function init(): void {
-		_unescapeRef.addEventListener('input', () => {
+		_ref_unescape.addEventListener('input', () => {
 			_inputSource = 'unescape'
-			EscaperStore.update(v => v.unescape = _unescapeRef.value)
+			EscaperStore.update(v => v.unescape = _ref_unescape.value)
 		})
 
-		_escapeRef.addEventListener('input', () => {
+		_ref_escape.addEventListener('input', () => {
 			_inputSource = 'escape'
 			EscaperStore.update(v => v.unescape = (
-				_escapeRef
+				_ref_escape
 				.value
 				.replace(/&amp;/g, '&' )
 				.replace(/&quot;/g, '"' )
@@ -129,25 +128,25 @@ function _initEvents(): void {
 			))
 		})
 
-		_moreMenuRef.addEventListener('click', () => {
-			const buttonRef = document.activeElement as HTMLButtonElement
-			if (!isTargetValidElement(_moreMenuRef, buttonRef)) {return}
+		_ref_moreMenu.addEventListener('click', () => {
+			const ref_btn = document.activeElement as HTMLButtonElement
+			if (!isTargetValidElement(_ref_moreMenu, ref_btn)) {return}
 
-			const close = () => _moreMenuRef.hidePopover()
-			switch (buttonRef) {
-			case _resetInputRef:
+			const close = () => _ref_moreMenu.hidePopover()
+			switch (ref_btn) {
+			case _ref_resetInput:
 				EscaperStore.update(v => v.unescape = DEFAULT_UNESCAPE_XML_TEXT)
 				close()
 				break
-			case _copyEscapeRef:
-				navigator.clipboard.writeText(_escapeRef.value).then(() => {
-					_toastCopiedRef.showPopover()
+			case _ref_copyEscape:
+				navigator.clipboard.writeText(_ref_escape.value).then(() => {
+					_ref_toastCopied.showPopover()
 				})
 				close()
 				break
-			case _copyUnescapeRef:
-				navigator.clipboard.writeText(_unescapeRef.value).then(() => {
-					_toastCopiedRef.showPopover()
+			case _ref_copyUnescape:
+				navigator.clipboard.writeText(_ref_unescape.value).then(() => {
+					_ref_toastCopied.showPopover()
 				})
 				close()
 			}

@@ -9,7 +9,7 @@ import Toast from '@/components/Toast/index.astro'
 import UIGradient from './_body/_UIGradient.astro'
 import { CSSClasses } from '../_styles/_css'
 import { IconCodes } from '@/enums/icons'
-import { ButtonClasses, ButtonVariant } from '@/components/Button'
+import { CButton } from '@/components/Button'
 import { AppCSSColors } from '@/enums/app-data'
 import { ElementIds } from '../_scripts/_shared/_ids'
 import { DEFAULT_PREVIEW_BORDER_RADIUS, DEFAULT_PREVIEW_HEIGHT, DEFAULT_PREVIEW_WIDTH, DEFAULT_STOP_COLOR_1, DEFAULT_STOP_COLOR_2 } from '../_scripts/_shared/_constant'
@@ -33,7 +33,7 @@ import { pxToRem } from '@/utils/css'
 	<div class={CSSClasses.bodyEditor}>
 		<details>
 			<summary
-				class={ButtonClasses.button}>
+				class={CButton.Classes.button}>
 				Saved gradient
 				<Icon IconCode={IconCodes.chevronDown}/>
 			</summary>
@@ -67,8 +67,8 @@ import { pxToRem } from '@/utils/css'
 		<Divider/>
 		<details open>
 			<summary
-				class={ButtonClasses.button}
-				data-c-button-variant={ButtonVariant.filled}>
+				class={CButton.Classes.button}
+				data-c-button-variant={CButton.Variant.filled}>
 				Properties
 				<Icon IconCode={IconCodes.chevronDown}/>
 			</summary>
@@ -128,8 +128,8 @@ import { pxToRem } from '@/utils/css'
 		<Divider/>
 		<details open>
 			<summary
-				class={ButtonClasses.button}
-				data-c-button-variant={ButtonVariant.filled}>
+				class={CButton.Classes.button}
+				data-c-button-variant={CButton.Variant.filled}>
 				Gradient
 				<Icon IconCode={IconCodes.chevronDown}/>
 			</summary>

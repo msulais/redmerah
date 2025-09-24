@@ -20,14 +20,14 @@ export const SettingsStore = new ObservableStore<SettingsStoreType>({
 	animation: DEFAULT_ANIMATION,
 	textWrap: DEFAULT_TEXT_WRAP,
 })
-const _rootRef = document.documentElement
-const _themeRef = $(ElementIds.apSett_themeMenu) as HTMLDivElement
-const _animationRef = $(ElementIds.apSett_animationMenu) as HTMLDivElement
-const _settingsMenuRef = $(ElementIds.apSett_menu) as HTMLDivElement
-const _markdownRef = $(ElementIds.bd_markdown) as HTMLTextAreaElement
-const _htmlRef = $(ElementIds.bd_html) as HTMLTextAreaElement
-const _cssRef = $(ElementIds.bd_css) as HTMLTextAreaElement
-const _sett_textWrapRef = $(ElementIds.apSett_textWrap) as HTMLInputElement
+const _ref_root = document.documentElement
+const _ref_theme = $(ElementIds.apSett_themeMenu) as HTMLDivElement
+const _ref_animation = $(ElementIds.apSett_animationMenu) as HTMLDivElement
+const _ref_settingsMenu = $(ElementIds.apSett_menu) as HTMLDivElement
+const _ref_markdown = $(ElementIds.bd_markdown) as HTMLTextAreaElement
+const _ref_html = $(ElementIds.bd_html) as HTMLTextAreaElement
+const _ref_css = $(ElementIds.bd_css) as HTMLTextAreaElement
+const _ref_sett_textWrap = $(ElementIds.apSett_textWrap) as HTMLInputElement
 
 function _subsAnimationChanges(v: SettingsStoreType, o: SettingsStoreType): void {
 	const animation = v.animation
@@ -47,44 +47,44 @@ function _subsAnimationView(v: SettingsStoreType, o: SettingsStoreType): void {
 	const animation = v.animation
 	if (animation === o.animation) return
 
-	_rootRef.setAttribute(RootAttributes.animation, animation)
-	const previousRef = $$(
+	_ref_root.setAttribute(RootAttributes.animation, animation)
+	const ref_previous = $$(
 		`input[name="${CSS.escape(RadioNames.animation)}"]:checked`
 	) as HTMLInputElement
-	const targetRef = $$(
+	const ref_target = $$(
 		`input[name="${CSS.escape(RadioNames.animation)}"][value="${CSS.escape(animation)}"]`
 	) as HTMLInputElement
 
-	if (previousRef === targetRef) {return}
-	if (previousRef) previousRef.checked = false
-	if (targetRef) targetRef.checked = true
+	if (ref_previous === ref_target) {return}
+	if (ref_previous) ref_previous.checked = false
+	if (ref_target) ref_target.checked = true
 }
 
 function _subsThemeView(v: SettingsStoreType, o: SettingsStoreType): void {
 	const theme = v.theme
 	if (theme === o.theme) return
 
-	_rootRef.setAttribute(RootAttributes.theme, theme)
-	const previousRef = $$(
+	_ref_root.setAttribute(RootAttributes.theme, theme)
+	const ref_previous = $$(
 		`input[name="${CSS.escape(RadioNames.theme)}"]:checked`
 	) as HTMLInputElement
-	const targetRef = $$(
+	const ref_target = $$(
 		`input[name="${CSS.escape(RadioNames.theme)}"][value="${CSS.escape(theme)}"]`
 	) as HTMLInputElement
 
-	if (previousRef === targetRef) {return}
-	if (previousRef) previousRef.checked = false
-	if (targetRef) targetRef.checked = true
+	if (ref_previous === ref_target) {return}
+	if (ref_previous) ref_previous.checked = false
+	if (ref_target) ref_target.checked = true
 }
 
 function _subsTextWrapView(v: SettingsStoreType, o: SettingsStoreType): void {
 	const textWrap = v.textWrap
 	if (textWrap === o.textWrap) {return}
 
-	_markdownRef.toggleAttribute('data-text-wrap', textWrap)
-	_htmlRef.toggleAttribute('data-text-wrap', textWrap)
-	_cssRef.toggleAttribute('data-text-wrap', textWrap)
-	_sett_textWrapRef.checked = textWrap
+	_ref_markdown.toggleAttribute('data-text-wrap', textWrap)
+	_ref_html.toggleAttribute('data-text-wrap', textWrap)
+	_ref_css.toggleAttribute('data-text-wrap', textWrap)
+	_ref_sett_textWrap.checked = textWrap
 }
 
 function _subsTextWrapChanges(v: SettingsStoreType, o: SettingsStoreType): void {
@@ -104,33 +104,33 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_themeRef.addEventListener('change', ev => {
+	_ref_theme.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as PlatformThemeMode
 		if (!value || !isValidEnumValue(value, PlatformThemeMode)) {return}
 
-		_settingsMenuRef.hidePopover()
+		_ref_settingsMenu.hidePopover()
 		SettingsStore.update(v => v.theme = value)
 	})
 
-	_animationRef.addEventListener('change', ev => {
+	_ref_animation.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as PlatformAnimationMode
 		if (!value || !isValidEnumValue(value, PlatformAnimationMode)) {return}
 
-		_settingsMenuRef.hidePopover()
+		_ref_settingsMenu.hidePopover()
 		SettingsStore.update(v => v.animation = value)
 	})
 
-	_settingsMenuRef.addEventListener('change', ev => {
+	_ref_settingsMenu.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
 		const checked = target?.checked
 		switch (target) {
-		case _sett_textWrapRef:
+		case _ref_sett_textWrap:
 			SettingsStore.update(v => v.textWrap = checked)
 			break
 		}
-		_settingsMenuRef.hidePopover()
+		_ref_settingsMenu.hidePopover()
 	})
 }
 

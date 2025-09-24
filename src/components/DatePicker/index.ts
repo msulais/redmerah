@@ -1,15 +1,681 @@
 import { isNumberDefined, isNumberNotDefined } from "@/utils/number"
-import { ButtonVariant, createButtonRef, createIconButtonRef, updateButtonRef, type ButtonElement, type ButtonProps, type IconButtonElement, type IconButtonProps } from "../Button"
-import { registerPopoverRef, repositionPopoverRef, updatePopoverRef, type PopoverElement, type PopoverProps, type PopoverUpdateOptions } from "../Popover"
-import { createTooltipRef, registerTooltipRef, type TooltipElement, type TooltipProps } from "../Tooltip"
-import { createDividerRef, type DividerElement, type DividerProps } from "../Divider"
 import { isValidEnumValue } from "@/utils/object"
 import { isAnimationAllowed } from "@/utils/animation"
 import { isDateEqual_Y, isDateEqual_YM, isDateEqual_YMD, isDateOutRange_Y, isDateOutRange_YM, isDateOutRange_YMD } from "@/utils/datetime"
 import { AnimationEasing } from "@/enums/animation"
 import { IconCodes } from "@/enums/icons"
+import { CPopover as GCPopover, type PopoverProps } from "../Popover"
+import { CButton as GCButton, type ButtonProps, type IconButtonProps } from "../Button"
+import { CTooltip as GCTooltip, type TooltipProps } from "../Tooltip"
+import { CDivider as GCDivider, type DividerProps } from "../Divider"
+import { $add_event, $children, $classlist, $create, $get_attr, $has_attr, $is_array, $is_false, $parse_date, $query, $query_all, $rm_event, $rm_style, $set_attr, $set_style } from "../utils"
 
-type DatePickerProps = PopoverProps & {
+// type Nullable<T> = T | null
+// const $is_array = (e: any) => Array.isArray(e)
+// const $is_false = (e: any) => e === false
+// const $get_attr = (ref?: Element, name?: string) => name && ref?.getAttribute(name)
+// const $has_attr = (ref?: Element, name?: string) => Boolean(name && ref?.hasAttribute(name))
+// const $set_attr = (
+// 	(ref?: Nullable<Element>, name?: string, value?: string) =>
+// 	name && value && ref?.setAttribute(name, value)
+// )
+// const $query = (
+// 	<T extends HTMLElement>(selector: string, from?: Element) =>
+// 	(from ?? document).querySelector<T>(selector)
+// )
+// const $query_all = (
+// 	<T extends HTMLElement>(selector: string, from?: Element) =>
+// 	(from ?? document).querySelectorAll<T>(selector)
+// )
+// const $create = (
+// 	<T extends keyof HTMLElementTagNameMap>(tagName: T) =>
+// 	document.createElement(tagName)
+// )
+// const $children = (
+// 	(ref?: Nullable<Element>, ...children: (Node | string)[]) =>
+// 	ref?.replaceChildren(...children)
+// )
+// const $classlist = (
+// 	(ref?: Nullable<Element>, ...classes: string[]) =>
+// 	ref?.classList.add(...classes)
+// )
+// const $add_event = (
+// 	<T extends Event = Event>(ref?: any, type?: string, callback?: (e: T) => unknown) =>
+// 	ref.addEventListener(type, callback)
+// )
+// const $rm_event = (
+// 	<T extends Event = Event>(ref?: any, type?: string, callback?: (e: T) => unknown) =>
+// 	ref.removeEventListener(type, callback)
+// )
+// const $set_style = (
+// 	(ref?: Nullable<HTMLElement>, name?: string, value?: string) =>
+// 	name && value && ref?.style.setProperty(name, value)
+// )
+// const $rm_style = (
+// 	(ref?: Nullable<HTMLElement>, name?: string) =>
+// 	name && ref?.style.removeProperty(name)
+// )
+
+
+export namespace CDatePicker {
+	export type CElement = GCPopover.CElement
+	export type UpdateOptions = GCPopover.UpdateOptions & {
+		DatePicker?: {
+			startDate?: Date
+			endDate  ?: Date
+			value    ?: Date
+			children ?: (string | Node)[] | boolean
+			refs     ?: {
+				header     ?(ref : HTMLDivElement         ): unknown
+				title      ?(ref : GCButton.CElement      ): unknown
+				previous   ?(ref : GCButton.CIcon.CElement): unknown
+				next       ?(ref : GCButton.CIcon.CElement): unknown
+				days       ?(ref : GCTooltip.CElement     ): unknown
+				day        ?(refs: HTMLSpanElement[]      ): unknown
+				divider    ?(ref : GCDivider.CElement     ): unknown
+				year       ?(ref : HTMLDivElement         ): unknown
+				yearButton ?(refs: GCButton.CElement[]    ): unknown
+				month      ?(ref : HTMLDivElement         ): unknown
+				monthButton?(refs: GCButton.CElement[]    ): unknown
+				date       ?(ref : HTMLDivElement         ): unknown
+				dateButton ?(refs: GCButton.CElement[]    ): unknown
+				dateEmpty  ?(refs: HTMLDivElement[]       ): unknown
+				content    ?(ref : HTMLDivElement         ): unknown
+			}
+		}
+	}
+
+	export enum Classes {
+		datepicker  = 'c-datepicker',
+		header      = datepicker + '-header',
+		title       = datepicker + '-title',
+		previous    = datepicker + '-previous',
+		next        = datepicker + '-next',
+		days        = datepicker + '-days',
+		day         = datepicker + '-day',
+		divider     = datepicker + '-divider',
+		year        = datepicker + '-year',
+		month       = datepicker + '-month',
+		date        = datepicker + '-date',
+		content     = datepicker + '-content',
+		yearButton  = year + '-button',
+		monthButton = month + '-button',
+		dateButton  = date + '-button',
+		dateEmpty   = date + '-empty',
+	}
+
+	export enum ViewType {
+		day  = 'day',
+		month = 'month',
+		year  = 'year'
+	}
+
+	export enum Attributes {
+		start     = 'data-c-datepicker-start',
+		end       = 'data-c-datepicker-end',
+		value     = 'data-c-datepicker-value',
+
+		/** @param value `ViewType` */
+		viewType  = 'data-c-datepicker-viewtype'
+	}
+
+	enum ButtonAttributes {
+		date = 'data-date'
+	}
+
+	export enum Events {
+		/** `!bubbles | !cancelable | !detail` */
+		change = 'datepicker:change'
+	}
+
+	const REGISTERED_DATEPICKER: Set<CElement> = new Set<CElement>()
+
+	function initDatePicker(ref_datepicker: CElement): void {
+		const attributes = {
+			get startDate(): Date | null {
+				const startDate = $get_attr(ref_datepicker, Attributes.start)
+				if (!startDate) return null
+
+				const date = $parse_date(startDate)
+				if (isNumberNotDefined(date)) return null
+
+				return new Date(date)
+			},
+			get endDate(): Date | null {
+				const endDate = $get_attr(ref_datepicker, Attributes.end)
+				if (!endDate) return null
+
+				const date = $parse_date(endDate)
+				if (isNumberNotDefined(date)) return null
+
+				return new Date(date)
+			},
+			get value(): Date | null {
+				const valueDate = $get_attr(ref_datepicker, Attributes.value)
+				if (!valueDate) return null
+
+				const date = $parse_date(valueDate)
+				if (isNumberNotDefined(date)) return null
+
+				return new Date(date)
+			},
+			get viewtype(): ViewType {
+				const type = $get_attr(ref_datepicker, Attributes.viewType)
+				if (!type || !isValidEnumValue(type, ViewType)) return ViewType.day
+
+				return type as ViewType
+			}
+		}
+		let currentView = new Date()
+
+		function next(): void {
+			const newDate = new Date(currentView)
+			switch (attributes.viewtype) {
+			case ViewType.day: newDate.setMonth(newDate.getMonth() + 1); break
+			case ViewType.month: newDate.setFullYear(newDate.getFullYear() + 1); break
+			case ViewType.year: newDate.setFullYear(newDate.getFullYear() + 16); break
+			}
+
+			updateView(newDate)
+			GCPopover.reposition(ref_datepicker)
+		}
+
+		function previous(): void {
+			const newDate = new Date(currentView)
+			switch (attributes.viewtype) {
+			case ViewType.day: newDate.setMonth(newDate.getMonth() - 1); break
+			case ViewType.month: newDate.setFullYear(newDate.getFullYear() - 1); break
+			case ViewType.year: newDate.setFullYear(newDate.getFullYear() - 16); break
+			}
+
+			updateView(newDate)
+			GCPopover.reposition(ref_datepicker)
+		}
+
+		function updateView(date: Date): void {
+			currentView = date
+
+			let daysPerMonth = 31 // default
+			let startDay = new Date(currentView.getFullYear(), currentView.getMonth(), 1).getDay()
+
+			// february
+			if (currentView.getMonth() === 1) {
+				daysPerMonth = 28
+				if (currentView.getFullYear() % 4 === 0) daysPerMonth = 29
+			}
+
+			// april, june, september, november
+			else if ([3, 5, 8, 10].includes(currentView.getMonth())) daysPerMonth = 30
+
+			const ref_title = $query<GCButton.CElement>('.' + Classes.title, ref_datepicker)!
+			const value = attributes.value!
+			const now = new Date()
+			const startDate = attributes.startDate!
+			const endDate = attributes.endDate!
+			const variant = GCButton.Variant
+			switch (attributes.viewtype) {
+			case ViewType.day: {
+				const titleText = currentView.toLocaleDateString('en', {month: 'long', year: 'numeric'})
+				ref_title.textContent = titleText
+
+				const refs_empty = $query_all<HTMLDivElement>('.' + Classes.dateEmpty, ref_datepicker)
+				const refs_date = $query_all<GCButton.CElement>('.' + Classes.dateButton, ref_datepicker)
+				for (let i = 0; i < refs_empty.length; i++) {
+					const ref = refs_empty[i]
+					if (i < startDay) {
+						$rm_style(ref, 'display')
+					} else {
+						$set_style(ref, 'display', 'none')
+					}
+				}
+
+				for (let i = 0; i < refs_date.length; i++) {
+					const ref = refs_date[i]
+					if (i < daysPerMonth) {
+						$rm_style(ref, 'display')
+					} else {
+						$set_style(ref, 'display', 'none')
+					}
+					const date = new Date(
+						currentView.getFullYear(),
+						currentView.getMonth(),
+						i + 1
+					)
+					$set_attr(ref, ButtonAttributes.date, date.toISOString())
+					ref.disabled = isDateOutRange_YMD(date, startDate, endDate)
+
+					GCButton.update(ref, {Button: {variant: isDateEqual_YMD(date, value)
+						? variant.filled
+						: isDateEqual_YMD(date, now)
+							? variant.tonal
+							: variant.transparent
+					}})
+				}
+				break
+			}
+			case ViewType.month: {
+				const year = currentView.getFullYear()
+				const titleText = currentView.toLocaleDateString('en', {year: 'numeric'})
+				ref_title.textContent = titleText
+
+				const refs_month = $query_all<GCButton.CElement>('.' + Classes.monthButton, ref_datepicker)
+				for (let i = 0; i < refs_month.length; i++) {
+					const ref = refs_month[i]
+					const date = new Date(year, i, 1)
+					$set_attr(ref, ButtonAttributes.date, date.toISOString())
+					ref.disabled = isDateOutRange_YM(date, startDate, endDate)
+					GCButton.update(ref, {Button: {variant: isDateEqual_YM(date, value)
+						? variant.filled
+						: isDateEqual_YM(date, now)
+							? variant.tonal
+							: variant.transparent
+					}})
+				}
+				break
+			}
+			case ViewType.year: {
+				const year = currentView.getFullYear()
+				const titleText = year + '-' + (year + 15)
+				ref_title.textContent = titleText
+
+				const refs_year = $query_all<GCButton.CElement>('.' + Classes.yearButton, ref_datepicker)
+				for (let i = 0; i < refs_year.length; i++) {
+					const ref = refs_year[i]
+					const date = new Date(year + i, 0, 1)
+					ref.textContent = year + i + ''
+					ref.setAttribute(ButtonAttributes.date, date.toISOString())
+					ref.disabled = isDateOutRange_Y(date, startDate, endDate)
+					GCButton.update(ref, {Button: {variant: isDateEqual_Y(date, value)
+						? variant.filled
+						: isDateEqual_Y(date, now)
+							? variant.tonal
+							: variant.transparent
+					}})
+				}
+				break
+			}}
+		}
+
+		function initDates(): void {
+			$set_attr(ref_datepicker, Attributes.viewType, ViewType.day)
+			if (attributes.startDate === null) {
+				$set_attr(ref_datepicker, Attributes.start, new Date(0).toISOString())
+			}
+
+			if (attributes.endDate === null) {
+				$set_attr(
+					ref_datepicker,
+					Attributes.end,
+					new Date(new Date().getFullYear() + 200, 0, 1).toISOString()
+				)
+			}
+
+			if (attributes.value === null) {
+				$set_attr(
+					ref_datepicker,
+					Attributes.value,
+					new Date().toISOString()
+				)
+			}
+		}
+
+		function changeViewType(type: ViewType): void {
+			switch (type) {
+			case ViewType.day:
+				$set_attr(ref_datepicker, Attributes.viewType, ViewType.day)
+				if (isAnimationAllowed()) {
+					const ref_date = $query<HTMLDivElement>('.' + Classes.date, ref_datepicker)
+					ref_date?.animate({
+						scale: [0.85, 1],
+						opacity: [0, 1]
+					}, {duration: 250, easing: AnimationEasing.spring})
+				}
+				break
+			case ViewType.month:
+				$set_attr(ref_datepicker, Attributes.viewType, ViewType.month)
+				if (isAnimationAllowed()) {
+					const ref_month = $query<HTMLDivElement>('.' + Classes.month, ref_datepicker)
+					ref_month?.animate({
+						scale: [0.85, 1],
+						opacity: [0, 1]
+					}, {duration: 250, easing: AnimationEasing.spring})
+				}
+				break
+			case ViewType.year:
+				$set_attr(ref_datepicker, Attributes.viewType, ViewType.year)
+				if (isAnimationAllowed()) {
+					const ref_year = $query<HTMLDivElement>('.' + Classes.year, ref_datepicker)
+					ref_year?.animate({
+						scale: [0.85, 1],
+						opacity: [0, 1]
+					}, {duration: 250, easing: AnimationEasing.spring})
+				}
+				break
+			}
+
+			updateView(currentView)
+			GCPopover.reposition(ref_datepicker)
+		}
+
+		function selectDate(date: Date): void {
+			updateView(date)
+			switch (attributes.viewtype) {
+			case ViewType.day: {
+				$set_attr(ref_datepicker, Attributes.value, date.toISOString())
+				ref_datepicker.dispatchEvent(new CustomEvent(Events.change))
+				ref_datepicker.hidePopover()
+				break
+			}
+			case ViewType.month: changeViewType(ViewType.day); break
+			case ViewType.year: changeViewType(ViewType.month); break
+			}
+		}
+
+		function ref_datepicker_onClick(): void {
+			const ref = document.activeElement
+			if (!ref) return
+
+			const classList = ref.classList
+			if (classList.contains(Classes.next)) {
+				next()
+			}
+			else if (classList.contains(Classes.previous)) {
+				previous()
+			}
+			else if (classList.contains(Classes.title)) {
+				const viewtype = attributes.viewtype
+				changeViewType(viewtype === ViewType.month? ViewType.year : ViewType.month)
+			}
+			else if (ref.hasAttribute(ButtonAttributes.date)) {
+				const parsed = Date.parse(ref.getAttribute(ButtonAttributes.date)!)
+				if (isNumberNotDefined(parsed)) return
+
+				const date = new Date(parsed)
+				selectDate(date)
+			}
+		}
+
+		function initEvents(): void {
+			$add_event<ToggleEvent>(ref_datepicker, 'beforetoggle', ev => {
+				const isOpen = ev.newState === 'open'
+				if (isOpen) {
+					initDates()
+					updateView(attributes.value!)
+				}
+			})
+
+			$add_event<ToggleEvent>(ref_datepicker, 'toggle', ev => {
+				const isOpen = ev.newState === 'open'
+				if (isOpen) {
+					GCPopover.reposition(ref_datepicker)
+					$add_event(ref_datepicker, 'click', ref_datepicker_onClick)
+				}
+				else {
+					$rm_event(ref_datepicker, 'click', ref_datepicker_onClick)
+				}
+			})
+		}
+
+		initDates()
+		initEvents()
+	}
+
+	export function register(...refs_datepicker: CElement[]): void {
+		if (refs_datepicker.length === 0) {
+			refs_datepicker = [...$query_all<CElement>('.' + Classes.datepicker)]
+		}
+
+		GCPopover.register(...refs_datepicker)
+		for (const ref of refs_datepicker){
+			if (REGISTERED_DATEPICKER.has(ref)) {
+				continue
+			}
+
+			REGISTERED_DATEPICKER.add(ref)
+			initDatePicker(ref)
+		}
+	}
+
+	export function unregister(...refs_datepicker: CElement[]): void {
+		for (const ref of refs_datepicker) {
+			REGISTERED_DATEPICKER.delete(ref)
+		}
+	}
+
+	export function create(options?: UpdateOptions): CElement {
+		const ref_datepicker = update($create('div'), options)
+		register(ref_datepicker)
+		return ref_datepicker
+	}
+
+	export function update(
+		ref_datepicker: CElement,
+		options?: UpdateOptions
+	): CElement {
+		const opt = options?.DatePicker
+		GCPopover.update(ref_datepicker, options)
+		$classlist(ref_datepicker, Classes.datepicker)
+		$set_attr(ref_datepicker, Attributes.viewType, ViewType.day)
+
+		if (!$has_attr(ref_datepicker, Attributes.start)) {
+			$set_attr(ref_datepicker, Attributes.start, new Date(0).toISOString())
+		}
+
+		if (!$has_attr(ref_datepicker, Attributes.value)) {
+			$set_attr(ref_datepicker, Attributes.value, new Date().toISOString())
+		}
+
+		if (!$has_attr(ref_datepicker, Attributes.end)) {
+			$set_attr(ref_datepicker, Attributes.end, new Date(new Date().getFullYear() + 200, 0, 1).toISOString())
+		}
+
+		const opt_startDate = opt?.startDate
+		if (opt_startDate) {
+			$set_attr(ref_datepicker, Attributes.start, opt_startDate.toISOString())
+		}
+
+		const opt_endDate = opt?.endDate
+		if (opt_endDate) {
+			$set_attr(ref_datepicker, Attributes.end, opt_endDate.toISOString())
+		}
+
+		const opt_value = opt?.value
+		if (opt_value) {
+			$set_attr(ref_datepicker, Attributes.value, opt_value.toISOString())
+		}
+
+		// header
+		let ref_header = $query<HTMLDivElement>('.' + Classes.header, ref_datepicker)
+		if (!ref_header) {
+			ref_header = $create('div')
+			$classlist(ref_header, Classes.header)
+		}
+
+		// header -> title
+		let ref_title = $query<GCButton.CElement>('.' + Classes.title, ref_header)
+		if (!ref_title) {
+			ref_title = GCButton.create({Button: {variant: GCButton.Variant.filled}})
+			$classlist(ref_title, Classes.title)
+		}
+
+		// header -> previous
+		let ref_previous = $query<GCButton.CIcon.CElement>('.' + Classes.previous, ref_header)
+		if (!ref_previous) {
+			ref_previous = GCButton.CIcon.create({
+				IconButton: {Icon: {code: IconCodes.chevronLeft}},
+				Button: {variant: GCButton.Variant.tonal}
+			})
+			$classlist(ref_previous, Classes.previous)
+		}
+
+		// header -> next
+		let ref_next = $query<GCButton.CIcon.CElement>('.' + Classes.next, ref_header)
+		if (!ref_next) {
+			ref_next = GCButton.CIcon.create({
+				IconButton: {Icon: {code: IconCodes.chevronRight}},
+				Button: {variant: GCButton.Variant.tonal}
+			})
+			$classlist(ref_next, Classes.next)
+		}
+
+		// days
+		let ref_days = $query<GCTooltip.CElement>('.' + Classes.days, ref_datepicker)
+		if (!ref_days) {
+			ref_days = GCTooltip.create()
+			$classlist(ref_days, Classes.days)
+			GCTooltip.register(ref_days)
+		}
+
+		// days -> day[]
+		let refs_day = [...$query_all<HTMLSpanElement>('.' + Classes.day, ref_days)]
+		if (refs_day.length < 7) {
+			refs_day.length = 0
+			for (const day of ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']) {
+				const ref_span = $create('span')
+				ref_span.textContent = day.substring(0, 3)
+				$set_attr(ref_span, GCTooltip.TargetAttributes.tooltip, day)
+				$classlist(ref_span, Classes.day)
+				refs_day.push(ref_span)
+			}
+		}
+
+		// divider
+		let ref_divider = $query<GCDivider.CElement>('.' + Classes.divider, ref_datepicker)
+		if (!ref_divider) {
+			ref_divider = GCDivider.create()
+			$classlist(ref_divider, Classes.divider)
+		}
+
+		// year
+		let ref_year = $query<HTMLDivElement>('.' + Classes.year, ref_datepicker)
+		if (!ref_year) {
+			ref_year = $create('div')
+			$classlist(ref_year, Classes.year)
+		}
+
+		// year -> yearButton[]
+		let refs_year = [...$query_all<GCButton.CElement>('.' + Classes.yearButton, ref_year)]
+		if (refs_year.length < 16) {
+			refs_year.length = 0
+			for (let i = 0; i < 16; i++) {
+				const ref = GCButton.create()
+				$classlist(ref, Classes.yearButton)
+				refs_year.push(ref)
+			}
+		}
+
+		// month
+		let ref_month = $query<HTMLDivElement>('.' + Classes.month, ref_datepicker)
+		if (!ref_month) {
+			ref_month = $create('div')
+			$classlist(ref_month, Classes.month)
+		}
+
+		// month -> monthButton[]
+		let refs_month = [...$query_all<GCButton.CElement>('.' + Classes.monthButton, ref_month)]
+		if (refs_month.length < 12) {
+			refs_month.length = 0
+			for (const name of [
+				'January', 'February', 'March', 'April',
+				'May', 'June', 'July', 'August', 'September',
+				'October', 'November', 'December'
+			]) {
+				const ref = GCButton.create({Button: {children: [name]}})
+				$classlist(ref, Classes.monthButton)
+				refs_month.push(ref)
+			}
+		}
+
+		// date
+		let ref_date = $query<HTMLDivElement>('.' + Classes.date, ref_datepicker)
+		if (!ref_date) {
+			ref_date = $create('div')
+			$classlist(ref_date, Classes.date)
+		}
+
+		// date -> dateEmpty[]
+		let refs_empty = [...$query_all<HTMLDivElement>('.' + Classes.dateEmpty, ref_date)]
+		if (refs_empty.length < 6) {
+			refs_empty.length = 0
+			for (let i = 0; i < 6; i++) {
+				const ref = $create('div')
+				$classlist(ref, Classes.dateEmpty)
+				refs_empty.push(ref)
+			}
+		}
+
+		// date -> dateButton[]
+		let refs_date = [...$query_all<GCButton.CElement>('.' + Classes.dateButton, ref_date)]
+		if (refs_date.length < 31) {
+			refs_date.length = 0
+			for (let i = 0; i < 31; i++) {
+				const ref = GCButton.create({
+					Button: {children: [`${i + 1}`]}
+				})
+				$classlist(ref, Classes.dateButton)
+				refs_date.push(ref)
+			}
+		}
+
+		// content
+		let ref_content = $query<HTMLDivElement>('.' + Classes.content, ref_datepicker)
+		if (!ref_content) {
+			ref_content = $create('div')
+			$classlist(ref_content, Classes.content)
+		}
+
+		const opt_children = opt?.children
+		if ($is_false(opt_children)) {
+			$children(ref_content)
+		}
+		else if ($is_array(opt_children)) {
+			$children(ref_content, ...opt_children)
+		}
+
+		$children(ref_header, ref_title, ref_previous, ref_next)
+		$children(ref_days, ...refs_day)
+		$children(ref_year, ...refs_year)
+		$children(ref_month, ...refs_month)
+		$children(ref_date, ...refs_empty, ...refs_date)
+		$children(ref_datepicker,
+			ref_header, ref_divider, ref_days,
+			ref_year, ref_month, ref_date,
+			ref_content
+		)
+
+		const refs = opt?.refs
+		refs?.content?.(ref_content)
+		refs?.date?.(ref_date)
+		refs?.dateButton?.(refs_date)
+		refs?.dateEmpty?.(refs_empty)
+		refs?.day?.(refs_day)
+		refs?.days?.(ref_days)
+		refs?.divider?.(ref_divider)
+		refs?.header?.(ref_header)
+		refs?.month?.(ref_month)
+		refs?.monthButton?.(refs_month)
+		refs?.next?.(ref_next)
+		refs?.previous?.(ref_previous)
+		refs?.title?.(ref_title)
+		refs?.year?.(ref_year)
+		refs?.yearButton?.(refs_year)
+		return ref_datepicker
+	}
+
+	export function getValue(ref_datepicker: CElement): Date | null {
+		const value = $get_attr(ref_datepicker, Attributes.value)
+		if (value) {
+			const date = new Date(value)
+			if (isNumberDefined(date.valueOf())) {
+				return date
+			}
+		}
+
+		return null
+	}
+}
+
+export type DatePickerProps = PopoverProps & {
 	DatePickerStartDate      ?: Date
 	DatePickerEndDate        ?: Date
 	DatePickerValue          ?: Date
@@ -28,656 +694,4 @@ type DatePickerProps = PopoverProps & {
 	DatePickerDateEmptyAttr  ?: astroHTML.JSX.HTMLAttributes[]
 	DatePickerDateButtonAttr ?: ButtonProps[]
 	DatePickerContentAttr    ?: astroHTML.JSX.HTMLAttributes
-}
-
-type DatePickerElement = PopoverElement
-
-type DatePickerUpdateOptions = PopoverUpdateOptions & {
-	DatePickerStartDate?: Date
-	DatePickerEndDate  ?: Date
-	DatePickerValue    ?: Date
-	DatePickerChildren ?: (string | Node)[] | boolean
-	DatePickerRefs     ?: {
-		header     ?(ref : HTMLDivElement   ): unknown
-		title      ?(ref : ButtonElement    ): unknown
-		previous   ?(ref : IconButtonElement): unknown
-		next       ?(ref : IconButtonElement): unknown
-		days       ?(ref : TooltipElement   ): unknown
-		day        ?(refs: HTMLSpanElement[]): unknown
-		divider    ?(ref : DividerElement   ): unknown
-		year       ?(ref : HTMLDivElement   ): unknown
-		yearButton ?(refs: ButtonElement[]  ): unknown
-		month      ?(ref : HTMLDivElement   ): unknown
-		monthButton?(refs: ButtonElement[]  ): unknown
-		date       ?(ref : HTMLDivElement   ): unknown
-		dateButton ?(refs: ButtonElement[]  ): unknown
-		dateEmpty  ?(refs: HTMLDivElement[] ): unknown
-		content    ?(ref : HTMLDivElement   ): unknown
-	}
-}
-
-enum DatePickerClasses {
-	datepicker  = 'c-datepicker',
-	header      = datepicker + '-header',
-	title       = datepicker + '-title',
-	previous    = datepicker + '-previous',
-	next        = datepicker + '-next',
-	days        = datepicker + '-days',
-	day         = datepicker + '-day',
-	divider     = datepicker + '-divider',
-	year        = datepicker + '-year',
-	month       = datepicker + '-month',
-	date        = datepicker + '-date',
-	content     = datepicker + '-content',
-	yearButton  = year + '-button',
-	monthButton = month + '-button',
-	dateButton  = date + '-button',
-	dateEmpty   = date + '-empty',
-}
-
-enum DatePickerViewType {
-	day  = 'day',
-	month = 'month',
-	year  = 'year'
-}
-
-enum DatePickerAttributes {
-	start     = 'data-c-datepicker-start',
-	end       = 'data-c-datepicker-end',
-	value     = 'data-c-datepicker-value',
-
-	/** @param value `DatePickerViewType` */
-	viewType  = 'data-c-datepicker-viewtype'
-}
-
-enum _DatePickerButtonAttributes {
-	date = 'data-date'
-}
-
-enum DatePickerEvents {
-	/** `!bubbles | !cancelable | !detail` */
-	change = 'datepicker:change'
-}
-
-const REGISTERED_DATEPICKER: Set<DatePickerElement> = new Set<DatePickerElement>()
-
-function _initDatePickerRef(datePickerRef: DatePickerElement): void {
-	const attributes = {
-		get startDate(): Date | null {
-			const startDate = datePickerRef.getAttribute(DatePickerAttributes.start)
-			if (!startDate) return null
-
-			const date = Date.parse(startDate)
-			if (isNumberNotDefined(date)) return null
-
-			return new Date(date)
-		},
-		get endDate(): Date | null {
-			const endDate = datePickerRef.getAttribute(DatePickerAttributes.end)
-			if (!endDate) return null
-
-			const date = Date.parse(endDate)
-			if (isNumberNotDefined(date)) return null
-
-			return new Date(date)
-		},
-		get value(): Date | null {
-			const valueDate = datePickerRef.getAttribute(DatePickerAttributes.value)
-			if (!valueDate) return null
-
-			const date = Date.parse(valueDate)
-			if (isNumberNotDefined(date)) return null
-
-			return new Date(date)
-		},
-		get viewtype(): DatePickerViewType {
-			const type = datePickerRef.getAttribute(DatePickerAttributes.viewType)
-			if (!type || !isValidEnumValue(type, DatePickerViewType)) return DatePickerViewType.day
-
-			return type as DatePickerViewType
-		}
-	}
-	let currentView = new Date()
-
-	function next(): void {
-		const newDate = new Date(currentView)
-		switch (attributes.viewtype) {
-		case DatePickerViewType.day: newDate.setMonth(newDate.getMonth() + 1); break
-		case DatePickerViewType.month: newDate.setFullYear(newDate.getFullYear() + 1); break
-		case DatePickerViewType.year: newDate.setFullYear(newDate.getFullYear() + 16); break
-		}
-
-		updateView(newDate)
-		repositionPopoverRef(datePickerRef)
-	}
-
-	function previous(): void {
-		const newDate = new Date(currentView)
-		switch (attributes.viewtype) {
-		case DatePickerViewType.day: newDate.setMonth(newDate.getMonth() - 1); break
-		case DatePickerViewType.month: newDate.setFullYear(newDate.getFullYear() - 1); break
-		case DatePickerViewType.year: newDate.setFullYear(newDate.getFullYear() - 16); break
-		}
-
-		updateView(newDate)
-		repositionPopoverRef(datePickerRef)
-	}
-
-	function updateView(date: Date): void {
-		currentView = date
-
-		let daysPerMonth = 31 // default
-		let startDay = new Date(currentView.getFullYear(), currentView.getMonth(), 1).getDay()
-
-		// february
-		if (currentView.getMonth() === 1) {
-			daysPerMonth = 28
-			if (currentView.getFullYear() % 4 === 0) daysPerMonth = 29
-		}
-
-		// april, june, september, november
-		else if ([3, 5, 8, 10].includes(currentView.getMonth())) daysPerMonth = 30
-
-		const titleRef = datePickerRef.querySelector<ButtonElement>('.' + DatePickerClasses.title)!
-		const value = attributes.value!
-		const now = new Date()
-		const startDate = attributes.startDate!
-		const endDate = attributes.endDate!
-		switch (attributes.viewtype) {
-		case DatePickerViewType.day: {
-			const titleText = currentView.toLocaleDateString('en', {month: 'long', year: 'numeric'})
-			titleRef.textContent = titleText
-
-			const emptyDate = datePickerRef.querySelectorAll<HTMLDivElement>('.' + DatePickerClasses.dateEmpty)
-			const dates = datePickerRef.querySelectorAll<ButtonElement>('.' + DatePickerClasses.dateButton)
-			for (let i = 0; i < emptyDate.length; i++) {
-				const item = emptyDate.item(i)
-				if (i < startDay) {
-					item.style.removeProperty('display')
-				} else {
-					item.style.setProperty('display', 'none')
-				}
-			}
-
-			for (let i = 0; i < dates.length; i++) {
-				const item = dates.item(i)
-				if (i < daysPerMonth) {
-					item.style.removeProperty('display')
-				} else {
-					item.style.setProperty('display', 'none')
-				}
-				const date = new Date(
-					currentView.getFullYear(),
-					currentView.getMonth(),
-					i + 1
-				)
-				item.setAttribute(
-					_DatePickerButtonAttributes.date,
-					date.toISOString()
-				)
-				item.disabled = isDateOutRange_YMD(date, startDate, endDate)
-
-				if (isDateEqual_YMD(date, value)) {
-					updateButtonRef(item, {
-						ButtonVariant: ButtonVariant.filled
-					})
-				}
-				else if (isDateEqual_YMD(date, now)) {
-					updateButtonRef(item, {
-						ButtonVariant: ButtonVariant.outlined
-					})
-				} else {
-					updateButtonRef(item, {
-						ButtonVariant: ButtonVariant.transparent
-					})
-				}
-			}
-			break
-		}
-		case DatePickerViewType.month: {
-			const year = currentView.getFullYear()
-			const titleText = currentView.toLocaleDateString('en', {year: 'numeric'})
-			titleRef.textContent = titleText
-
-			const monthButtonRefs = datePickerRef.querySelectorAll<ButtonElement>('.' + DatePickerClasses.monthButton)
-			for (let i = 0; i < monthButtonRefs.length; i++) {
-				const buttonRef = monthButtonRefs.item(i)
-				const date = new Date(year, i, 1)
-				buttonRef.setAttribute(_DatePickerButtonAttributes.date, date.toISOString())
-				buttonRef.disabled = isDateOutRange_YM(date, startDate, endDate)
-				if (isDateEqual_YM(date, value)) {
-					updateButtonRef(buttonRef, {
-						ButtonVariant: ButtonVariant.filled
-					})
-				}
-				else if (isDateEqual_YM(date, now)) {
-					updateButtonRef(buttonRef, {
-						ButtonVariant: ButtonVariant.outlined
-					})
-				} else {
-					updateButtonRef(buttonRef, {
-						ButtonVariant: ButtonVariant.transparent
-					})
-				}
-			}
-			break
-		}
-		case DatePickerViewType.year: {
-			const year = currentView.getFullYear()
-			const titleText = year + '-' + (year + 15)
-			titleRef.textContent = titleText
-
-			const yearButtonRefs = datePickerRef.querySelectorAll<ButtonElement>('.' + DatePickerClasses.yearButton)
-			for (let i = 0; i < yearButtonRefs.length; i++) {
-				const buttonRef = yearButtonRefs.item(i)
-				const date = new Date(year + i, 0, 1)
-				buttonRef.textContent = year + i + ''
-				buttonRef.setAttribute(_DatePickerButtonAttributes.date, date.toISOString())
-				buttonRef.disabled = isDateOutRange_Y(date, startDate, endDate)
-				if (isDateEqual_Y(date, value)) {
-					updateButtonRef(buttonRef, {
-						ButtonVariant: ButtonVariant.filled
-					})
-				}
-				else if (isDateEqual_Y(date, now)) {
-					updateButtonRef(buttonRef, {
-						ButtonVariant: ButtonVariant.outlined
-					})
-				} else {
-					updateButtonRef(buttonRef, {
-						ButtonVariant: ButtonVariant.transparent
-					})
-				}
-			}
-			break
-		}}
-	}
-
-	function initDates(): void {
-		datePickerRef.setAttribute(DatePickerAttributes.viewType, DatePickerViewType.day)
-		if (attributes.startDate === null) datePickerRef.setAttribute(
-			DatePickerAttributes.start,
-			new Date(0).toISOString()
-		)
-
-		if (attributes.endDate === null) datePickerRef.setAttribute(
-			DatePickerAttributes.end,
-			new Date(new Date().getFullYear() + 200, 0, 1).toISOString()
-		)
-
-		if (attributes.value === null) datePickerRef.setAttribute(
-			DatePickerAttributes.value,
-			new Date().toISOString()
-		)
-	}
-
-	function changeViewType(type: DatePickerViewType): void {
-		switch (type) {
-		case DatePickerViewType.day:
-			datePickerRef.setAttribute(DatePickerAttributes.viewType, DatePickerViewType.day)
-			if (isAnimationAllowed()) {
-				const dateRef = datePickerRef.querySelector<HTMLDivElement>('.' + DatePickerClasses.date)
-				dateRef?.animate({
-					scale: [0.85, 1],
-					opacity: [0, 1]
-				}, {duration: 250, easing: AnimationEasing.spring})
-			}
-			break
-		case DatePickerViewType.month:
-			datePickerRef.setAttribute(DatePickerAttributes.viewType, DatePickerViewType.month)
-			if (isAnimationAllowed()) {
-				const monthRef = datePickerRef.querySelector<HTMLDivElement>('.' + DatePickerClasses.month)
-				monthRef?.animate({
-					scale: [0.85, 1],
-					opacity: [0, 1]
-				}, {duration: 250, easing: AnimationEasing.spring})
-			}
-			break
-		case DatePickerViewType.year:
-			datePickerRef.setAttribute(DatePickerAttributes.viewType, DatePickerViewType.year)
-			if (isAnimationAllowed()) {
-				const yearRef = datePickerRef.querySelector<HTMLDivElement>('.' + DatePickerClasses.year)
-				yearRef?.animate({
-					scale: [0.85, 1],
-					opacity: [0, 1]
-				}, {duration: 250, easing: AnimationEasing.spring})
-			}
-			break
-		}
-
-		updateView(currentView)
-		repositionPopoverRef(datePickerRef)
-	}
-
-	function selectDate(date: Date): void {
-		updateView(date)
-		switch (attributes.viewtype) {
-		case DatePickerViewType.day: {
-			datePickerRef.setAttribute(DatePickerAttributes.value, date.toISOString())
-			datePickerRef.dispatchEvent(new CustomEvent(DatePickerEvents.change))
-			datePickerRef.hidePopover()
-			break
-		}
-		case DatePickerViewType.month: changeViewType(DatePickerViewType.day); break
-		case DatePickerViewType.year: changeViewType(DatePickerViewType.month); break
-		}
-	}
-
-	function datePickerRefOnClick(): void {
-		const button = document.activeElement
-		if (!button) return
-
-		const classList = button.classList
-		if (classList.contains(DatePickerClasses.next)) {
-			next()
-		}
-		else if (classList.contains(DatePickerClasses.previous)) {
-			previous()
-		}
-		else if (classList.contains(DatePickerClasses.title)) {
-			const viewtype = attributes.viewtype
-			changeViewType(viewtype === DatePickerViewType.month? DatePickerViewType.year : DatePickerViewType.month)
-		}
-		else if (button.hasAttribute(_DatePickerButtonAttributes.date)) {
-			const parsed = Date.parse(button.getAttribute(_DatePickerButtonAttributes.date)!)
-			if (isNumberNotDefined(parsed)) return
-
-			const date = new Date(parsed)
-			selectDate(date)
-		}
-	}
-
-	function initEvents(): void {
-		datePickerRef.addEventListener('beforetoggle', ev => {
-			const isOpen = (ev as ToggleEvent).newState === 'open'
-			if (isOpen) {
-				initDates()
-				updateView(attributes.value!)
-			}
-		})
-
-		datePickerRef.addEventListener('toggle', ev => {
-			const isOpen = (ev as ToggleEvent).newState === 'open'
-			if (isOpen) {
-				repositionPopoverRef(datePickerRef)
-				datePickerRef.addEventListener('click', datePickerRefOnClick)
-			}
-			else {
-				datePickerRef.removeEventListener('click', datePickerRefOnClick)
-			}
-		})
-	}
-
-	initDates()
-	initEvents()
-}
-
-function registerDatePickerRef(...datePickerRefs: DatePickerElement[]): void {
-	if (datePickerRefs.length === 0) {
-		datePickerRefs = [...document.querySelectorAll<DatePickerElement>('.' + DatePickerClasses.datepicker)]
-	}
-
-	registerPopoverRef(...datePickerRefs)
-	for (const popover of datePickerRefs){
-		if (REGISTERED_DATEPICKER.has(popover)) {
-			continue
-		}
-
-		REGISTERED_DATEPICKER.add(popover)
-		_initDatePickerRef(popover)
-	}
-}
-
-function unregisterDatePickerRef(...datePickerRefs: DatePickerElement[]): void {
-	for (const emojiPickerRef of datePickerRefs) {
-		REGISTERED_DATEPICKER.delete(emojiPickerRef)
-	}
-}
-
-function createDatePickerRef(options?: DatePickerUpdateOptions): DatePickerElement {
-	const datePickerRef = updateDatePickerRef(document.createElement('div'), options)
-	registerDatePickerRef(datePickerRef)
-	return datePickerRef
-}
-
-function updateDatePickerRef(
-	datePickerRef: DatePickerElement,
-	options?: DatePickerUpdateOptions
-): DatePickerElement {
-	updatePopoverRef(datePickerRef, options)
-	datePickerRef.classList.add(DatePickerClasses.datepicker)
-	datePickerRef.setAttribute(DatePickerAttributes.viewType, DatePickerViewType.day)
-
-	if (!datePickerRef.hasAttribute(DatePickerAttributes.start)) {
-		datePickerRef.setAttribute(DatePickerAttributes.start, new Date(0).toISOString())
-	}
-
-	if (!datePickerRef.hasAttribute(DatePickerAttributes.value)) {
-		datePickerRef.setAttribute(DatePickerAttributes.value, new Date().toISOString())
-	}
-
-	if (!datePickerRef.hasAttribute(DatePickerAttributes.end)) {
-		datePickerRef.setAttribute(DatePickerAttributes.end, new Date(new Date().getFullYear() + 200, 0, 1).toISOString())
-	}
-
-	const startDateOption = options?.DatePickerStartDate
-	if (startDateOption) {
-		datePickerRef.setAttribute(DatePickerAttributes.start, startDateOption.toISOString())
-	}
-
-	const endDateOption = options?.DatePickerEndDate
-	if (endDateOption) {
-		datePickerRef.setAttribute(DatePickerAttributes.end, endDateOption.toISOString())
-	}
-
-	const valueDateOption = options?.DatePickerValue
-	if (valueDateOption) {
-		datePickerRef.setAttribute(DatePickerAttributes.value, valueDateOption.toISOString())
-	}
-
-	// header
-	let headerRef = datePickerRef.querySelector<HTMLDivElement>('.' + DatePickerClasses.header)
-	if (!headerRef) {
-		headerRef = document.createElement('div')
-		headerRef.classList.add(DatePickerClasses.header)
-	}
-
-	// header -> title
-	let titleRef = headerRef.querySelector<ButtonElement>('.' + DatePickerClasses.title)
-	if (!titleRef) {
-		titleRef = createButtonRef({ButtonVariant: ButtonVariant.filled})
-		titleRef.classList.add(DatePickerClasses.title)
-	}
-
-	// header -> previous
-	let previousRef = headerRef.querySelector<IconButtonElement>('.' + DatePickerClasses.previous)
-	if (!previousRef) {
-		previousRef = createIconButtonRef({
-			IconButtonIcon: { IconCode: IconCodes.chevronLeft },
-			ButtonVariant: ButtonVariant.tonal
-		})
-		previousRef.classList.add(DatePickerClasses.previous)
-	}
-
-	// header -> next
-	let nextRef = headerRef.querySelector<IconButtonElement>('.' + DatePickerClasses.next)
-	if (!nextRef) {
-		nextRef = createIconButtonRef({
-			IconButtonIcon: { IconCode: IconCodes.chevronRight },
-			ButtonVariant: ButtonVariant.tonal
-		})
-		nextRef.classList.add(DatePickerClasses.next)
-	}
-
-	// days
-	let daysRef = datePickerRef.querySelector<TooltipElement>('.' + DatePickerClasses.days)
-	if (!daysRef) {
-		daysRef = createTooltipRef()
-		daysRef.classList.add(DatePickerClasses.days)
-		registerTooltipRef(daysRef)
-	}
-
-	// days -> day[]
-	let dayRefs = [...daysRef.querySelectorAll<HTMLSpanElement>('.' + DatePickerClasses.day)]
-	if (dayRefs.length < 7) {
-		dayRefs.length = 0
-		for (const day of ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']) {
-			const span = document.createElement('span')
-			span.textContent = day.substring(0, 3)
-			span.setAttribute('data-tooltip', day)
-			span.classList.add(DatePickerClasses.day)
-			dayRefs.push(span)
-		}
-	}
-
-	// divider
-	let dividerRef = datePickerRef.querySelector<DividerElement>('.' + DatePickerClasses.divider)
-	if (!dividerRef) {
-		dividerRef = createDividerRef()
-		dividerRef.classList.add(DatePickerClasses.divider)
-	}
-
-	// year
-	let yearRef = datePickerRef.querySelector<HTMLDivElement>('.' + DatePickerClasses.year)
-	if (!yearRef) {
-		yearRef = document.createElement('div')
-		yearRef.classList.add(DatePickerClasses.year)
-	}
-
-	// year -> yearButton[]
-	let yearButtonRefs = [...yearRef.querySelectorAll<ButtonElement>('.' + DatePickerClasses.yearButton)]
-	if (yearButtonRefs.length < 16) {
-		yearButtonRefs.length = 0
-		for (let i = 0; i < 16; i++) {
-			const yearButtonRef = createButtonRef()
-			yearButtonRef.classList.add(DatePickerClasses.yearButton)
-			yearButtonRefs.push(yearButtonRef)
-		}
-	}
-
-	// month
-	let monthRef = datePickerRef.querySelector<HTMLDivElement>('.' + DatePickerClasses.month)
-	if (!monthRef) {
-		monthRef = document.createElement('div')
-		monthRef.classList.add(DatePickerClasses.month)
-	}
-
-	// month -> monthButton[]
-	let monthButtonRefs = [...monthRef.querySelectorAll<ButtonElement>('.' + DatePickerClasses.monthButton)]
-	if (monthButtonRefs.length < 12) {
-		monthButtonRefs.length = 0
-		for (const monthName of [
-			'January', 'February', 'March', 'April',
-			'May', 'June', 'July', 'August', 'September',
-			'October', 'November', 'December'
-		]) {
-			const monthButtonRef = createButtonRef({
-				ButtonChildren: [monthName]
-			})
-			monthButtonRef.classList.add(DatePickerClasses.monthButton)
-			monthButtonRefs.push(monthButtonRef)
-		}
-	}
-
-	// date
-	let dateRef = datePickerRef.querySelector<HTMLDivElement>('.' + DatePickerClasses.date)
-	if (!dateRef) {
-		dateRef = document.createElement('div')
-		dateRef.classList.add(DatePickerClasses.date)
-	}
-
-	// date -> dateEmpty[]
-	let dateEmptyRefs = [...dateRef.querySelectorAll<HTMLDivElement>('.' + DatePickerClasses.dateEmpty)]
-	if (dateEmptyRefs.length < 6) {
-		dateEmptyRefs.length = 0
-		for (let i = 0; i < 6; i++) {
-			const dateEmptyRef = document.createElement('div')
-			dateEmptyRef.classList.add(DatePickerClasses.dateEmpty)
-			dateEmptyRefs.push(dateEmptyRef)
-		}
-	}
-
-	// date -> dateButton[]
-	let dateButtonRefs = [...dateRef.querySelectorAll<ButtonElement>('.' + DatePickerClasses.dateButton)]
-	if (dateButtonRefs.length < 31) {
-		dateButtonRefs.length = 0
-		for (let i = 0; i < 31; i++) {
-			const btnRef = createButtonRef({
-				ButtonChildren: [`${i + 1}`]
-			})
-			btnRef.classList.add(DatePickerClasses.dateButton)
-			dateButtonRefs.push(btnRef)
-		}
-	}
-
-	// content
-	let contentRef = datePickerRef.querySelector<HTMLDivElement>('.' + DatePickerClasses.content)
-	if (!contentRef) {
-		contentRef = document.createElement('div')
-		contentRef.classList.add(DatePickerClasses.content)
-	}
-
-	const childrenOption = options?.DatePickerChildren
-	if (childrenOption === false) {
-		contentRef.replaceChildren()
-	}
-	else if (childrenOption !== undefined && childrenOption !== true) {
-		contentRef.replaceChildren(...childrenOption)
-	}
-
-	headerRef.replaceChildren(titleRef, previousRef, nextRef)
-	daysRef.replaceChildren(...dayRefs)
-	yearRef.replaceChildren(...yearButtonRefs)
-	monthRef.replaceChildren(...monthButtonRefs)
-	dateRef.replaceChildren(...dateEmptyRefs, ...dateButtonRefs)
-	datePickerRef.replaceChildren(
-		headerRef, dividerRef, daysRef,
-		yearRef, monthRef, dateRef,
-		contentRef
-	)
-
-	const refs = options?.DatePickerRefs
-	refs?.content?.(contentRef)
-	refs?.date?.(dateRef)
-	refs?.dateButton?.(dateButtonRefs)
-	refs?.dateEmpty?.(dateEmptyRefs)
-	refs?.day?.(dayRefs)
-	refs?.days?.(daysRef)
-	refs?.divider?.(dividerRef)
-	refs?.header?.(headerRef)
-	refs?.month?.(monthRef)
-	refs?.monthButton?.(monthButtonRefs)
-	refs?.next?.(nextRef)
-	refs?.previous?.(previousRef)
-	refs?.title?.(titleRef)
-	refs?.year?.(yearRef)
-	refs?.yearButton?.(yearButtonRefs)
-	return datePickerRef
-}
-
-function getDatePickerRefValue(datePickerRef: DatePickerElement): Date | null {
-	const value = datePickerRef.getAttribute(DatePickerAttributes.value)
-	if (value) {
-		const date = new Date(value)
-		if (isNumberDefined(date.valueOf())) {
-			return date
-		}
-	}
-
-	return null
-}
-
-export {
-	type DatePickerProps,
-	type DatePickerUpdateOptions,
-	type DatePickerElement,
-	DatePickerEvents,
-	DatePickerViewType,
-	DatePickerClasses,
-	DatePickerAttributes,
-	registerDatePickerRef,
-	unregisterDatePickerRef,
-	createDatePickerRef,
-	updateDatePickerRef,
-	getDatePickerRefValue
 }

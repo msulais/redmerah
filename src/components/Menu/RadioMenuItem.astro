@@ -1,12 +1,8 @@
 ---
 import { joinClassList } from '@/utils/attributes'
 import { IconCodes } from '@/enums/icons'
-
-import {
-	type RadioMenuItemProps,
-	MenuClasses
-} from '.'
-import { ButtonClasses } from '@/components/Button'
+import {type RadioMenuItemProps, CMenu} from '.'
+import { CButton } from '@/components/Button'
 import Icon from '@/components/Icon/index.astro'
 import './index.scss'
 
@@ -42,15 +38,15 @@ const {
 	autocomplete: inputAutocomplete = 'off',
 	...inputOther
 } = RadioMenuItemInputAttr
+
+const cls = CMenu.Classes
 ---
 <label
-	class={joinClassList(ButtonClasses.button, MenuClasses.item, MenuClasses.radioItem, className)}
+	class={joinClassList(CButton.Classes.button, cls.item, cls.radioItem, className)}
 	{...other}>
 	<div
-		class={joinClassList(MenuClasses.radioItemLeading, leadingClassName)}
-		{...leadingOther}>
-		<slot name="leading"/>
-	</div>
+		class={joinClassList(cls.radioItemLeading, leadingClassName)}
+		{...leadingOther}><slot name="leading"/></div>
 	<input
 		name={inputName}
 		checked={inputChecked}
@@ -59,18 +55,16 @@ const {
 		role={inputRole}
 		value={inputValue}
 		autocomplete={inputAutocomplete}
-		class={joinClassList(MenuClasses.radioItemInput, inputClassName)}
+		class={joinClassList(cls.radioItemInput, inputClassName)}
 		{...inputOther}
 	/>
 	<Icon
-		class={joinClassList(MenuClasses.radioItemIcon, iconClassName)}
+		class={joinClassList(cls.radioItemIcon, iconClassName)}
 		IconCode={iconIcon}
 		IconFilled={iconFilled}
 		{...iconOther}
 	/>
 	<div
-		class={joinClassList(MenuClasses.radioItemContent, contentClassName)}
-		{...contentOther}>
-		<slot />
-	</div>
+		class={joinClassList(cls.radioItemContent, contentClassName)}
+		{...contentOther}><slot /></div>
 </label>

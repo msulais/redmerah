@@ -1,10 +1,6 @@
 ---
 import { joinClassList } from '@/utils/attributes'
-
-import {
-	type LinkDrawerButtonProps,
-	DrawerClasses
-} from '.'
+import {type LinkDrawerButtonProps, CDrawer} from '.'
 import LinkButton from '@/components/Button/LinkButton.astro'
 import './index.scss'
 
@@ -15,11 +11,11 @@ const {
 	LinkDrawerButtonSelected,
 	...other
 } = Astro.props
+
+const cls = CDrawer.Classes
 ---
 
 <LinkButton
-	class={joinClassList(DrawerClasses.button, className)}
+	class={joinClassList(cls.button, className)}
 	data-c-drawer-button-selected={LinkDrawerButtonSelected? '' : undefined}
-	{...other}>
-	<slot/>
-</LinkButton>
+	{...other}><slot/></LinkButton>

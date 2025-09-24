@@ -23,7 +23,7 @@ import { IconCodes } from '@/enums/icons'
 import { ElementIds } from '../_scripts/_shared/_ids'
 import { RadioNames } from '../_scripts/_shared/_input-names'
 import { APP, DEFAULT_ANIMATION, DEFAULT_PREFIX, DEFAULT_SUFFIX, DEFAULT_TEXT_WRAP, DEFAULT_THEME } from '../_scripts/_shared/_constant'
-import { ButtonVariant } from '@/components/Button'
+import { CButton } from '@/components/Button'
 import { pxToRem } from '@/utils/css'
 
 const animations: {
@@ -231,6 +231,6 @@ const themes: {
 	</p>
 	<form method="dialog" slot="footer" style="display:contents">
 		<div style="flex:1"/>
-		<Button ButtonVariant={ButtonVariant.filled}>Close</Button>
+		<Button ButtonVariant={CButton.Variant.filled}>Close</Button>
 	</form>
 </Dialog>

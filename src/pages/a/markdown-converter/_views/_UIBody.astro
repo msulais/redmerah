@@ -6,14 +6,14 @@ import { CSSClasses } from '../_styles/_css'
 import { IconCodes } from '@/enums/icons'
 import { ElementIds } from '../_scripts/_shared/_ids'
 import { DEFAULT_MARKDOWN_TEXT, DEFAULT_HTML_TEXT, DEFAULT_TEXT_WRAP, DEFAULT_CSS_TEXT, DEFAULT_PREVIEW_TEXT } from '../_scripts/_shared/_constant'
-import { ButtonVariant } from '@/components/Button'
+import { CButton } from '@/components/Button'
 ---
 
 <main class={CSSClasses.body}>
 	<div id={ElementIds.bd_inputContainer}>
 		<div>
-			<Button id={ElementIds.bdTab_markdown} ButtonVariant={ButtonVariant.filled}>Markdown</Button>
-			<Button id={ElementIds.bdTab_css} ButtonVariant={ButtonVariant.outlined}>CSS</Button>
+			<Button id={ElementIds.bdTab_markdown} ButtonVariant={CButton.Variant.filled}>Markdown</Button>
+			<Button id={ElementIds.bdTab_css} ButtonVariant={CButton.Variant.outlined}>CSS</Button>
 		</div>
 		<textarea
 			id={ElementIds.bd_markdown}
@@ -32,8 +32,8 @@ import { ButtonVariant } from '@/components/Button'
 	<div id={ElementIds.bd_slider} class={CSSClasses.bodySlider}/>
 	<div>
 		<div>
-			<Button id={ElementIds.bdTab_preview} ButtonVariant={ButtonVariant.filled}>Preview</Button>
-			<Button id={ElementIds.bdTab_html} ButtonVariant={ButtonVariant.outlined}>HTML</Button>
+			<Button id={ElementIds.bdTab_preview} ButtonVariant={CButton.Variant.filled}>Preview</Button>
+			<Button id={ElementIds.bdTab_html} ButtonVariant={CButton.Variant.outlined}>HTML</Button>
 		</div>
 		<textarea
 			style="display:none"

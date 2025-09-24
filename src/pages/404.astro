@@ -7,7 +7,7 @@ import Appbar from '@/layouts/Appbar/index.astro'
 import Main from '@/layouts/Main/index.astro'
 import BottomBar from '@/layouts/BottomBar/index.astro'
 import CSS from './_404.module.scss'
-import { ButtonVariant } from '@/components/Button'
+import { CButton } from '@/components/Button'
 import { IconCodes } from '@/enums/icons'
 import Splash from '@/layouts/Splash/index.astro'
 
@@ -35,7 +35,7 @@ export const prerender = true
 	<Appbar/>
 	<Main classList={[CSS.main]}>
 		<h1><span>PAGE&nbsp;&nbsp;&nbsp;&nbsp;<br/><span style="color:rgb(var(--g-color-accent))">NOT</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><br/>FOUND</h1>
-		<LinkButton href={RoutesLinks.home} LinkButtonVariant={ButtonVariant.filled}>
+		<LinkButton href={RoutesLinks.home} LinkButtonVariant={CButton.Variant.filled}>
 			<Icon IconCode={IconCodes.home} IconFilled/>
 			Back to home
 		</LinkButton>

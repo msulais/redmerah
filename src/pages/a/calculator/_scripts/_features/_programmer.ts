@@ -5,7 +5,7 @@ import { ElementIds } from "../_shared/_ids"
 import { $, $$, $$$, scrollInputToEnd } from "../_core/_dom-utils"
 import { isTargetValidElement } from "@/utils/element"
 import { CSSClasses } from "../../_styles/_css"
-import { ButtonVariant, updateButtonRef } from "@/components/Button"
+import { CButton } from "@/components/Button"
 import { calculate } from "../_core/_calculator"
 import { isNumberDefined, numberToBinary } from "@/utils/number"
 import { formatOutput } from "../_core/_string-utils"
@@ -27,26 +27,26 @@ export const ProgrammerStore = new ObservableStore<ProgrammerStoreType>({
 	output: DEFAULT_PROGRAMMER_OUTPUT
 })
 
-const _inputRef = $(ElementIds.pgPro_input) as HTMLInputElement
-const _outputRef = $(ElementIds.pgPro_output) as HTMLDivElement
-const _outputGroupDecRef = $(ElementIds.pgPro_outDec) as HTMLDivElement
-const _outputGroupOctRef = $(ElementIds.pgPro_outOct) as HTMLDivElement
-const _outputGroupHexRef = $(ElementIds.pgPro_outHex) as HTMLDivElement
-const _outputGroupBinRef = $(ElementIds.pgPro_outBin) as HTMLDivElement
-const _outputDecRef = $$(`#${ElementIds.pgPro_outDec} input`) as HTMLInputElement
-const _outputOctRef = $$(`#${ElementIds.pgPro_outOct} input`) as HTMLInputElement
-const _outputHexRef = $$(`#${ElementIds.pgPro_outHex} input`) as HTMLInputElement
-const _outputBinRef = $$(`#${ElementIds.pgPro_outBin} input`) as HTMLInputElement
-const _hexButtonRef = $$<HTMLButtonElement>(`#${(ElementIds.pgPro_outHex)}>button`)
-const _decButtonRef = $$<HTMLButtonElement>(`#${(ElementIds.pgPro_outDec)}>button`)
-const _octButtonRef = $$<HTMLButtonElement>(`#${(ElementIds.pgPro_outOct)}>button`)
-const _binButtonRef = $$<HTMLButtonElement>(`#${(ElementIds.pgPro_outBin)}>button`)
-const _hexButtonRefs = $$$<HTMLButtonElement>(`.${CSSClasses.bdPageProg_btnHex}`)
-const _decButtonRefs = $$$<HTMLButtonElement>(`.${CSSClasses.bdPageProg_btnDec}`)
-const _octButtonRefs = $$$<HTMLButtonElement>(`.${CSSClasses.bdPageProg_btnOct}`)
-const _binButtonRefs = $$$<HTMLButtonElement>(`.${CSSClasses.bdPageProg_btnBin}`)
-let _timeCalculateId: null | number | NodeJS.Timeout = null
-let _timeSaveInputId: null | number | NodeJS.Timeout = null
+const _ref_input = $(ElementIds.pgPro_input) as HTMLInputElement
+const _ref_output = $(ElementIds.pgPro_output) as HTMLDivElement
+const _ref_outputGroupDec = $(ElementIds.pgPro_outDec) as HTMLDivElement
+const _ref_outputGroupOct = $(ElementIds.pgPro_outOct) as HTMLDivElement
+const _ref_outputGroupHex = $(ElementIds.pgPro_outHex) as HTMLDivElement
+const _ref_outputGroupBin = $(ElementIds.pgPro_outBin) as HTMLDivElement
+const _ref_outputDec = $$(`#${ElementIds.pgPro_outDec} input`) as HTMLInputElement
+const _ref_outputOct = $$(`#${ElementIds.pgPro_outOct} input`) as HTMLInputElement
+const _ref_outputHex = $$(`#${ElementIds.pgPro_outHex} input`) as HTMLInputElement
+const _ref_outputBin = $$(`#${ElementIds.pgPro_outBin} input`) as HTMLInputElement
+const _ref_hexButton = $$<CButton.CElement>(`#${(ElementIds.pgPro_outHex)}>button`)
+const _ref_decButton = $$<CButton.CElement>(`#${(ElementIds.pgPro_outDec)}>button`)
+const _ref_octButton = $$<CButton.CElement>(`#${(ElementIds.pgPro_outOct)}>button`)
+const _ref_binButton = $$<CButton.CElement>(`#${(ElementIds.pgPro_outBin)}>button`)
+const _refs_hexButton = $$$<CButton.CElement>(`.${CSSClasses.bdPageProg_btnHex}`)
+const _refs_decButton = $$$<CButton.CElement>(`.${CSSClasses.bdPageProg_btnDec}`)
+const _refs_octButton = $$$<CButton.CElement>(`.${CSSClasses.bdPageProg_btnOct}`)
+const _refs_binButton = $$$<CButton.CElement>(`.${CSSClasses.bdPageProg_btnBin}`)
+let _time_calculate: null | number | NodeJS.Timeout = null
+let _time_saveInput: null | number | NodeJS.Timeout = null
 
 function _inputToDecimal(input: string): string {
 	const type = ProgrammerStore.value.numberType
@@ -74,12 +74,12 @@ function _inputToDecimal(input: string): string {
 }
 
 function _calculate(): void {
-	if (_timeCalculateId !== null) {
-		clearTimeout(_timeCalculateId)
+	if (_time_calculate !== null) {
+		clearTimeout(_time_calculate)
 	}
 
-	_timeCalculateId = setTimeout(() => {
-		_timeCalculateId = null
+	_time_calculate = setTimeout(() => {
+		_time_calculate = null
 		const output = calculate(_inputToDecimal(ProgrammerStore.value.input))
 		const parsedOutput = Number.parseFloat(output)
 		ProgrammerStore.update(v => v.output = isNumberDefined(parsedOutput)? parsedOutput : null)
@@ -119,12 +119,12 @@ function _subsInputChanges(v: ProgrammerStoreType, o: ProgrammerStoreType): void
 	if (input === o.input) return
 
 	_calculate()
-	if (_timeSaveInputId !== null) {
-		clearTimeout(_timeSaveInputId)
+	if (_time_saveInput !== null) {
+		clearTimeout(_time_saveInput)
 	}
 
-	_timeSaveInputId = setTimeout(() => {
-		_timeSaveInputId = null
+	_time_saveInput = setTimeout(() => {
+		_time_saveInput = null
 		saveStorageItem('calc:programmer/input', input)
 	}, 250)
 }
@@ -132,33 +132,33 @@ function _subsInputChanges(v: ProgrammerStoreType, o: ProgrammerStoreType): void
 function _subsInputView(v: ProgrammerStoreType, o: ProgrammerStoreType): void {
 	if (v.input === o.input) return
 
-	_inputRef.value = v.input
-	scrollInputToEnd(_inputRef)
+	_ref_input.value = v.input
+	scrollInputToEnd(_ref_input)
 }
 
 function _subsOutputView(v: ProgrammerStoreType, o: ProgrammerStoreType): void {
 	const output = v.output
 	const oldOutput = o.output
 	if (output === null) {
-		_outputDecRef.value
-		= _outputHexRef.value
-		= _outputOctRef.value
-		= _outputBinRef.value = ''
+		_ref_outputDec.value
+		= _ref_outputHex.value
+		= _ref_outputOct.value
+		= _ref_outputBin.value = ''
 		return
 	}
 
 	const formattedOutput = formatOutput(output)
 	if (
 		output === oldOutput
-		&& _outputDecRef.value === formattedOutput
+		&& _ref_outputDec.value === formattedOutput
 	) return;
 
 	const bin = numberToBinary(output)
 	const parsedBin = Number.parseInt(bin, 2)
-	_outputHexRef.value = parsedBin.toString(16).toUpperCase()
-	_outputDecRef.value = formattedOutput
-	_outputOctRef.value = parsedBin.toString(8).toUpperCase()
-	_outputBinRef.value = bin
+	_ref_outputHex.value = parsedBin.toString(16).toUpperCase()
+	_ref_outputDec.value = formattedOutput
+	_ref_outputOct.value = parsedBin.toString(8).toUpperCase()
+	_ref_outputBin.value = bin
 }
 
 function _subsButtonsView(v: ProgrammerStoreType, o: ProgrammerStoreType): void {
@@ -166,29 +166,29 @@ function _subsButtonsView(v: ProgrammerStoreType, o: ProgrammerStoreType): void 
 	if (numberType === o.numberType) return
 
 	let cls = CSSClasses.bdPageProg_btnDec
-	let elements = _decButtonRefs
+	let elements = _refs_decButton
 
 	switch (numberType) {
 	case NumberType.decimal:
 		cls = CSSClasses.bdPageProg_btnDec
-		elements = _decButtonRefs
+		elements = _refs_decButton
 		break
 	case NumberType.hexadecimal:
 		cls = CSSClasses.bdPageProg_btnHex
-		elements = _hexButtonRefs
+		elements = _refs_hexButton
 		break
 	case NumberType.octal:
 		cls = CSSClasses.bdPageProg_btnOct
-		elements = _octButtonRefs
+		elements = _refs_octButton
 		break
 	case NumberType.binary:
 		cls = CSSClasses.bdPageProg_btnBin
-		elements = _binButtonRefs
+		elements = _refs_binButton
 		break
 	}
 
-	const buttonRefs = $$$<HTMLButtonElement>(`.${CSSClasses.bdPageProg_btnValue}:not(.${cls})`)
-	for (const ref of buttonRefs) {
+	const ref_btns = $$$<CButton.CElement>(`.${CSSClasses.bdPageProg_btnValue}:not(.${cls})`)
+	for (const ref of ref_btns) {
 		ref.disabled = true
 	}
 
@@ -200,30 +200,30 @@ function _subsButtonsView(v: ProgrammerStoreType, o: ProgrammerStoreType): void 
 function _subsNumberTypeView(v: ProgrammerStoreType, o: ProgrammerStoreType): void {
 	if (v.numberType === o.numberType) return
 
-	for (const ref of [_outputGroupDecRef, _outputGroupHexRef, _outputGroupOctRef, _outputGroupBinRef]) {
+	for (const ref of [_ref_outputGroupDec, _ref_outputGroupHex, _ref_outputGroupOct, _ref_outputGroupBin]) {
 		ref.setAttribute('aria-selected', 'false')
 	}
 
-	for (const ref of [_hexButtonRef, _decButtonRef, _octButtonRef, _binButtonRef]) {
-		updateButtonRef(ref!, {ButtonVariant: ButtonVariant.transparent})
+	for (const ref of [_ref_hexButton, _ref_decButton, _ref_octButton, _ref_binButton]) {
+		CButton.update(ref!, {Button: {variant: CButton.Variant.transparent}})
 	}
 
 	switch (v.numberType) {
 	case NumberType.decimal:
-		_outputGroupDecRef.setAttribute('aria-selected', 'true')
-		updateButtonRef(_decButtonRef!, {ButtonVariant: ButtonVariant.filled})
+		_ref_outputGroupDec.setAttribute('aria-selected', 'true')
+		CButton.update(_ref_decButton!, {Button: {variant: CButton.Variant.filled}})
 		break
 	case NumberType.hexadecimal:
-		_outputGroupHexRef.setAttribute('aria-selected', 'true')
-		updateButtonRef(_hexButtonRef!, {ButtonVariant: ButtonVariant.filled})
+		_ref_outputGroupHex.setAttribute('aria-selected', 'true')
+		CButton.update(_ref_hexButton!, {Button: {variant: CButton.Variant.filled}})
 		break
 	case NumberType.octal:
-		_outputGroupOctRef.setAttribute('aria-selected', 'true')
-		updateButtonRef(_octButtonRef!, {ButtonVariant: ButtonVariant.filled})
+		_ref_outputGroupOct.setAttribute('aria-selected', 'true')
+		CButton.update(_ref_octButton!, {Button: {variant: CButton.Variant.filled}})
 		break
 	case NumberType.binary:
-		_outputGroupBinRef.setAttribute('aria-selected', 'true')
-		updateButtonRef(_binButtonRef!, {ButtonVariant: ButtonVariant.filled})
+		_ref_outputGroupBin.setAttribute('aria-selected', 'true')
+		CButton.update(_ref_binButton!, {Button: {variant: CButton.Variant.filled}})
 		break
 	}
 }
@@ -238,16 +238,16 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_outputRef.addEventListener('click', () => {
-		const buttonRef = document.activeElement as HTMLButtonElement
-		if (!isTargetValidElement(_outputRef, buttonRef, el => el.tagName === 'BUTTON')) return
+	_ref_output.addEventListener('click', () => {
+		const ref_btn = document.activeElement as CButton.CElement
+		if (!isTargetValidElement(_ref_output, ref_btn, el => el.tagName === 'BUTTON')) return
 
 		let type: NumberType = NumberType.decimal
-		switch (buttonRef) {
-		case _hexButtonRef: type = NumberType.hexadecimal; break
-		case _decButtonRef: type = NumberType.decimal; break
-		case _octButtonRef: type = NumberType.octal; break
-		case _binButtonRef: type = NumberType.binary; break
+		switch (ref_btn) {
+		case _ref_hexButton: type = NumberType.hexadecimal; break
+		case _ref_decButton: type = NumberType.decimal; break
+		case _ref_octButton: type = NumberType.octal; break
+		case _ref_binButton: type = NumberType.binary; break
 		}
 
 		ProgrammerStore.update(v => v.numberType = type)

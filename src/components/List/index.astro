@@ -1,11 +1,6 @@
 ---
 import { joinClassList } from '@/utils/attributes'
-
-import {
-	ListClasses,
-	type ListProps
-} from '.'
-
+import {CList, type ListProps} from '.'
 import './index.scss'
 
 type Props = ListProps
@@ -23,27 +18,28 @@ const {'class': leadingClass , ...leadingOther } = ListLeadingAttr
 const {'class': trailingClass, ...trailingOther} = ListTrailingAttr
 const {'class': contentClass , ...contentOther } = ListContentAttr
 const {'class': subtitleClass, ...subtitleOther} = ListSubtitleAttr
+
 const Dynamic = ListTagName as 'div'
+const cls = CList.Classes
 
 ---
 <Dynamic
-	class={joinClassList(ListClasses.list, className)}
+	class={joinClassList(cls.list, className)}
 	data-c-list-variant={ListVariant}
 	{...other}>
-	<div class={joinClassList(ListClasses.leading, leadingClass)} {...leadingOther}>
-		<slot name='leading'/>
-	</div>
-	<div class={joinClassList(ListClasses.content, contentClass)} {...contentOther}>
+	<div
+		class={joinClassList(cls.leading, leadingClass)}
+		{...leadingOther}><slot name='leading'/></div>
+	<div
+		class={joinClassList(cls.content, contentClass)}
+		{...contentOther}>
 		<slot/>
-		{Astro.slots.has('subtitle') &&
-			<div
-				class={joinClassList(ListClasses.subtitle, subtitleClass)}
-				{...subtitleOther}>
-				<slot name='subtitle'/>
-			</div>
+		{Astro.slots.has('subtitle') && <div
+			class={joinClassList(cls.subtitle, subtitleClass)}
+			{...subtitleOther}><slot name='subtitle'/></div>
 		}
 	</div>
-	<div class={joinClassList(ListClasses.trailing, trailingClass)} {...trailingOther}>
-		<slot name='trailing'/>
-	</div>
+	<div
+		class={joinClassList(cls.trailing, trailingClass)}
+		{...trailingOther}><slot name='trailing'/></div>
 </Dynamic>

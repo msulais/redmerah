@@ -1,59 +1,63 @@
-import { ButtonVariant, updateIconButtonRef, type IconButtonElement } from "@/components/Button"
+import { CButton } from "@/components/Button"
 import { ElementIds } from "../_shared/_ids"
 import { $ } from "./_dom-utils"
-import { SideBarAttributes, updateSideBarRef } from "@/components/SideBar"
+import { CSideBar } from "@/components/SideBar"
 import { APP, SCREEN_WIDTH_SMALL } from "../_shared/_constant"
-import type { PopoverElement } from "@/components/Popover"
+import { CPopover } from "@/components/Popover"
 
-const _infoMenuRef = $(ElementIds.apInf_menu) as HTMLDivElement
-const _infoButtonRef = $(ElementIds.apInf_btn) as HTMLButtonElement
-const _settingsMenuRef = $(ElementIds.apSett_menu) as HTMLDivElement
-const _settingsButtonRef = $(ElementIds.apSett_btn) as HTMLButtonElement
-const _shareButtonRef = $(ElementIds.apInf_shareBtn) as HTMLButtonElement
-const _sideBarButtonRef = $(ElementIds.ap_sideBarBtn) as HTMLButtonElement
-const _sideBarRef = $(ElementIds.navigationSideBar) as HTMLDivElement
-const _drawerRef = $(ElementIds.navigationDrawer) as HTMLDivElement
-const _searchButtonRef = $(ElementIds.apSrc_btn) as IconButtonElement
-const _searchPopoverRef = $(ElementIds.apSrc_popover) as PopoverElement
+const _ref_infoMenu = $(ElementIds.apInf_menu) as HTMLDivElement
+const _ref_infoBtn = $(ElementIds.apInf_btn) as CButton.CElement
+const _ref_settingsMenu = $(ElementIds.apSett_menu) as HTMLDivElement
+const _ref_settingsBtn = $(ElementIds.apSett_btn) as CButton.CElement
+const _ref_shareButton = $(ElementIds.apInf_shareBtn) as CButton.CElement
+const _ref_sideBarBtn = $(ElementIds.ap_sideBarBtn) as CButton.CElement
+const _ref_sideBar = $(ElementIds.navigationSideBar) as HTMLDivElement
+const _ref_drawerBtn = $(ElementIds.navigationDrawer) as HTMLDivElement
+const _ref_searchButton = $(ElementIds.apSrc_btn) as CButton.CIcon.CElement
+const _ref_searchPopover = $(ElementIds.apSrc_popover) as CPopover.CElement
 
 function _initEvents(): void {
-	_shareButtonRef.addEventListener('click', () => {
-		_infoMenuRef.hidePopover()
+	_ref_shareButton.addEventListener('click', () => {
+		_ref_infoMenu.hidePopover()
 		navigator.share({
 			text: APP.name,
 			url: document.URL
 		})
 	})
 
-	_infoMenuRef.addEventListener('beforetoggle', ev => {
+	_ref_infoMenu.addEventListener('beforetoggle', ev => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
-		updateIconButtonRef(_infoButtonRef, {
-			ButtonFocused: isOpen
+		CButton.CIcon.update(_ref_infoBtn, {
+			Button: {focused: isOpen}
 		})
 	})
 
-	_settingsMenuRef.addEventListener('beforetoggle', ev => {
+	_ref_settingsMenu.addEventListener('beforetoggle', ev => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
-		updateIconButtonRef(_settingsButtonRef, {
-			ButtonFocused: isOpen
+		CButton.CIcon.update(_ref_settingsBtn, {
+			Button: {focused: isOpen}
 		})
 	})
 
-	_sideBarButtonRef.addEventListener('click', () => {
+	_ref_sideBarBtn.addEventListener('click', () => {
 		if (window.matchMedia(`(max-width: ${SCREEN_WIDTH_SMALL}rem)`).matches) {
-			_drawerRef.togglePopover()
+			_ref_drawerBtn.togglePopover()
 			return
 		}
 
-		updateSideBarRef(_sideBarRef, {
-			SideBarMinimized: !_sideBarRef.hasAttribute(SideBarAttributes.minimized)
+		CSideBar.update(_ref_sideBar, {
+			SideBar: {
+				minimized: !_ref_sideBar.hasAttribute(CSideBar.Attributes.minimized)
+			}
 		})
 	})
 
-	_searchPopoverRef.addEventListener('beforetoggle', ev => {
+	_ref_searchPopover.addEventListener('beforetoggle', ev => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
-		updateIconButtonRef(_searchButtonRef, {
-			ButtonVariant: isOpen? ButtonVariant.filled : ButtonVariant.transparent
+		CButton.CIcon.update(_ref_searchButton, {
+			Button: {
+				variant: isOpen? CButton.Variant.filled : CButton.Variant.transparent
+			}
 		})
 	})
 }

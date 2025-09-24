@@ -3,15 +3,15 @@ import { ObservableStore } from "@/utils/store"
 import { DEFAULT_COLOR, DEFAULT_PALETTE } from "../_shared/_constant"
 import { $, $$, $$$ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
-import { ColorPickerEvents, getColorPickerRefValue, updateColorPickerRef, type ColorPickerElement } from "@/components/ColorPicker"
+import { CColorPicker } from "@/components/ColorPicker"
 import { GlobalElementIds } from "@/enums/ids"
 import { generateColorPalette, hexToRgb, isColorValid } from "@/utils/color"
-import type { ToastElement } from "@/components/Toast"
+import { CToast } from "@/components/Toast"
 import { CSSClasses } from "../../_styles/_css"
 import { isTargetValidElement } from "@/utils/element"
 import { Commands } from "../_shared/_commands"
-import { createIconButtonRef, type IconButtonElement } from "@/components/Button"
-import { createIconRef } from "@/components/Icon"
+import { CButton } from "@/components/Button"
+import { CIcon } from "@/components/Icon"
 import { IconCodes } from "@/enums/icons"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEasing } from "@/enums/animation"
@@ -28,17 +28,17 @@ export const ColorsStore = new ObservableStore<ColorsStoreType>({
 	palette: DEFAULT_PALETTE
 })
 const _animationOption = {duration: 250, easing: AnimationEasing.spring}
-const _saveButtonRef = $(ElementIds.bd_saveBtn) as IconButtonElement
-const _toastCopiedRef = $(ElementIds.toa_copied) as ToastElement
-const _paletteListRef = $$(`.${CSSClasses.bodyList}`) as HTMLDivElement
-const _colorAccentRef = $(GlobalElementIds.colorAccent) as HTMLStyleElement
-const _colorPickerRef = $(ElementIds.bd_picker) as ColorPickerElement
-const _colorPickerButtonSpanRef = $(ElementIds.bd_pickerBtnSpan) as HTMLSpanElement
-const _paletteAccentLightRef = $(ElementIds.bd_accentLight) as HTMLSpanElement
-const _paletteOnAccentLightRef = $(ElementIds.bd_onAccentLight) as HTMLSpanElement
-const _paletteAccentDarkRef = $(ElementIds.bd_accentDark) as HTMLSpanElement
-const _paletteOnAccentDarkRef = $(ElementIds.bd_onAccentDark) as HTMLSpanElement
-let _timeAccentId: NodeJS.Timeout | number | null = null
+const _ref_saveBtn = $(ElementIds.bd_saveBtn) as CButton.CIcon.CElement
+const _ref_toastCopied = $(ElementIds.toa_copied) as CToast.CElement
+const _ref_paletteList = $$(`.${CSSClasses.bodyList}`) as HTMLDivElement
+const _ref_colorAccent = $(GlobalElementIds.colorAccent) as HTMLStyleElement
+const _ref_colorPicker = $(ElementIds.bd_picker) as CColorPicker.CElement
+const _ref_colorPickerButtonSpan = $(ElementIds.bd_pickerBtnSpan) as HTMLSpanElement
+const _ref_paletteAccentLight = $(ElementIds.bd_accentLight) as HTMLSpanElement
+const _ref_paletteOnAccentLight = $(ElementIds.bd_onAccentLight) as HTMLSpanElement
+const _ref_paletteAccentDark = $(ElementIds.bd_accentDark) as HTMLSpanElement
+const _ref_paletteOnAccentDark = $(ElementIds.bd_onAccentDark) as HTMLSpanElement
+let _time_accent: NodeJS.Timeout | number | null = null
 
 function _rgbToCSS(rgb: RGBColor) {
 	return `${Math.round(rgb.r * 0xff)}, ${Math.round(rgb.g * 0xff)}, ${Math.round(rgb.b * 0xff)}`
@@ -55,28 +55,30 @@ function _subscribePaletteRefView(v: ColorsStoreType, o: ColorsStoreType): void 
 
 	// add
 	if (length > oldLength) {
-		const children = [..._paletteListRef.children]
+		const children = [..._ref_paletteList.children]
 		const childrenRects = children.map(v => v.getBoundingClientRect())
 		for (let i = 0; i < length - oldLength; i++) {
-			const children = [..._paletteListRef.children]
+			const children = [..._ref_paletteList.children]
 			const seed = palette[i]
 			const pal = generateColorPalette(seed)
 
-			const icon = createIconRef({
-				IconCode: IconCodes.circle,
-				IconFilled: true
+			const icon = CIcon.create({
+				Icon: {
+					code: IconCodes.circle,
+					filled: true
+				}
 			})
 			icon.style.setProperty('color', seed)
 
-			const copyButton = createIconButtonRef({
-				IconButtonIcon: {IconCode: IconCodes.copy},
+			const copyButton = CButton.CIcon.create({
+				IconButton: {Icon: {code: IconCodes.copy}}
 			})
 			copyButton.setAttribute('data-command', Commands.pal_copy)
 			copyButton.setAttribute('aria-label', 'Copy')
 			copyButton.setAttribute('data-tooltip', 'Copy')
 
-			const delButton = createIconButtonRef({
-				IconButtonIcon: {IconCode: IconCodes.delete}
+			const delButton = CButton.CIcon.create({
+				IconButton: {Icon: {code: IconCodes.delete}}
 			})
 			delButton.setAttribute('data-command', Commands.pal_delete)
 			delButton.setAttribute('aria-label', 'Delete')
@@ -102,7 +104,7 @@ function _subscribePaletteRefView(v: ColorsStoreType, o: ColorsStoreType): void 
 </div>
 `
 
-			_paletteListRef.replaceChildren(li, ...children)
+			_ref_paletteList.replaceChildren(li, ...children)
 			if (allowAnimation) {
 				li.animate({
 					scale: [.85, 1],
@@ -169,14 +171,14 @@ function _subscribeColorRefView(v: ColorsStoreType, o: ColorsStoreType): void {
 	const color = v.seed
 	if (color === o.seed) return
 
-	if (_timeAccentId !== null) {
-		clearTimeout(_timeAccentId)
+	if (_time_accent !== null) {
+		clearTimeout(_time_accent)
 	}
 
-	_timeAccentId = setTimeout(() => {
-		_timeAccentId = null
+	_time_accent = setTimeout(() => {
+		_time_accent = null
 		const palette = generateColorPalette(color)
-		_colorAccentRef.innerHTML = ':root{'
+		_ref_colorAccent.innerHTML = ':root{'
 			+ `--g-color-accent-light: ${_rgbToCSS(hexToRgb(palette.color))};`
 			+ `--g-color-accent-dark: ${_rgbToCSS(hexToRgb(palette.colorDark))};`
 			+ `--g-color-on-accent-light: ${_rgbToCSS(hexToRgb(palette.onColor))};`
@@ -184,15 +186,15 @@ function _subscribeColorRefView(v: ColorsStoreType, o: ColorsStoreType): void {
 			+ '}'
 		;
 		const hex = color.toUpperCase() as HEXColor
-		if (getColorPickerRefValue(_colorPickerRef) !== hex) {
-			updateColorPickerRef(_colorPickerRef, {ColorPickerValue: hex})
+		if (CColorPicker.getValue(_ref_colorPicker) !== hex) {
+			CColorPicker.update(_ref_colorPicker, {ColorPicker: {value: hex}})
 		}
 
-		_colorPickerButtonSpanRef.textContent = hex
-		_paletteAccentLightRef   .textContent = palette.color      .toUpperCase()
-		_paletteOnAccentLightRef .textContent = palette.onColor    .toUpperCase()
-		_paletteAccentDarkRef    .textContent = palette.colorDark  .toUpperCase()
-		_paletteOnAccentDarkRef  .textContent = palette.onColorDark.toUpperCase()
+		_ref_colorPickerButtonSpan.textContent = hex
+		_ref_paletteAccentLight   .textContent = palette.color      .toUpperCase()
+		_ref_paletteOnAccentLight .textContent = palette.onColor    .toUpperCase()
+		_ref_paletteAccentDark    .textContent = palette.colorDark  .toUpperCase()
+		_ref_paletteOnAccentDark  .textContent = palette.onColorDark.toUpperCase()
 	}, 10)
 }
 
@@ -218,17 +220,17 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_colorPickerRef.addEventListener(ColorPickerEvents.input, () => {
-		ColorsStore.update(v => v.seed = getColorPickerRefValue(_colorPickerRef))
+	_ref_colorPicker.addEventListener(CColorPicker.Events.input, () => {
+		ColorsStore.update(v => v.seed = CColorPicker.getValue(_ref_colorPicker))
 	})
 
-	_paletteListRef.addEventListener('click', () => {
-		const buttonRef = document.activeElement as HTMLButtonElement
-		if (!isTargetValidElement(_paletteListRef, buttonRef)) {return}
+	_ref_paletteList.addEventListener('click', () => {
+		const ref_btn = document.activeElement as CButton.CElement
+		if (!isTargetValidElement(_ref_paletteList, ref_btn)) {return}
 
-		const command = buttonRef.dataset.command as Commands
+		const command = ref_btn.dataset.command as Commands
 		const getSeedColor = () => {
-			const li = buttonRef.closest('[data-seed-color]')
+			const li = ref_btn.closest('[data-seed-color]')
 			const seed = li?.getAttribute('data-seed-color')
 			if (!seed || !isColorValid(seed)) return null
 
@@ -251,7 +253,7 @@ function _initEvents(): void {
 		}
 	})
 
-	_saveButtonRef.addEventListener('click', () => {
+	_ref_saveBtn.addEventListener('click', () => {
 		const value = ColorsStore.value
 		const color = value.seed
 		if (value.palette.includes(color)) {return}
@@ -270,7 +272,7 @@ export function copyColorPalette(color: HEXColor = ColorsStore.value.seed): void
 		'--on-accent-dark : ' + palette.onColorDark.toUpperCase(),
 	].map(v => v + ';').join('\n')
 	navigator.clipboard.writeText(text).then(() => {
-		_toastCopiedRef.showPopover()
+		_ref_toastCopied.showPopover()
 	})
 }
 

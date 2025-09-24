@@ -1,9 +1,6 @@
 ---
 import { joinClassList } from '@/utils/attributes'
-import {
-	type DialogProps,
-	DialogClasses
-} from '.'
+import {type DialogProps, CDialog} from '.'
 import './index.scss'
 
 type Props = DialogProps
@@ -20,25 +17,27 @@ const {'class': containerClass, ...containerOther} = DialogContainerAttr ?? {}
 const {'class': headerClass   , ...headerOther   } = DialogHeaderAttr    ?? {}
 const {'class': contentClass  , ...contentOther  } = DialogContentAttr   ?? {}
 const {'class': footerClass   , ...footerOther   } = DialogFooterAttr    ?? {}
+
+const cls = CDialog.Classes
 ---
 
 <dialog
-	class={joinClassList(DialogClasses.dialog, className)}
+	class={joinClassList(cls.dialog, className)}
 	data-c-dialog-important={DialogImportant? '' : undefined}
 	{...other}>
-	<div class={joinClassList(DialogClasses.container, containerClass)} {...containerOther}>
+	<div class={joinClassList(cls.container, containerClass)} {...containerOther}>
 		<div
-			class={joinClassList(DialogClasses.header, headerClass)}
+			class={joinClassList(cls.header, headerClass)}
 			{...headerOther}><slot name="header"/></div>
-		<div class={joinClassList(DialogClasses.content, contentClass)} {...contentOther}>
-			<slot />
-		</div>
 		<div
-			class={joinClassList(DialogClasses.footer, footerClass)}
+			class={joinClassList(cls.content, contentClass)}
+			{...contentOther}><slot /></div>
+		<div
+			class={joinClassList(cls.footer, footerClass)}
 			{...footerOther}><slot name="footer"/></div>
 	</div>
 </dialog>
 <script>
-	import { registerDialogRef } from '.'
-	registerDialogRef()
+	import { CDialog } from '.'
+	CDialog.register()
 </script>

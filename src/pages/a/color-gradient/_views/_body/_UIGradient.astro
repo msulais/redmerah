@@ -20,7 +20,7 @@ import TextFieldButton from '@/components/TextField/TextFieldButton.astro'
 import { CSSClasses, CSSGroup } from '../../_styles/_css'
 import { IconCodes } from '@/enums/icons'
 import { FlyoutPosition } from '@/enums/position'
-import { ButtonClasses, ButtonVariant } from '@/components/Button'
+import { CButton } from '@/components/Button'
 import { Commands } from '../../_scripts/_shared/_commands'
 import { ElementIds } from '../../_scripts/_shared/_ids'
 import { GradientType, HueInterpolationMethod, PolarColorSpace, RadialGradientShape, RectangularColorSpace } from '../../_scripts/_shared/_enums'
@@ -68,7 +68,7 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 		display: 'flex',
 		gap: pxToRem(2) + 'rem'
 	}}>
-	<Button id={ElementIds.bdGrad_add} ButtonVariant={ButtonVariant.outlined}>
+	<Button id={ElementIds.bdGrad_add} ButtonVariant={CButton.Variant.outlined}>
 		<Icon IconCode={IconCodes.add}/>
 		Add gradient
 	</Button>
@@ -123,8 +123,8 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 	<Tooltip>
 		<details>
 			<summary
-				class={ButtonClasses.button}
-				data-c-button-variant={ButtonVariant.tonal}>
+				class={CButton.Classes.button}
+				data-c-button-variant={CButton.Variant.tonal}>
 				Properties
 				<Icon IconCode={IconCodes.chevronDown}/>
 			</summary>
@@ -262,8 +262,8 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 		<Divider/>
 		<details open>
 			<summary
-				class={ButtonClasses.button}
-				data-c-button-variant={ButtonVariant.filled}>
+				class={CButton.Classes.button}
+				data-c-button-variant={CButton.Variant.filled}>
 				Stops
 				<Icon IconCode={IconCodes.chevronDown}/>
 			</summary>
@@ -273,7 +273,7 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 					gap: pxToRem(8) + 'rem',
 					marginTop: pxToRem(8) + 'rem'
 				}}>
-					<Button id={ElementIds.bdGradStop_add} ButtonVariant={ButtonVariant.outlined}>
+					<Button id={ElementIds.bdGradStop_add} ButtonVariant={CButton.Variant.outlined}>
 						<Icon IconCode={IconCodes.add}/>
 						Add color stop
 					</Button>

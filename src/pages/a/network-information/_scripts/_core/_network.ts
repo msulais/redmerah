@@ -2,7 +2,7 @@ import type { NetworkInformation } from "@/interfaces/network-information"
 import { ObservableStore } from "@/utils/store"
 import { ElementIds } from "../_shared/_ids"
 import { $ } from "./_dom-utils"
-import type { DialogElement } from "@/components/Dialog"
+import { CDialog } from "@/components/Dialog"
 import { isNumberDefined } from "@/utils/number"
 
 // NOTE: not every browser support all these property
@@ -24,13 +24,13 @@ export const NetworkStore = new ObservableStore<NetworkStoreType>({
 	type: null
 })
 
-const _downlinkRef = $(ElementIds.bd_downlink) as HTMLSpanElement
-const _downlinkMaxRef = $(ElementIds.bd_downlinkMax) as HTMLSpanElement
-const _effectiveTypeRef = $(ElementIds.bd_effectiveType) as HTMLSpanElement
-const _typeRef = $(ElementIds.bd_type) as HTMLSpanElement
-const _rttRef = $(ElementIds.bd_rtt) as HTMLSpanElement
-const _saveDataRef = $(ElementIds.bd_saveData) as HTMLSpanElement
-const _notSupportDialogRef = $(ElementIds.dlg_browseNotSupported) as DialogElement
+const _ref_downlink = $(ElementIds.bd_downlink) as HTMLSpanElement
+const _ref_downlinkMax = $(ElementIds.bd_downlinkMax) as HTMLSpanElement
+const _ref_effectiveType = $(ElementIds.bd_effectiveType) as HTMLSpanElement
+const _ref_type = $(ElementIds.bd_type) as HTMLSpanElement
+const _ref_rtt = $(ElementIds.bd_rtt) as HTMLSpanElement
+const _ref_saveData = $(ElementIds.bd_saveData) as HTMLSpanElement
+const _ref_notSupportDialog = $(ElementIds.dlg_browseNotSupported) as CDialog.CElement
 
 function _initSubscriber(): void {
 	const isNumber = (v: any) => typeof v === 'number'
@@ -39,28 +39,28 @@ function _initSubscriber(): void {
 
 	NetworkStore.subscribe(v => {
 		const downlink = v.downlink
-		_downlinkRef.textContent = isNumber(downlink) && isNumberDefined(downlink)
+		_ref_downlink.textContent = isNumber(downlink) && isNumberDefined(downlink)
 			? (downlink + ' Mbps')
 			: 'N/A'
 
 		const downlinkMax = v.downlinkMax
-		_downlinkMaxRef.textContent = isNumber(downlinkMax) && isNumberDefined(downlinkMax)
+		_ref_downlinkMax.textContent = isNumber(downlinkMax) && isNumberDefined(downlinkMax)
 			? (downlinkMax + ' Mbps')
 			: 'N/A'
 
 		const rtt = v.rtt
-		_rttRef.textContent = isNumber(rtt) && isNumberDefined(rtt)? (rtt + ' ms')  : 'N/A'
+		_ref_rtt.textContent = isNumber(rtt) && isNumberDefined(rtt)? (rtt + ' ms')  : 'N/A'
 
-		_effectiveTypeRef.textContent = isString(v.effectiveType)? v.effectiveType : 'N/A'
-		_typeRef.textContent = isString(v.type)? v.type : 'N/A'
-		_saveDataRef.textContent = isBoolean(v.dataSaver)? v.dataSaver? 'Yes' : 'No' : 'N/A'
+		_ref_effectiveType.textContent = isString(v.effectiveType)? v.effectiveType : 'N/A'
+		_ref_type.textContent = isString(v.type)? v.type : 'N/A'
+		_ref_saveData.textContent = isBoolean(v.dataSaver)? v.dataSaver? 'Yes' : 'No' : 'N/A'
 	})
 }
 
 function _initNetworkInfo(): void {
 	const supported = 'connection' in navigator
 	if (!supported) {
-		_notSupportDialogRef.showModal()
+		_ref_notSupportDialog.showModal()
 		return
 	}
 

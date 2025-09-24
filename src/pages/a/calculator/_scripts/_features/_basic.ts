@@ -16,18 +16,18 @@ export const BasicStore = new ObservableStore<BasicStoreType>({
 	input: DEFAULT_BASIC_INPUT,
 	output: DEFAULT_BASIC_OUTPUT,
 })
-const _inputRef = $(ElementIds.pgBas_input) as HTMLInputElement
-const _outputRef = $(ElementIds.pgBas_output) as HTMLInputElement
-let _timeCalculateId: NodeJS.Timeout | number | null = null
-let _timeSaveInputId: NodeJS.Timeout | number | null = null
+const _ref_input = $(ElementIds.pgBas_input) as HTMLInputElement
+const _ref_output = $(ElementIds.pgBas_output) as HTMLInputElement
+let _time_calculate: NodeJS.Timeout | number | null = null
+let _time_saveInput: NodeJS.Timeout | number | null = null
 
 function _calculate(): void {
-	if (_timeCalculateId !== null) {
-		clearTimeout(_timeCalculateId)
+	if (_time_calculate !== null) {
+		clearTimeout(_time_calculate)
 	}
 
-	_timeCalculateId = setTimeout(() => {
-		_timeCalculateId = null
+	_time_calculate = setTimeout(() => {
+		_time_calculate = null
 		const output = calculate(BasicStore.value.input)
 		const parsedOutput = Number.parseFloat(output)
 		BasicStore.update(v => v.output = isNumberDefined(parsedOutput)? parsedOutput : null)
@@ -39,35 +39,35 @@ function _subsInputChanges(value: BasicStoreType, old: BasicStoreType) {
 	if (input === old.input) return
 
 	_calculate()
-	if (_timeSaveInputId !== null) {
-		clearTimeout(_timeSaveInputId)
+	if (_time_saveInput !== null) {
+		clearTimeout(_time_saveInput)
 	}
 
-	_timeSaveInputId = setTimeout(() => {
-		_timeSaveInputId = null
+	_time_saveInput = setTimeout(() => {
+		_time_saveInput = null
 		saveStorageItem('calc:basic/input', input)
 	}, 250)
 }
 
 function _subsInputView(value: BasicStoreType) {
 	const input = value.input
-	if (input === _inputRef.value) return
+	if (input === _ref_input.value) return
 
-	_inputRef.value = input
-	scrollInputToEnd(_inputRef)
+	_ref_input.value = input
+	scrollInputToEnd(_ref_input)
 }
 
 function _subsOutputView(value: BasicStoreType, old: BasicStoreType) {
 	const output = value.output
-	if (output === null) return _outputRef.value = ''
+	if (output === null) return _ref_output.value = ''
 
 	const formattedOutput = formatOutput(output)
 	if (
 		output === old.output
-		&& _outputRef.value === formattedOutput
+		&& _ref_output.value === formattedOutput
 	) return;
 
-	_outputRef.value = formattedOutput
+	_ref_output.value = formattedOutput
 }
 
 function _initSubscriber(): void {

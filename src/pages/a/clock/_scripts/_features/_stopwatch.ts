@@ -1,18 +1,18 @@
 import { ObservableStore } from "@/utils/store"
 import { $, $$, $$$ } from "../_core/_dom-utils"
 import { ElementIds } from "../_shared/_ids"
-import { IconClasses, updateIconRef, type IconElement } from "@/components/Icon"
+import { CIcon } from "@/components/Icon"
 import { isTargetValidElement } from "@/utils/element"
 import { IconCodes } from "@/enums/icons"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEasing } from "@/enums/animation"
-import { SideBarClasses } from "@/components/SideBar2"
-import { DrawerClasses } from "@/components/Drawer"
+import { CSideBar } from "@/components/SideBar2"
+import { CDrawer } from "@/components/Drawer"
 import { Pages } from "../_shared/_enums"
 import { AppCSSColors } from "@/enums/app-data"
-import { updateButtonRef, updateIconButtonRef } from "@/components/Button"
+import { CButton } from "@/components/Button"
 import { Commands } from "../_shared/_commands"
-import { openToastRef, type ToastElement } from "@/components/Toast"
+import { CToast } from "@/components/Toast"
 import { DEFAULT_STOPWATCH_MS, DEFAULT_STOPWATCH_RUNNING, DEFAULT_STOPWATCH_LAPS } from "../_shared/_constant"
 import { pxToRem } from "@/utils/css"
 
@@ -28,22 +28,22 @@ export const StopwatchStore = new ObservableStore<_StopwatchStoreType>({
 	laps: DEFAULT_STOPWATCH_LAPS
 })
 const _animationOption = {duration: 250, easing: AnimationEasing.spring}
-const _toastCopiedRef = $(ElementIds.toa_copied) as ToastElement
-const _lapsRef = $(ElementIds.pgSw_laps) as HTMLDivElement
-const _lapsContentRef = $(ElementIds.pgSw_lapsContent) as HTMLDivElement
-const _pageRef = $(ElementIds.pg_stopwatch) as HTMLDivElement
-const _HMSRef = $(ElementIds.pgSw_hhmmss) as HTMLSpanElement
-const _MSRef = $(ElementIds.pgSw_ms) as HTMLElement
-const _timeRef = _HMSRef.parentElement as HTMLHeadingElement
-const _moreButtonRef = $(ElementIds.pgSw_moreBtn) as HTMLButtonElement
-const _moreMenuRef = $(ElementIds.pgSw_moreMenu) as HTMLDivElement
-const _resetOrLapButtonRef = $(ElementIds.pgSw_resetLap) as HTMLButtonElement
-const _resetOrLapIconRef = $$(`#${ElementIds.pgSw_resetLap}>.${IconClasses.icon}`) as IconElement
-const _playOrPauseButtonRef = $(ElementIds.pgSw_playPause) as HTMLButtonElement
-const _playOrPauseIconRef = $$(`#${ElementIds.pgSw_playPause}>.${IconClasses.icon}`) as IconElement
-const _playOrPauseSpanRef = $$(`#${ElementIds.pgSw_playPause}>span:not(.${IconClasses.icon})`) as HTMLSpanElement
-const _navigationButtonIconRefs = $$$(`:is(.${SideBarClasses.button},.${DrawerClasses.button})[data-page=${Pages.stopwatch}] .${IconClasses.icon}`)
-let _intervalId: null | number | NodeJS.Timeout = null
+const _ref_toastCopied = $(ElementIds.toa_copied) as CToast.CElement
+const _ref_laps = $(ElementIds.pgSw_laps) as HTMLDivElement
+const _ref_lapsContent = $(ElementIds.pgSw_lapsContent) as HTMLDivElement
+const _ref_page = $(ElementIds.pg_stopwatch) as HTMLDivElement
+const _ref_HMS = $(ElementIds.pgSw_hhmmss) as HTMLSpanElement
+const _ref_MS = $(ElementIds.pgSw_ms) as HTMLElement
+const _ref_time = _ref_HMS.parentElement as HTMLHeadingElement
+const _ref_moreButton = $(ElementIds.pgSw_moreBtn) as CButton.CElement
+const _ref_moreMenu = $(ElementIds.pgSw_moreMenu) as HTMLDivElement
+const _ref_resetOrLapButton = $(ElementIds.pgSw_resetLap) as CButton.CElement
+const _ref_resetOrLapIcon = $$(`#${ElementIds.pgSw_resetLap}>.${CIcon.Classes.icon}`) as CIcon.CElement
+const _ref_playOrPauseButton = $(ElementIds.pgSw_playPause) as CButton.CElement
+const _ref_playOrPauseIcon = $$(`#${ElementIds.pgSw_playPause}>.${CIcon.Classes.icon}`) as CIcon.CElement
+const _ref_playOrPauseSpan = $$(`#${ElementIds.pgSw_playPause}>span:not(.${CIcon.Classes.icon})`) as HTMLSpanElement
+const _refs_navigationButtonIcon = $$$(`:is(.${CSideBar.Classes.button},.${CDrawer.Classes.button})[data-page=${Pages.stopwatch}] .${CIcon.Classes.icon}`)
+let _interval: null | number | NodeJS.Timeout = null
 let _isResetOrLapButtonVisible = false
 let _isLapVisible = false
 
@@ -78,13 +78,13 @@ function _subscribeRunningChanges(v: _StopwatchStoreType, o: _StopwatchStoreType
 	const running = v.running
 	if (running === o.running) {return}
 
-	if (_intervalId !== null) {
-		clearInterval(_intervalId)
+	if (_interval !== null) {
+		clearInterval(_interval)
 	}
 
 	if (!running) {return}
 
-	_intervalId = setInterval(() => {
+	_interval = setInterval(() => {
 		StopwatchStore.update(v => v.ms += 10)
 	}, 10)
 }
@@ -93,35 +93,39 @@ function _subscribeRunningRefView(v: _StopwatchStoreType, o: _StopwatchStoreType
 	const running = v.running
 	if (running === o.running) {return}
 
-	_playOrPauseSpanRef.textContent = running? 'Pause' : 'Start'
-	updateIconRef(_playOrPauseIconRef, {
-		IconCode: running? IconCodes.pause : IconCodes.play,
-		IconFilled: true
-	})
-	updateIconButtonRef(_resetOrLapButtonRef, {
-		IconButtonIcon: {
-			IconCode: running? IconCodes.flag : IconCodes.arrowReset
+	_ref_playOrPauseSpan.textContent = running? 'Pause' : 'Start'
+	CIcon.update(_ref_playOrPauseIcon, {
+		Icon: {
+			code: running? IconCodes.pause : IconCodes.play,
+			filled: true
 		}
 	})
-	_resetOrLapButtonRef.setAttribute('aria-label', running? 'Lap' : 'Reset')
-	_resetOrLapButtonRef.setAttribute('data-tooltip', running? 'Lap' : 'Reset')
+	CButton.CIcon.update(_ref_resetOrLapButton, {
+		IconButton: {
+			Icon: {
+				code: running? IconCodes.flag : IconCodes.arrowReset
+			}
+		}
+	})
+	_ref_resetOrLapButton.setAttribute('aria-label', running? 'Lap' : 'Reset')
+	_ref_resetOrLapButton.setAttribute('data-tooltip', running? 'Lap' : 'Reset')
 
 	if (!isAnimationAllowed()) {return}
 
-	_resetOrLapIconRef.animate({
+	_ref_resetOrLapIcon.animate({
 		opacity: [0, 1],
 		scale: [0, 1]
 	}, _animationOption)
-	_playOrPauseSpanRef.animate({
+	_ref_playOrPauseSpan.animate({
 		opacity: [0, 1],
 		translate: [`${pxToRem(-8)}rem 0`, '0 0']
 	}, _animationOption)
-	_playOrPauseIconRef.animate({
+	_ref_playOrPauseIcon.animate({
 		opacity: [0, 1],
 		translate: [`${pxToRem(8)}rem 0`, '0 0']
 	}, _animationOption)
 
-	for (const ref of _navigationButtonIconRefs) {
+	for (const ref of _refs_navigationButtonIcon) {
 		if (running) {
 			ref.style.setProperty('color', `rgb(${AppCSSColors.accent})`)
 			ref.animate({
@@ -154,23 +158,23 @@ function _subscribeMSRefView(v: _StopwatchStoreType, o: _StopwatchStoreType): vo
 		ms = Math.floor(ms % 1000)
 	}
 
-	_HMSRef.textContent =  hour.toString() + ':' + [minute, second].map(v => v.toString().padStart(2, '0')).join(':')
-	_MSRef.textContent = Math.floor(ms / 10).toString().padStart(2, '0')
+	_ref_HMS.textContent =  hour.toString() + ':' + [minute, second].map(v => v.toString().padStart(2, '0')).join(':')
+	_ref_MS.textContent = Math.floor(ms / 10).toString().padStart(2, '0')
 	const visible = v.ms > 0
 	if (visible === _isResetOrLapButtonVisible) {return}
 
-	const btnRect = _playOrPauseButtonRef.getBoundingClientRect()
+	const btnRect = _ref_playOrPauseButton.getBoundingClientRect()
 	_isResetOrLapButtonVisible = visible
 	if (visible) {
-		_resetOrLapButtonRef.style.removeProperty('display')
+		_ref_resetOrLapButton.style.removeProperty('display')
 	} else {
-		_resetOrLapButtonRef.style.setProperty('display', 'none')
+		_ref_resetOrLapButton.style.setProperty('display', 'none')
 	}
 
 	if (!isAnimationAllowed()) {return}
 
-	const btnRect2 = _playOrPauseButtonRef.getBoundingClientRect()
-	_playOrPauseButtonRef.animate({
+	const btnRect2 = _ref_playOrPauseButton.getBoundingClientRect()
+	_ref_playOrPauseButton.animate({
 		translate: [`${pxToRem(btnRect.x - btnRect2.x)}rem ${pxToRem(btnRect.y - btnRect2.y)}rem`, '0 0']
 	}, _animationOption)
 }
@@ -180,20 +184,20 @@ function _subscribeLapsRefView(v: _StopwatchStoreType, o: _StopwatchStoreType): 
 	const length = laps.length
 	if (length === o.laps.length) {return}
 	if (length <= 0) {
-		const _timeRect = _timeRef.getBoundingClientRect()
-		const _playBtnRect = _playOrPauseButtonRef.getBoundingClientRect()
+		const _timeRect = _ref_time.getBoundingClientRect()
+		const _playBtnRect = _ref_playOrPauseButton.getBoundingClientRect()
 		_isLapVisible = false
-		_moreButtonRef.style.setProperty('display', 'none')
-		_lapsRef.style.removeProperty('display')
-		_lapsContentRef.replaceChildren()
+		_ref_moreButton.style.setProperty('display', 'none')
+		_ref_laps.style.removeProperty('display')
+		_ref_lapsContent.replaceChildren()
 		if (!isAnimationAllowed()) {return}
 
-		const _timeRect2 = _timeRef.getBoundingClientRect()
-		const _playBtnRect2 = _playOrPauseButtonRef.getBoundingClientRect()
-		_playOrPauseButtonRef.animate({
+		const _timeRect2 = _ref_time.getBoundingClientRect()
+		const _playBtnRect2 = _ref_playOrPauseButton.getBoundingClientRect()
+		_ref_playOrPauseButton.animate({
 			translate: [`${pxToRem(_playBtnRect.x - _playBtnRect2.x)}rem ${pxToRem(_playBtnRect.y - _playBtnRect2.y)}rem`, '0 0']
 		}, _animationOption)
-		_timeRef.animate({
+		_ref_time.animate({
 			translate: [`${pxToRem(_timeRect.x - _timeRect2.x)}rem ${pxToRem(_timeRect.y - _timeRect2.y)}rem`, '0 0']
 		}, _animationOption)
 		return
@@ -214,8 +218,8 @@ function _subscribeLapsRefView(v: _StopwatchStoreType, o: _StopwatchStoreType): 
 	spanTimeRef.textContent = _msText(diff)
 	divRef.tabIndex = 0
 	divRef.append(spanLapRef, spanTimeRef, spanTotalRef)
-	_lapsContentRef.replaceChildren(divRef, ...[..._lapsContentRef.children])
-	_lapsRef.scrollTo({top: 0, behavior: 'instant'})
+	_ref_lapsContent.replaceChildren(divRef, ...[..._ref_lapsContent.children])
+	_ref_laps.scrollTo({top: 0, behavior: 'instant'})
 	if (isAnimationAllowed()) {
 		divRef.animate({
 			opacity: [0, 1],
@@ -224,32 +228,32 @@ function _subscribeLapsRefView(v: _StopwatchStoreType, o: _StopwatchStoreType): 
 	}
 	if (_isLapVisible) {return}
 
-	const _timeRect = _timeRef.getBoundingClientRect()
-	const _playBtnRect = _playOrPauseButtonRef.getBoundingClientRect()
-	const _resetBtnRect = _resetOrLapButtonRef.getBoundingClientRect()
+	const _timeRect = _ref_time.getBoundingClientRect()
+	const _playBtnRect = _ref_playOrPauseButton.getBoundingClientRect()
+	const _resetBtnRect = _ref_resetOrLapButton.getBoundingClientRect()
 	_isLapVisible = true
-	_lapsRef.style.setProperty('display', 'flex')
-	_moreButtonRef.style.removeProperty('display')
+	_ref_laps.style.setProperty('display', 'flex')
+	_ref_moreButton.style.removeProperty('display')
 	if (!isAnimationAllowed()) {return}
 
-	const _timeRect2 = _timeRef.getBoundingClientRect()
-	const _playBtnRect2 = _playOrPauseButtonRef.getBoundingClientRect()
-	const _resetBtnRect2 = _resetOrLapButtonRef.getBoundingClientRect()
-	_lapsRef.animate({
+	const _timeRect2 = _ref_time.getBoundingClientRect()
+	const _playBtnRect2 = _ref_playOrPauseButton.getBoundingClientRect()
+	const _resetBtnRect2 = _ref_resetOrLapButton.getBoundingClientRect()
+	_ref_laps.animate({
 		opacity: [0, 1],
 		scale: [.9, 1]
 	}, _animationOption)
-	_moreButtonRef.animate({
+	_ref_moreButton.animate({
 		scale: [0, 1],
 		opacity: [0, 1]
 	}, _animationOption)
-	_timeRef.animate({
+	_ref_time.animate({
 		translate: [`${pxToRem(_timeRect.x - _timeRect2.x)}rem ${pxToRem(_timeRect.y - _timeRect2.y)}rem`, '0 0']
 	}, _animationOption)
-	_playOrPauseButtonRef.animate({
+	_ref_playOrPauseButton.animate({
 		translate: [`${pxToRem(_playBtnRect.x - _playBtnRect2.x)}rem ${pxToRem(_playBtnRect.y - _playBtnRect2.y)}rem`, '0 0']
 	}, _animationOption)
-	_resetOrLapButtonRef.animate({
+	_ref_resetOrLapButton.animate({
 		translate: [`${pxToRem(_resetBtnRect.x - _resetBtnRect2.x)}rem ${pxToRem(_resetBtnRect.y - _resetBtnRect2.y)}rem`, '0 0']
 	}, _animationOption)
 }
@@ -295,23 +299,23 @@ function _copyLaps(time: boolean, total: boolean, ms: boolean = false): void {
 	}
 
 	navigator.clipboard.writeText(text).then(() => {
-		openToastRef(_toastCopiedRef)
+		CToast.open(_ref_toastCopied)
 	})
 }
 
 function _initEvents(): void {
-	_pageRef.addEventListener('click', () => {
-		const buttonRef = document.activeElement as HTMLButtonElement
-		if (!isTargetValidElement(_pageRef, buttonRef)) {
+	_ref_page.addEventListener('click', () => {
+		const ref_btn = document.activeElement as CButton.CElement
+		if (!isTargetValidElement(_ref_page, ref_btn)) {
 			return
 		}
 
 		const value = StopwatchStore.value
-		switch (buttonRef) {
-		case _playOrPauseButtonRef:
+		switch (ref_btn) {
+		case _ref_playOrPauseButton:
 			StopwatchStore.update(v => v.running = !v.running)
 			break
-		case _resetOrLapButtonRef:
+		case _ref_resetOrLapButton:
 			if (value.running) {
 				StopwatchStore.update(v => v.laps = [v.ms, ...v.laps])
 			}
@@ -324,19 +328,19 @@ function _initEvents(): void {
 		}
 	})
 
-	_moreMenuRef.addEventListener('beforetoggle', ev => {
+	_ref_moreMenu.addEventListener('beforetoggle', ev => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
-		updateButtonRef(_moreButtonRef, {
-			ButtonFocused: isOpen
+		CButton.update(_ref_moreButton, {
+			Button: {focused: isOpen}
 		})
 	})
 
-	_moreMenuRef.addEventListener('click', () => {
-		const buttonRef = document.activeElement as HTMLButtonElement
-		if (!isTargetValidElement(_moreMenuRef, buttonRef)) return
+	_ref_moreMenu.addEventListener('click', () => {
+		const ref_btn = document.activeElement as CButton.CElement
+		if (!isTargetValidElement(_ref_moreMenu, ref_btn)) return
 
-		const command = buttonRef.dataset.command
-		const closeMenu = () => _moreMenuRef.hidePopover()
+		const command = ref_btn.dataset.command
+		const closeMenu = () => _ref_moreMenu.hidePopover()
 		switch (command as Commands) {
 		case Commands.swCpLp_time:
 			_copyLaps(true, false)

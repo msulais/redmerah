@@ -6,7 +6,7 @@ import { DEFAULT_COLORS_COUNT, DEFAULT_COLORS_HEX_MAX, DEFAULT_COLORS_HEX_MIN, D
 import type { HEXColor } from "@/types/color"
 import { Math_clamp } from "@/utils/math"
 import { safeNumber } from "@/utils/number"
-import type { ComboBoxElement } from "@/components/ComboBox"
+import { CComboBox } from "@/components/ComboBox"
 import { isValidEnumValue } from "@/utils/object"
 import { colorContrastPercentage, hexToRgb, hslToHex, rgbToHex, rgbToHsl } from "@/utils/color"
 import { saveStorageItem } from "../_core/_database"
@@ -51,27 +51,27 @@ export const ColorsStore = new ObservableStore<ColorsStoreType>({
 	output: DEFAULT_COLORS_OUTPUT
 })
 
-const _countRef = $(ElementIds.pgCol_count) as HTMLInputElement
-const _spaceRef = $(ElementIds.pgCol_space) as ComboBoxElement
-const _hexRef = $(ElementIds.pgCol_hex) as HTMLDivElement
-const _hexMinRef = $(ElementIds.pgCol_hexMin) as HTMLInputElement
-const _hexMaxRef = $(ElementIds.pgCol_hexMax) as HTMLInputElement
-const _rgbRef = $(ElementIds.pgCol_rgb) as HTMLDivElement
-const _redMinRef = $(ElementIds.pgCol_redMin) as HTMLInputElement
-const _redMaxRef = $(ElementIds.pgCol_redMax) as HTMLInputElement
-const _greenMinRef = $(ElementIds.pgCol_greenMin) as HTMLInputElement
-const _greenMaxRef = $(ElementIds.pgCol_greenMax) as HTMLInputElement
-const _blueMinRef = $(ElementIds.pgCol_blueMin) as HTMLInputElement
-const _blueMaxRef = $(ElementIds.pgCol_blueMax) as HTMLInputElement
-const _hslRef = $(ElementIds.pgCol_hsl) as HTMLDivElement
-const _hueMinRef = $(ElementIds.pgCol_hueMin) as HTMLInputElement
-const _hueMaxRef = $(ElementIds.pgCol_hueMax) as HTMLInputElement
-const _saturationMinRef = $(ElementIds.pgCol_saturationMin) as HTMLInputElement
-const _saturationMaxRef = $(ElementIds.pgCol_saturationMax) as HTMLInputElement
-const _lightMinRef = $(ElementIds.pgCol_lightMin) as HTMLInputElement
-const _lightMaxRef = $(ElementIds.pgCol_lightMax) as HTMLInputElement
-const _outputRef = $(ElementIds.pgCol_output) as HTMLUListElement
-let _timeStorageId: NodeJS.Timeout | number | undefined
+const _ref_count = $(ElementIds.pgCol_count) as HTMLInputElement
+const _ref_space = $(ElementIds.pgCol_space) as CComboBox.CElement
+const _ref_hex = $(ElementIds.pgCol_hex) as HTMLDivElement
+const _ref_hexMin = $(ElementIds.pgCol_hexMin) as HTMLInputElement
+const _ref_hexMax = $(ElementIds.pgCol_hexMax) as HTMLInputElement
+const _ref_rgb = $(ElementIds.pgCol_rgb) as HTMLDivElement
+const _ref_redMin = $(ElementIds.pgCol_redMin) as HTMLInputElement
+const _ref_redMax = $(ElementIds.pgCol_redMax) as HTMLInputElement
+const _ref_greenMin = $(ElementIds.pgCol_greenMin) as HTMLInputElement
+const _ref_greenMax = $(ElementIds.pgCol_greenMax) as HTMLInputElement
+const _ref_blueMin = $(ElementIds.pgCol_blueMin) as HTMLInputElement
+const _ref_blueMax = $(ElementIds.pgCol_blueMax) as HTMLInputElement
+const _ref_hsl = $(ElementIds.pgCol_hsl) as HTMLDivElement
+const _ref_hueMin = $(ElementIds.pgCol_hueMin) as HTMLInputElement
+const _ref_hueMax = $(ElementIds.pgCol_hueMax) as HTMLInputElement
+const _ref_saturationMin = $(ElementIds.pgCol_saturationMin) as HTMLInputElement
+const _ref_saturationMax = $(ElementIds.pgCol_saturationMax) as HTMLInputElement
+const _ref_lightMin = $(ElementIds.pgCol_lightMin) as HTMLInputElement
+const _ref_lightMax = $(ElementIds.pgCol_lightMax) as HTMLInputElement
+const _ref_output = $(ElementIds.pgCol_output) as HTMLUListElement
+let _time_storage: NodeJS.Timeout | number | undefined
 
 export function updateOutput(): void {
 	const store = ColorsStore.value
@@ -114,8 +114,8 @@ export function updateOutput(): void {
 }
 
 function _subsStorage(v: ColorsStoreType): void {
-	clearTimeout(_timeStorageId)
-	_timeStorageId = setTimeout(() => {
+	clearTimeout(_time_storage)
+	_time_storage = setTimeout(() => {
 		saveStorageItem('colors:color-space', v.colorSpace)
 		saveStorageItem('colors:count', v.count)
 		saveStorageItem('colors:hex-max', v.hexMax)
@@ -141,8 +141,8 @@ function _subsOutputView(v: ColorsStoreType, o: ColorsStoreType): void {
 	if (output === o.output) {return}
 
 	const r = (v: number) => Math.round(v)
-	const refs = $$$<HTMLLIElement>('li', _outputRef)
-	const updateLIRef = (ref: HTMLLIElement, hex: HEXColor) => {
+	const refs = $$$<HTMLLIElement>('li', _ref_output)
+	const update_ref_li = (ref: HTMLLIElement, hex: HEXColor) => {
 		const rgb = hexToRgb(hex)
 		const hsl = rgbToHsl(rgb)
 		const color = colorContrastPercentage(rgb, {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff'
@@ -165,14 +165,14 @@ function _subsOutputView(v: ColorsStoreType, o: ColorsStoreType): void {
 			continue
 		}
 
-		updateLIRef(ref, output[i])
+		update_ref_li(ref, output[i])
 	}
 
 	for (let i = 0; i < output.length - refs.length; i++) {
 		const index = refs.length + i
 		const ref = document.createElement('li')
-		updateLIRef(ref, output[index])
-		_outputRef.append(ref)
+		update_ref_li(ref, output[index])
+		_ref_output.append(ref)
 	}
 }
 
@@ -180,23 +180,23 @@ function _subsColorSpacesView(v: ColorsStoreType, o: ColorsStoreType): void {
 	const colorSpace = v.colorSpace
 	if (colorSpace === o.colorSpace) {return}
 
-	_spaceRef.value = colorSpace
-	let selectedRef = _hexRef
+	_ref_space.value = colorSpace
+	let ref_selected = _ref_hex
 	switch (colorSpace) {
 	case ColorsRandomizerSpace.rgb:
-		selectedRef = _rgbRef
+		ref_selected = _ref_rgb
 		break
 	case ColorsRandomizerSpace.hsl:
-		selectedRef = _hslRef
+		ref_selected = _ref_hsl
 		break
 	case ColorsRandomizerSpace.hex:
-		selectedRef = _hexRef
+		ref_selected = _ref_hex
 		break
 	}
 
-	for (const ref of [_hexRef, _rgbRef, _hslRef]) {
+	for (const ref of [_ref_hex, _ref_rgb, _ref_hsl]) {
 		ref.style.setProperty(
-			'display', selectedRef === ref? 'contents' : 'none'
+			'display', ref_selected === ref? 'contents' : 'none'
 		)
 	}
 }
@@ -204,99 +204,99 @@ function _subsColorSpacesView(v: ColorsStoreType, o: ColorsStoreType): void {
 function _subsView(v: ColorsStoreType): void {
 	const isActive = (el: Element) => el === document.activeElement
 	const count = v.count
-	if (!isActive(_countRef)) {
-		_countRef.valueAsNumber = count
+	if (!isActive(_ref_count)) {
+		_ref_count.valueAsNumber = count
 	}
 
 	// HEX
 	const hexMax = v.hexMax
-	_hexMinRef.max = hexMax.toString()
-	if (!isActive(_hexMaxRef)) {
-		_hexMaxRef.valueAsNumber = hexMax
+	_ref_hexMin.max = hexMax.toString()
+	if (!isActive(_ref_hexMax)) {
+		_ref_hexMax.valueAsNumber = hexMax
 	}
 
 	const hexMin = v.hexMin
-	_hexMaxRef.min = hexMin.toString()
-	if (!isActive(_hexMinRef)) {
-		_hexMinRef.valueAsNumber = hexMin
+	_ref_hexMax.min = hexMin.toString()
+	if (!isActive(_ref_hexMin)) {
+		_ref_hexMin.valueAsNumber = hexMin
 	}
 
 	// RGB->R
 	const rgbRMax = v.rgbRMax
-	_redMinRef.max = rgbRMax.toString()
-	if (!isActive(_redMaxRef)) {
-		_redMaxRef.valueAsNumber = rgbRMax
+	_ref_redMin.max = rgbRMax.toString()
+	if (!isActive(_ref_redMax)) {
+		_ref_redMax.valueAsNumber = rgbRMax
 	}
 
 	const rgbRMin = v.rgbRMin
-	_redMaxRef.min = rgbRMin.toString()
-	if (!isActive(_redMinRef)) {
-		_redMinRef.valueAsNumber = rgbRMin
+	_ref_redMax.min = rgbRMin.toString()
+	if (!isActive(_ref_redMin)) {
+		_ref_redMin.valueAsNumber = rgbRMin
 	}
 
 	// RGB->G
 	const rgbGMax = v.rgbGMax
-	_greenMinRef.max = rgbGMax.toString()
-	if (!isActive(_greenMaxRef)) {
-		_greenMaxRef.valueAsNumber = rgbGMax
+	_ref_greenMin.max = rgbGMax.toString()
+	if (!isActive(_ref_greenMax)) {
+		_ref_greenMax.valueAsNumber = rgbGMax
 	}
 
 	const rgbGMin = v.rgbGMin
-	_greenMaxRef.min = rgbGMin.toString()
-	if (!isActive(_greenMinRef)) {
-		_greenMinRef.valueAsNumber = rgbGMin
+	_ref_greenMax.min = rgbGMin.toString()
+	if (!isActive(_ref_greenMin)) {
+		_ref_greenMin.valueAsNumber = rgbGMin
 	}
 
 	// RGB->B
 	const rgbBMax = v.rgbBMax
-	_blueMinRef.max = rgbBMax.toString()
-	if (!isActive(_blueMaxRef)) {
-		_blueMaxRef.valueAsNumber = rgbBMax
+	_ref_blueMin.max = rgbBMax.toString()
+	if (!isActive(_ref_blueMax)) {
+		_ref_blueMax.valueAsNumber = rgbBMax
 	}
 
 	const rgbBMin = v.rgbBMin
-	_blueMaxRef.min = rgbBMin.toString()
-	if (!isActive(_blueMinRef)) {
-		_blueMinRef.valueAsNumber = rgbBMin
+	_ref_blueMax.min = rgbBMin.toString()
+	if (!isActive(_ref_blueMin)) {
+		_ref_blueMin.valueAsNumber = rgbBMin
 	}
 
 	// HSL->H
 	const hslHMax = v.hslHMax
-	_hueMinRef.max = hslHMax.toString()
-	if (!isActive(_hueMaxRef)) {
-		_hueMaxRef.valueAsNumber = hslHMax
+	_ref_hueMin.max = hslHMax.toString()
+	if (!isActive(_ref_hueMax)) {
+		_ref_hueMax.valueAsNumber = hslHMax
 	}
 
 	const hslHMin = v.hslHMin
-	_hueMaxRef.min = hslHMin.toString()
-	if (!isActive(_hueMinRef)) {
-		_hueMinRef.valueAsNumber = hslHMin
+	_ref_hueMax.min = hslHMin.toString()
+	if (!isActive(_ref_hueMin)) {
+		_ref_hueMin.valueAsNumber = hslHMin
 	}
 
 	// HSL->S
 	const hslSMax = v.hslSMax
-	_saturationMinRef.max = hslSMax.toString()
-	if (!isActive(_saturationMaxRef)) {
-		_saturationMaxRef.valueAsNumber = hslSMax
+	_ref_saturationMin.max = hslSMax.toString()
+	if (!isActive(_ref_saturationMax)) {
+		_ref_saturationMax.valueAsNumber = hslSMax
 	}
 
 	const hslSMin = v.hslSMin
-	_saturationMaxRef.min = hslSMin.toString()
-	if (!isActive(_saturationMinRef)) {
-		_saturationMinRef.valueAsNumber = hslSMin
+	_ref_saturationMax.min = hslSMin.toString()
+	if (!isActive(_ref_saturationMin)) {
+		_ref_saturationMin.valueAsNumber = hslSMin
 	}
 
 	// HSL->L
 	const hslLMax = v.hslLMax
-	_lightMinRef.max = hslLMax.toString()
-	if (!isActive(_lightMaxRef)) {
-		_lightMaxRef.valueAsNumber = hslLMax
+	_ref_lightMin.max = hslLMax.toString()
+	if (!isActive(_ref_lightMax)) {
+		_ref_lightMax.valueAsNumber = hslLMax
 	}
 
 	const hslLMin = v.hslLMin
-	_lightMaxRef.min = hslLMin.toString()
-	if (!isActive(_lightMinRef)) {
-		_lightMinRef.valueAsNumber = hslLMin
+	_ref_lightMax.min = hslLMin.toString()
+	if (!isActive(_ref_lightMin)) {
+		_ref_lightMin.valueAsNumber = hslLMin
 	}
 }
 
@@ -308,174 +308,174 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_countRef.addEventListener('input', () => {
-		const value = Math_clamp(safeNumber(_countRef.valueAsNumber), 1, Number.MAX_VALUE)
+	_ref_count.addEventListener('input', () => {
+		const value = Math_clamp(safeNumber(_ref_count.valueAsNumber), 1, Number.MAX_VALUE)
 		ColorsStore.update(v => v.count = value)
 	})
 
-	_countRef.addEventListener('blur', () => {
-		_countRef.valueAsNumber = ColorsStore.value.count
+	_ref_count.addEventListener('blur', () => {
+		_ref_count.valueAsNumber = ColorsStore.value.count
 	})
 
-	_spaceRef.addEventListener('change', () => {
-		const value = _spaceRef.value
+	_ref_space.addEventListener('change', () => {
+		const value = _ref_space.value
 		if (!isValidEnumValue(value, ColorsRandomizerSpace)) {return}
 
 		ColorsStore.update(v => v.colorSpace = value as ColorsRandomizerSpace)
 	})
 
-	_hexMinRef.addEventListener('input', () => {
+	_ref_hexMin.addEventListener('input', () => {
 		const value = Math_clamp(
-			safeNumber(_hexMinRef.valueAsNumber), 0, ColorsStore.value.hexMax
+			safeNumber(_ref_hexMin.valueAsNumber), 0, ColorsStore.value.hexMax
 		)
 		ColorsStore.update(v => v.hexMin = value)
 	})
 
-	_hexMinRef.addEventListener('blur', () => {
-		_hexMinRef.valueAsNumber = ColorsStore.value.hexMin
+	_ref_hexMin.addEventListener('blur', () => {
+		_ref_hexMin.valueAsNumber = ColorsStore.value.hexMin
 	})
 
-	_hexMaxRef.addEventListener('input', () => {
+	_ref_hexMax.addEventListener('input', () => {
 		const value = Math_clamp(
-			safeNumber(_hexMaxRef.valueAsNumber), ColorsStore.value.hexMin, 0xffffff
+			safeNumber(_ref_hexMax.valueAsNumber), ColorsStore.value.hexMin, 0xffffff
 		)
 		ColorsStore.update(v => v.hexMax = value)
 	})
 
-	_hexMaxRef.addEventListener('blur', () => {
-		_hexMaxRef.valueAsNumber = ColorsStore.value.hexMax
+	_ref_hexMax.addEventListener('blur', () => {
+		_ref_hexMax.valueAsNumber = ColorsStore.value.hexMax
 	})
 
-	_redMinRef.addEventListener('input', () => {
+	_ref_redMin.addEventListener('input', () => {
 		const value = Math_clamp(
-			safeNumber(_redMinRef.valueAsNumber), 0, ColorsStore.value.rgbRMax
+			safeNumber(_ref_redMin.valueAsNumber), 0, ColorsStore.value.rgbRMax
 		)
 		ColorsStore.update(v => v.rgbRMin = value)
 	})
 
-	_redMinRef.addEventListener('blur', () => {
-		_redMinRef.valueAsNumber = ColorsStore.value.rgbRMin
+	_ref_redMin.addEventListener('blur', () => {
+		_ref_redMin.valueAsNumber = ColorsStore.value.rgbRMin
 	})
 
-	_redMaxRef.addEventListener('input', () => {
+	_ref_redMax.addEventListener('input', () => {
 		const value = Math_clamp(
-			safeNumber(_redMaxRef.valueAsNumber), ColorsStore.value.rgbRMin, 0xff
+			safeNumber(_ref_redMax.valueAsNumber), ColorsStore.value.rgbRMin, 0xff
 		)
 		ColorsStore.update(v => v.rgbRMax = value)
 	})
 
-	_redMaxRef.addEventListener('blur', () => {
-		_redMaxRef.valueAsNumber = ColorsStore.value.rgbRMax
+	_ref_redMax.addEventListener('blur', () => {
+		_ref_redMax.valueAsNumber = ColorsStore.value.rgbRMax
 	})
 
-	_greenMinRef.addEventListener('input', () => {
+	_ref_greenMin.addEventListener('input', () => {
 		const value = Math_clamp(
-			safeNumber(_greenMinRef.valueAsNumber), 0, ColorsStore.value.rgbGMax
+			safeNumber(_ref_greenMin.valueAsNumber), 0, ColorsStore.value.rgbGMax
 		)
 		ColorsStore.update(v => v.rgbGMin = value)
 	})
 
-	_greenMinRef.addEventListener('blur', () => {
-		_greenMinRef.valueAsNumber = ColorsStore.value.rgbGMin
+	_ref_greenMin.addEventListener('blur', () => {
+		_ref_greenMin.valueAsNumber = ColorsStore.value.rgbGMin
 	})
 
-	_greenMaxRef.addEventListener('input', () => {
+	_ref_greenMax.addEventListener('input', () => {
 		const value = Math_clamp(
-			safeNumber(_greenMaxRef.valueAsNumber), ColorsStore.value.rgbGMin, 0xff
+			safeNumber(_ref_greenMax.valueAsNumber), ColorsStore.value.rgbGMin, 0xff
 		)
 		ColorsStore.update(v => v.rgbGMax = value)
 	})
 
-	_greenMaxRef.addEventListener('blur', () => {
-		_greenMaxRef.valueAsNumber = ColorsStore.value.rgbGMax
+	_ref_greenMax.addEventListener('blur', () => {
+		_ref_greenMax.valueAsNumber = ColorsStore.value.rgbGMax
 	})
 
-	_blueMinRef.addEventListener('input', () => {
+	_ref_blueMin.addEventListener('input', () => {
 		const value = Math_clamp(
-			safeNumber(_blueMinRef.valueAsNumber), 0, ColorsStore.value.rgbBMax
+			safeNumber(_ref_blueMin.valueAsNumber), 0, ColorsStore.value.rgbBMax
 		)
 		ColorsStore.update(v => v.rgbBMin = value)
 	})
 
-	_blueMinRef.addEventListener('blur', () => {
-		_blueMinRef.valueAsNumber = ColorsStore.value.rgbBMin
+	_ref_blueMin.addEventListener('blur', () => {
+		_ref_blueMin.valueAsNumber = ColorsStore.value.rgbBMin
 	})
 
-	_blueMaxRef.addEventListener('input', () => {
+	_ref_blueMax.addEventListener('input', () => {
 		const value = Math_clamp(
-			safeNumber(_blueMaxRef.valueAsNumber), ColorsStore.value.rgbBMin, 0xff
+			safeNumber(_ref_blueMax.valueAsNumber), ColorsStore.value.rgbBMin, 0xff
 		)
 		ColorsStore.update(v => v.rgbBMax = value)
 	})
 
-	_blueMaxRef.addEventListener('blur', () => {
-		_blueMaxRef.valueAsNumber = ColorsStore.value.rgbBMax
+	_ref_blueMax.addEventListener('blur', () => {
+		_ref_blueMax.valueAsNumber = ColorsStore.value.rgbBMax
 	})
 
-	_hueMinRef.addEventListener('input', () => {
+	_ref_hueMin.addEventListener('input', () => {
 		const value = Math_clamp(
-			safeNumber(_hueMinRef.valueAsNumber), 0, ColorsStore.value.hslHMax
+			safeNumber(_ref_hueMin.valueAsNumber), 0, ColorsStore.value.hslHMax
 		)
 		ColorsStore.update(v => v.hslHMin = value)
 	})
 
-	_hueMinRef.addEventListener('blur', () => {
-		_hueMinRef.valueAsNumber = ColorsStore.value.hslHMin
+	_ref_hueMin.addEventListener('blur', () => {
+		_ref_hueMin.valueAsNumber = ColorsStore.value.hslHMin
 	})
 
-	_hueMaxRef.addEventListener('input', () => {
+	_ref_hueMax.addEventListener('input', () => {
 		const value = Math_clamp(
-			safeNumber(_hueMaxRef.valueAsNumber), ColorsStore.value.hslHMin, 360
+			safeNumber(_ref_hueMax.valueAsNumber), ColorsStore.value.hslHMin, 360
 		)
 		ColorsStore.update(v => v.hslHMax = value)
 	})
 
-	_hueMaxRef.addEventListener('blur', () => {
-		_hueMaxRef.valueAsNumber = ColorsStore.value.hslHMax
+	_ref_hueMax.addEventListener('blur', () => {
+		_ref_hueMax.valueAsNumber = ColorsStore.value.hslHMax
 	})
 
-	_saturationMinRef.addEventListener('input', () => {
+	_ref_saturationMin.addEventListener('input', () => {
 		const value = Math_clamp(
-			safeNumber(_saturationMinRef.valueAsNumber), 0, ColorsStore.value.hslSMax
+			safeNumber(_ref_saturationMin.valueAsNumber), 0, ColorsStore.value.hslSMax
 		)
 		ColorsStore.update(v => v.hslSMin = value)
 	})
 
-	_saturationMinRef.addEventListener('blur', () => {
-		_saturationMinRef.valueAsNumber = ColorsStore.value.hslSMin
+	_ref_saturationMin.addEventListener('blur', () => {
+		_ref_saturationMin.valueAsNumber = ColorsStore.value.hslSMin
 	})
 
-	_saturationMaxRef.addEventListener('input', () => {
+	_ref_saturationMax.addEventListener('input', () => {
 		const value = Math_clamp(
-			safeNumber(_saturationMaxRef.valueAsNumber), ColorsStore.value.hslSMin, 100
+			safeNumber(_ref_saturationMax.valueAsNumber), ColorsStore.value.hslSMin, 100
 		)
 		ColorsStore.update(v => v.hslSMax = value)
 	})
 
-	_saturationMaxRef.addEventListener('blur', () => {
-		_saturationMaxRef.valueAsNumber = ColorsStore.value.hslSMax
+	_ref_saturationMax.addEventListener('blur', () => {
+		_ref_saturationMax.valueAsNumber = ColorsStore.value.hslSMax
 	})
 
-	_lightMinRef.addEventListener('input', () => {
+	_ref_lightMin.addEventListener('input', () => {
 		const value = Math_clamp(
-			safeNumber(_lightMinRef.valueAsNumber), 0, ColorsStore.value.hslLMax
+			safeNumber(_ref_lightMin.valueAsNumber), 0, ColorsStore.value.hslLMax
 		)
 		ColorsStore.update(v => v.hslLMin = value)
 	})
 
-	_lightMinRef.addEventListener('blur', () => {
-		_lightMinRef.valueAsNumber = ColorsStore.value.hslLMin
+	_ref_lightMin.addEventListener('blur', () => {
+		_ref_lightMin.valueAsNumber = ColorsStore.value.hslLMin
 	})
 
-	_lightMaxRef.addEventListener('input', () => {
+	_ref_lightMax.addEventListener('input', () => {
 		const value = Math_clamp(
-			safeNumber(_lightMaxRef.valueAsNumber), ColorsStore.value.hslLMin, 100
+			safeNumber(_ref_lightMax.valueAsNumber), ColorsStore.value.hslLMin, 100
 		)
 		ColorsStore.update(v => v.hslLMax = value)
 	})
 
-	_lightMaxRef.addEventListener('blur', () => {
-		_lightMaxRef.valueAsNumber = ColorsStore.value.hslLMax
+	_ref_lightMax.addEventListener('blur', () => {
+		_ref_lightMax.valueAsNumber = ColorsStore.value.hslLMax
 	})
 }
 

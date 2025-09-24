@@ -1,10 +1,7 @@
 ---
 import { joinClassList } from '@/utils/attributes'
 
-import {
-	type LinkButtonProps,
-	ButtonClasses
-} from './index'
+import {type LinkButtonProps, CButton} from './index'
 import './index.scss'
 
 type Props = LinkButtonProps
@@ -18,13 +15,12 @@ const {
 	rel,
 	...other
 } = Astro.props
+const cls = CButton.Classes
 ---
 <a
-	class={joinClassList(ButtonClasses.button, className)}
+	class={joinClassList(cls.button, className)}
 	data-c-button-variant={LinkButtonVariant}
 	data-c-button-focused={LinkButtonFocused? '' : undefined}
 	target={target ?? (LinkButtonNewTab? '_blank' : undefined)}
 	rel={rel ?? (LinkButtonNewTab? 'noopener noreferrer' : undefined)}
-	{...other}>
-	<slot />
-</a>
+	{...other}><slot /></a>

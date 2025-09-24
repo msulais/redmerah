@@ -1,4 +1,4 @@
-import type { ButtonElement } from "@/components/Button"
+import { CButton } from "@/components/Button"
 import { $ } from "../_core/_dom-utils"
 import { ElementIds } from "../_shared/_ids"
 import { BrowserQRCodeReader } from '@zxing/browser'
@@ -7,7 +7,7 @@ import { pickFile } from "@/utils/file"
 import { ObservableStore } from "@/utils/store"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEasing } from "@/enums/animation"
-import type { TextAreaFieldElement } from "@/components/TextAreaField"
+import { CTextAreaField } from "@/components/TextAreaField"
 
 export type ScanStoreType = Readonly<{
 	imgUrl: string | null
@@ -33,30 +33,30 @@ const _qrDecoder02 = new BrowserQRCodeReader(new Map([[DecodeHintType.PURE_BARCO
 const _qrDecoder03 = new BrowserQRCodeReader(new Map([[DecodeHintType.POSSIBLE_FORMATS, _barcodeFormat]]))
 const _qrDecoder04 = new BrowserQRCodeReader(new Map([[DecodeHintType.TRY_HARDER, _barcodeFormat]]))
 const _qrDecoder05 = new BrowserQRCodeReader(new Map([[DecodeHintType.OTHER, _barcodeFormat]]))
-const _pickImgBtnRef = $(ElementIds.pgScan_pickImg) as ButtonElement
-const _imgPreviewRef = $(ElementIds.pgScan_imgPreview) as HTMLImageElement
-const _outputRef = $(ElementIds.pgScan_output) as TextAreaFieldElement
+const _ref_pickImgBtn = $(ElementIds.pgScan_pickImg) as CButton.CElement
+const _ref_imgPreview = $(ElementIds.pgScan_imgPreview) as HTMLImageElement
+const _ref_output = $(ElementIds.pgScan_output) as CTextAreaField.CElement
 
 function _subsOutputView(v: ScanStoreType, o: ScanStoreType): void {
 	const outputText = v.outputText
 	if (outputText === o.outputText) {return}
 
-	_outputRef.value = outputText
+	_ref_output.value = outputText
 }
 
 async function _subsImgUrlView(v: ScanStoreType, o: ScanStoreType): Promise<void> {
 	const url = v.imgUrl
 	if (url === o.imgUrl || url === null) {return}
 
-	_imgPreviewRef.src = url
+	_ref_imgPreview.src = url
 	if (isAnimationAllowed()) {
-		_imgPreviewRef.animate({
+		_ref_imgPreview.animate({
 			opacity: [0, 1],
 			scale: [.9, 1]
 		}, _animationOptions)
 	}
 	const decodeImage = (async (decoder: BrowserQRCodeReader) => (
-		await decoder.decodeFromImageElement(_imgPreviewRef)
+		await decoder.decodeFromImageElement(_ref_imgPreview)
 	).getText())
 
 	let outputText: string | null = null
@@ -81,7 +81,7 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_pickImgBtnRef.addEventListener('click', () => {
+	_ref_pickImgBtn.addEventListener('click', () => {
 		pickFile('image/*', false).then((files) => {
 			if (files === null || files.length === 0) return
 

@@ -2,7 +2,7 @@ import { ObservableStore } from "@/utils/store"
 import { DEFAULT_TEAMS_COUNT, DEFAULT_TEAMS_MEMBERS_ID, DEFAULT_TEAMS_NAMES_ID, DEFAULT_TEAMS_OUTPUT } from "../_shared/_constant"
 import { ElementIds } from "../_shared/_ids"
 import { $, $$, $$$ } from "../_core/_dom-utils"
-import type { ComboBoxElement } from "@/components/ComboBox"
+import { CComboBox } from "@/components/ComboBox"
 import { safeNumber } from "@/utils/number"
 import { Math_clamp } from "@/utils/math"
 import { ListsStore } from "../_core/_lists"
@@ -22,11 +22,11 @@ export const TeamsStore = new ObservableStore<TeamsStoreType>({
 	namesId: DEFAULT_TEAMS_NAMES_ID,
 	output: DEFAULT_TEAMS_OUTPUT
 })
-const _namesRef = $(ElementIds.pgTm_names) as ComboBoxElement
-const _membersRef = $(ElementIds.pgTm_members) as ComboBoxElement
-const _countRef = $(ElementIds.pgTm_count) as HTMLInputElement
-const _outputRef = $(ElementIds.pgTm_output) as HTMLUListElement
-let _timeStorageId: NodeJS.Timeout | number | undefined
+const _ref_names = $(ElementIds.pgTm_names) as CComboBox.CElement
+const _ref_members = $(ElementIds.pgTm_members) as CComboBox.CElement
+const _ref_count = $(ElementIds.pgTm_count) as HTMLInputElement
+const _ref_output = $(ElementIds.pgTm_output) as HTMLUListElement
+let _time_storage: NodeJS.Timeout | number | undefined
 
 export function updateOutput(): void {
 	const lists = ListsStore.value.list
@@ -74,8 +74,8 @@ export function updateOutput(): void {
 }
 
 function _subsStorage(v: TeamsStoreType): void {
-	clearTimeout(_timeStorageId)
-	_timeStorageId = setTimeout(() => {
+	clearTimeout(_time_storage)
+	_time_storage = setTimeout(() => {
 		saveStorageItem('teams:count', v.count)
 		saveStorageItem('teams:members-id', v.membersId)
 		saveStorageItem('teams:names-id', v.namesId)
@@ -88,7 +88,7 @@ function _subsOutputView(v: TeamsStoreType, o: TeamsStoreType): void {
 	if (output === o.output) {return}
 
 	const refs = $$$<HTMLLIElement>(`#${CSS.escape(ElementIds.pgTm_output)}>li`)
-	const updateLiRef = (ref: HTMLLIElement, items: string[]) => {
+	const update_ref_li = (ref: HTMLLIElement, items: string[]) => {
 		const ul = $$<HTMLUListElement>('ul', ref) ?? document.createElement('ul')
 		const refs = $$$<HTMLLIElement>('li', ul)
 		const teamName = items[0] ?? ''
@@ -120,25 +120,25 @@ function _subsOutputView(v: TeamsStoreType, o: TeamsStoreType): void {
 			continue
 		}
 
-		updateLiRef(ref, output[i])
+		update_ref_li(ref, output[i])
 	}
 
 	for (let i = 0; i < output.length - refs.length; i++) {
 		const index = refs.length + i
 		const ref = document.createElement('li')
-		updateLiRef(ref, output[index])
-		_outputRef.append(ref)
+		update_ref_li(ref, output[index])
+		_ref_output.append(ref)
 	}
 }
 
 function _subsView(v: TeamsStoreType): void {
 	const isActive = (el: Element) => el === document.activeElement
-	if (!isActive(_countRef)) {
-		_countRef.valueAsNumber = v.count
+	if (!isActive(_ref_count)) {
+		_ref_count.valueAsNumber = v.count
 	}
 
-	_namesRef.value = v.namesId.toString()
-	_membersRef.value = v.membersId.toString()
+	_ref_names.value = v.namesId.toString()
+	_ref_members.value = v.membersId.toString()
 }
 
 function _initSubscriber(): void {
@@ -148,15 +148,15 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_namesRef.addEventListener('change', () => {
-		const id = Number.parseInt(_namesRef.value)
+	_ref_names.addEventListener('change', () => {
+		const id = Number.parseInt(_ref_names.value)
 		if (!ListsStore.value.list.some(v => v.id === id)) {return}
 
 		TeamsStore.update(v => v.namesId = id)
 	})
 
-	_membersRef.addEventListener('change', () => {
-		const id = Number.parseInt(_membersRef.value)
+	_ref_members.addEventListener('change', () => {
+		const id = Number.parseInt(_ref_members.value)
 		const list = ListsStore.value.list
 		if (!list.some(v => v.id === id)) {return}
 
@@ -167,20 +167,20 @@ function _initEvents(): void {
 		})
 	})
 
-	_countRef.addEventListener('focus', () => {
+	_ref_count.addEventListener('focus', () => {
 		const list = ListsStore.value.list.find(v => v.id === TeamsStore.value.membersId)
 		if (!list) {return}
 
-		_countRef.max = list.items.length.toString()
+		_ref_count.max = list.items.length.toString()
 	})
 
-	_countRef.addEventListener('input', () => {
-		const value = Math_clamp(safeNumber(_countRef.valueAsNumber), 1, Number.MAX_VALUE)
+	_ref_count.addEventListener('input', () => {
+		const value = Math_clamp(safeNumber(_ref_count.valueAsNumber), 1, Number.MAX_VALUE)
 		TeamsStore.update(v => v.count = value)
 	})
 
-	_countRef.addEventListener('blur', () => {
-		_countRef.valueAsNumber = TeamsStore.value.count
+	_ref_count.addEventListener('blur', () => {
+		_ref_count.valueAsNumber = TeamsStore.value.count
 	})
 }
 

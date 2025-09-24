@@ -1,10 +1,6 @@
 ---
 import { joinClassList } from '@/utils/attributes'
-
-import {
-	type TextFieldProps,
-	TextFieldClasses
-} from '.'
+import {type TextFieldProps, CTextField} from '.'
 import './index.scss'
 
 type Props = TextFieldProps
@@ -18,18 +14,22 @@ const {
 const {'class': inputClass   , type: inputType = "text", ...inputOther} = TextFieldInputAttr
 const {'class': leadingClass , ...leadingOther } = TextFieldLeadingAttr
 const {'class': trailingClass, ...trailingOther} = TextFieldTrailingAttr
+
+const cls = CTextField.Classes
 ---
 
-<div class={joinClassList(TextFieldClasses.textfield, className)} {...other}>
-	<div class={joinClassList(TextFieldClasses.leading, leadingClass)} {...leadingOther}>
-		<slot name="leading"/>
-	</div>
+<div
+	class={joinClassList(cls.textfield, className)}
+	{...other}>
+	<div
+		class={joinClassList(cls.leading, leadingClass)}
+		{...leadingOther}><slot name="leading"/></div>
 	<input
 		type={inputType}
-		class={joinClassList(TextFieldClasses.input, inputClass)}
+		class={joinClassList(cls.input, inputClass)}
 		{...inputOther}
 	/>
-	<div class={joinClassList(TextFieldClasses.trailing, trailingClass)} {...trailingOther}>
-		<slot name="trailing"/>
-	</div>
+	<div
+		class={joinClassList(cls.trailing, trailingClass)}
+		{...trailingOther}><slot name="trailing"/></div>
 </div>

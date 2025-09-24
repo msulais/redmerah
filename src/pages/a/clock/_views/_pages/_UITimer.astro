@@ -1,5 +1,5 @@
 ---
-import { ButtonVariant } from '@/components/Button'
+import { CButton } from '@/components/Button'
 import { ElementIds } from '../../_scripts/_shared/_ids'
 import { CSSClasses } from '../../_styles/_css'
 import Button from '@/components/Button/index.astro'
@@ -39,7 +39,7 @@ const seconds = Math.floor(Math.floor(DEFAULT_TIMER_SECONDS % 3600) % 60)
 			style={{
 				width: pxToRem(92) + 'rem'
 			}}
-			ButtonVariant={ButtonVariant.filled}
+			ButtonVariant={CButton.Variant.filled}
 			id={ElementIds.pgTm_playPause}>
 			<Icon IconCode={DEFAULT_TIMER_RUNNING? IconCodes.pause : IconCodes.play} IconFilled/>
 			<span>{DEFAULT_TIMER_RUNNING? 'Pause' : 'Start'}</span>
@@ -48,7 +48,7 @@ const seconds = Math.floor(Math.floor(DEFAULT_TIMER_SECONDS % 3600) % 60)
 			style={DEFAULT_TIMER_RUNNING? "display:none" : undefined}
 			id={ElementIds.pgTm_editReset}
 			IconButtonCode={IconCodes.edit}
-			ButtonVariant={ButtonVariant.tonal}
+			ButtonVariant={CButton.Variant.tonal}
 			aria-label="Edit timer"
 			data-tooltip="Edit timer"
 		/>
@@ -88,8 +88,8 @@ const seconds = Math.floor(Math.floor(DEFAULT_TIMER_SECONDS % 3600) % 60)
 			}}/>
 		</div>
 		<form slot="footer" method="dialog" style="display:contents">
-			<Button ButtonVariant={ButtonVariant.tonal}>Cancel</Button>
-			<Button id={ElementIds.pgTm_save} ButtonVariant={ButtonVariant.filled}>Save</Button>
+			<Button ButtonVariant={CButton.Variant.tonal}>Cancel</Button>
+			<Button id={ElementIds.pgTm_save} ButtonVariant={CButton.Variant.filled}>Save</Button>
 		</form>
 	</Dialog>
 	<Dialog
@@ -101,7 +101,7 @@ const seconds = Math.floor(Math.floor(DEFAULT_TIMER_SECONDS % 3600) % 60)
 		<p id={ElementIds.pgTm_doneTime}></p>
 		<p id={ElementIds.pgTm_doneDate}></p>
 		<form style="display:contents" method="dialog" slot="footer">
-			<Button ButtonVariant={ButtonVariant.filled}>
+			<Button ButtonVariant={CButton.Variant.filled}>
 				<Icon IconCode={IconCodes.dismiss}/>
 				Dismiss
 			</Button>

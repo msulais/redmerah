@@ -1,55 +1,594 @@
-import { FlyoutPosition as MenuPosition } from "@/enums/position"
-
 import {
+	CPopover as GCPopover,
 	type PopoverProps,
-	type PopoverUpdateOptions,
-	PopoverAttributes,
-	PopoverClasses,
-	openPopoverRef,
-	closePopoverRef,
-	repositionPopoverRef,
-	isPopoverRefOpen,
-	createPopoverRef,
-	registerPopoverRef,
-	updatePopoverRef,
-	unregisterPopoverRef,
-	type PopoverElement,
 } from "@/components/Popover"
 import {
-	type ButtonUpdateOptions,
+	CButton as GCButton,
 	type ButtonProps,
-	type LinkButtonUpdateOptions,
-	type LinkButtonProps,
-	createButtonRef,
-	createLinkButtonRef,
-	updateButtonRef,
-	updateLinkButtonRef,
-	ButtonClasses,
-	type LinkButtonElement,
-	type ButtonElement
+	type LinkButtonProps
 } from "@/components/Button"
-import { createIconRef, type IconElement, type IconProps } from "@/components/Icon"
+import { CIcon as GCIcon, type IconProps } from "@/components/Icon"
 import { AppCSSColors } from "@/enums/app-data"
 import { createElementId } from "@/utils/ids"
 import { IconCodes } from "@/enums/icons"
+import { $classlist, $has_attr, $set_attr, $is_false, $rm_attr, $is_string, $query, $create, $children, $is_array, $add_event, $is_bool, $query_all } from "../utils"
 
-type MenuProps = PopoverProps & {
+export namespace CMenu {
+	export type CElement = GCPopover.CElement
+	export type UpdateOptions = GCPopover.UpdateOptions & {
+		Menu?: {
+			children?: (string | Node)[] | boolean
+			role    ?: astroHTML.JSX.AriaRole | boolean
+			refs    ?: {
+				menu    ?(ref: CElement   ): unknown
+				content ?(ref: HTMLDivElement): unknown
+			}
+		}
+	}
+
+	export enum Classes {
+		menu             = 'c-menu',
+		content          = menu + '-content',
+		header           = menu + '-header',
+		item             = menu + '-item',
+		indent           = menu + '-indent',
+		radioItem        = menu + '-radio-item',
+		submenu          = menu + '-submenu',
+		checkItem        = menu + '-check-item',
+		submenuItem      = submenu + '-item',
+		radioItemLeading = radioItem + '-leading',
+		radioItemIcon    = radioItem + '-icon',
+		radioItemInput   = radioItem + '-input',
+		radioItemContent = radioItem + '-content',
+		checkItemLeading = checkItem + '-leading',
+		checkItemInput   = checkItem + '-input',
+		checkItemIcon    = checkItem + '-icon',
+		checkItemContent = checkItem + '-content'
+	}
+
+	export function create(options?: UpdateOptions): CElement {
+		const ref_menu = GCPopover.create(options)
+		return update(ref_menu)
+	}
+
+	export function update(ref_menu: CElement, options?: UpdateOptions): CElement {
+		let ref_popoverContent: HTMLDivElement
+		const opt = options?.Menu
+		const popover = options?.Popover
+		GCPopover.update(ref_menu, {
+			Popover: {
+				...popover,
+				refs: {
+					...popover?.refs,
+					content(ref) {
+						ref_popoverContent = ref
+						popover?.refs?.content?.(ref)
+					},
+				}
+			},
+		})
+
+		$classlist(ref_menu, Classes.menu)
+		if (!$has_attr(ref_menu, 'role')) {
+			$set_attr(ref_menu, 'role', 'menu')
+		}
+
+		const opt_role = opt?.role
+		if ($is_false(opt_role)) {
+			$rm_attr(ref_menu, 'role')
+		}
+		else if ($is_string(opt_role)) {
+			$set_attr(ref_menu, 'role', opt_role)
+		}
+
+		// content
+		const opt_children = opt?.children
+		let ref_content = $query<HTMLDivElement>(`.${Classes.content}`, ref_popoverContent!)
+		if (!ref_content) {
+			ref_content = $create('div')
+			$classlist(ref_content, Classes.content)
+		}
+		if ($is_false(opt_children)) {
+			$children(ref_content)
+		}
+		else if ($is_array(opt_children)) {
+			$children(ref_content, ...opt_children)
+		}
+
+		$children(ref_popoverContent!, ref_content)
+		const refs = opt?.refs
+		refs?.menu?.(ref_menu)
+		refs?.content?.(ref_content)
+		return ref_menu
+	}
+
+	export namespace CSub {
+		export type CElement = GCPopover.CElement
+		export type UpdateOptions = CMenu.UpdateOptions
+
+		export function create(options?: UpdateOptions): CElement {
+			const ref_submenu = $create('div')
+			return update(ref_submenu, options)
+		}
+
+		export function update(ref_submenu: CElement, options?: UpdateOptions): CElement {
+			CMenu.update(ref_submenu, options)
+			$classlist(ref_submenu, Classes.submenu)
+			return ref_submenu
+		}
+	}
+
+	export namespace CSubItem {
+		export type CElement = CItem.CElement
+		export type UpdateOptions = CItem.UpdateOptions & {
+			SubMenuItem?: {
+				popoverId?: string
+				refs     ?: {
+					submenuitem?(ref: CElement): unknown
+				}
+			},
+		}
+
+		const REGISTERED_SUBMENUITEM: Set<CElement> = new Set<CElement>()
+
+		/**
+		 * Any element is possible as long have class `Classes.submenuItem`
+		 * @param ref_submenuitem
+		 */
+		function initSubMenuItem(ref_submenuitem: CElement): void {
+			const elements = {
+				get parent() {
+					return ref_submenuitem.closest('.' + Classes.menu) as CSub.CElement | null
+				},
+				get target() {
+					return ref_submenuitem.popoverTargetElement as CSub.CElement | null
+				}
+			}
+
+			function initEvents(): void {
+				const ref_parent = elements.parent
+				$add_event<ToggleEvent>(ref_parent, 'beforetoggle', ev => {
+					const isOpen = ev.newState === 'open'
+					if (isOpen) {return}
+
+					for (const ref of $query_all<CSub.CElement>(`.${Classes.submenu}`, ref_parent!)) {
+						ref.hidePopover()
+					}
+				})
+
+				const ref_target = elements.target
+				$add_event<ToggleEvent>(ref_target, 'beforetoggle', ev => {
+					const isOpen = ev.newState === 'open'
+					update(ref_submenuitem, {Button: {focused: isOpen}})
+
+					if (!isOpen || !ref_parent) {return}
+
+					for (const ref of $query_all<CSub.CElement>(`.${Classes.submenu}`, ref_parent)) {
+						if (ref === ref_target) {continue}
+						ref.hidePopover()
+					}
+				})
+			}
+
+			function initSubMenuItemId(): void {
+				let id = ref_submenuitem.id
+				if (!id) {
+					id = createElementId()
+					ref_submenuitem.id = id
+				}
+
+				const target = elements.target
+				if (!target) {return}
+
+				CSub.update(target, {Popover: {anchorBy: id}})
+			}
+
+			initSubMenuItemId()
+			initEvents()
+		}
+
+		export function create(options: Omit<UpdateOptions, 'SubMenuItemPopoverId'> & {
+			SubMenuItemPopoverId: string
+		}): CElement {
+			const ref_submenuitem = update(CItem.create(options))
+			register(ref_submenuitem)
+			return ref_submenuitem
+		}
+
+		export function update(
+			ref_submenuitem: CElement,
+			options?: UpdateOptions
+		): CElement {
+			const opt = options?.SubMenuItem
+			CItem.update(ref_submenuitem, options)
+			$classlist(ref_submenuitem, Classes.submenuItem)
+			const opt_popoverId = opt?.popoverId
+			if (opt_popoverId) {
+				$set_attr(ref_submenuitem, 'popovertarget', opt_popoverId)
+			}
+
+			const refs = opt?.refs
+			refs?.submenuitem?.(ref_submenuitem)
+			return ref_submenuitem
+		}
+
+		export function register(...refs_submenuitem: CElement[]): void {
+			if (refs_submenuitem.length === 0) {
+				refs_submenuitem = [...$query_all<CElement>('.' + Classes.submenuItem)]
+			}
+
+			for (const ref of refs_submenuitem){
+				if (REGISTERED_SUBMENUITEM.has(ref)) {
+					continue
+				}
+
+				REGISTERED_SUBMENUITEM.add(ref)
+				initSubMenuItem(ref)
+			}
+		}
+
+		export function unregister(...refs_submenuitem: CElement[]): void {
+			for (const ref of refs_submenuitem) {
+				REGISTERED_SUBMENUITEM.delete(ref)
+			}
+		}
+	}
+
+	export namespace CItem {
+		export type CElement = GCButton.CElement
+		export type UpdateOptions = GCButton.UpdateOptions & {
+			MenuItem?: {
+				role?: astroHTML.JSX.AriaRole | boolean
+				refs?: {
+					menuitem?(ref: CElement): unknown
+				}
+			},
+		}
+
+		export function create(options?: UpdateOptions): CElement {
+			const ref_menuitem = GCButton.create(options)
+			return update(ref_menuitem)
+		}
+
+		export function update(ref_menuitem: CElement, options?: UpdateOptions): CElement {
+			const opt = options?.MenuItem
+			GCButton.update(ref_menuitem, options)
+			$classlist(ref_menuitem, Classes.item)
+			if (!$has_attr(ref_menuitem, 'role')) {
+				$set_attr(ref_menuitem, 'role', 'menuitem')
+			}
+
+			const opt_role = opt?.role
+			if ($is_false(opt_role)) {
+				$rm_attr(ref_menuitem, 'role')
+			}
+			else if ($is_string(opt_role)) {
+				$set_attr(ref_menuitem, 'role', opt_role)
+			}
+
+			const refs = opt?.refs
+			refs?.menuitem?.(ref_menuitem)
+			return ref_menuitem
+		}
+	}
+
+	export namespace CCheckItem {
+		export type CElement = HTMLLabelElement
+		export type UpdateOptions = {
+			CheckMenuItem?: {
+				checked ?: boolean
+				disabled?: boolean
+				leading ?: (string | Node[]) | boolean
+				children?: (string | Node[]) | boolean
+				refs    ?: {
+					checkmenuitem?(ref: CElement      ): unknown
+					leading      ?(ref: HTMLDivElement): unknown
+					icon         ?(ref: SVGSVGElement ): unknown
+					content      ?(ref: HTMLDivElement): unknown
+				}
+			}
+		}
+
+		export function create(options?: UpdateOptions): CElement {
+			const ref_checkmenuitem = $create('label')
+			return update(ref_checkmenuitem, options)
+		}
+
+		export function update(ref_checkmenuitem: CElement, options?: UpdateOptions): CElement {
+			const opt = options?.CheckMenuItem
+			const refs = opt?.refs
+			$classlist(ref_checkmenuitem, GCButton.Classes.button, Classes.item, Classes.checkItem)
+
+			// leading
+			const opt_leading = opt?.leading
+			let ref_leading = $query<HTMLDivElement>(`.${Classes.checkItemLeading}`, ref_checkmenuitem)
+			if (!ref_leading) {
+				ref_leading = $create('div')
+				$classlist(ref_leading, Classes.checkItemLeading)
+			}
+			if ($is_false(opt_leading)) {
+				$children(ref_leading)
+			}
+			else if ($is_array(opt_leading)) {
+				$children(ref_leading, ...opt_leading)
+			}
+
+			// input
+			let ref_input = $query<HTMLInputElement>(`.${Classes.checkItemInput}`, ref_checkmenuitem)
+			if (!ref_input) {
+				ref_input = $create('input')
+				$classlist(ref_input, Classes.checkItemInput)
+				ref_input.autocomplete = 'off'
+				ref_input.role = 'menuitemcheckbox'
+				ref_input.type = 'checkbox'
+			}
+
+			const opt_checked = opt?.checked
+			if ($is_bool(opt_checked)) {
+				ref_input.checked = opt_checked
+			}
+
+			const opt_disabled = opt?.disabled
+			if ($is_bool(opt_disabled)) {
+				ref_input.disabled = opt_disabled
+			}
+
+			// icon
+			let ref_icon = $query<SVGSVGElement>('.' + Classes.checkItemIcon, ref_checkmenuitem)
+			if (!ref_icon) {
+				ref_icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+				$classlist(ref_icon, Classes.checkItemIcon)
+				$set_attr(ref_icon, 'viewBox', '0 -960 960 960')
+				$set_attr(ref_icon, 'width', '20')
+				$set_attr(ref_icon, 'height', '20')
+
+				const ref_path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+				$set_attr(ref_path, 'd', 'm389-369 299-299q10.91-11 25.45-11Q728-679 739-668t11 25.58q0 14.58-10.61 25.19L415-292q-10.91 11-25.45 11Q375-281 364-292L221-435q-11-11-11-25.5t11-25.5q11-11 25.67-11 14.66 0 25.33 11l117 117Z')
+				$set_attr(ref_path, 'fill', `rgb(${AppCSSColors.accent})`)
+				ref_icon.append(ref_path)
+			}
+
+			// content
+			const opt_children = opt?.children
+			let ref_content = $query<HTMLDivElement>(`.${Classes.checkItemContent}`, ref_checkmenuitem)
+			if (!ref_content) {
+				ref_content = $create('div')
+				$classlist(ref_content, Classes.checkItemContent)
+			}
+			if ($is_false(opt_children)) {
+				$children(ref_content)
+			}
+			else if ($is_array(opt_children)) {
+				$children(ref_content, ...opt_children)
+			}
+
+			$children(ref_checkmenuitem, ref_leading, ref_input, ref_icon, ref_content)
+			refs?.checkmenuitem?.(ref_checkmenuitem)
+			refs?.content?.(ref_content)
+			refs?.icon?.(ref_icon)
+			refs?.leading?.(ref_leading)
+			return ref_checkmenuitem
+		}
+	}
+
+	export namespace CRadioItem {
+		export type CElement = HTMLLabelElement
+		export type UpdateOptions = {
+			RadioMenuItem?: {
+				checked ?: boolean
+				disabled?: boolean
+				name    ?: string
+				value   ?: string
+				leading ?: (string | Node[]) | boolean
+				children?: (string | Node[]) | boolean
+				refs    ?: {
+					radiomenuitem?(ref: CElement): unknown
+					leading      ?(ref: HTMLDivElement): unknown
+					icon         ?(ref: GCIcon.CElement): unknown
+					content      ?(ref: HTMLDivElement): unknown
+				}
+			}
+		}
+
+		export function create(options?: UpdateOptions): CElement {
+			const ref_radiomenuitem = $create('label')
+			return update(ref_radiomenuitem, options)
+		}
+
+		export function update(ref_radiomenuitem: CElement, options?: UpdateOptions): CElement {
+			const opt = options?.RadioMenuItem
+			$classlist(ref_radiomenuitem, GCButton.Classes.button, Classes.item, Classes.radioItem)
+
+			// leading
+			const opt_leading = opt?.leading
+			let ref_leading = $query<HTMLDivElement>(`.${Classes.radioItemLeading}`, ref_radiomenuitem)
+			if (!ref_leading) {
+				ref_leading = $create('div')
+				$classlist(ref_leading, Classes.radioItemLeading)
+			}
+			if ($is_false(opt_leading)) {
+				$children(ref_leading)
+			}
+			else if ($is_array(opt_leading)) {
+				$children(ref_leading, ...opt_leading)
+			}
+
+			// input
+			let ref_input = $query<HTMLInputElement>(`.${Classes.radioItemInput}`, ref_radiomenuitem)
+			if (!ref_input) {
+				ref_input = $create('input')
+				$classlist(ref_input, Classes.radioItemInput)
+				$set_attr(ref_input, 'role', 'menuitemradio')
+				$set_attr(ref_input, 'type', 'radio')
+				$set_attr(ref_input, 'autocomplete', 'off')
+			}
+
+			const opt_name = opt?.name
+			if (opt_name) {
+				ref_input.name = opt_name
+			}
+
+			const opt_value = opt?.value
+			if (opt_value) {
+				ref_input.value = opt_value
+			}
+
+			const opt_checked = opt?.checked
+			if ($is_bool(opt_checked)) {
+				ref_input.checked = opt_checked
+			}
+
+			const opt_disabled = opt?.disabled
+			if ($is_bool(opt_disabled)) {
+				ref_input.disabled = opt_disabled
+			}
+
+			// icon
+			let ref_icon = $query<GCIcon.CElement>(`.${Classes.radioItemIcon}`, ref_radiomenuitem)
+			if (!ref_icon) {
+				ref_icon = GCIcon.create({Icon: {
+					code: IconCodes.circleSmall,
+					filled: true
+				}})
+				$classlist(ref_icon, Classes.radioItemIcon)
+			}
+
+			// content
+			const opt_children = opt?.children
+			let ref_content = $query<HTMLDivElement>(`.${Classes.radioItemContent}`, ref_radiomenuitem)
+			if (!ref_content) {
+				ref_content = $create('div')
+				$classlist(ref_content, Classes.radioItemContent)
+			}
+			if ($is_false(opt_children)) {
+				$children(ref_content)
+			}
+			else if ($is_array(opt_children)) {
+				$children(ref_content, ...opt_children)
+			}
+
+			$children(ref_radiomenuitem, ref_leading, ref_input, ref_icon, ref_content)
+			const refs = opt?.refs
+			refs?.content?.(ref_content)
+			refs?.icon?.(ref_icon)
+			refs?.leading?.(ref_leading)
+			refs?.radiomenuitem?.(ref_radiomenuitem)
+			return ref_radiomenuitem
+		}
+	}
+
+	export namespace CLinkItem {
+		export type CElement = GCButton.CLink.CElement
+		export type UpdateOptions = GCButton.CLink.UpdateOptions & {
+			LinkMenuItem?: {
+				role?: astroHTML.JSX.AriaRole | boolean
+				refs?: {
+					linkmenuitem?(ref: CElement): unknown
+				}
+			}
+		}
+
+		export function create(options: UpdateOptions): CElement {
+			const ref_linkmenuitem = GCButton.CLink.create(options)
+			return update(ref_linkmenuitem, options)
+		}
+
+		export function update(ref_linkmenuitem: CElement, options: UpdateOptions): CElement {
+			const opt = options.LinkMenuItem
+			GCButton.CLink.update(ref_linkmenuitem, options)
+			$classlist(ref_linkmenuitem, Classes.item)
+			if (!$has_attr(ref_linkmenuitem, 'role')) {
+				$set_attr(ref_linkmenuitem, 'role', 'menuitem')
+			}
+
+			const opt_role = opt?.role
+			if ($is_false(opt_role)) {
+				$rm_attr(ref_linkmenuitem, 'role')
+			}
+			else if ($is_string(opt_role)) {
+				$set_attr(ref_linkmenuitem, 'role', opt_role)
+			}
+
+			const refs = opt?.refs
+			refs?.linkmenuitem?.(ref_linkmenuitem)
+			return ref_linkmenuitem
+		}
+	}
+
+	export namespace CHeader {
+		export type CElement = HTMLDivElement
+		export type UpdateOptions = {
+			MenuHeader?: {
+				children?: (string | Node)[] | boolean
+				refs    ?: {
+					header?(ref: CElement): unknown
+				}
+			}
+		}
+
+		export function create(options?: UpdateOptions): CElement {
+			const ref_menuheader = $create('div')
+			return update(ref_menuheader, options)
+		}
+
+		export function update(ref_menuheader: CElement, options?: UpdateOptions): CElement {
+			const opt = options?.MenuHeader
+			$classlist(ref_menuheader, Classes.header)
+
+			const opt_children = opt?.children
+			if ($is_false(opt_children)) {
+				$children(ref_menuheader)
+			}
+			else if ($is_array(opt_children)) {
+				$children(ref_menuheader, ...opt_children)
+			}
+
+			const refs = opt?.refs
+			refs?.header?.(ref_menuheader)
+			return ref_menuheader
+		}
+	}
+
+	export namespace CIndent {
+		export type CElement = HTMLDivElement
+		export type UpdateOptions = {
+			MenuIndent?: {
+				refs?: {
+					indent?(ref: CElement): unknown
+				}
+			}
+		}
+
+		export function create(options?: UpdateOptions): CElement {
+			const ref_indent = $create('div')
+			return update(ref_indent, options)
+		}
+
+		export function update(ref_indent: CElement, options?: UpdateOptions): CElement {
+			$classlist(ref_indent, Classes.indent)
+			options?.MenuIndent?.refs?.indent?.(ref_indent)
+			return ref_indent
+		}
+	}
+}
+
+export type MenuProps = PopoverProps & {
 	MenuContentAttr ?: astroHTML.JSX.HTMLAttributes
 }
 
-type SubMenuProps = MenuProps
+export type SubMenuProps = MenuProps
 
-type MenuItemProps = ButtonProps
-type LinkMenuItemProps = LinkButtonProps
-type MenuHeaderProps = astroHTML.JSX.HTMLAttributes
+export type MenuItemProps = ButtonProps
+export type LinkMenuItemProps = LinkButtonProps
+export type MenuHeaderProps = astroHTML.JSX.HTMLAttributes
 
-type SubMenuItemProps = Omit<MenuItemProps, 'popovertarget'> & {
+export type SubMenuItemProps = Omit<MenuItemProps, 'popovertarget'> & {
 	'popovertarget': string
 }
 
-type MenuIndentProps = astroHTML.JSX.HTMLAttributes
+export type MenuIndentProps = astroHTML.JSX.HTMLAttributes
 
-type RadioMenuItemProps = astroHTML.JSX.LabelHTMLAttributes & {
+export type RadioMenuItemProps = astroHTML.JSX.LabelHTMLAttributes & {
 	RadioMenuItemChecked    ?: boolean
 	RadioMenuItemDisabled   ?: boolean
 	RadioMenuItemName       ?: string
@@ -60,604 +599,11 @@ type RadioMenuItemProps = astroHTML.JSX.LabelHTMLAttributes & {
 	RadioMenuItemContentAttr?: astroHTML.JSX.HTMLAttributes
 }
 
-type CheckMenuItemProps = astroHTML.JSX.LabelHTMLAttributes & {
+export type CheckMenuItemProps = astroHTML.JSX.LabelHTMLAttributes & {
 	CheckMenuItemChecked    ?: boolean
 	CheckMenuItemDisabled   ?: boolean
 	CheckMenuItemLeadingAttr?: astroHTML.JSX.HTMLAttributes
 	CheckMenuItemInputAttr  ?: astroHTML.JSX.InputHTMLAttributes
 	CheckMenuItemIconAttr   ?: astroHTML.JSX.SVGAttributes
 	CheckMenuItemContentAttr?: astroHTML.JSX.HTMLAttributes
-}
-
-type MenuElement = PopoverElement
-type CheckMenuItemElement = HTMLLabelElement
-type LinkMenuItemElement = LinkButtonElement
-type MenuHeaderElement = HTMLDivElement
-type MenuIndentElement = HTMLDivElement
-type MenuItemElement = ButtonElement
-type RadioMenuItemElement = HTMLLabelElement
-type SubMenuElement = PopoverElement
-type SubMenuItemElement = MenuItemElement
-
-type CheckMenuItemUpdateOptions = {
-	CheckMenuItemChecked ?: boolean
-	CheckMenuItemDisabled?: boolean
-	CheckMenuItemLeading ?: (string | Node[]) | boolean
-	CheckMenuItemChildren?: (string | Node[]) | boolean
-	CheckMenuItemRefs    ?: {
-		checkmenuitem?(ref: CheckMenuItemElement): unknown
-		leading      ?(ref: HTMLDivElement      ): unknown
-		icon         ?(ref: SVGSVGElement       ): unknown
-		content      ?(ref: HTMLDivElement      ): unknown
-	}
-}
-
-type RadioMenuItemUpdateOptions = {
-	RadioMenuItemChecked ?: boolean
-	RadioMenuItemDisabled?: boolean
-	RadioMenuItemName    ?: string
-	RadioMenuItemValue   ?: string
-	RadioMenuItemLeading ?: (string | Node[]) | boolean
-	RadioMenuItemChildren?: (string | Node[]) | boolean
-	RadioMenuItemRefs    ?: {
-		radiomenuitem?(ref: RadioMenuItemElement): unknown
-		leading      ?(ref: HTMLDivElement      ): unknown
-		icon         ?(ref: IconElement         ): unknown
-		content      ?(ref: HTMLDivElement      ): unknown
-	}
-}
-
-type MenuIndentUpdateOptions = {
-	MenuIndentRefs?: {
-		indent?(ref: MenuIndentElement): unknown
-	}
-}
-
-type MenuHeaderUpdateOptions = {
-	MenuHeaderChildren?: (string | Node)[] | boolean
-	MenuHeaderRefs    ?: {
-		header?(ref: MenuHeaderElement): unknown
-	}
-}
-
-type MenuUpdateOptions = Omit<PopoverUpdateOptions, 'PopoverChildren'> & {
-	MenuChildren?: (string | Node)[] | boolean
-	MenuRole    ?: astroHTML.JSX.AriaRole | boolean
-	MenuRefs    ?: {
-		menu    ?(ref: MenuElement   ): unknown
-		content ?(ref: HTMLDivElement): unknown
-	}
-}
-
-type SubMenuUpdateOptions = MenuUpdateOptions
-
-type MenuItemUpdateOptions = ButtonUpdateOptions & {
-	MenuItemRole?: astroHTML.JSX.AriaRole | boolean
-	MenuItemRefs?: {
-		menuitem?(ref: MenuItemElement): unknown
-	}
-}
-
-type SubMenuItemUpdateOptions = MenuItemUpdateOptions & {
-	SubMenuItemPopoverId?: string
-	SubMenuItemRefs     ?: {
-		menuitem?(ref: SubMenuItemElement): unknown
-	}
-}
-
-type LinkMenuItemUpdateOptions = LinkButtonUpdateOptions & {
-	LinkMenuItemRole?: astroHTML.JSX.AriaRole | boolean
-	LinkMenuItemRefs?: {
-		menuitem?(ref: LinkMenuItemElement): unknown
-	}
-}
-
-enum MenuClasses {
-	menu             = 'c-menu',
-	content          = menu + '-content',
-	header           = menu + '-header',
-	item             = menu + '-item',
-	indent           = menu + '-indent',
-	radioItem        = menu + '-radio-item',
-	submenu          = menu + '-submenu',
-	checkItem        = menu + '-check-item',
-	submenuItem      = submenu + '-item',
-	radioItemLeading = radioItem + '-leading',
-	radioItemIcon    = radioItem + '-icon',
-	radioItemInput   = radioItem + '-input',
-	radioItemContent = radioItem + '-content',
-	checkItemLeading = checkItem + '-leading',
-	checkItemInput   = checkItem + '-input',
-	checkItemIcon    = checkItem + '-icon',
-	checkItemContent = checkItem + '-content'
-}
-
-const REGISTERED_SUBMENUITEM: Set<SubMenuItemElement> = new Set<SubMenuItemElement>()
-
-/**
- * Any element is possible as long have class `MenuClasses.submenuItem`
- * @param subMenuItemRef
- */
-function _initSubMenuItemRef(subMenuItemRef: SubMenuItemElement): void {
-	const elements = {
-		get parent() {
-			return subMenuItemRef.closest('.' + MenuClasses.menu) as MenuElement | null
-		},
-		get target() {
-			return subMenuItemRef.popoverTargetElement as SubMenuElement | null
-		}
-	}
-
-	function initEvents(): void {
-		const parentRef = elements.parent
-		parentRef?.addEventListener('beforetoggle', ev => {
-			const isOpen = (ev as ToggleEvent).newState === 'open'
-			if (isOpen) {return}
-
-			for (const ref of parentRef.querySelectorAll<SubMenuElement>(`.${MenuClasses.submenu}`)) {
-				ref.hidePopover()
-			}
-		})
-
-		const targetRef = elements.target
-		targetRef?.addEventListener('beforetoggle', ev => {
-			const isOpen = (ev as ToggleEvent).newState === 'open'
-			updateSubMenuItemRef(subMenuItemRef, {
-				ButtonFocused: isOpen
-			})
-
-			if (!isOpen || !parentRef) {return}
-
-			for (const ref of parentRef.querySelectorAll<SubMenuElement>(`.${MenuClasses.submenu}`)) {
-				if (ref === targetRef) {continue}
-				ref.hidePopover()
-			}
-		})
-	}
-
-	function initSubMenuItemId(): void {
-		let id = subMenuItemRef.id
-		if (!id) {
-			id = createElementId()
-			subMenuItemRef.id = id
-		}
-
-		const target = elements.target
-		if (!target) {return}
-
-		updateSubMenuRef(target, {
-			PopoverAnchorBy: id
-		})
-	}
-
-	initSubMenuItemId()
-	initEvents()
-}
-
-function createMenuRef(options?: MenuUpdateOptions): MenuElement {
-	const menuRef = createPopoverRef(options)
-	return updateMenuRef(menuRef)
-}
-
-function updateMenuRef(menuRef: MenuElement, options?: MenuUpdateOptions): MenuElement {
-	let popoverContentRef: HTMLDivElement
-	updatePopoverRef(menuRef, {
-		...options,
-		PopoverRefs: {
-			...options?.PopoverRefs,
-			content(ref) {
-				popoverContentRef = ref
-				options?.PopoverRefs?.content?.(ref)
-			},
-		}
-	})
-	menuRef.classList.add(MenuClasses.menu)
-	if (!menuRef.hasAttribute('role')) {
-		menuRef.setAttribute('role', 'menu')
-	}
-
-	const role = options?.MenuRole
-	if (role === false) {
-		menuRef.removeAttribute('role')
-	}
-	else if (role !== undefined && role !== true) {
-		menuRef.setAttribute('role', role)
-	}
-
-	// content
-	const childrenOption = options?.MenuChildren
-	let contentRef = popoverContentRef!.querySelector<HTMLDivElement>(`.${MenuClasses.content}`)
-	if (!contentRef) {
-		contentRef = document.createElement('div')
-		contentRef.classList.add(MenuClasses.content)
-	}
-	if (childrenOption === false) {
-		contentRef.replaceChildren()
-	}
-	else if (childrenOption !== undefined && childrenOption !== true) {
-		contentRef.replaceChildren(...childrenOption)
-	}
-
-	popoverContentRef!.replaceChildren(contentRef)
-	const refs = options?.MenuRefs
-	refs?.menu?.(menuRef)
-	refs?.content?.(contentRef)
-	return menuRef
-}
-
-function createMenuItemRef(options?: MenuItemUpdateOptions): MenuItemElement {
-	const menuItemRef = createButtonRef(options)
-	return updateMenuItemRef(menuItemRef)
-}
-
-function updateMenuItemRef(
-	menuItemRef: MenuItemElement,
-	options?: MenuItemUpdateOptions
-): MenuItemElement {
-	updateButtonRef(menuItemRef, options)
-	menuItemRef.classList.add(MenuClasses.item)
-	if (!menuItemRef.hasAttribute('role')) {
-		menuItemRef.setAttribute('role', 'menuitem')
-	}
-
-	const role = options?.MenuItemRole
-	if (role === false) {
-		menuItemRef.removeAttribute('role')
-	}
-	else if (role !== undefined && role !== true) {
-		menuItemRef.setAttribute('role', role)
-	}
-
-	options?.MenuItemRefs?.menuitem?.(menuItemRef)
-	return menuItemRef
-}
-
-function createLinkMenuItemRef(options: LinkMenuItemUpdateOptions): LinkMenuItemElement {
-	const linkMenuItemRef = createLinkButtonRef(options)
-	return updateLinkMenuItemRef(linkMenuItemRef, options)
-}
-
-function updateLinkMenuItemRef(
-	linkMenuItemRef: LinkMenuItemElement,
-	options: LinkMenuItemUpdateOptions
-): LinkMenuItemElement {
-	updateLinkButtonRef(linkMenuItemRef, options)
-	linkMenuItemRef.classList.add(MenuClasses.item)
-	if (!linkMenuItemRef.hasAttribute('role')) {
-		linkMenuItemRef.setAttribute('role', 'menuitem')
-	}
-
-	const role = options?.LinkMenuItemRole
-	if (role === false) {
-		linkMenuItemRef.removeAttribute('role')
-	}
-	else if (role !== undefined && role !== true) {
-		linkMenuItemRef.setAttribute('role', role)
-	}
-	options.LinkMenuItemRefs?.menuitem?.(linkMenuItemRef)
-	return linkMenuItemRef
-}
-
-function createSubMenuItemRef(options: Omit<SubMenuItemUpdateOptions, 'SubMenuItemPopoverId'> & {
-	SubMenuItemPopoverId: string
-}): SubMenuItemElement {
-	const subMenuItemRef = updateSubMenuItemRef(createMenuItemRef(options))
-	registerSubMenuItemRef(subMenuItemRef)
-	return subMenuItemRef
-}
-
-function updateSubMenuItemRef(
-	subMenuItemRef: SubMenuItemElement,
-	options?: SubMenuItemUpdateOptions
-): SubMenuItemElement {
-	updateMenuItemRef(subMenuItemRef, options)
-	subMenuItemRef.classList.add(MenuClasses.submenuItem)
-	const popoverIdOption = options?.SubMenuItemPopoverId
-	if (popoverIdOption) {
-		subMenuItemRef.setAttribute('popovertarget', popoverIdOption)
-	}
-
-	options?.SubMenuItemRefs?.menuitem?.(subMenuItemRef)
-	return subMenuItemRef
-}
-
-function registerSubMenuItemRef(...subMenuItemRefs: SubMenuItemElement[]): void {
-	if (subMenuItemRefs.length === 0) {
-		subMenuItemRefs = [...document.querySelectorAll<SubMenuItemElement>('.' + MenuClasses.submenuItem)]
-	}
-
-	for (const subMenuItemRef of subMenuItemRefs){
-		if (REGISTERED_SUBMENUITEM.has(subMenuItemRef)) {
-			continue
-		}
-
-		REGISTERED_SUBMENUITEM.add(subMenuItemRef)
-		_initSubMenuItemRef(subMenuItemRef)
-	}
-}
-
-function unregisterSubMenuItemRef(...subMenuItemRefs: SubMenuItemElement[]): void {
-	for (const subMenuItemRef of subMenuItemRefs) {
-		REGISTERED_SUBMENUITEM.delete(subMenuItemRef)
-	}
-}
-
-function createMenuIndentRef(options?: MenuIndentUpdateOptions): MenuIndentElement {
-	const indentRef = document.createElement('div')
-	return updateMenuIndentRef(indentRef, options)
-}
-
-function updateMenuIndentRef(
-	indentRef: MenuIndentElement,
-	options?: MenuIndentUpdateOptions
-): MenuIndentElement {
-	indentRef.classList.add(MenuClasses.indent)
-	options?.MenuIndentRefs?.indent?.(indentRef)
-	return indentRef
-}
-
-function createMenuHeaderRef(options?: MenuHeaderUpdateOptions): MenuHeaderElement {
-	const menuHeaderRef = document.createElement('div')
-	return updateMenuHeaderRef(menuHeaderRef, options)
-}
-
-function updateMenuHeaderRef(
-	headerRef: MenuHeaderElement,
-	options?: MenuHeaderUpdateOptions
-): MenuHeaderElement {
-	headerRef.classList.add(MenuClasses.header)
-
-	const childrenOption = options?.MenuHeaderChildren
-	if (childrenOption === false) {
-		headerRef.replaceChildren()
-	}
-	else if (childrenOption !== undefined && childrenOption !== true) {
-		headerRef.replaceChildren(...childrenOption)
-	}
-
-	options?.MenuHeaderRefs?.header?.(headerRef)
-	return headerRef
-}
-
-function createCheckMenuItemRef(options?: CheckMenuItemUpdateOptions): CheckMenuItemElement {
-	const checkMenuItemRef = document.createElement('label')
-	return updateCheckMenuItemRef(checkMenuItemRef, options)
-}
-
-function updateCheckMenuItemRef(
-	checkMenuItemRef: CheckMenuItemElement,
-	options?: CheckMenuItemUpdateOptions
-): CheckMenuItemElement {
-	const refs = options?.CheckMenuItemRefs
-	checkMenuItemRef.classList.add(ButtonClasses.button, MenuClasses.item, MenuClasses.checkItem)
-
-	// leading
-	const leadingOption = options?.CheckMenuItemLeading
-	let leadingRef = checkMenuItemRef.querySelector<HTMLDivElement>(`.${MenuClasses.checkItemLeading}`)
-	if (!leadingRef) {
-		leadingRef = document.createElement('div')
-		leadingRef.classList.add(MenuClasses.checkItemLeading)
-	}
-	if (leadingOption === false) {
-		leadingRef.replaceChildren()
-	}
-	else if (leadingOption !== undefined && leadingOption !== true) {
-		leadingRef.replaceChildren(...leadingOption)
-	}
-
-	// input
-	let inputRef = checkMenuItemRef.querySelector<HTMLInputElement>(`.${MenuClasses.checkItemInput}`)
-	if (!inputRef) {
-		inputRef = document.createElement('input')
-		inputRef.classList.add(MenuClasses.checkItemInput)
-		inputRef.autocomplete = 'off'
-		inputRef.role = 'menuitemcheckbox'
-		inputRef.type = 'checkbox'
-	}
-
-	const checkedOption = options?.CheckMenuItemChecked
-	if (checkedOption !== undefined) {
-		inputRef.checked = checkedOption
-	}
-
-	const disabledOption = options?.CheckMenuItemDisabled
-	if (disabledOption !== undefined) {
-		inputRef.disabled = disabledOption
-	}
-
-	// icon
-	let iconRef = checkMenuItemRef.querySelector<SVGSVGElement>('.' + MenuClasses.checkItemIcon)
-	if (!iconRef) {
-		iconRef = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-		iconRef.classList.add(MenuClasses.checkItemIcon)
-		iconRef.setAttribute('viewBox', '0 -960 960 960')
-		iconRef.setAttribute('width', '20')
-		iconRef.setAttribute('height', '20')
-
-		const pathRef = document.createElementNS('http://www.w3.org/2000/svg', 'path')
-		pathRef.setAttribute('d', 'm389-369 299-299q10.91-11 25.45-11Q728-679 739-668t11 25.58q0 14.58-10.61 25.19L415-292q-10.91 11-25.45 11Q375-281 364-292L221-435q-11-11-11-25.5t11-25.5q11-11 25.67-11 14.66 0 25.33 11l117 117Z')
-		pathRef.setAttribute('fill', `rgb(${AppCSSColors.accent})`)
-		iconRef.append(pathRef)
-	}
-
-	// content
-	const childrenOption = options?.CheckMenuItemChildren
-	let contentRef = checkMenuItemRef.querySelector<HTMLDivElement>(`.${MenuClasses.checkItemContent}`)
-	if (!contentRef) {
-		contentRef = document.createElement('div')
-		contentRef.classList.add(MenuClasses.checkItemContent)
-	}
-	if (childrenOption === false) {
-		contentRef.replaceChildren()
-	}
-	else if (childrenOption !== undefined && childrenOption !== true) {
-		contentRef.replaceChildren(...childrenOption)
-	}
-
-	checkMenuItemRef.replaceChildren(leadingRef, inputRef, iconRef, contentRef)
-	refs?.checkmenuitem?.(checkMenuItemRef)
-	refs?.content?.(contentRef)
-	refs?.icon?.(iconRef)
-	refs?.leading?.(leadingRef)
-	return checkMenuItemRef
-}
-
-function createRadioMenuItemRef(options?: RadioMenuItemUpdateOptions): RadioMenuItemElement {
-	const radioMenuItemRef = document.createElement('label')
-	return updateRadioMenuItemRef(radioMenuItemRef, options)
-}
-
-function updateRadioMenuItemRef(
-	radioMenuItemRef: RadioMenuItemElement,
-	options?: RadioMenuItemUpdateOptions
-): RadioMenuItemElement {
-	radioMenuItemRef.classList.add(ButtonClasses.button, MenuClasses.item, MenuClasses.radioItem)
-
-	// leading
-	const leadingOption = options?.RadioMenuItemLeading
-	let leadingRef = radioMenuItemRef.querySelector<HTMLDivElement>(`.${MenuClasses.radioItemLeading}`)
-	if (!leadingRef) {
-		leadingRef = document.createElement('div')
-		leadingRef.classList.add(MenuClasses.radioItemLeading)
-	}
-	if (leadingOption === false) {
-		leadingRef.replaceChildren()
-	}
-	else if (leadingOption !== undefined && leadingOption !== true) {
-		leadingRef.replaceChildren(...leadingOption)
-	}
-
-	// input
-	let inputRef = radioMenuItemRef.querySelector<HTMLInputElement>(`.${MenuClasses.radioItemInput}`)
-	if (!inputRef) {
-		inputRef = document.createElement('input')
-		inputRef.classList.add(MenuClasses.radioItemInput)
-		inputRef.role = 'menuitemradio'
-		inputRef.type = 'radio'
-		inputRef.autocomplete = 'off'
-	}
-
-	const nameOption = options?.RadioMenuItemName
-	if (nameOption) {
-		inputRef.name = nameOption
-	}
-
-	const valueOption = options?.RadioMenuItemValue
-	if (valueOption) {
-		inputRef.value = valueOption
-	}
-
-	const checkedOption = options?.RadioMenuItemChecked
-	if (checkedOption !== undefined) {
-		inputRef.checked = checkedOption
-	}
-
-	const disabledOption = options?.RadioMenuItemDisabled
-	if (disabledOption !== undefined) {
-		inputRef.disabled = disabledOption
-	}
-
-	// icon
-	let iconRef = radioMenuItemRef.querySelector<IconElement>(`.${MenuClasses.radioItemIcon}`)
-	if (!iconRef) {
-		iconRef = createIconRef({
-			IconCode: IconCodes.circleSmall,
-			IconFilled: true
-		})
-		iconRef.classList.add(MenuClasses.radioItemIcon)
-	}
-
-	// content
-	const childrenOption = options?.RadioMenuItemChildren
-	let contentRef = radioMenuItemRef.querySelector<HTMLDivElement>(`.${MenuClasses.radioItemContent}`)
-	if (!contentRef) {
-		contentRef = document.createElement('div')
-		contentRef.classList.add(MenuClasses.radioItemContent)
-	}
-	if (childrenOption === false) {
-		contentRef.replaceChildren()
-	}
-	else if (childrenOption !== undefined && childrenOption !== true) {
-		contentRef.replaceChildren(...childrenOption)
-	}
-
-	radioMenuItemRef.replaceChildren(leadingRef, inputRef, iconRef, contentRef)
-
-	const refs = options?.RadioMenuItemRefs
-	refs?.content?.(contentRef)
-	refs?.icon?.(iconRef)
-	refs?.leading?.(leadingRef)
-	refs?.radiomenuitem?.(radioMenuItemRef)
-	return radioMenuItemRef
-}
-
-function createSubMenuRef(options?: SubMenuUpdateOptions): SubMenuElement {
-	const subMenuRef = document.createElement('div')
-	return updateSubMenuRef(subMenuRef, options)
-}
-
-function updateSubMenuRef(subMenuRef: SubMenuElement, options?: SubMenuUpdateOptions): SubMenuElement {
-	updateMenuRef(subMenuRef, options)
-	subMenuRef.classList.add(MenuClasses.submenu)
-	return subMenuRef
-}
-
-export {
-	type MenuProps,
-	type MenuItemProps,
-	type SubMenuUpdateOptions,
-	type LinkMenuItemProps,
-	type SubMenuItemProps,
-	type MenuUpdateOptions,
-	type MenuItemUpdateOptions,
-	type LinkMenuItemUpdateOptions,
-	type SubMenuItemUpdateOptions,
-	type RadioMenuItemProps,
-	type MenuHeaderProps,
-	type MenuIndentProps,
-	type MenuIndentUpdateOptions,
-	type MenuHeaderUpdateOptions,
-	type CheckMenuItemProps,
-	type CheckMenuItemUpdateOptions,
-	type RadioMenuItemUpdateOptions,
-	type SubMenuProps,
-	type MenuElement,
-	type CheckMenuItemElement,
-	type LinkMenuItemElement,
-	type MenuHeaderElement,
-	type MenuIndentElement,
-	type MenuItemElement,
-	type RadioMenuItemElement,
-	type SubMenuElement,
-	type SubMenuItemElement,
-	MenuClasses,
-	PopoverAttributes as MenuAttributes,
-	PopoverClasses,
-	MenuPosition,
-	openPopoverRef as openMenuRef,
-	closePopoverRef as closeMenuRef,
-	repositionPopoverRef as repositionMenuRef,
-	isPopoverRefOpen as isMenuRefOpen,
-	registerPopoverRef as registerMenuRef,
-	unregisterPopoverRef as unregisterMenuRef,
-	createMenuRef,
-	updateMenuRef,
-	updateMenuItemRef,
-	updateLinkMenuItemRef,
-	createMenuItemRef,
-	createLinkMenuItemRef,
-	registerSubMenuItemRef,
-	unregisterSubMenuItemRef,
-	createSubMenuItemRef,
-	updateSubMenuItemRef,
-	createMenuIndentRef,
-	updateMenuIndentRef,
-	createMenuHeaderRef,
-	updateMenuHeaderRef,
-	createCheckMenuItemRef,
-	updateCheckMenuItemRef,
-	createRadioMenuItemRef,
-	updateRadioMenuItemRef,
-	createSubMenuRef,
-	updateSubMenuRef
 }

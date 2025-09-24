@@ -1,9 +1,9 @@
-import { ButtonVariant, updateButtonRef, type ButtonElement } from "@/components/Button"
+import { CButton } from "@/components/Button"
 import { ElementIds } from "../_shared/_ids"
 import { $, $$ } from "./_dom-utils"
 import { ObservableStore } from "@/utils/store"
-import type { ToastElement } from "@/components/Toast"
-import { IconClasses, type IconElement } from "@/components/Icon"
+import { CToast } from "@/components/Toast"
+import { CIcon } from "@/components/Icon"
 
 export type GeolocationStoreType = {
 	isWatching: boolean
@@ -27,23 +27,25 @@ export const GeolocationStore = new ObservableStore<GeolocationStoreType>({
 	speed: null
 })
 
-const _startPauseBtnRef = $(ElementIds.bd_startPause) as ButtonElement
-const _startPauseIconRef = $$('.' + IconClasses.icon, _startPauseBtnRef) as IconElement
-const _accuracyRef = $(ElementIds.bd_accuracy) as HTMLSpanElement
-const _altitudeRef = $(ElementIds.bd_altitude) as HTMLSpanElement
-const _altitudeAccuracyRef = $(ElementIds.bd_altitudeAccuracy) as HTMLSpanElement
-const _headingRef = $(ElementIds.bd_heading) as HTMLSpanElement
-const _latitudeRef = $(ElementIds.bd_latitude) as HTMLSpanElement
-const _longitudeRef = $(ElementIds.bd_longitude) as HTMLSpanElement
-const _speedRef = $(ElementIds.bd_speed) as HTMLSpanElement
-const _toa_permissionRef = $(ElementIds.toa_permission) as ToastElement
-const _toa_locationRef = $(ElementIds.toa_location) as ToastElement
+const _ref_startPauseBtn = $(ElementIds.bd_startPause) as CButton.CElement
+const _ref_startPauseIcon = $$('.' + CIcon.Classes.icon, _ref_startPauseBtn) as CIcon.CElement
+const _ref_accuracy = $(ElementIds.bd_accuracy) as HTMLSpanElement
+const _ref_altitude = $(ElementIds.bd_altitude) as HTMLSpanElement
+const _ref_altitudeAccuracy = $(ElementIds.bd_altitudeAccuracy) as HTMLSpanElement
+const _ref_heading = $(ElementIds.bd_heading) as HTMLSpanElement
+const _ref_latitude = $(ElementIds.bd_latitude) as HTMLSpanElement
+const _ref_longitude = $(ElementIds.bd_longitude) as HTMLSpanElement
+const _ref_speed = $(ElementIds.bd_speed) as HTMLSpanElement
+
+// toa = toast
+const _ref_toa_permission = $(ElementIds.toa_permission) as CToast.CElement
+const _ref_toa_location = $(ElementIds.toa_location) as CToast.CElement
 let _geoWatchId: number | null = null
 
 function _watchGeolocation(): void {
 	navigator.permissions.query({name: 'geolocation'}).then((permission) => {
 		if (permission.state === 'denied') {
-			_toa_permissionRef.showPopover()
+			_ref_toa_permission.showPopover()
 			GeolocationStore.update(v => v.isWatching = false)
 			return
 		}
@@ -63,7 +65,7 @@ function _watchGeolocation(): void {
 				v.speed = coords.speed
 			})
 		}, () => {
-			_toa_locationRef.showPopover()
+			_ref_toa_location.showPopover()
 			GeolocationStore.update(v => v.isWatching = false)
 		}, {enableHighAccuracy: true,
 			maximumAge: Infinity})
@@ -76,17 +78,17 @@ function _initSubscriber(): void {
 		if (isWatching === o.isWatching) {return}
 
 		if (isWatching) {
-			updateButtonRef(_startPauseBtnRef, {
-				ButtonVariant: ButtonVariant.tonal,
-				ButtonChildren: [_startPauseIconRef, 'Pause my location']
-			})
+			CButton.update(_ref_startPauseBtn, {Button: {
+				variant: CButton.Variant.tonal,
+				children: [_ref_startPauseIcon, 'Pause my location']
+			}})
 			_watchGeolocation()
 		}
 		else {
-			updateButtonRef(_startPauseBtnRef, {
-				ButtonVariant: ButtonVariant.filled,
-				ButtonChildren: [_startPauseIconRef, 'Show my location']
-			})
+			CButton.update(_ref_startPauseBtn, {Button: {
+				variant: CButton.Variant.filled,
+				children: [_ref_startPauseIcon, 'Show my location']
+			}})
 			if (typeof _geoWatchId === 'number'){
 				navigator.geolocation.clearWatch(_geoWatchId)
 				_geoWatchId = null
@@ -96,31 +98,31 @@ function _initSubscriber(): void {
 
 	GeolocationStore.subscribe((v) => {
 		const accuracy = v.accuracy
-		_accuracyRef.textContent = (typeof accuracy === 'number'
+		_ref_accuracy.textContent = (typeof accuracy === 'number'
 			? [Number.parseFloat(accuracy.toFixed(2)), ' meter', accuracy > 1? 's' : ''].join('')
 			: 'N/A'
 		)
 
 		const altitude = v.altitude
-		_altitudeRef.textContent = (typeof altitude === 'number'
+		_ref_altitude.textContent = (typeof altitude === 'number'
 			? [Number.parseFloat(altitude.toFixed(2)), ' meter', altitude > 1? 's' : ''].join('')
 			: 'N/A'
 		)
 
 		const altitudeAccuracy = v.altitudeAccuracy
-		_altitudeAccuracyRef.textContent = (typeof altitudeAccuracy === 'number'
+		_ref_altitudeAccuracy.textContent = (typeof altitudeAccuracy === 'number'
 			? [Number.parseFloat(altitudeAccuracy.toFixed(2)), ' meter', altitudeAccuracy > 1? 's' : ''].join('')
 			: 'N/A'
 		)
 
 		const speed = v.speed
-		_speedRef.textContent = (typeof speed === 'number'
+		_ref_speed.textContent = (typeof speed === 'number'
 			? [Number.parseFloat(speed.toFixed(2)), ' m/s'].join('')
 			: 'N/A'
 		)
 
-		_latitudeRef.textContent = [v.latitude, '°'].join('')
-		_longitudeRef.textContent = [v.longitude, '°'].join('')
+		_ref_latitude.textContent = [v.latitude, '°'].join('')
+		_ref_longitude.textContent = [v.longitude, '°'].join('')
 
 		// heading
 		{
@@ -140,13 +142,13 @@ function _initSubscriber(): void {
 				else if (heading > 270 && heading < 360) text = heading + '° (North West)'
 			}
 
-			_headingRef.textContent = text ?? 'N/A'
+			_ref_heading.textContent = text ?? 'N/A'
 		}
 	})
 }
 
 function _initEvents(): void {
-	_startPauseBtnRef.addEventListener('click', () => {
+	_ref_startPauseBtn.addEventListener('click', () => {
 		GeolocationStore.update(v => v.isWatching = !v.isWatching)
 	})
 }

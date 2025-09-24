@@ -10,7 +10,7 @@ import Icon from '@/components/Icon/index.astro'
 import LinkButton from '@/components/Button/LinkButton.astro'
 import Splash from '@/layouts/Splash/index.astro'
 import { APPS } from "@/constants/apps"
-import { ButtonVariant } from '@/components/Button'
+import { CButton } from '@/components/Button'
 import { IconCodes } from '@/enums/icons'
 import { ElementIds } from './_scripts/_shared/_ids'
 import { pxToRem } from '@/utils/css'
@@ -53,7 +53,7 @@ export const prerender = true
 			<ul class={CSSClasses.content} id={ElementIds.appList}>
 				{[...APPS].sort((a,b) => a.name.localeCompare(b.name)).map(app =>
 					<li>
-						<LinkButton style={`--color: ${app.color}`} href={app.link} LinkButtonVariant={ButtonVariant.tonal}>
+						<LinkButton style={`--color: ${app.color}`} href={app.link} LinkButtonVariant={CButton.Variant.tonal}>
 							<img
 								loading="eager"
 								src={app.logoUrl}

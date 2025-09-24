@@ -2,7 +2,7 @@ import { ObservableStore } from "@/utils/store"
 import { DEFAULT_SELECTION_COUNT, DEFAULT_SELECTION_LIST, DEFAULT_SELECTION_LIST_ID, DEFAULT_SELECTION_OUTPUT } from "../_shared/_constant"
 import { ElementIds } from "../_shared/_ids"
 import { $, $$$ } from "../_core/_dom-utils"
-import type { ComboBoxElement } from "@/components/ComboBox"
+import { CComboBox } from "@/components/ComboBox"
 import { Math_clamp } from "@/utils/math"
 import { safeNumber } from "@/utils/number"
 import { ListsStore } from "../_core/_lists"
@@ -23,9 +23,9 @@ export const SelectionStore = new ObservableStore<SelectionStoreType>({
 	listItems: DEFAULT_SELECTION_LIST.items
 })
 
-const _listRef = $(ElementIds.pgSel_list) as ComboBoxElement
-const _countRef = $(ElementIds.pgSel_count) as HTMLInputElement
-const _outputRef = $(ElementIds.pgSel_output) as HTMLUListElement
+const _ref_list = $(ElementIds.pgSel_list) as CComboBox.CElement
+const _ref_count = $(ElementIds.pgSel_count) as HTMLInputElement
+const _ref_output = $(ElementIds.pgSel_output) as HTMLUListElement
 let _timeStorageId: NodeJS.Timeout | number | undefined
 
 export function updateOutput(): void {
@@ -66,8 +66,8 @@ function _subsOutputView(v: SelectionStoreType, o: SelectionStoreType): void {
 	if (output === o.output) {return}
 
 	const items = v.listItems
-	const refs = $$$<HTMLLIElement>('li', _outputRef)
-	const updateLIRef = (ref: HTMLLIElement, name: string) => {
+	const refs = $$$<HTMLLIElement>('li', _ref_output)
+	const upreate_ref_li = (ref: HTMLLIElement, name: string) => {
 		ref.textContent = name
 		ref.toggleAttribute('data-selected', output.some(v => v === name))
 	}
@@ -79,24 +79,24 @@ function _subsOutputView(v: SelectionStoreType, o: SelectionStoreType): void {
 			continue
 		}
 
-		updateLIRef(ref, items[i])
+		upreate_ref_li(ref, items[i])
 	}
 
 	for (let i = 0; i < items.length - refs.length; i++) {
 		const index = refs.length + i
 		const ref = document.createElement('li')
-		updateLIRef(ref, items[index])
-		_outputRef.append(ref)
+		upreate_ref_li(ref, items[index])
+		_ref_output.append(ref)
 	}
 }
 
 function _subsView(v: SelectionStoreType, o: SelectionStoreType): void {
 	const isActive = (el: Element) => el === document.activeElement
-	if (!isActive(_countRef)) {
-		_countRef.valueAsNumber = v.count
+	if (!isActive(_ref_count)) {
+		_ref_count.valueAsNumber = v.count
 	}
 
-	_listRef.value = v.listId.toString()
+	_ref_list.value = v.listId.toString()
 	if (v.listId !== o.listId) {
 		const list = ListsStore.value.list.find(a => a.id ===  v.listId)
 		if (list) {
@@ -112,8 +112,8 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_listRef.addEventListener("change", () => {
-		const id = Number.parseInt(_listRef.value)
+	_ref_list.addEventListener("change", () => {
+		const id = Number.parseInt(_ref_list.value)
 		const list = ListsStore.value.list
 		if (!list.some(v => v.id === id)) {return}
 
@@ -125,20 +125,20 @@ function _initEvents(): void {
 	})
 
 	// the only place to dynamically set HTMLInputElement.max
-	_countRef.addEventListener('focus', () => {
+	_ref_count.addEventListener('focus', () => {
 		const list = ListsStore.value.list.find(v => v.id === SelectionStore.value.listId)
 		if (!list) {return}
 
-		_countRef.max = list.items.length.toString()
+		_ref_count.max = list.items.length.toString()
 	})
 
-	_countRef.addEventListener("input", () => {
-		const value = Math_clamp(safeNumber(_countRef.valueAsNumber), 1, Number.MAX_VALUE)
+	_ref_count.addEventListener("input", () => {
+		const value = Math_clamp(safeNumber(_ref_count.valueAsNumber), 1, Number.MAX_VALUE)
 		SelectionStore.update(v => v.count = value)
 	})
 
-	_countRef.addEventListener("blur", () => {
-		_countRef.valueAsNumber = SelectionStore.value.count
+	_ref_count.addEventListener("blur", () => {
+		_ref_count.valueAsNumber = SelectionStore.value.count
 	})
 }
 

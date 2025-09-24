@@ -3,10 +3,10 @@ import { NavigationStore } from "./_navigation"
 import { Pages } from "../_shared/_enums"
 import { StringStore, updateOutput as updateStringOutput } from "../_features/_string"
 import { SettingsStore } from "./_settings"
-import type { ButtonElement, IconButtonElement } from "@/components/Button"
+import { CButton } from "@/components/Button"
 import { ElementIds } from "../_shared/_ids"
 import { $, $$ } from "./_dom-utils"
-import { IconClasses, type IconElement } from "@/components/Icon"
+import { CIcon } from "@/components/Icon"
 import { BodyAttributes, GlobalAttributes } from "@/enums/attributes"
 import { AnimationEasing } from "@/enums/animation"
 import { isAnimationAllowed } from "@/utils/animation"
@@ -15,8 +15,8 @@ import { ColorsStore, updateOutput as updateColorsOutput } from "../_features/_c
 import { updateOutput as updateWordsOutput, WordsStore } from "../_features/_words"
 import { SelectionStore, updateOutput as updateSelectionOutput } from "../_features/_selection"
 import { TeamsStore, updateOutput as updateTeamsOutput } from "../_features/_teams"
-import type { ToastElement } from "@/components/Toast"
-import type { DialogElement } from "@/components/Dialog"
+import { CToast } from "@/components/Toast"
+import { CDialog } from "@/components/Dialog"
 import { hexToRgb, rgbToHsl } from "@/utils/color"
 import { pxToRem } from "@/utils/css"
 
@@ -27,39 +27,39 @@ export type GeneratorStoreType = Readonly<{
 export const GeneratorStore = new ObservableStore<GeneratorStoreType>({
 	isGenerating: false
 })
-const _generatorBtnRef = $(ElementIds.ap_generator) as ButtonElement
-const _generatorIconRef = $$(`#${CSS.escape(ElementIds.ap_generator)}>.${IconClasses.icon}`) as IconElement
-const _generatorTextRef = $$(`#${CSS.escape(ElementIds.ap_generator)}>div`) as HTMLDivElement
-const _toastCopiedRef = $(ElementIds.toa_copied) as ToastElement
-const _copyBtnRef = $(ElementIds.ap_copyBtn) as IconButtonElement
-const _copyColorsDialogRef = $(ElementIds.ap_copyColorsDialog) as DialogElement
-const _copyColorsBtnRef = $(ElementIds.ap_copyColorsBtn) as ButtonElement
-const _copyColorsHexRef = $(ElementIds.ap_copyColorsHex) as HTMLInputElement
-const _copyColorsRgbRef = $(ElementIds.ap_copyColorsRgb) as HTMLInputElement
-const _copyColorsHslRef = $(ElementIds.ap_copyColorsHsl) as HTMLInputElement
-let _intervalId: NodeJS.Timeout | number | null = null
+const _ref_generatorBtn = $(ElementIds.ap_generator) as CButton.CElement
+const _ref_generatorIcon = $$(`#${CSS.escape(ElementIds.ap_generator)}>.${CIcon.Classes.icon}`) as CIcon.CElement
+const _ref_generatorText = $$(`#${CSS.escape(ElementIds.ap_generator)}>div`) as HTMLDivElement
+const _ref_toastCopied = $(ElementIds.toa_copied) as CToast.CElement
+const _ref_copyBtn = $(ElementIds.ap_copyBtn) as CButton.CIcon.CElement
+const _ref_copyColorsDialog = $(ElementIds.ap_copyColorsDialog) as CDialog.CElement
+const _ref_copyColorsBtn = $(ElementIds.ap_copyColorsBtn) as CButton.CElement
+const _ref_copyColorsHex = $(ElementIds.ap_copyColorsHex) as HTMLInputElement
+const _ref_copyColorsRgb = $(ElementIds.ap_copyColorsRgb) as HTMLInputElement
+const _ref_copyColorsHsl = $(ElementIds.ap_copyColorsHsl) as HTMLInputElement
+let _interval: NodeJS.Timeout | number | null = null
 
 function _subsIsGeneratingView(v: GeneratorStoreType): void {
 	const isGenerating = v.isGenerating
 	document.body.toggleAttribute(BodyAttributes.noPointerEvent, isGenerating)
-	_generatorBtnRef.toggleAttribute(GlobalAttributes.keepPointerEvent, isGenerating)
-	_generatorTextRef.textContent = isGenerating? 'Generating' : 'Generate'
+	_ref_generatorBtn.toggleAttribute(GlobalAttributes.keepPointerEvent, isGenerating)
+	_ref_generatorText.textContent = isGenerating? 'Generating' : 'Generate'
 
-	for (const anim of _generatorIconRef.getAnimations()) {
+	for (const anim of _ref_generatorIcon.getAnimations()) {
 		anim.cancel()
 	}
 
 	if (!isAnimationAllowed() || SettingsStore.value.instantResult) {return}
 
 	const easing = AnimationEasing.spring
-	_generatorTextRef.animate({
+	_ref_generatorText.animate({
 		translate: [`0 ${pxToRem(isGenerating? -12 : 12)}rem`, '0 0'],
 		scale: [.9, 1],
 		opacity: [0, 1]
 	}, {duration: 250, easing})
 	if (!isGenerating) {return}
 
-	_generatorIconRef.animate({
+	_ref_generatorIcon.animate({
 		rotate: '180deg'
 	}, {
 		duration: 500,
@@ -72,9 +72,9 @@ function _subsIsGeneratingChanges(v: GeneratorStoreType, o: GeneratorStoreType):
 	const isGenerating = v.isGenerating
 	if (isGenerating === o.isGenerating) {return}
 
-	if (_intervalId !== null) {
-		clearInterval(_intervalId)
-		_intervalId = null
+	if (_interval !== null) {
+		clearInterval(_interval)
+		_interval = null
 	}
 
 	if (!isGenerating) {return}
@@ -110,7 +110,7 @@ function _subsIsGeneratingChanges(v: GeneratorStoreType, o: GeneratorStoreType):
 	const duration = 3000
 	const step = 250
 	let i = 0
-	_intervalId = setInterval(() => {
+	_interval = setInterval(() => {
 		if (i >= duration / step) {
 			GeneratorStore.update(v => v.isGenerating = false)
 			return
@@ -127,13 +127,13 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_generatorBtnRef.addEventListener('click', () => {
+	_ref_generatorBtn.addEventListener('click', () => {
 		GeneratorStore.update(v => v.isGenerating = !v.isGenerating)
 	})
 
-	_copyBtnRef.addEventListener('click', () => {
+	_ref_copyBtn.addEventListener('click', () => {
 		const copy = (text: string) => navigator.clipboard.writeText(text).then((() => {
-			_toastCopiedRef.showPopover()
+			_ref_toastCopied.showPopover()
 		})).catch()
 		switch (NavigationStore.value.page) {
 		case Pages.string:
@@ -146,7 +146,7 @@ function _initEvents(): void {
 			copy(NumbersStore.value.output)
 			break
 		case Pages.colors:
-			_copyColorsDialogRef.showModal()
+			_ref_copyColorsDialog.showModal()
 			break
 		case Pages.selection: {
 			const store = SelectionStore.value
@@ -168,10 +168,10 @@ function _initEvents(): void {
 		}}
 	})
 
-	_copyColorsBtnRef.addEventListener('click', () => {
-		const isHex = _copyColorsHexRef.checked
-		const isRgb = _copyColorsRgbRef.checked
-		const isHsl = _copyColorsHslRef.checked
+	_ref_copyColorsBtn.addEventListener('click', () => {
+		const isHex = _ref_copyColorsHex.checked
+		const isRgb = _ref_copyColorsRgb.checked
+		const isHsl = _ref_copyColorsHsl.checked
 		if (!isHex && !isRgb && !isHsl) {return}
 
 		const r = (v: number) => Math.round(v)
@@ -196,7 +196,7 @@ function _initEvents(): void {
 		}
 
 		navigator.clipboard.writeText(text.map(v => v.join(', ')).join('\n')).then(() => {
-			_toastCopiedRef.showPopover()
+			_ref_toastCopied.showPopover()
 		})
 	})
 }

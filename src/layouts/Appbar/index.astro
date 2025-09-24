@@ -7,7 +7,7 @@ import Button from '@/components/Button/index.astro'
 import LinkDrawerButton from '@/components/Drawer/LinkDrawerButton.astro'
 import LinkButton from '@/components/Button/LinkButton.astro'
 import IconButton from '@/components/Button/IconButton.astro'
-import { ButtonVariant } from '@/components/Button'
+import { CButton } from '@/components/Button'
 import UIMenus from './_ui/_UIMenus.astro'
 import CSS from './_index.module.scss'
 
@@ -67,7 +67,7 @@ const { route } = Astro.props
 		<nav data-css-float>
 			<LinkButton
 				class={CSS.desktop_only}
-				LinkButtonVariant={route == RoutesLinks.apps? ButtonVariant.filled : undefined}
+				LinkButtonVariant={route == RoutesLinks.apps? CButton.Variant.filled : undefined}
 				href={RoutesLinks.apps}>
 				<Icon
 					IconCode={IconCodes.apps}
@@ -77,7 +77,7 @@ const { route } = Astro.props
 			</LinkButton>
 			<LinkButton
 				class={CSS.desktop_only}
-				LinkButtonVariant={route == RoutesLinks.about? ButtonVariant.filled : undefined}
+				LinkButtonVariant={route == RoutesLinks.about? CButton.Variant.filled : undefined}
 				href={RoutesLinks.about}>
 				<Icon
 					IconCode={IconCodes.info}
@@ -116,35 +116,35 @@ const { route } = Astro.props
 	<LinkDrawerButton
 		href={RoutesLinks.home}
 		LinkDrawerButtonSelected={route === RoutesLinks.home}
-		LinkButtonVariant={route === RoutesLinks.home? ButtonVariant.tonal : undefined}>
+		LinkButtonVariant={route === RoutesLinks.home? CButton.Variant.tonal : undefined}>
 		<Icon IconCode={IconCodes.home}/>
 		Home
 	</LinkDrawerButton>
 	<LinkDrawerButton
 		href={RoutesLinks.apps}
 		LinkDrawerButtonSelected={route === RoutesLinks.apps}
-		LinkButtonVariant={route === RoutesLinks.apps? ButtonVariant.tonal : undefined}>
+		LinkButtonVariant={route === RoutesLinks.apps? CButton.Variant.tonal : undefined}>
 		<Icon IconCode={IconCodes.apps}/>
 		Apps
 	</LinkDrawerButton>
 	<LinkDrawerButton
 		href={RoutesLinks.about}
 		LinkDrawerButtonSelected={route === RoutesLinks.about}
-		LinkButtonVariant={route === RoutesLinks.about? ButtonVariant.tonal : undefined}>
+		LinkButtonVariant={route === RoutesLinks.about? CButton.Variant.tonal : undefined}>
 		<Icon IconCode={IconCodes.info}/>
 		About
 	</LinkDrawerButton>
 	<LinkDrawerButton
 		href={RoutesLinks.privacy}
 		LinkDrawerButtonSelected={route === RoutesLinks.privacy}
-		LinkButtonVariant={route === RoutesLinks.privacy? ButtonVariant.tonal : undefined}>
+		LinkButtonVariant={route === RoutesLinks.privacy? CButton.Variant.tonal : undefined}>
 		<Icon IconCode={IconCodes.shieldCheckmark}/>
 		Privacy policy
 	</LinkDrawerButton>
 	<LinkDrawerButton
 		href={RoutesLinks.terms}
 		LinkDrawerButtonSelected={route === RoutesLinks.terms}
-		LinkButtonVariant={route === RoutesLinks.terms? ButtonVariant.tonal : undefined}>
+		LinkButtonVariant={route === RoutesLinks.terms? CButton.Variant.tonal : undefined}>
 		<Icon IconCode={IconCodes.receipt}/>
 		Terms & conditions
 	</LinkDrawerButton>

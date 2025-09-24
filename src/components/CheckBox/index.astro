@@ -1,10 +1,7 @@
 ---
 import { joinClassList } from '@/utils/attributes'
 
-import {
-	type CheckBoxProps,
-	CheckBoxClasses
-} from '.'
+import {type CheckBoxProps, CCheckBox} from '.'
 import './index.scss'
 
 type Props = CheckBoxProps
@@ -19,26 +16,27 @@ const {
 const {'class': inputClass  , checked = CheckBoxChecked, autocomplete = 'off', type = 'checkbox', ...inputOther} = CheckBoxInputAttr
 const {'class': iconClass   , ...iconOther   } = CheckBoxIconAttr
 const {'class': contentClass, ...contentOther} = CheckBoxContentAttr
----
 
-<label class={joinClassList(CheckBoxClasses.checkbox, className)} {...other}>
+const cls = CCheckBox.Classes
+---
+<label
+	class={joinClassList(cls.checkbox, className)}
+	{...other}>
 	<input
-		class={joinClassList(CheckBoxClasses.input, inputClass)}
+		class={joinClassList(cls.input, inputClass)}
 		autocomplete={autocomplete}
 		checked={checked}
 		type={type}
 		{...inputOther}
 	/>
 	<svg
-		class={joinClassList(CheckBoxClasses.icon, iconClass)}
+		class={joinClassList(cls.icon, iconClass)}
 		xmlns="http://www.w3.org/2000/svg"
 		viewBox="0 -960 960 960"
 		{...iconOther}>
 		<path d="m389-369 299-299q10.91-11 25.45-11Q728-679 739-668t11 25.58q0 14.58-10.61 25.19L415-292q-10.91 11-25.45 11Q375-281 364-292L221-435q-11-11-11-25.5t11-25.5q11-11 25.67-11 14.66 0 25.33 11l117 117Z"/>
 	</svg>
 	<div
-		class={joinClassList(CheckBoxClasses.content, contentClass)}
-		{...contentOther}>
-		<slot />
-	</div>
+		class={joinClassList(cls.content, contentClass)}
+		{...contentOther}><slot /></div>
 </label>

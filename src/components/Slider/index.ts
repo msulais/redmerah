@@ -1,125 +1,119 @@
 import { Math_clamp } from "@/utils/math"
 import { safeNumber } from "@/utils/number"
 import './index.scss'
+import { $add_event, $classlist, $create, $is_number, $query_all, $set_style } from "../utils"
 
-type SliderProps = astroHTML.JSX.InputHTMLAttributes
-
-type SliderElement = HTMLInputElement
-
-type SliderUpdateOptions = {
-	SliderValue?: number
-	SliderMin?: number
-	SliderMax?: number
-	SliderRefs?: {
-		slider?(ref: SliderElement): unknown
+export namespace CSlider {
+	export type CElement = HTMLInputElement
+	export type UpdateOptions = {
+		Slider?: {
+			value?: number
+			min?: number
+			max?: number
+			refs?: {
+				slider?(ref: CElement): unknown
+			}
+		}
 	}
-}
 
-enum SliderClasses {
-	slider = 'c-slider'
-}
+	export enum Classes {
+		slider = 'c-slider'
+	}
 
-enum SliderCSSVariables {
-	percent = '--c-slider-percent'
-}
+	export enum CSSVars {
+		percent = '--c-slider-percent'
+	}
 
-const REGISTERED_SLIDER: Set<SliderElement> = new Set<SliderElement>()
+	const REGISTERED_SLIDER: Set<CElement> = new Set<CElement>()
 
-function _initSliderRef(sliderRef: SliderElement): void {
-	function initEvents(): void {
-		sliderRef.addEventListener('input', () => {
-			updateSliderRefValue(sliderRef)
+	function initSlider(ref_slider: CElement): void {
+		function initEvents(): void {
+			$add_event(ref_slider, 'input', () => setValue(ref_slider))
+		}
+
+		function initView(): void {
+			setValue(ref_slider)
+		}
+
+		initView()
+		initEvents()
+	}
+
+	export function register(...refs_slider: CElement[]): void {
+		if (refs_slider.length === 0) {
+			refs_slider = [...$query_all<CElement>('.' + Classes.slider)]
+		}
+
+		for (const ref of refs_slider){
+			if (REGISTERED_SLIDER.has(ref)) {
+				continue
+			}
+
+			REGISTERED_SLIDER.add(ref)
+			initSlider(ref)
+		}
+	}
+
+	export function unregister(...refs_slider: CElement[]): void {
+		for (const ref of refs_slider) {
+			REGISTERED_SLIDER.delete(ref)
+		}
+	}
+
+	export function setValue(ref_slider: CElement, value?: number): void {
+		const min = safeNumber(Number.parseFloat(ref_slider.min), 0)
+		const max = safeNumber(Number.parseFloat(ref_slider.max), 100)
+		if ($is_number(value)) {
+			ref_slider.value = value + ''
+		}
+
+		const v = safeNumber(ref_slider.valueAsNumber, 0)
+		const range = Math_clamp(v / (Math.max(min, max) - Math.min(min, max)) * 100, 0, 100)
+		requestAnimationFrame(() => {
+			$set_style(ref_slider, CSSVars.percent, range + '%')
 		})
 	}
 
-	function initView(): void {
-		updateSliderRefValue(sliderRef)
+	export function create(options?: UpdateOptions): CElement {
+		const opt = options?.Slider
+		const ref_slider = update($create('input'), {
+			...options,
+			Slider: {
+				max: opt?.max ?? 100,
+				min: opt?.min ?? 0,
+				value: opt?.value ?? 0,
+				...opt,
+			}
+		})
+		register(ref_slider)
+		return ref_slider
 	}
 
-	initView()
-	initEvents()
-}
+	export function update(ref_slider: CElement, options?: UpdateOptions): CElement {
+		const opt = options?.Slider
+		$classlist(ref_slider, Classes.slider)
+		ref_slider.type = 'range'
 
-function registerSliderRef(...sliderRefs: SliderElement[]): void {
-	if (sliderRefs.length === 0) {
-		sliderRefs = [...document.querySelectorAll<SliderElement>('.' + SliderClasses.slider)]
-	}
-
-	for (const ref of sliderRefs){
-		if (REGISTERED_SLIDER.has(ref)) {
-			continue
+		const opt_min = opt?.min
+		if ($is_number(opt_min)) {
+			ref_slider.min = opt_min + ''
 		}
 
-		REGISTERED_SLIDER.add(ref)
-		_initSliderRef(ref)
+		const opt_max = opt?.max
+		if ($is_number(opt_max)) {
+			ref_slider.max = opt_max + ''
+		}
+
+		const opt_value = opt?.value
+		if ($is_number(opt_value)) {
+			ref_slider.value = opt_value + ''
+		}
+
+		setValue(ref_slider)
+		const refs = opt?.refs
+		refs?.slider?.(ref_slider)
+		return ref_slider
 	}
 }
 
-function unregisterSliderRef(...sliderRefs: SliderElement[]): void {
-	for (const ref of sliderRefs) {
-		REGISTERED_SLIDER.delete(ref)
-	}
-}
-
-function updateSliderRefValue(sliderRef: SliderElement, value?: number): void {
-	const min = safeNumber(Number.parseFloat(sliderRef.min), 0)
-	const max = safeNumber(Number.parseFloat(sliderRef.max), 100)
-	if (typeof value === 'number') {
-		sliderRef.value = value + ''
-	}
-
-	const v = safeNumber(sliderRef.valueAsNumber, 0)
-	const range = Math_clamp(v / (Math.max(min, max) - Math.min(min, max)) * 100, 0, 100)
-	requestAnimationFrame(() => {
-		sliderRef.style.setProperty(SliderCSSVariables.percent, range + '%')
-	})
-}
-
-function createSliderRef(options?: SliderUpdateOptions): SliderElement {
-	const sliderRef = updateSliderRef(document.createElement('input'), {
-		...options,
-		SliderMax: options?.SliderMax ?? 100,
-		SliderMin: options?.SliderMin ?? 0,
-		SliderValue: options?.SliderValue ?? 0,
-	})
-	registerSliderRef(sliderRef)
-	return sliderRef
-}
-
-function updateSliderRef(sliderRef: SliderElement, options?: SliderUpdateOptions): SliderElement {
-	sliderRef.classList.add(SliderClasses.slider)
-	sliderRef.type = 'range'
-	const minOption = options?.SliderMin
-	if (typeof minOption === 'number') {
-		sliderRef.min = minOption + ''
-	}
-
-	const maxOption = options?.SliderMax
-	if (typeof maxOption === 'number') {
-		sliderRef.max = maxOption + ''
-	}
-
-	const valueOption = options?.SliderValue
-	if (typeof valueOption === 'number') {
-		sliderRef.value = valueOption + ''
-	}
-
-	updateSliderRefValue(sliderRef)
-
-	const refs = options?.SliderRefs
-	refs?.slider?.(sliderRef)
-	return sliderRef
-}
-
-export {
-	type SliderProps,
-	type SliderUpdateOptions,
-	type SliderElement,
-	SliderClasses,
-	SliderCSSVariables,
-	registerSliderRef,
-	unregisterSliderRef,
-	updateSliderRefValue,
-	createSliderRef,
-	updateSliderRef
-}
+export type SliderProps = astroHTML.JSX.InputHTMLAttributes

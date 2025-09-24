@@ -11,7 +11,7 @@ import SubMenu from '@/components/Menu/SubMenu.astro'
 import Divider from '@/components/Divider/index.astro'
 import { ElementIds } from '../../_scripts/_shared/_ids'
 import { CSSClasses } from '../../_styles/_css'
-import { ButtonVariant } from '@/components/Button'
+import { CButton } from '@/components/Button'
 import { IconCodes } from '@/enums/icons'
 import { Commands } from '../../_scripts/_shared/_commands'
 import { Pages } from '../../_scripts/_shared/_enums'
@@ -108,14 +108,14 @@ function msText(ms: number): string {
 				width: pxToRem(92) + 'rem'
 			}}
 			id={ElementIds.pgSw_playPause}
-			ButtonVariant={ButtonVariant.filled}>
+			ButtonVariant={CButton.Variant.filled}>
 			<Icon IconCode={DEFAULT_STOPWATCH_RUNNING? IconCodes.pause : IconCodes.play} IconFilled/>
 			<span>{DEFAULT_STOPWATCH_RUNNING? 'Pause' : 'Start'}</span>
 		</Button>
 		<IconButton
 			style={DEFAULT_STOPWATCH_MS > 0? undefined : "display:none"}
 			id={ElementIds.pgSw_resetLap}
-			ButtonVariant={ButtonVariant.tonal}
+			ButtonVariant={CButton.Variant.tonal}
 			IconButtonCode={DEFAULT_STOPWATCH_RUNNING? IconCodes.flag : IconCodes.arrowReset}
 			data-tooltip={DEFAULT_STOPWATCH_RUNNING? 'Lap' : 'Reset'}
 			aria-label={DEFAULT_STOPWATCH_RUNNING? 'Lap' : 'Reset'}
@@ -124,7 +124,7 @@ function msText(ms: number): string {
 			style={DEFAULT_STOPWATCH_LAPS.length > 0? undefined : "display:none"}
 			popovertarget={ElementIds.pgSw_moreMenu}
 			id={ElementIds.pgSw_moreBtn}
-			ButtonVariant={ButtonVariant.tonal}
+			ButtonVariant={CButton.Variant.tonal}
 			IconButtonCode={IconCodes.moreVertical}
 			data-tooltip="More actions"
 			aria-label="More actions"

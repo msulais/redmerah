@@ -3,10 +3,10 @@ import { Pages } from "../_shared/_enums"
 import { ElementIds } from "../_shared/_ids"
 import { $, $$, $$$ } from "./_dom-utils"
 import { isValidEnumValue } from "@/utils/object"
-import { DrawerClasses, updateDrawerButtonRef } from "@/components/Drawer"
-import { SideBarAttributes, SideBarClasses, updateSideBarButtonRef, updateSideBarRef } from "@/components/SideBar2"
+import { CDrawer } from "@/components/Drawer"
+import { CSideBar } from "@/components/SideBar2"
 import { CSSClasses } from "../../_styles/_css"
-import { ButtonVariant, type IconButtonElement } from "@/components/Button"
+import { CButton } from "@/components/Button"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEasing } from "@/enums/animation"
 import { saveStorageItem } from "./_database"
@@ -22,9 +22,9 @@ export const NavigationStore = new ObservableStore<NavigationStoreType>({
 	page: DEFAULT_PAGE
 })
 
-const _minimizeBtnRef = $(ElementIds.nav_minimizeBtn) as IconButtonElement
-const _sideBarRef = $(ElementIds.nav_sideBar)
-const _drawerRef = $(ElementIds.nav_drawer)
+const _ref_minimizeBtn = $(ElementIds.nav_minimizeBtn) as CButton.CIcon.CElement
+const _ref_sideBar = $(ElementIds.nav_sideBar) as CSideBar.CElement
+const _ref_drawerBtn = $(ElementIds.nav_drawer)
 
 function _subsPageChanges(v: NavigationStoreType, o: NavigationStoreType): void {
 	const page = v.page
@@ -37,51 +37,51 @@ function _subsPageView(v: NavigationStoreType, o: NavigationStoreType): void {
 	const page = v.page
 	if (page === o.page) return
 
-	const selectedPanelRef = $$<HTMLDivElement>(`:is(.${CSSClasses.bd_page},.${CSSClasses.bdPage_date})[role=tabpanel]:not([hidden])`)
-	const selectedTabRefs = $$$<HTMLButtonElement>(`:is(.${SideBarClasses.button},.${DrawerClasses.button})[aria-selected=true]`)
-	const targetTabRefs = $$$<HTMLButtonElement>(`:is(.${SideBarClasses.button},.${DrawerClasses.button})[data-page="${page}"]`)
+	const ref_selectedPanel = $$<HTMLDivElement>(`:is(.${CSSClasses.bd_page},.${CSSClasses.bdPage_date})[role=tabpanel]:not([hidden])`)
+	const refs_selectedTab = $$$<CButton.CElement>(`:is(.${CSideBar.Classes.button},.${CDrawer.Classes.button})[aria-selected=true]`)
+	const refs_targetTab = $$$<CButton.CElement>(`:is(.${CSideBar.Classes.button},.${CDrawer.Classes.button})[data-page="${page}"]`)
 
-	const panelId = targetTabRefs[0]?.getAttribute('aria-controls')
+	const panelId = refs_targetTab[0]?.getAttribute('aria-controls')
 	if (!panelId) return
 
-	const targetPanelRef = $(panelId)
-	if (!targetPanelRef) return
+	const ref_targetPanel = $(panelId)
+	if (!ref_targetPanel) return
 
-	targetPanelRef.hidden = false
-	if (selectedPanelRef) {
-		selectedPanelRef.hidden = true
+	ref_targetPanel.hidden = false
+	if (ref_selectedPanel) {
+		ref_selectedPanel.hidden = true
 	}
 
-	for (const tab of targetTabRefs) {
+	for (const tab of refs_targetTab) {
 		const classList = tab.classList
 		tab.setAttribute('aria-selected', 'true')
-		if (classList.contains(SideBarClasses.button)) {
-			updateSideBarButtonRef(tab, {
-				ButtonVariant: ButtonVariant.tonal,
-				SideBarButtonSelected: true
+		if (classList.contains(CSideBar.Classes.button)) {
+			CSideBar.CButton.update(tab, {
+				Button: {variant: CButton.Variant.tonal},
+				SideBarButton: {selected: true}
 			})
 		}
-		else if (classList.contains(DrawerClasses.button)) {
-			updateDrawerButtonRef(tab, {
-				ButtonVariant: ButtonVariant.tonal,
-				DrawerButtonSelected: true
+		else if (classList.contains(CDrawer.Classes.button)) {
+			CDrawer.CButton.update(tab, {
+				Button: {variant: CButton.Variant.tonal},
+				DrawerButton: {selected: true}
 			})
 		}
 	}
 
-	for (const tab of selectedTabRefs) {
+	for (const tab of refs_selectedTab) {
 		const classList = tab.classList
 		tab.setAttribute('aria-selected', 'false')
-		if (classList.contains(SideBarClasses.button)) {
-			updateSideBarButtonRef(tab, {
-				ButtonVariant: ButtonVariant.transparent,
-				SideBarButtonSelected: false
+		if (classList.contains(CSideBar.Classes.button)) {
+			CSideBar.CButton.update(tab, {
+				Button: {variant: CButton.Variant.transparent},
+				SideBarButton: {selected: false}
 			})
 		}
-		else if (classList.contains(DrawerClasses.button)) {
-			updateDrawerButtonRef(tab, {
-				ButtonVariant: ButtonVariant.transparent,
-				DrawerButtonSelected: false
+		else if (classList.contains(CDrawer.Classes.button)) {
+			CDrawer.CButton.update(tab, {
+				Button: {variant: CButton.Variant.transparent},
+				DrawerButton: {selected: false}
 			})
 		}
 	}
@@ -89,7 +89,7 @@ function _subsPageView(v: NavigationStoreType, o: NavigationStoreType): void {
 	if (!isAnimationAllowed()) return
 
 	const borderColor = `rgba(${AppCSSColors.onSurface},${AppCSSOpacity.o3})`
-	targetPanelRef.animate({
+	ref_targetPanel.animate({
 		transform: ['scale(.9)', 'scale(1)'],
 		borderRadius: [pxToRem(8) + 'rem', pxToRem(8) + 'rem'],
 		borderRightColor: page === Pages.date
@@ -111,37 +111,37 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_sideBarRef?.addEventListener('click', (ev) => {
-		const targetRef = (ev.target as HTMLElement).closest<HTMLButtonElement>(`.${SideBarClasses.button}[data-page]`)
-		if (!targetRef) return
+	_ref_sideBar?.addEventListener('click', (ev) => {
+		const ref_target = (ev.target as HTMLElement).closest<CButton.CElement>(`.${CSideBar.Classes.button}[data-page]`)
+		if (!ref_target) return
 
-		const page = targetRef.dataset.page
+		const page = ref_target.dataset.page
 		if (!isValidEnumValue(page, Pages)) return
 
 		NavigationStore.update(v => v.page = page as Pages)
 	})
 
-	_drawerRef?.addEventListener('click', (ev) => {
-		const targetRef = (ev.target as HTMLElement).closest<HTMLButtonElement>(`.${DrawerClasses.button}[data-page]`)
-		if (!targetRef) return
+	_ref_drawerBtn?.addEventListener('click', (ev) => {
+		const ref_target = (ev.target as HTMLElement).closest<CButton.CElement>(`.${CDrawer.Classes.button}[data-page]`)
+		if (!ref_target) return
 
-		const page = targetRef.dataset.page
+		const page = ref_target.dataset.page
 		if (!isValidEnumValue(page, Pages)) return
 
-		_drawerRef.hidePopover()
+		_ref_drawerBtn.hidePopover()
 		NavigationStore.update(v => v.page = page as Pages)
 	})
 
-	_minimizeBtnRef?.addEventListener('click', () => {
-		if (!_sideBarRef) {return}
+	_ref_minimizeBtn?.addEventListener('click', () => {
+		if (!_ref_sideBar) {return}
 
-		const isMinimized = _sideBarRef.hasAttribute(SideBarAttributes.minimized)
-		_minimizeBtnRef.setAttribute('data-tooltip',
+		const isMinimized = _ref_sideBar.hasAttribute(CSideBar.Attributes.minimized)
+		_ref_minimizeBtn.setAttribute('data-tooltip',
 			isMinimized? 'Minimize side bar' : 'Maximize side bar'
 		)
 
-		updateSideBarRef(_sideBarRef, {
-			SideBarMinimized: !isMinimized
+		CSideBar.update(_ref_sideBar, {
+			SideBar: {minimized: !isMinimized}
 		})
 	})
 }

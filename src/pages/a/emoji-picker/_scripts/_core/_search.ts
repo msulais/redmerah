@@ -2,7 +2,7 @@ import { ObservableStore } from "@/utils/store"
 import { updateEmojiList } from "./_body"
 import { $ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
-import type { PopoverElement } from "@/components/Popover"
+import { CPopover } from "@/components/Popover"
 
 export type SearchStoreType = Readonly<{
 	isSearching: boolean
@@ -13,17 +13,17 @@ export const SearchStore = new ObservableStore<SearchStoreType>({
 	isSearching: false,
 	searchText: ''
 })
-const _searchTextFieldRef = $(ElementIds.apSrc_input) as HTMLInputElement
-const _searchPopoverRef = $(ElementIds.apSrc_popover) as PopoverElement
-let _timeSearchId: NodeJS.Timeout | number | null = null
+const _ref_searchTextField = $(ElementIds.apSrc_input) as HTMLInputElement
+const _ref_searchPopover = $(ElementIds.apSrc_popover) as CPopover.CElement
+let _time_search: NodeJS.Timeout | number | null = null
 
 function _searchEmoji(): void {
-	if (_timeSearchId !== null) {
-		clearTimeout(_timeSearchId)
+	if (_time_search !== null) {
+		clearTimeout(_time_search)
 	}
 
-	_timeSearchId = setTimeout(() => {
-		_timeSearchId = null
+	_time_search = setTimeout(() => {
+		_time_search = null
 		updateEmojiList()
 	}, 1000)
 }
@@ -46,17 +46,17 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_searchPopoverRef.addEventListener('beforetoggle', ev => {
+	_ref_searchPopover.addEventListener('beforetoggle', ev => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
 		SearchStore.update(v => v.isSearching = isOpen)
 	})
 
-	_searchTextFieldRef.addEventListener('input', () => {
-		SearchStore.update(v => v.searchText = _searchTextFieldRef.value)
+	_ref_searchTextField.addEventListener('input', () => {
+		SearchStore.update(v => v.searchText = _ref_searchTextField.value)
 	})
 
-	_searchTextFieldRef.addEventListener('focus', () => {
-		SearchStore.update(v => v.searchText = _searchTextFieldRef.value)
+	_ref_searchTextField.addEventListener('focus', () => {
+		SearchStore.update(v => v.searchText = _ref_searchTextField.value)
 	})
 }
 

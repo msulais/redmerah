@@ -7,7 +7,7 @@ import { ColorPickerMode } from "../_scripts/_shared/_enums"
 import { CSSClasses } from "../_styles/_css"
 import { ElementIds } from "../_scripts/_shared/_ids"
 import { IconCodes } from '@/enums/icons'
-import { ButtonVariant } from '@/components/Button'
+import { CButton } from '@/components/Button'
 import { pxToRem } from '@/utils/css'
 ---
 
@@ -16,7 +16,7 @@ import { pxToRem } from '@/utils/css'
 	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.image}>
 	<Button
 		id={ElementIds.bdPick_imageButton}
-		ButtonVariant={ButtonVariant.filled}
+		ButtonVariant={CButton.Variant.filled}
 		style={{
 			'margin-top': pxToRem(8) + 'rem'
 		}}>

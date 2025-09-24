@@ -9,7 +9,7 @@ import Toast from '@/components/Toast/index.astro'
 import Icon from '@/components/Icon/index.astro'
 import { IconCodes } from '@/enums/icons'
 import { pxToRem } from '@/utils/css'
-import { ButtonVariant } from '@/components/Button'
+import { CButton } from '@/components/Button'
 ---
 
 <div
@@ -38,9 +38,9 @@ import { ButtonVariant } from '@/components/Button'
 			width: pxToRem(192) + 'rem'
 		}}>
 			<p style="font-size:var(--g-font-size-xs);">Donwload:</p>
-			<Button id={ElementIds.pgGen_png} disabled ButtonVariant={ButtonVariant.tonal}>PNG</Button>
-			<Button id={ElementIds.pgGen_jpg} disabled ButtonVariant={ButtonVariant.tonal}>JPEG</Button>
-			<Button id={ElementIds.pgGen_svg} disabled ButtonVariant={ButtonVariant.tonal}>SVG</Button>
+			<Button id={ElementIds.pgGen_png} disabled ButtonVariant={CButton.Variant.tonal}>PNG</Button>
+			<Button id={ElementIds.pgGen_jpg} disabled ButtonVariant={CButton.Variant.tonal}>JPEG</Button>
+			<Button id={ElementIds.pgGen_svg} disabled ButtonVariant={CButton.Variant.tonal}>SVG</Button>
 		</div>
 	</div>
 </div>

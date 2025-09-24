@@ -9,8 +9,7 @@ import Divider from '@/components/Divider/index.astro'
 import ComboBoxOption from '@/components/ComboBox/ComboBoxOption.astro'
 import { CSSClasses } from "../../_styles/_css"
 import { AppCSSColors } from '@/enums/app-data'
-import { ButtonVariant } from '@/components/Button'
-import { PopoverPosition } from '@/components/Popover'
+import { CButton } from '@/components/Button'
 import { IconCodes } from '@/enums/icons'
 import { ElementIds } from '../../_scripts/_shared/_ids'
 import { Commands } from '../../_scripts/_shared/_commands'
@@ -18,6 +17,7 @@ import { ScientificAngleType } from '../../_scripts/_shared/_enums'
 import { Pages } from '../../_scripts/_shared/_enums'
 import { DEFAULT_PAGE, DEFAULT_SCIENTIFIC_ANGLE, DEFAULT_SCIENTIFIC_INPUT, DEFAULT_SCIENTIFIC_OUTPUT } from '../../_scripts/_shared/_constant'
 import { pxToRem } from '@/utils/css'
+import { FlyoutPosition } from '@/enums/position'
 ---
 <div
 	class={CSSClasses.bd_page}
@@ -50,7 +50,7 @@ import { pxToRem } from '@/utils/css'
 		</div>
 		<div class={CSSClasses.bdPage_optionGroup}>
 			<Button
-				ButtonVariant={ButtonVariant.tonal}
+				ButtonVariant={CButton.Variant.tonal}
 				id={ElementIds.pgSci_fnBtn}
 				aria-haspopup="true"
 				aria-expanded="false"
@@ -68,17 +68,17 @@ import { pxToRem } from '@/utils/css'
 				popover="manual"
 				PopoverDraggable
 				PopoverGap={pxToRem(8)}
-				PopoverPosition={PopoverPosition.centerBottomToRight}
+				PopoverPosition={FlyoutPosition.centerBottomToRight}
 				PopoverPadding={pxToRem(16)}
 				id={ElementIds.pgSci_fnMenu}
 				PopoverAnchorBy={ElementIds.pgSci_fnBtn}>
 				<div class={CSSClasses.bdPageSci_menuGrid}>
-					<Button data-command={Commands.key_char} data-char="abs(" ButtonVariant={ButtonVariant.tonal}>abs(x)</Button>
-					<Button data-command={Commands.key_char} data-char="log(" ButtonVariant={ButtonVariant.tonal}>log(x)</Button>
-					<Button data-command={Commands.key_char} data-char="ln(" ButtonVariant={ButtonVariant.tonal}>ln(x)</Button>
-					<Button data-command={Commands.key_char} data-char="ceil(" ButtonVariant={ButtonVariant.tonal}>ceil(x)</Button>
-					<Button data-command={Commands.key_char} data-char="round(" ButtonVariant={ButtonVariant.tonal}>round(x)</Button>
-					<Button data-command={Commands.key_char} data-char="floor(" ButtonVariant={ButtonVariant.tonal}>floor(x)</Button>
+					<Button data-command={Commands.key_char} data-char="abs(" ButtonVariant={CButton.Variant.tonal}>abs(x)</Button>
+					<Button data-command={Commands.key_char} data-char="log(" ButtonVariant={CButton.Variant.tonal}>log(x)</Button>
+					<Button data-command={Commands.key_char} data-char="ln(" ButtonVariant={CButton.Variant.tonal}>ln(x)</Button>
+					<Button data-command={Commands.key_char} data-char="ceil(" ButtonVariant={CButton.Variant.tonal}>ceil(x)</Button>
+					<Button data-command={Commands.key_char} data-char="round(" ButtonVariant={CButton.Variant.tonal}>round(x)</Button>
+					<Button data-command={Commands.key_char} data-char="floor(" ButtonVariant={CButton.Variant.tonal}>floor(x)</Button>
 				</div>
 				<Divider/>
 				<div style={{
@@ -94,12 +94,12 @@ import { pxToRem } from '@/utils/css'
 						'padding-top': pxToRem(4) + 'rem'
 					}}
 					class={CSSClasses.bdPageSci_menuGrid}>
-					<Button data-command={Commands.key_char} data-char="sin(" class={CSSClasses.bdPageSci_trigonometry} ButtonVariant={ButtonVariant.tonal}>sin(x)</Button>
-					<Button data-command={Commands.key_char} data-char="cos(" class={CSSClasses.bdPageSci_trigonometry} ButtonVariant={ButtonVariant.tonal}>cos(x)</Button>
-					<Button data-command={Commands.key_char} data-char="tan(" class={CSSClasses.bdPageSci_trigonometry} ButtonVariant={ButtonVariant.tonal}>tan(x)</Button>
-					<Button data-command={Commands.key_char} data-char="csc(" class={CSSClasses.bdPageSci_trigonometry} ButtonVariant={ButtonVariant.tonal}>csc(x)</Button>
-					<Button data-command={Commands.key_char} data-char="sec(" class={CSSClasses.bdPageSci_trigonometry} ButtonVariant={ButtonVariant.tonal}>sec(x)</Button>
-					<Button data-command={Commands.key_char} data-char="cot(" class={CSSClasses.bdPageSci_trigonometry} ButtonVariant={ButtonVariant.tonal}>cot(x)</Button>
+					<Button data-command={Commands.key_char} data-char="sin(" class={CSSClasses.bdPageSci_trigonometry} ButtonVariant={CButton.Variant.tonal}>sin(x)</Button>
+					<Button data-command={Commands.key_char} data-char="cos(" class={CSSClasses.bdPageSci_trigonometry} ButtonVariant={CButton.Variant.tonal}>cos(x)</Button>
+					<Button data-command={Commands.key_char} data-char="tan(" class={CSSClasses.bdPageSci_trigonometry} ButtonVariant={CButton.Variant.tonal}>tan(x)</Button>
+					<Button data-command={Commands.key_char} data-char="csc(" class={CSSClasses.bdPageSci_trigonometry} ButtonVariant={CButton.Variant.tonal}>csc(x)</Button>
+					<Button data-command={Commands.key_char} data-char="sec(" class={CSSClasses.bdPageSci_trigonometry} ButtonVariant={CButton.Variant.tonal}>sec(x)</Button>
+					<Button data-command={Commands.key_char} data-char="cot(" class={CSSClasses.bdPageSci_trigonometry} ButtonVariant={CButton.Variant.tonal}>cot(x)</Button>
 				</div>
 			</Popover>
 			<ComboBox id={ElementIds.pgSci_angle}>
@@ -116,40 +116,40 @@ import { pxToRem } from '@/utils/css'
 		</div>
 	</div>
 	<div class={CSSClasses.bdPage_buttons} style="grid-template-columns: repeat(5, 1fr);">
-		<Button data-command={Commands.key_char} data-char="mod" ButtonVariant={ButtonVariant.tonal}>mod</Button>
-		<Button data-command={Commands.key_char} data-char="(" ButtonVariant={ButtonVariant.tonal}>(</Button>
-		<Button data-command={Commands.key_char} data-char=")" ButtonVariant={ButtonVariant.tonal}>)</Button>
-		<Button data-command={Commands.key_clear} ButtonVariant={ButtonVariant.tonal} style={`color:rgb(${AppCSSColors.accent})`}>C</Button>
-		<Button data-command={Commands.key_backspace} ButtonVariant={ButtonVariant.tonal} style={`color:rgb(${AppCSSColors.accent})`}><Icon IconCode={IconCodes.backspace}/></Button>
+		<Button data-command={Commands.key_char} data-char="mod" ButtonVariant={CButton.Variant.tonal}>mod</Button>
+		<Button data-command={Commands.key_char} data-char="(" ButtonVariant={CButton.Variant.tonal}>(</Button>
+		<Button data-command={Commands.key_char} data-char=")" ButtonVariant={CButton.Variant.tonal}>)</Button>
+		<Button data-command={Commands.key_clear} ButtonVariant={CButton.Variant.tonal} style={`color:rgb(${AppCSSColors.accent})`}>C</Button>
+		<Button data-command={Commands.key_backspace} ButtonVariant={CButton.Variant.tonal} style={`color:rgb(${AppCSSColors.accent})`}><Icon IconCode={IconCodes.backspace}/></Button>
 
-		<Button data-command={Commands.key_char} data-char="%" ButtonVariant={ButtonVariant.tonal}>%</Button>
-		<Button data-command={Commands.key_char} data-char="10^" ButtonVariant={ButtonVariant.tonal}>10^</Button>
-		<Button data-command={Commands.key_char} data-char="^2" ButtonVariant={ButtonVariant.tonal}>^2</Button>
-		<Button data-command={Commands.key_char} data-char="e^" ButtonVariant={ButtonVariant.tonal}>e^</Button>
-		<Button data-command={Commands.key_char} data-char="^" ButtonVariant={ButtonVariant.tonal}><Icon IconCode={IconCodes.chevronUp}/></Button>
+		<Button data-command={Commands.key_char} data-char="%" ButtonVariant={CButton.Variant.tonal}>%</Button>
+		<Button data-command={Commands.key_char} data-char="10^" ButtonVariant={CButton.Variant.tonal}>10^</Button>
+		<Button data-command={Commands.key_char} data-char="^2" ButtonVariant={CButton.Variant.tonal}>^2</Button>
+		<Button data-command={Commands.key_char} data-char="e^" ButtonVariant={CButton.Variant.tonal}>e^</Button>
+		<Button data-command={Commands.key_char} data-char="^" ButtonVariant={CButton.Variant.tonal}><Icon IconCode={IconCodes.chevronUp}/></Button>
 
-		<Button data-command={Commands.key_char} data-char="!" ButtonVariant={ButtonVariant.tonal}>!</Button>
-		<Button data-command={Commands.key_char} data-char="7" data-type="number" ButtonVariant={ButtonVariant.tonal}>7</Button>
-		<Button data-command={Commands.key_char} data-char="8" data-type="number" ButtonVariant={ButtonVariant.tonal}>8</Button>
-		<Button data-command={Commands.key_char} data-char="9" data-type="number" ButtonVariant={ButtonVariant.tonal}>9</Button>
-		<Button data-command={Commands.key_char} data-char="÷" ButtonVariant={ButtonVariant.tonal}><Icon IconCode={IconCodes.slashForward}/></Button>
+		<Button data-command={Commands.key_char} data-char="!" ButtonVariant={CButton.Variant.tonal}>!</Button>
+		<Button data-command={Commands.key_char} data-char="7" data-type="number" ButtonVariant={CButton.Variant.tonal}>7</Button>
+		<Button data-command={Commands.key_char} data-char="8" data-type="number" ButtonVariant={CButton.Variant.tonal}>8</Button>
+		<Button data-command={Commands.key_char} data-char="9" data-type="number" ButtonVariant={CButton.Variant.tonal}>9</Button>
+		<Button data-command={Commands.key_char} data-char="÷" ButtonVariant={CButton.Variant.tonal}><Icon IconCode={IconCodes.slashForward}/></Button>
 
-		<Button data-command={Commands.key_char} data-char="e" ButtonVariant={ButtonVariant.tonal}>e</Button>
-		<Button data-command={Commands.key_char} data-char="4" data-type="number" ButtonVariant={ButtonVariant.tonal}>4</Button>
-		<Button data-command={Commands.key_char} data-char="5" data-type="number" ButtonVariant={ButtonVariant.tonal}>5</Button>
-		<Button data-command={Commands.key_char} data-char="6" data-type="number" ButtonVariant={ButtonVariant.tonal}>6</Button>
-		<Button data-command={Commands.key_char} data-char="×" ButtonVariant={ButtonVariant.tonal}><Icon IconCode={IconCodes.dismiss}/></Button>
+		<Button data-command={Commands.key_char} data-char="e" ButtonVariant={CButton.Variant.tonal}>e</Button>
+		<Button data-command={Commands.key_char} data-char="4" data-type="number" ButtonVariant={CButton.Variant.tonal}>4</Button>
+		<Button data-command={Commands.key_char} data-char="5" data-type="number" ButtonVariant={CButton.Variant.tonal}>5</Button>
+		<Button data-command={Commands.key_char} data-char="6" data-type="number" ButtonVariant={CButton.Variant.tonal}>6</Button>
+		<Button data-command={Commands.key_char} data-char="×" ButtonVariant={CButton.Variant.tonal}><Icon IconCode={IconCodes.dismiss}/></Button>
 
-		<Button data-command={Commands.key_char} data-char="π" ButtonVariant={ButtonVariant.tonal}>π</Button>
-		<Button data-command={Commands.key_char} data-char="1" data-type="number" ButtonVariant={ButtonVariant.tonal}>1</Button>
-		<Button data-command={Commands.key_char} data-char="2" data-type="number" ButtonVariant={ButtonVariant.tonal}>2</Button>
-		<Button data-command={Commands.key_char} data-char="3" data-type="number" ButtonVariant={ButtonVariant.tonal}>3</Button>
-		<Button data-command={Commands.key_char} data-char="-" ButtonVariant={ButtonVariant.tonal}><Icon IconCode={IconCodes.lineHorizontal1}/></Button>
+		<Button data-command={Commands.key_char} data-char="π" ButtonVariant={CButton.Variant.tonal}>π</Button>
+		<Button data-command={Commands.key_char} data-char="1" data-type="number" ButtonVariant={CButton.Variant.tonal}>1</Button>
+		<Button data-command={Commands.key_char} data-char="2" data-type="number" ButtonVariant={CButton.Variant.tonal}>2</Button>
+		<Button data-command={Commands.key_char} data-char="3" data-type="number" ButtonVariant={CButton.Variant.tonal}>3</Button>
+		<Button data-command={Commands.key_char} data-char="-" ButtonVariant={CButton.Variant.tonal}><Icon IconCode={IconCodes.lineHorizontal1}/></Button>
 
-		<Button data-command={Commands.key_char} data-char="√" ButtonVariant={ButtonVariant.tonal}>√</Button>
-		<Button data-command={Commands.key_char} data-char="0" data-type="number" ButtonVariant={ButtonVariant.tonal}>0</Button>
-		<Button data-command={Commands.key_dec} ButtonVariant={ButtonVariant.tonal}>.</Button>
-		<Button data-command={Commands.key_equal} ButtonVariant={ButtonVariant.filled} style="font-weight:bold">=</Button>
-		<Button data-command={Commands.key_char} data-char="+" ButtonVariant={ButtonVariant.tonal}><Icon IconCode={IconCodes.add}/></Button>
+		<Button data-command={Commands.key_char} data-char="√" ButtonVariant={CButton.Variant.tonal}>√</Button>
+		<Button data-command={Commands.key_char} data-char="0" data-type="number" ButtonVariant={CButton.Variant.tonal}>0</Button>
+		<Button data-command={Commands.key_dec} ButtonVariant={CButton.Variant.tonal}>.</Button>
+		<Button data-command={Commands.key_equal} ButtonVariant={CButton.Variant.filled} style="font-weight:bold">=</Button>
+		<Button data-command={Commands.key_char} data-char="+" ButtonVariant={CButton.Variant.tonal}><Icon IconCode={IconCodes.add}/></Button>
 	</div>
 </div>

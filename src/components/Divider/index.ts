@@ -1,32 +1,29 @@
-type DividerProps = astroHTML.JSX.HTMLAttributes
+import { $create } from "../utils"
 
-type DividerElement = HTMLDivElement
+export namespace CDivider {
+	export type CElement = HTMLDivElement
 
-type DividerUpdateOptions = {
-	DividerRefs?: {
-		divider?(ref: HTMLDivElement): unknown
+	export type UpdateOptions = {
+		Divider?: {
+			refs?: {
+				divider?(ref: CElement): unknown
+			}
+		}
+	}
+
+	export enum Classes {
+		divider = 'c-divider'
+	}
+
+	export function create(options?: UpdateOptions): CElement {
+		const ref_divider = $create('div')
+		return update(ref_divider, options)
+	}
+
+	export function update(ref_divider: CElement, options?: UpdateOptions): CElement {
+		options?.Divider?.refs?.divider?.(ref_divider)
+		return ref_divider
 	}
 }
 
-enum DividerClasses {
-	divider = 'c-divider'
-}
-
-function createDividerRef(options?: DividerUpdateOptions): DividerElement {
-	const dividerRef = document.createElement('div')
-	return updateDividerRef(dividerRef, options)
-}
-
-function updateDividerRef(dividerRef: DividerElement, options?: DividerUpdateOptions): DividerElement {
-	options?.DividerRefs?.divider?.(dividerRef)
-	return dividerRef
-}
-
-export {
-	type DividerProps,
-	type DividerUpdateOptions,
-	type DividerElement,
-	DividerClasses,
-	createDividerRef,
-	updateDividerRef
-}
+export type DividerProps = astroHTML.JSX.HTMLAttributes

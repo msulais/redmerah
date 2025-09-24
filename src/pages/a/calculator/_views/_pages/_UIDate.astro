@@ -6,7 +6,7 @@ import Icon from '@/components/Icon/index.astro'
 import TextField from '@/components/TextField/index.astro'
 import ComboBoxOption from '@/components/ComboBox/ComboBoxOption.astro'
 import { CSSClasses } from "../../_styles/_css"
-import { ButtonVariant } from '@/components/Button'
+import { CButton } from '@/components/Button'
 import { IconCodes } from '@/enums/icons'
 import { FlyoutPosition } from '@/enums/position'
 import { ElementIds } from '../../_scripts/_shared/_ids'
@@ -46,7 +46,7 @@ import { pxToRem } from '@/utils/css'
 			width: pxToRem(256) + 'rem'
 		}}
 		id={ElementIds.pgDate_fromBtn}
-		ButtonVariant={ButtonVariant.tonal}
+		ButtonVariant={CButton.Variant.tonal}
 		popovertarget={ElementIds.pgDate_fromPicker}>
 		<span style="display:block">{DEFAULT_DATE_INPUT_FROM.toLocaleDateString('en', {day:'numeric', month: 'long', year: 'numeric'})}</span>
 		<div style="flex:1"/>
@@ -68,7 +68,7 @@ import { pxToRem } from '@/utils/css'
 				width: pxToRem(256) + 'rem'
 			}}
 			id={ElementIds.pgDate_toBtn}
-			ButtonVariant={ButtonVariant.tonal}
+			ButtonVariant={CButton.Variant.tonal}
 			popovertarget={ElementIds.pgDate_toPicker}>
 			<span style="display:block">{DEFAULT_DATE_INPUT_TO.toLocaleDateString('en', {day:'numeric', month: 'long', year: 'numeric'})}</span>
 			<div style="flex:1"/>

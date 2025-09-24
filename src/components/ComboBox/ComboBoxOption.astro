@@ -1,7 +1,7 @@
 ---
-import { ComboBoxClasses, type ComboBoxOptionProps } from '.'
+import { CComboBox, type ComboBoxOptionProps } from '.'
 import { joinClassList } from '@/utils/attributes'
-import { ButtonClasses } from '../Button'
+import { CButton } from '../Button'
 import './index.scss'
 
 type Props = ComboBoxOptionProps
@@ -9,9 +9,9 @@ const {
 	'class': className,
 	...other
 } = Astro.props
+
+const cls = CComboBox.Classes
 ---
 <option
-	class={joinClassList(ButtonClasses.button, ComboBoxClasses.option, className)}
-	{...other}>
-	<slot />
-</option>
+	class={joinClassList(CButton.Classes.button, cls.option, className)}
+	{...other}><slot /></option>

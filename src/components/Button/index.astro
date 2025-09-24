@@ -1,10 +1,7 @@
 ---
 import { joinClassList } from '@/utils/attributes'
 
-import {
-	type ButtonProps,
-	ButtonClasses
-} from '.'
+import {type ButtonProps, CButton} from '.'
 import './index.scss'
 
 type Props = ButtonProps
@@ -15,14 +12,13 @@ const {
 	ButtonFocused,
 	...other
 } = Astro.props
+const cls = CButton.Classes
 ---
 <button
 	class={joinClassList(
-		ButtonClasses.button,
+		cls.button,
 		className
 	)}
 	data-c-button-variant={ButtonVariant}
 	data-c-button-focused={ButtonFocused? '' : undefined}
-	{...other}>
-	<slot />
-</button>
+	{...other}><slot /></button>

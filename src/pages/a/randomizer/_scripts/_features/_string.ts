@@ -25,14 +25,14 @@ export const StringStore = new ObservableStore<StringStoreType>({
 	symbols: DEFAULT_STRING_SYMBOLS,
 	uppercase: DEFAULT_STRING_UPPERCASE
 })
-const _lengthRef = $(ElementIds.pgStr_length) as HTMLInputElement
-const _customRef = $(ElementIds.pgStr_custom) as HTMLInputElement
-const _upperRef = $(ElementIds.pgStr_upper) as HTMLInputElement
-const _lowerRef = $(ElementIds.pgStr_lower) as HTMLInputElement
-const _numbersRef = $(ElementIds.pgStr_number) as HTMLInputElement
-const _symbolsRef = $(ElementIds.pgStr_symbol) as HTMLInputElement
-const _outputRef = $(ElementIds.pgStr_output) as HTMLOutputElement
-let _timeStorageId: NodeJS.Timeout | number | undefined
+const _ref_length = $(ElementIds.pgStr_length) as HTMLInputElement
+const _ref_custom = $(ElementIds.pgStr_custom) as HTMLInputElement
+const _ref_upper = $(ElementIds.pgStr_upper) as HTMLInputElement
+const _ref_lower = $(ElementIds.pgStr_lower) as HTMLInputElement
+const _ref_numbers = $(ElementIds.pgStr_number) as HTMLInputElement
+const _ref_symbols = $(ElementIds.pgStr_symbol) as HTMLInputElement
+const _ref_output = $(ElementIds.pgStr_output) as HTMLOutputElement
+let _time_storage: NodeJS.Timeout | number | undefined
 
 export function updateOutput(): void {
 	const store = StringStore.value
@@ -63,8 +63,8 @@ export function updateOutput(): void {
 }
 
 function _subsStorage(v: StringStoreType): void {
-	clearTimeout(_timeStorageId)
-	_timeStorageId = setTimeout(() => {
+	clearTimeout(_time_storage)
+	_time_storage = setTimeout(() => {
 		saveStorageItem('string:length', v.length)
 		saveStorageItem('string:output', v.output)
 		saveStorageItem('string:custom', v.custom)
@@ -77,19 +77,19 @@ function _subsStorage(v: StringStoreType): void {
 
 function _subsView(v: StringStoreType): void {
 	const isActive = (el: Element) => el === document.activeElement
-	if (!isActive(_customRef)) {
-		_customRef.value = v.custom
+	if (!isActive(_ref_custom)) {
+		_ref_custom.value = v.custom
 	}
 
-	if (!isActive(_lengthRef)) {
-		_lengthRef.valueAsNumber = v.length
+	if (!isActive(_ref_length)) {
+		_ref_length.valueAsNumber = v.length
 	}
 
-	_numbersRef.checked = v.numbers
-	_upperRef.checked = v.uppercase
-	_lowerRef.checked = v.lowercase
-	_symbolsRef.checked = v.symbols
-	_outputRef.textContent = v.output
+	_ref_numbers.checked = v.numbers
+	_ref_upper.checked = v.uppercase
+	_ref_lower.checked = v.lowercase
+	_ref_symbols.checked = v.symbols
+	_ref_output.textContent = v.output
 }
 
 function _initSubscriber(): void {
@@ -98,33 +98,33 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_lengthRef.addEventListener('input', () => {
-		const value = Math_clamp(safeNumber(_lengthRef.valueAsNumber), 1, Number.MAX_VALUE)
+	_ref_length.addEventListener('input', () => {
+		const value = Math_clamp(safeNumber(_ref_length.valueAsNumber), 1, Number.MAX_VALUE)
 		StringStore.update(v => v.length = value)
 	})
 
-	_lengthRef.addEventListener('blur', () => {
-		_lengthRef.valueAsNumber = Math_clamp(safeNumber(_lengthRef.valueAsNumber), 1, Number.MAX_VALUE)
+	_ref_length.addEventListener('blur', () => {
+		_ref_length.valueAsNumber = Math_clamp(safeNumber(_ref_length.valueAsNumber), 1, Number.MAX_VALUE)
 	})
 
-	_customRef.addEventListener('input', () => {
-		StringStore.update(v => v.custom = _customRef.value)
+	_ref_custom.addEventListener('input', () => {
+		StringStore.update(v => v.custom = _ref_custom.value)
 	})
 
-	_upperRef.addEventListener('change', () => {
-		StringStore.update(v => v.uppercase = _upperRef.checked)
+	_ref_upper.addEventListener('change', () => {
+		StringStore.update(v => v.uppercase = _ref_upper.checked)
 	})
 
-	_lowerRef.addEventListener('change', () => {
-		StringStore.update(v => v.lowercase = _lowerRef.checked)
+	_ref_lower.addEventListener('change', () => {
+		StringStore.update(v => v.lowercase = _ref_lower.checked)
 	})
 
-	_numbersRef.addEventListener('change', () => {
-		StringStore.update(v => v.numbers = _numbersRef.checked)
+	_ref_numbers.addEventListener('change', () => {
+		StringStore.update(v => v.numbers = _ref_numbers.checked)
 	})
 
-	_symbolsRef.addEventListener('change', () => {
-		StringStore.update(v => v.symbols = _symbolsRef.checked)
+	_ref_symbols.addEventListener('change', () => {
+		StringStore.update(v => v.symbols = _ref_symbols.checked)
 	})
 }
 
