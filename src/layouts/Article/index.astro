@@ -3,7 +3,7 @@ import { CButton } from '@/components/Button'
 import Button from '@/components/Button/index.astro'
 import Icon from '@/components/Icon/index.astro'
 import { IconCodes } from '@/enums/icons'
-import { ElementIds } from './_scripts/_ids'
+import { ElementIds } from './_scripts/_shared/_ids'
 import { CSSClasses } from './_styles/_css'
 
 type Props = {
@@ -50,3 +50,4 @@ const props = Astro.props
 		<slot />
 	</div>
 </article>
+<script src="./_scripts/_index.ts"/>
