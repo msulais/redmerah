@@ -238,14 +238,15 @@
 				margin-bottom: u.Rem(8px);
 
 				& [data-css-more] {
-					height: u.Rem(32px);
-					padding: u.Rem(4px) u.Rem(10px);
 					font-weight: bold;
+					font-size: var(--g-font-size-xxm);
+					border: u.Rem(1px) solid;
+					min-height: u.Rem(64px);
 					display: flex;
-					border-radius: u.Rem(16px);
+					border-radius: u.Rem(32px);
 					align-items: center;
-					background-color: rgb(var(--g-color-on-surface));
-					color: rgb(var(--g-color-surface));
+					justify-content: center;
+					padding: 0 1em;
 				}
 
 				& img {

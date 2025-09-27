@@ -83,10 +83,8 @@ function appColorCustom(color: HEXColor): string {
 								<img tabindex="0" data-tooltip={v.name} src={v.logoUrl} alt={v.name}/>
 							</li>}</>)}
 							{APPS.length > 5 && <li
-								tabindex="0"
-								data-tooltip={`And ${APPS.length-5} more apps`}
 								data-css-more>
-								{APPS.length - 5}+
+								{APPS.length - 5}+ more apps
 							</li>}
 						</ul>
 					</Tooltip>
