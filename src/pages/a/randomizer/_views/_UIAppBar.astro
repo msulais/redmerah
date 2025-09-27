@@ -1,5 +1,5 @@
 ---
-import AppBar from '@/components/AppBar/index.astro'
+import AppBar from '@/components/AppBar2/index.astro'
 import IconButton from '@/components/Button/IconButton.astro'
 import Tooltip from '@/components/Tooltip/index.astro'
 import Dialog from '@/components/Dialog/index.astro'
@@ -77,30 +77,39 @@ const themes: {
 ]
 ---
 
-<AppBar id={ElementIds.appbar}>
+<AppBar
+	id={ElementIds.appbar}
+	AppBarLeadingAttr={{class: CSSClasses.smallScreenOnly}}>
 	<Fragment slot="leading">
 		<IconButton
-			id={ElementIds.ap_sideBarBtn}
+			class={CSSClasses.smallScreenOnly}
+			id={ElementIds.ap_openDrawerBtn}
 			IconButtonCode={IconCodes.lineHorizontal3}
 		/>
+	</Fragment>
+	<Fragment slot="headline">
 		<img
 			src={APP.logoUrl}
 			alt={APP.name + ' logo'}
 			style={{
-				width: pxToRem(32) + 'rem',
-				margin: `0 ${pxToRem(8)}rem 0 0`
+				width: pxToRem(24) + 'rem',
+				marginLeft: pxToRem(4) + 'rem'
 			}}
 		/>
+		{APP.name}
 	</Fragment>
-	<Fragment slot="headline">{APP.name}</Fragment>
 	<Tooltip slot="trailing">
-		<Button
-			ButtonVariant={CButton.Variant.filled}
-			class={CSSClasses.generateBtn}
-			id={ElementIds.ap_generator}>
-			<Icon IconCode={IconCodes.arrowSync}/>
-			<div>Generate</div>
-		</Button>
+		<div
+			id={ElementIds.ap_generatorLocation}
+			style={{display: 'contents'}}>
+			<Button
+				ButtonVariant={CButton.Variant.filled}
+				class={CSSClasses.generateBtn}
+				id={ElementIds.ap_generator}>
+				<Icon IconCode={IconCodes.arrowSync}/>
+				<div>Generate</div>
+			</Button>
+		</div>
 		<IconButton
 			id={ElementIds.apInf_btn}
 			data-tooltip="Info"

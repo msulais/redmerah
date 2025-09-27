@@ -1,8 +1,7 @@
 import { CButton } from "@/components/Button"
 import { $ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
-import { APP, HIDE_NAVIGATION } from "../_shared/_constant"
-import { CSideBar } from "@/components/SideBar"
+import { APP } from "../_shared/_constant"
 
 // inf = info
 const _ref_inf_menu = $(ElementIds.apInf_menu) as HTMLDivElement
@@ -12,8 +11,7 @@ const _ref_inf_btn = $(ElementIds.apInf_btn) as CButton.CElement
 const _ref_sett_menu = $(ElementIds.apSett_menu) as HTMLDivElement
 const _ref_sett_btn = $(ElementIds.apSett_btn) as CButton.CElement
 
-const _ref_sideBarBtn = $(ElementIds.ap_sideBarBtn) as CButton.CElement
-const _ref_sideBar = $(ElementIds.nav_sideBar) as HTMLDivElement
+const _ref_sideBarBtn = $(ElementIds.ap_openDrawerBtn) as CButton.CElement
 const _ref_drawerBtn = $(ElementIds.nav_drawer) as HTMLDivElement
 const _ref_shareBtn = $(ElementIds.apInf_shareBtn) as CButton.CElement
 
@@ -41,14 +39,7 @@ function _initEvents(): void {
 	})
 
 	_ref_sideBarBtn.addEventListener('click', () => {
-		if (window.matchMedia(`(max-width: ${HIDE_NAVIGATION}rem)`).matches) {
-			_ref_drawerBtn.togglePopover()
-			return
-		}
-
-		CSideBar.update(_ref_sideBar, {
-			SideBar: {minimized: !_ref_sideBar.hasAttribute(CSideBar.Attributes.minimized)}
-		})
+		_ref_drawerBtn.togglePopover()
 	})
 }
 

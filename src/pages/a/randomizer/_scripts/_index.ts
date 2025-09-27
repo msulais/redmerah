@@ -11,6 +11,7 @@ import teams from './_features/_teams'
 import words from './_features/_words'
 import database from './_core/_database'
 import { removeSplashScreen } from '@/utils/splash'
+import mediaQuery from './_core/_media-query'
 
 function _main(): void {
 	appbar()
@@ -25,6 +26,7 @@ function _main(): void {
 	teams()
 	words()
 	database()
+	mediaQuery()
 	removeSplashScreen()
 }
 

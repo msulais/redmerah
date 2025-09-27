@@ -1,17 +1,18 @@
 ---
-import SideBar from '@/components/SideBar/index.astro'
+import SideBar from '@/components/SideBar2/index.astro'
 import Tooltip from '@/components/Tooltip/index.astro'
 import Icon from '@/components/Icon/index.astro'
 import Drawer from '@/components/Drawer/index.astro'
 import DrawerButton from '@/components/Drawer/DrawerButton.astro'
 import Button from '@/components/Button/index.astro'
-import SideBarButton from '@/components/SideBar/SideBarButton.astro'
+import SideBarButton from '@/components/SideBar2/SideBarButton.astro'
 import { CButton } from '@/components/Button'
 import { IconCodes } from '@/enums/icons'
 import { CSSClasses } from '../_styles/_css'
 import { Pages } from '../_scripts/_shared/_enums'
 import { ElementIds } from '../_scripts/_shared/_ids'
 import { DEFAULT_PAGE } from '../_scripts/_shared/_constant'
+import IconButton from '@/components/Button/IconButton.astro'
 
 const items: {
 	icon: number
@@ -64,6 +65,12 @@ const items: {
 	id={ElementIds.nav_sideBar}
 	aria-label="Navigation">
 	<Tooltip>
+		<IconButton
+			style={{width: 'fit-content'}}
+			IconButtonCode={IconCodes.lineHorizontal3}
+			data-tooltip="Minimize side bar"
+			id={ElementIds.nav_minimizeBtn}
+		/>
 		{items.map(v => <SideBarButton
 			role="tab"
 			data-page={v.page}

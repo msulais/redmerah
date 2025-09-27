@@ -6,8 +6,8 @@ import { APP_RANDOMIZER } from "@/constants/apps"
 import type { AppItem } from "@/types/apps"
 
 export const APP: AppItem = APP_RANDOMIZER
-export const HIDE_NAVIGATION = pxToRem(900)
-export const DEVICE_WIDTH_SMALL = pxToRem(650)
+export const CSS_HIDE_NAVIGATION = pxToRem(900, 16)
+export const CSS_SMALL_SIZE = pxToRem(650, 16)
 export const DEFAULT_PAGE: Pages = Pages.string
 export const DEFAULT_THEME = PlatformThemeMode.auto
 export const DEFAULT_ANIMATION = PlatformAnimationMode.auto

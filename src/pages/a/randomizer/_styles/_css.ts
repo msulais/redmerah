@@ -14,4 +14,5 @@ export class CSSClasses {
 	static readonly resultColors = CSS.resultColors
 	static readonly resultSelection = CSS.resultSelection
 	static readonly resultTeams = CSS.resultTeams
+	static readonly smallScreenOnly = CSS.smallScreenOnly
 }

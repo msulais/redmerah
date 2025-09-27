@@ -4,12 +4,12 @@ import { ElementIds } from "../_shared/_ids"
 import { $, $$, $$$ } from "./_dom-utils"
 import { isValidEnumValue } from "@/utils/object"
 import { CDrawer } from "@/components/Drawer"
-import { CSideBar } from "@/components/SideBar"
+import { CSideBar } from "@/components/SideBar2"
 import { CSSClasses } from "../../_styles/_css"
 import { CButton } from "@/components/Button"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEasing } from "@/enums/animation"
-import { DEFAULT_PAGE, HIDE_NAVIGATION } from "../_shared/_constant"
+import { DEFAULT_PAGE, CSS_HIDE_NAVIGATION } from "../_shared/_constant"
 import { saveStorageItem } from "./_database"
 import { pxToRem } from "@/utils/css"
 
@@ -21,7 +21,8 @@ export const NavigationStore = new ObservableStore<NavigationStoreType>({
 	page: DEFAULT_PAGE
 })
 
-const _ref_sideBar = $(ElementIds.nav_sideBar)
+const _ref_minimizeBtn = $(ElementIds.nav_minimizeBtn) as CButton.CIcon.CElement
+const _ref_sideBar = $(ElementIds.nav_sideBar) as CSideBar.CElement
 const _ref_drawerBtn = $(ElementIds.nav_drawer)
 
 function _subscribePageRefView(v: NavigationStoreType, o: NavigationStoreType): void {
@@ -85,7 +86,7 @@ function _subscribePageRefView(v: NavigationStoreType, o: NavigationStoreType): 
 		duration: 500,
 		easing: AnimationEasing.spring
 	}
-	const isHideNavigation = window.matchMedia(`(max-width:${HIDE_NAVIGATION}rem)`).matches
+	const isHideNavigation = window.matchMedia(`(max-width:${CSS_HIDE_NAVIGATION}rem)`).matches
 	ref_options?.animate({
 		opacity: [0, 1],
 		scale: [isHideNavigation? 0.9 : 1, 1],
@@ -129,6 +130,19 @@ function _initEvents(): void {
 		if (!isValidEnumValue(page, Pages)) return
 
 		NavigationStore.update(v => v.page = page as Pages)
+	})
+
+	_ref_minimizeBtn?.addEventListener('click', () => {
+		if (!_ref_sideBar) {return}
+
+		const isMinimized = _ref_sideBar.hasAttribute(CSideBar.Attributes.minimized)
+		_ref_minimizeBtn.setAttribute('data-tooltip',
+			isMinimized? 'Minimize side bar' : 'Maximize side bar'
+		)
+
+		CSideBar.update(_ref_sideBar, {
+			SideBar: {minimized: !isMinimized}
+		})
 	})
 }
 
