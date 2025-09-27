@@ -52,7 +52,7 @@ export const prerender = true
 		<Tooltip>
 			<ul class={CSSClasses.content} id={ElementIds.appList}>
 				{[...APPS].sort((a,b) => a.name.localeCompare(b.name)).map(app =>
-					<li>
+					<li data-tooltip={app.name}>
 						<LinkButton style={`--color: ${app.color}`} href={app.link} LinkButtonVariant={CButton.Variant.tonal}>
 							<img
 								loading="eager"
@@ -60,7 +60,7 @@ export const prerender = true
 								style={{width: pxToRem(48) + 'rem'}}
 								alt={app.name + ' logo'}
 							/>
-							<span data-tooltip={app.name} >{app.name}</span>
+							<span>{app.name}</span>
 						</LinkButton>
 					</li>
 				)}
