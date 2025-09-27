@@ -104,8 +104,9 @@ function appColorCustom(color: HEXColor): string {
 		<section class={CSS.apps}>
 			<h2 class={CSS.heading}><div><span>Apps</span></div></h2>
 			<div>
-				<ul class={CSS.fadeOnView}>
+				<ul>
 					{APPS.map((v, i) => <>{i < 3 && <li
+						class={CSS.fadeOnView}
 						style={appColorCustom(v.color)}>
 						<img src={v.logoUrl} alt={v.name} />
 						<h3>{v.name}</h3>
@@ -127,8 +128,8 @@ function appColorCustom(color: HEXColor): string {
 		<section class={CSS.features}>
 			<h2 class={CSS.heading}><div><span>Features</span></div></h2>
 			<div>
-				<ul class={CSS.fadeOnView}>
-					{features.map(v => <li>
+				<ul>
+					{features.map(v => <li class={CSS.fadeOnView}>
 						<img src={v.icon.src} alt={v.title}/>
 						<h3>{v.title}</h3>
 						<p>{v.description}</p>
