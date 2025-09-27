@@ -6,19 +6,6 @@ $SCREEN_WIDTH_SMALL: u.Rem(700px);
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	height: 100%;
-	max-height: 100%;
-	overflow: auto;
-	background-color: rgb(var(--g-color-surface));
-	border-radius: u.Rem(8px) 0 0 0;
-	border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity3));
-	border-bottom: none;
-	border-right: none;
-
-	@media (max-width: $SCREEN_WIDTH_SMALL) {
-		border: none;
-		background-color: transparent;
-	}
 }
 
 .bodyPage {
@@ -109,5 +96,11 @@ $SCREEN_WIDTH_SMALL: u.Rem(700px);
 		@supports not (field-sizing: content) {
 			resize: vertical;
 		}
+	}
+}
+
+.smallScreenOnly {
+	@media not (max-width: $SCREEN_WIDTH_SMALL) {
+		display: none !important;
 	}
 }

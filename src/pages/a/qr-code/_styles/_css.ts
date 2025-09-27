@@ -6,4 +6,5 @@ export class CSSClasses {
 	static readonly pageGenerate = CSS.pageGenerate
 	static readonly pageScan = CSS.pageScan
 	static readonly navigationSideBar = CSS.navigationSideBar
+	static readonly smallScreenOnly = CSS.smallScreenOnly
 }

@@ -1,5 +1,5 @@
 ---
-import AppBar from '@/components/AppBar/index.astro'
+import AppBar from '@/components/AppBar2/index.astro'
 import IconButton from '@/components/Button/IconButton.astro'
 import Tooltip from '@/components/Tooltip/index.astro'
 import Menu from '@/components/Menu/index.astro'
@@ -27,6 +27,7 @@ import { APP, DEFAULT_ANIMATION, DEFAULT_ERROR_CORRECTION_LEVEL, DEFAULT_THEME, 
 import { EncodingMode, ErrorCorrectionLevel, QRVersion } from '../_scripts/_shared/_enums'
 import { CButton } from '@/components/Button'
 import { FlyoutPosition } from '@/enums/position'
+import { CSSClasses } from '../_styles/_css'
 
 const animations: {
 	value: PlatformAnimationMode
@@ -72,22 +73,27 @@ const themes: {
 ]
 ---
 
-<AppBar id={ElementIds.appbar}>
+<AppBar
+	id={ElementIds.appbar}
+	AppBarLeadingAttr={{class: CSSClasses.smallScreenOnly}}>
 	<Fragment slot="leading">
 		<IconButton
-			id={ElementIds.ap_sideBarBtn}
+			class={CSSClasses.smallScreenOnly}
+			id={ElementIds.ap_openDrawerBtn}
 			IconButtonCode={IconCodes.lineHorizontal3}
 		/>
+	</Fragment>
+	<Fragment slot="headline">
 		<img
 			src={APP.logoUrl}
 			alt={APP.name + ' logo'}
 			style={{
-				width: pxToRem(32) + 'rem',
-				margin: `0 ${pxToRem(8)}rem 0 0`
+				width: pxToRem(24) + 'rem',
+				marginLeft: pxToRem(4) + 'rem'
 			}}
 		/>
+		{APP.name}
 	</Fragment>
-	<Fragment slot="headline">{APP.name}</Fragment>
 	<Tooltip slot="trailing">
 		<IconButton
 			id={ElementIds.apInf_btn}
