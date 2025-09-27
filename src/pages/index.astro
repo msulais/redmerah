@@ -75,8 +75,8 @@ function appColorCustom(color: HEXColor): string {
 	<div class={CSS.body}>
 		<section class={CSS.header}>
 			<div>
-				<h1><span>Apps</span><br/><span>Tasks</span><br/><span>Productivity</span></h1>
-				<div>
+				<h1 class={CSS.fadeOnView}><span>Apps</span><br/><span>Tasks</span><br/><span>Productivity</span></h1>
+				<div class={CSS.fadeOnView}>
 					<Tooltip>
 						<ul>
 							{shuffleArray([...APPS]).map((v, i) => <>{i < 5 && <li>
@@ -104,7 +104,7 @@ function appColorCustom(color: HEXColor): string {
 		<section class={CSS.apps}>
 			<h2 class={CSS.heading}><div><span>Apps</span></div></h2>
 			<div>
-				<ul>
+				<ul class={CSS.fadeOnView}>
 					{APPS.map((v, i) => <>{i < 3 && <li
 						style={appColorCustom(v.color)}>
 						<img src={v.logoUrl} alt={v.name} />
@@ -116,6 +116,7 @@ function appColorCustom(color: HEXColor): string {
 					</li>}</>)}
 				</ul>
 				<LinkButton
+					class={CSS.fadeOnView}
 					LinkButtonVariant={CButton.Variant.filled}
 					href={RoutesLinks.apps}>
 					See {APPS.length-3} more apps
@@ -126,7 +127,7 @@ function appColorCustom(color: HEXColor): string {
 		<section class={CSS.features}>
 			<h2 class={CSS.heading}><div><span>Features</span></div></h2>
 			<div>
-				<ul>
+				<ul class={CSS.fadeOnView}>
 					{features.map(v => <li>
 						<img src={v.icon.src} alt={v.title}/>
 						<h3>{v.title}</h3>
@@ -137,7 +138,7 @@ function appColorCustom(color: HEXColor): string {
 		</section>
 	</div>
 	<BottomBar>
-		<p id="quote" class={CSS.quote}><q>
+		<p id="quote" class={[CSS.quote, CSS.fadeOnView].join(' ')}><q>
 			{ 'We are also users. What’s good for you, good for us too.'.split(' ').map(v => <><span>{v}</span> </>) }
 		</q></p>
 	</BottomBar>
@@ -146,10 +147,14 @@ function appColorCustom(color: HEXColor): string {
 <script>
 	import { isAnimationAllowed } from "@/utils/animation"
 	import { removeSplashScreen } from "@/utils/splash"
+	import CSS from './_index.module.scss'
+import { pxToRem } from "@/utils/css"
+import { AnimationEasing } from "@/enums/animation"
 
 	const quote = document.getElementById('quote') as HTMLParagraphElement
 	const spans = document.querySelectorAll<HTMLSpanElement>('#quote span')
-	const observer = new IntersectionObserver((entries) => {
+	const refs = document.querySelectorAll(`.${CSS.fadeOnView}`)
+	const observer1 = new IntersectionObserver((entries) => {
 		if (!isAnimationAllowed()) return
 
 		for (const entry of entries) {
@@ -170,7 +175,37 @@ function appColorCustom(color: HEXColor): string {
 		root: null,
 		threshold: 1.0
 	})
+	const targets = new Set<HTMLElement>()
+	const observer2 = new IntersectionObserver((entries) => {
+		for (const entry of entries) {
+			if (entry.isIntersecting) {
+				const ref_target = entry.target as HTMLElement
+				if (targets.has(ref_target)) {
+					continue
+				}
 
-	observer.observe(quote)
+				ref_target.style.setProperty('opacity', '1')
+				if (isAnimationAllowed()){
+					ref_target.animate({
+						opacity: [0, 1],
+						translate: [`0 ${pxToRem(64)}rem`, '0 0']
+					}, {
+						duration: 1000,
+						easing: AnimationEasing.spring
+					})
+				}
+				targets.add(ref_target)
+			}
+		}
+	}, {
+		root: null,
+		threshold: 0
+	})
+
+	for (const ref of refs) {
+		observer2.observe(ref)
+	}
+
+	observer1.observe(quote)
 	removeSplashScreen()
 </script>
