@@ -61,3 +61,7 @@ export enum AppCSSElevation {
 export enum AppCSSDuration {
 	transition = 'var(--g-duration-transition)'
 }
+
+export enum AppCSSBlur {
+	glass = 'var(--g-blur-glass)'
+}

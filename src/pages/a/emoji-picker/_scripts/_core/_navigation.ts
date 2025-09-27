@@ -4,10 +4,11 @@ import { ElementIds } from "../_shared/_ids"
 import { $ } from "./_dom-utils"
 import { isValidEnumValue } from "@/utils/object"
 import { CDrawer } from "@/components/Drawer"
-import { CSideBar } from "@/components/SideBar"
+import { CSideBar } from "@/components/SideBar2"
 import { updateEmojiList } from "./_body"
 import { saveStorageItem } from "./_database"
 import { DEFAULT_PAGE } from "../_shared/_constant"
+import type { CButton } from "@/components/Button"
 
 export type NavigationStoreType = Readonly<{
 	page: Pages
@@ -17,7 +18,8 @@ export const NavigationStore = new ObservableStore<NavigationStoreType>({
 	page: DEFAULT_PAGE
 })
 
-const _ref_sideBar = $(ElementIds.navigationSideBar)
+const _ref_minimizeBtn = $(ElementIds.nav_minimizeBtn) as CButton.CIcon.CElement
+const _ref_sideBar = $(ElementIds.navigationSideBar) as HTMLDivElement
 const _ref_drawerBtn = $(ElementIds.navigationDrawer)
 
 function _initEvents(): void {
@@ -40,6 +42,19 @@ function _initEvents(): void {
 		if (!isValidEnumValue(page, Pages)) return
 
 		NavigationStore.update(v => v.page = page as Pages)
+	})
+
+	_ref_minimizeBtn?.addEventListener('click', () => {
+		if (!_ref_sideBar) {return}
+
+		const isMinimized = _ref_sideBar.hasAttribute(CSideBar.Attributes.minimized)
+		_ref_minimizeBtn.setAttribute('data-tooltip',
+			isMinimized? 'Minimize side bar' : 'Maximize side bar'
+		)
+
+		CSideBar.update(_ref_sideBar, {
+			SideBar: {minimized: !isMinimized}
+		})
 	})
 }
 

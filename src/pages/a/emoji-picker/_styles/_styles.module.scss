@@ -60,3 +60,9 @@ $SCREEN_WIDTH_SMALL: u.Rem(650px);
 		display: none !important;
 	}
 }
+
+.smallScreenOnly {
+	@media not (max-width: $SCREEN_WIDTH_SMALL) {
+		display: none !important;
+	}
+}

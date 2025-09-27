@@ -9,7 +9,7 @@ import { EMOJIS_ACTIVITIES, EMOJIS_ANIMAL_AND_NATURE, EMOJIS_FLAGS, EMOJIS_FOOD_
 import { CSSClasses } from '../_styles/_css'
 import { CButton } from '@/components/Button'
 import { IconCodes } from '@/enums/icons'
-import { AppCSSColors } from '@/enums/app-data'
+import { AppCSSColors, AppCSSOpacity, AppCSSBlur } from '@/enums/app-data'
 import { ElementIds } from '../_scripts/_shared/_ids'
 import { SkinToneEmoji } from '../_scripts/_shared/_enums'
 import { RadioNames } from '../_scripts/_shared/_input-names'
@@ -76,8 +76,9 @@ const skinTones: {
 			padding: `${pxToRem(4)}rem 0 ${pxToRem(16)}rem 0`,
 			position: 'sticky',
 			borderRadius: `0 0 ${pxToRem(1)}rem ${pxToRem(1)}rem`,
-			top: '0',
-			backgroundColor: `rgb(${AppCSSColors.background})`
+			top: pxToRem(58) + 'rem',
+			backdropFilter: `blur(${AppCSSBlur.glass})`,
+			backgroundColor: `rgba(${AppCSSColors.background},${AppCSSOpacity.glass})`
 		}}>
 			<h1 id={ElementIds.bd_title}>Smiley & Emotion</h1>
 			<TextField

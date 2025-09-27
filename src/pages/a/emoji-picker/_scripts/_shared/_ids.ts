@@ -12,7 +12,7 @@ export class ElementIds {
 	static readonly appbar = _createId()
 
 	// ap = appbar
-	static readonly ap_sideBarBtn = _createId()
+	static readonly ap_openDrawerBtn = _createId()
 
 	// apInf = appbar info
 	static readonly apInf_btn = _createId()
@@ -43,6 +43,7 @@ export class ElementIds {
 	// nav = navigation
 	static readonly navigationSideBar = _createId()
 	static readonly navigationDrawer = _createId()
+	static readonly nav_minimizeBtn = _createId()
 
 	// toa = toast
 	static readonly toa_copied = _createId()

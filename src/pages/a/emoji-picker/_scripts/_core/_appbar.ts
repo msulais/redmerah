@@ -1,8 +1,7 @@
 import { CButton } from "@/components/Button"
 import { ElementIds } from "../_shared/_ids"
 import { $ } from "./_dom-utils"
-import { CSideBar } from "@/components/SideBar"
-import { APP, SCREEN_WIDTH_SMALL } from "../_shared/_constant"
+import { APP } from "../_shared/_constant"
 import { CPopover } from "@/components/Popover"
 
 const _ref_infoMenu = $(ElementIds.apInf_menu) as HTMLDivElement
@@ -10,8 +9,7 @@ const _ref_infoBtn = $(ElementIds.apInf_btn) as CButton.CElement
 const _ref_settingsMenu = $(ElementIds.apSett_menu) as HTMLDivElement
 const _ref_settingsBtn = $(ElementIds.apSett_btn) as CButton.CElement
 const _ref_shareButton = $(ElementIds.apInf_shareBtn) as CButton.CElement
-const _ref_sideBarBtn = $(ElementIds.ap_sideBarBtn) as CButton.CElement
-const _ref_sideBar = $(ElementIds.navigationSideBar) as HTMLDivElement
+const _ref_sideBarBtn = $(ElementIds.ap_openDrawerBtn) as CButton.CElement
 const _ref_drawerBtn = $(ElementIds.navigationDrawer) as HTMLDivElement
 const _ref_searchButton = $(ElementIds.apSrc_btn) as CButton.CIcon.CElement
 const _ref_searchPopover = $(ElementIds.apSrc_popover) as CPopover.CElement
@@ -39,19 +37,6 @@ function _initEvents(): void {
 		})
 	})
 
-	_ref_sideBarBtn.addEventListener('click', () => {
-		if (window.matchMedia(`(max-width: ${SCREEN_WIDTH_SMALL}rem)`).matches) {
-			_ref_drawerBtn.togglePopover()
-			return
-		}
-
-		CSideBar.update(_ref_sideBar, {
-			SideBar: {
-				minimized: !_ref_sideBar.hasAttribute(CSideBar.Attributes.minimized)
-			}
-		})
-	})
-
 	_ref_searchPopover.addEventListener('beforetoggle', ev => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
 		CButton.CIcon.update(_ref_searchButton, {
@@ -59,6 +44,10 @@ function _initEvents(): void {
 				variant: isOpen? CButton.Variant.filled : CButton.Variant.transparent
 			}
 		})
+	})
+
+	_ref_sideBarBtn.addEventListener('click', () => {
+		_ref_drawerBtn.togglePopover()
 	})
 }
 

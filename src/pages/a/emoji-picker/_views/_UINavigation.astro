@@ -1,10 +1,10 @@
 ---
-import SideBar from '@/components/SideBar/index.astro'
+import SideBar from '@/components/SideBar2/index.astro'
 import Tooltip from '@/components/Tooltip/index.astro'
 import Drawer from '@/components/Drawer/index.astro'
 import DrawerButton from '@/components/Drawer/DrawerButton.astro'
 import IconButton from '@/components/Button/IconButton.astro'
-import SideBarButton from '@/components/SideBar/SideBarButton.astro'
+import SideBarButton from '@/components/SideBar2/SideBarButton.astro'
 import { CButton } from '@/components/Button'
 import { IconCodes } from '@/enums/icons'
 import { CSSClasses } from '../_styles/_css'
@@ -72,6 +72,12 @@ const items: {
 	id={ElementIds.navigationSideBar}
 	aria-label="Navigation">
 	<Tooltip>
+		<IconButton
+			style={{width: 'fit-content'}}
+			IconButtonCode={IconCodes.lineHorizontal3}
+			data-tooltip="Minimize side bar"
+			id={ElementIds.nav_minimizeBtn}
+		/>
 		{items.map(v => <SideBarButton
 			role="tab"
 			style={{
