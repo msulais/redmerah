@@ -5,15 +5,16 @@
 	width: u.Rem(280px);
 	max-width: u.Rem(280px);
 	max-height: 100%;
-	overflow: hidden;
-	border-radius: u.Rem(8px);
 	padding: u.Rem(8px);
+	border-right: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity2));
+	overflow: hidden;
+	background-color: rgb(var(--g-color-surface));
 	transition-property: width, max-width;
 	transition-duration: var(--g-duration-transition);
 
 	&[data-c-sidebar-minimized] {
-		width: u.Rem(76px);
-		max-width: u.Rem(76px);
+		width: u.Rem(58px);
+		max-width: u.Rem(58px);
 	}
 }
 
@@ -40,7 +41,6 @@
 	height: inherit;
 	width: 100%;
 	max-width: inherit;
-	padding: u.Rem(8px);
 	max-height: 100%;
 	overflow-x: hidden;
 }
