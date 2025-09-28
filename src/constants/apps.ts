@@ -23,6 +23,17 @@ import logoCompass from '@/assets/images/apps/compass.svg'
 import logoNetworkInformation from '@/assets/images/apps/network-information.svg'
 import logoVibrator from '@/assets/images/apps/vibrator.svg'
 import logoContrastChecker from '@/assets/images/apps/contrast-checker.svg'
+import logoCSSUnitConverter from '@/assets/images/apps/css-unit-converter.svg'
+
+export const APP_CSS_UNIT_CONVERTER: AppItem = {
+	logoUrl: logoCSSUnitConverter.src,
+	name: 'CSS Unit Converter',
+	description: "Instantly convert px, rem, em, %, vw/vh, numbers and color formats. Fast, accurate, and copy-ready.",
+	link: RoutesLinks.cssUnitConverter,
+	color: '#F81B1B',
+	buildNumber: 1,
+	buildVersion: '0.0.1',
+}
 
 export const APP_CONTRAST_CHECKER: AppItem = {
 	logoUrl: logoContrastChecker.src,
@@ -255,6 +266,7 @@ export const APP_DEAD_PIXEL_TEST: AppItem = {
 }
 
 export const APPS: AppItem[] = [
+	APP_CSS_UNIT_CONVERTER,
 	APP_CONTRAST_CHECKER,
 	APP_VIBRATOR,
 	APP_NETWORK_INFORMATION,

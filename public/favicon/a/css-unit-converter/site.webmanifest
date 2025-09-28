@@ -1,0 +1,32 @@
+{
+	"name": "CSS Unit Converter",
+	"short_name": "CSS Unit Converter",
+	"id": "/css-unit-converter",
+	"description": "Instantly convert px, rem, em, %, vw/vh, numbers and color formats. Fast, accurate, and copy-ready.",
+	"start_url": "/css-unit-converter",
+	"icons": [
+		{
+			"src": "/favicon/a/css-unit-converter/favicon-16x16.png",
+			"sizes": "16x16",
+			"type": "image/png"
+		},
+		{
+			"src": "/favicon/a/css-unit-converter/favicon-32x32.png",
+			"sizes": "32x32",
+			"type": "image/png"
+		},
+		{
+			"src": "/favicon/a/css-unit-converter/android-chrome-192x192.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		},
+		{
+			"src": "/favicon/a/css-unit-converter/android-chrome-512x512.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		}
+	],
+	"theme_color": "#F81B1B",
+	"background_color": "#ffffff",
+	"display": "standalone"
+}

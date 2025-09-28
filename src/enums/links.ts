@@ -28,10 +28,10 @@ export enum RoutesLinks {
 	compass = '/a/compass',
 	networkInformation = '/a/network-information',
 	vibrator = '/a/vibrator',
-
-	// TODO: create these apps
 	cssUnitConverter = '/a/css-unit-converter',
 	contrastChecker = '/a/contrast-checker',
+
+	// TODO: create these apps
 	shadowGenerator = '/a/shadow-generator',
 	sensor = '/a/sensor',
 	screenRecorder = '/a/screen-recorder',
