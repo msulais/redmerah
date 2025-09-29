@@ -1,0 +1,41 @@
+---
+import ComboBox from '@/components/ComboBox/index.astro'
+import ComboBoxOption from '@/components/ComboBox/ComboBoxOption.astro'
+import { CSSClasses } from "../../_styles/_css"
+import { Pages } from '../../_scripts/_shared/_enums'
+import { DEFAULT_ANGLE_INPUT, DEFAULT_ANGLE_INPUT_UNIT, DEFAULT_ANGLE_OUTPUT, DEFAULT_ANGLE_OUTPUT_UNIT, DEFAULT_PAGE } from '../../_scripts/_shared/_constant'
+import { ElementIds } from '../../_scripts/_shared/_ids'
+import { AngleUnits } from '../../_scripts/_shared/_units'
+---
+
+<div
+	class={CSSClasses.bodyPage}
+	role="tabpanel"
+	id={ElementIds.bd_angle}
+	hidden={DEFAULT_PAGE !== Pages.angle}>
+	<input
+		value={DEFAULT_ANGLE_INPUT}
+		type="number"
+		id={ElementIds.pgAng_input}
+	/>
+	<ComboBox id={ElementIds.pgAng_inputUnit}>
+		{AngleUnits.all.values().toArray().sort((a, b) => a.name.localeCompare(b.name)).map(v => <ComboBoxOption
+			value={v.id}
+			selected={v.id === DEFAULT_ANGLE_INPUT_UNIT.id}>
+			{v.name} [ {v.symbol} ]
+		</ComboBoxOption>)}
+	</ComboBox>
+
+	<input
+		value={DEFAULT_ANGLE_OUTPUT}
+		type="number"
+		id={ElementIds.pgAng_output}
+	/>
+	<ComboBox id={ElementIds.pgAng_outputUnit}>
+		{AngleUnits.all.values().toArray().sort((a, b) => a.name.localeCompare(b.name)).map(v => <ComboBoxOption
+			value={v.id}
+			selected={v.id === DEFAULT_ANGLE_OUTPUT_UNIT.id}>
+			{v.name} [ {v.symbol} ]
+		</ComboBoxOption>)}
+	</ComboBox>
+</div>

@@ -1,0 +1,41 @@
+---
+import ComboBox from '@/components/ComboBox/index.astro'
+import ComboBoxOption from '@/components/ComboBox/ComboBoxOption.astro'
+import { CSSClasses } from "../../_styles/_css"
+import { Pages } from '../../_scripts/_shared/_enums'
+import { DEFAULT_PAGE, DEFAULT_TIME_INPUT, DEFAULT_TIME_INPUT_UNIT, DEFAULT_TIME_OUTPUT, DEFAULT_TIME_OUTPUT_UNIT } from '../../_scripts/_shared/_constant'
+import { ElementIds } from '../../_scripts/_shared/_ids'
+import { TimeUnits } from '../../_scripts/_shared/_units'
+---
+
+<div
+	class={CSSClasses.bodyPage}
+	role="tabpanel"
+	id={ElementIds.bd_time}
+	hidden={DEFAULT_PAGE !== Pages.time}>
+	<input
+		id={ElementIds.pgTm_input}
+		value={DEFAULT_TIME_INPUT}
+		type="number"
+	/>
+	<ComboBox id={ElementIds.pgTm_inputUnit}>
+		{TimeUnits.all.values().toArray().sort((a, b) => a.name.localeCompare(b.name)).map(v => <ComboBoxOption
+			value={v.id}
+			selected={v.id === DEFAULT_TIME_INPUT_UNIT.id}>
+			{v.name} [ {v.symbol} ]
+		</ComboBoxOption>)}
+	</ComboBox>
+
+	<input
+		id={ElementIds.pgTm_output}
+		value={DEFAULT_TIME_OUTPUT}
+		type="number"
+	/>
+	<ComboBox id={ElementIds.pgTm_outputUnit}>
+		{TimeUnits.all.values().toArray().sort((a, b) => a.name.localeCompare(b.name)).map(v => <ComboBoxOption
+			value={v.id}
+			selected={v.id === DEFAULT_TIME_OUTPUT_UNIT.id}>
+			{v.name} [ {v.symbol} ]
+		</ComboBoxOption>)}
+	</ComboBox>
+</div>

@@ -1,0 +1,31 @@
+---
+import { APP } from './_scripts/_shared/_constant'
+import UIAppBar from './_views/_UIAppBar.astro'
+import UIBody from './_views/_UIBody.astro'
+import UINavigation from './_views/_UINavigation.astro'
+import UISplash from './_views/_UISplash.astro'
+import App from '@/components/App2/index.astro'
+import Html from '@/layouts/Html/index.astro'
+
+export const prerender = true
+---
+
+<Html
+	title={APP.name + ' • Redmerah'}
+	accentColor={APP.color}
+	description={APP.description}>
+	<Fragment slot="favicon">
+		<link rel="shortcut icon" type="image/ico" href={`/favicon${APP.link}/favicon.ico`} />
+		<link rel="apple-touch-icon" sizes="180x180" href={`/favicon${APP.link}/apple-touch-icon.png`}>
+		<link rel="icon" type="image/png" sizes="32x32" href={`/favicon${APP.link}/favicon-32x32.png`}>
+		<link rel="icon" type="image/png" sizes="16x16" href={`/favicon${APP.link}/favicon-16x16.png`}>
+		<link rel="manifest" href={`/favicon${APP.link}/site.webmanifest`}>
+	</Fragment>
+	<UISplash/>
+	<App>
+		<UIAppBar slot="appbar"/>
+		<UINavigation slot="left-sidebar"/>
+		<UIBody />
+	</App>
+	<script src="./_scripts/_index.ts"/>
+</Html>

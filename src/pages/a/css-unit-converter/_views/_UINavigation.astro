@@ -1,0 +1,93 @@
+---
+import SideBar from '@/components/SideBar2/index.astro'
+import Tooltip from '@/components/Tooltip/index.astro'
+import Icon from '@/components/Icon/index.astro'
+import Drawer from '@/components/Drawer/index.astro'
+import DrawerButton from '@/components/Drawer/DrawerButton.astro'
+import Button from '@/components/Button/index.astro'
+import SideBarButton from '@/components/SideBar2/SideBarButton.astro'
+import { CButton } from '@/components/Button'
+import { IconCodes } from '@/enums/icons'
+import { CSSClasses } from '../_styles/_css'
+import { Pages } from '../_scripts/_shared/_enums'
+import { ElementIds } from '../_scripts/_shared/_ids'
+import { DEFAULT_PAGE } from '../_scripts/_shared/_constant'
+import IconButton from '@/components/Button/IconButton.astro'
+
+const items: {
+	icon: number
+	name: string
+	page: Pages
+	controls: string
+}[] = [
+	{
+		icon: IconCodes.remote,
+		name: 'Angle',
+		page: Pages.angle,
+		controls: ElementIds.bd_angle,
+	},
+	{
+		icon: IconCodes.ruler,
+		name: 'Length',
+		page: Pages.length,
+		controls: ElementIds.bd_length,
+	},
+	{
+		icon: IconCodes.timer,
+		name: 'Time',
+		page: Pages.time,
+		controls: ElementIds.bd_time,
+	},
+]
+---
+
+<SideBar
+	role="tablist"
+	class={CSSClasses.navigationSideBar}
+	id={ElementIds.nav_sideBar}
+	aria-label="Navigation">
+	<Tooltip>
+		<IconButton
+			style={{width: 'fit-content'}}
+			IconButtonCode={IconCodes.lineHorizontal3}
+			data-tooltip="Minimize side bar"
+			id={ElementIds.nav_minimizeBtn}
+		/>
+		{items.map(v => <SideBarButton
+			role="tab"
+			data-page={v.page}
+			aria-selected={DEFAULT_PAGE === v.page}
+			aria-controls={v.controls}
+			data-tooltip={v.name}
+			SideBarButtonSelected={DEFAULT_PAGE === v.page}
+			ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.tonal : undefined}>
+			<Icon
+				slot="leading"
+				IconCode={v.icon}
+			/>
+			{v.name}
+		</SideBarButton>)}
+	</Tooltip>
+</SideBar>
+<Drawer
+	id={ElementIds.nav_drawer}
+	aria-label="Navigation">
+	<Button
+		slot="header"
+		style="width:min-content"
+		popovertarget={ElementIds.nav_drawer}
+		popovertargetaction="hide">
+		<Icon IconCode={IconCodes.lineHorizontal3}/>
+	</Button>
+	{items.map(v => <DrawerButton
+		aria-selected={DEFAULT_PAGE === v.page}
+		aria-controls={v.controls}
+		data-page={v.page}
+		DrawerButtonSelected={DEFAULT_PAGE === v.page}
+		ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.tonal : undefined}>
+		<Icon
+			IconCode={v.icon}
+		/>
+		{v.name}
+	</DrawerButton>)}
+</Drawer>

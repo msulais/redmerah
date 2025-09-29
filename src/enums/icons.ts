@@ -158,6 +158,7 @@ export enum IconCodes {
 	shareAndroid = 0xEEE5,
 	shieldCheckmark = 0xEEFF,
 	slashForward = 0xEF53,
+	slideSize = 0xEF75,
 	sparkle = 0xEF97,
 	square = 0xEFC5,
 	star = 0xEFEF,
