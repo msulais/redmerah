@@ -19,7 +19,7 @@ import { TimeUnits } from '../../_scripts/_shared/_units'
 		type="number"
 	/>
 	<ComboBox id={ElementIds.pgTm_inputUnit}>
-		{TimeUnits.all.values().toArray().sort((a, b) => a.name.localeCompare(b.name)).map(v => <ComboBoxOption
+		{[...TimeUnits.all.values()].sort((a, b) => a.name.localeCompare(b.name)).map(v => <ComboBoxOption
 			value={v.id}
 			selected={v.id === DEFAULT_TIME_INPUT_UNIT.id}>
 			{v.name} [ {v.symbol} ]
@@ -32,7 +32,7 @@ import { TimeUnits } from '../../_scripts/_shared/_units'
 		type="number"
 	/>
 	<ComboBox id={ElementIds.pgTm_outputUnit}>
-		{TimeUnits.all.values().toArray().sort((a, b) => a.name.localeCompare(b.name)).map(v => <ComboBoxOption
+		{[...TimeUnits.all.values()].sort((a, b) => a.name.localeCompare(b.name)).map(v => <ComboBoxOption
 			value={v.id}
 			selected={v.id === DEFAULT_TIME_OUTPUT_UNIT.id}>
 			{v.name} [ {v.symbol} ]
