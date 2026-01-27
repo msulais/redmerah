@@ -32,6 +32,8 @@ export enum RoutesLinks {
 	contrastChecker = '/a/contrast-checker',
 
 	// TODO: create these apps
+	pixelate = '/a/pixelate',
+	mimeTypeChecker = '/a/mime-type-checker',
 	shadowGenerator = '/a/shadow-generator',
 	sensor = '/a/sensor',
 	screenRecorder = '/a/screen-recorder',
