@@ -42,12 +42,18 @@ export function deepCopy<T>(obj: T): T {
 	}
 
 	if (Array.isArray(obj)) {
-		return [].concat(obj as any).map(v => deepCopy(v)) as T
+		const arr = []
+		for (let i = 0; i < (obj as any[]).length; i++) {
+			arr.push(deepCopy(obj[i]))
+		}
+
+		return arr as T
 	}
 
-	if (obj && !isInstanceOfClass(obj) && Object.keys(obj as any).length > 0) {
-		const copy = {...obj}
-		for (const key of Object.keys(obj as any)) {
+	const keys = Object.keys(obj as any)
+	if (obj && !isInstanceOfClass(obj) && keys.length > 0) {
+		const copy = {}
+		for (const key of keys) {
 			// @ts-ignore
 			copy[key] = deepCopy(copy[key])
 		}
