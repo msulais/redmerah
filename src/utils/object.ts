@@ -32,7 +32,14 @@ export function isInstanceOfClass(obj: any): boolean {
 }
 
 export function deepCopy<T>(obj: T): T {
-	if (typeof obj !== 'object') {return obj}
+	if (typeof obj !== 'object') {
+		return obj
+	}
+
+	// typeof null === 'object'
+	if (obj === null) {
+		return obj
+	}
 
 	if (Array.isArray(obj)) {
 		return [].concat(obj as any).map(v => deepCopy(v)) as T

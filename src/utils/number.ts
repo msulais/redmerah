@@ -41,125 +41,77 @@ export function formatNumber(num: number, separator: {
  * @returns
  */
 export function numberToRealDigits(input: number): string {
-	const regex = /([+-]?)(\d+)(\.\d+)?[Ee]([+\-])?(\d+)/
-	const str: string = input.toString()
+    const str = input.toString()
+	if (!str.includes('e') && !str.includes('E')) {
+		return str
+	}
 
-	const result = str.match(regex)
-	if (!result) return str
+	let [coefficient, exponentStr] = str.split(/[eE]/)
+	let exponent = Number.parseInt(exponentStr)
+	const decimalIndex = coefficient.indexOf('.')
+	if (decimalIndex !== -1) {
+		const fractionalDigits = coefficient.length - decimalIndex - 1
+		exponent -= fractionalDigits
+		coefficient = coefficient.replace('.', '')
+	}
 
-	const sign = result[1]
-	const num = result[2]
-	const decimal = result[3] ?? '.0'
-	const expSign = result[4]
-	const exponent = Number.parseInt(result[5])
+	if (exponent > 0) {
+		return coefficient + '0'.repeat(exponent)
+	}
 
-	if (expSign === '-') return (sign
-		+ '0.'
-		+ '0'.repeat(exponent - 1)
-		+ num
-		+ decimal.substring(1)
-	)
+	const absExponent = Math.abs(exponent)
+	if (absExponent >= coefficient.length) {
+		return [
+			'0.',
+			'0'.repeat(absExponent - coefficient.length),
+			coefficient
+		].join('')
+	}
 
-	const leftover = exponent - (decimal.length - 1)
-	return (sign
-		+ num
-		+ decimal.substring(1, exponent + 1)
-		+ (leftover <= 0
-			? '.' + decimal.substring(exponent + 1)
-			: '0'.repeat(leftover)
-		)
-	)
+	const insertionPoint = coefficient.length - absExponent
+	return [
+		coefficient.slice(0, insertionPoint),
+		'.',
+		coefficient.slice(insertionPoint)
+	].join('')
 }
 
 export function binaryToFloat(input: string, bit: 32 | 64 = 64): number {
-	if (/^[10]+$/.test(input)) throw Error('input not valid')
-
-	if (input.length > bit) input = input.substring(0, bit)
-	if (input.length < bit) input = ('0'.repeat(bit - input.length)) + input
-
-	const sign = input.substring(0, 1)
-	let exponent = input.substring(1, bit == 32 ? 9 : 12)
-	let mantissa = input.substring(bit == 32 ? 9 : 12)
-	let carry = 0
-
-	// convert mantissa from bits to real numbers
-	for (let i = 1; i <= mantissa.length; i++) {
-		if (mantissa.substring(i - 1, i) != '1') continue
-
-		carry = carry + Math.pow(2, -i)
+	if (/[^01]/.test(input)) {
+		console.error('Input not valid: must contain only 0 and 1')
+		return 0
 	}
 
-	// mantissa in real numbers (base10)
-	mantissa = carry.toString()
-	exponent = Number.parseInt(exponent, 2).toString()
+	const paddedInput = input.padStart(bit, '0')
+	const buffer = new ArrayBuffer(8)
+	const view = new DataView(buffer)
+	if (bit === 32) {
+		const intVal = parseInt(paddedInput, 2)
+		view.setUint32(0, intVal)
+		return view.getFloat32(0)
+	}
 
-	// denormalized
-	if (exponent === '0') return (
-		Math.pow(-1, Number.parseInt(sign))
-		* Math.pow(2, (bit == 32 ? -126 : -1022))
-		* Number.parseFloat(mantissa)
-	)
-
-	return (
-		Math.pow(-1, Number.parseInt(sign))
-		* Math.pow(2, Number.parseInt(exponent) - (bit == 32 ? 127 : 1023))
-		* (1 + Number.parseFloat(mantissa))
-	)
+	const bigIntVal = BigInt("0b" + paddedInput)
+	view.setBigUint64(0, bigIntVal)
+	return view.getFloat64(0)
 }
 
 export function numberToBinary(input: number, bit: 32 | 64 = 64): string {
-	const sign = input < 0 ? '1' : '0'
-	let n = input.toString(2)
-
-	// Make sure only float with decimal
-	if (!/\./.test(n)) return n
-
-	let mantissa = Math.abs(input).toString(2)
-	const indexDot =  mantissa.indexOf('.')
-	const indexOne = mantissa.indexOf('1')
-	const subtractForExp = (indexDot < indexOne
-		? indexDot - indexOne
-		: indexDot - (indexOne + 1)
-	)
-	let more = false
-	let less = false
-	let exponent: number | string = 0
-	if (indexOne !== -1) {
-		exponent = subtractForExp + (bit == 32 ? 127 : 1023)
-		if (exponent > (bit == 32 ? 255 : 4095)) {
-			more = true
-			exponent = 255
-		}
-		else if (exponent < 0) {
-			less = true
-			exponent = 0
-		}
-		exponent = exponent.toString(2)
-	}
-	else exponent = '0'
-
-	if (exponent.length < (bit === 32 ? 8 : 11)) {
-		exponent = ('0'.repeat((bit === 32 ? 8 : 11) - exponent.length)) + exponent
+    const buffer = new ArrayBuffer(8)
+    const view = new DataView(buffer)
+	if (bit !== 32 && bit !== 64) {
+		bit = 64
 	}
 
-	if (indexOne == -1) mantissa = mantissa.substring(indexDot + 1)
+	let binary = ''
+    if (bit === 32) {
+        view.setFloat32(0, input)
+        binary = view.getUint32(0).toString(2)
+    }
 	else {
-		if (indexDot < indexOne) {
-			if (less) mantissa = mantissa.substring(indexDot + (bit === 32 ? 127 : 1023))
-			else mantissa = mantissa.substring(indexOne + 1)
-		}
-
-		else if (indexDot > indexOne) {
-			if (more) mantissa = mantissa.substring(
-				indexDot - (bit === 32 ? 127 : 1023),
-				indexDot + 1
-			);
-			else mantissa = (
-				mantissa.substring(indexOne + 1, indexDot)
-				+ mantissa.substring(indexDot + 1)
-			)
-		}
+		view.setFloat64(0, input)
+		binary = view.getBigUint64(0).toString(2)
 	}
 
-	return (sign + exponent + mantissa).substring(0, bit == 32 ? 32 : 64)
+	return binary.padStart(bit, '0')
 }

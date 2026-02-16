@@ -26,6 +26,7 @@ export class ObservableStore<T extends object> {
 	 */
 	update(updater: (state: ReadWrite<T>) => unknown, notifyKeys: symbol[] | null = []) {
 		const oldState = this.state
+		// TODO: find better solution
 		updater(this.state = deepCopy(this.state))
 		if (notifyKeys !== null) {
 			this.notify(notifyKeys, oldState)
