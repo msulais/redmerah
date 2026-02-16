@@ -48,6 +48,10 @@ const colorToCSS = (hex: HEXColor) => {
 		<title>{ title }</title>
 		<script is:inline src='/scripts/root-settings.min.js'/>
 		<style id={GlobalElementIds.colorAccent} set:html={`:root{--g-color-accent-light: ${colorToCSS(colors.color)};--g-color-accent-dark: ${colorToCSS(colors.colorDark)};--g-color-on-accent-light: ${colorToCSS(colors.onColor)};--g-color-on-accent-dark: ${colorToCSS(colors.onColorDark)};}`}/>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20,400,0,0" />
 		<slot name="favicon">
 			<link rel="shortcut icon" type="image/ico" href="/favicon/favicon.ico" />
 			<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
