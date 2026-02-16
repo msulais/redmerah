@@ -61,3 +61,15 @@ import { GlobalElementIds } from '@/enums/ids'
 	<slot />
 	<span class="loading-indicator"/>
 </div>
+<script>
+	import { GlobalElementIds } from "@/enums/ids"
+
+	window.addEventListener('load', () => {
+		const splashRef = document.getElementById(GlobalElementIds.splash)
+		if (!splashRef) {return}
+
+		const imgRef = splashRef.querySelector('svg')
+		imgRef?.remove()
+		splashRef.remove()
+	})
+</script>

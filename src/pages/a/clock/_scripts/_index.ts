@@ -5,7 +5,6 @@ import clock from './_features/_clock'
 import timer from "./_features/_timer"
 import stopwatch from './_features/_stopwatch'
 import database from "./_core/_database"
-import { removeSplashScreen } from "@/utils/splash"
 
 function main(): void {
 	appbar()
@@ -15,7 +14,6 @@ function main(): void {
 	timer()
 	stopwatch()
 	database()
-	removeSplashScreen()
 }
 
 main()

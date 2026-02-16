@@ -2,7 +2,6 @@ import appbar from "./_core/_appbar"
 import settings from "./_core/_settings"
 import database from "./_core/_database"
 import navigation from "./_core/_navigation"
-import { removeSplashScreen } from "@/utils/splash"
 import inputNumber from "./_core/_input-number"
 import angle from "./_features/_angle"
 import time from "./_features/_time"
@@ -17,7 +16,6 @@ function main() {
 	angle()
 	time()
 	length()
-	removeSplashScreen()
 }
 
 main()

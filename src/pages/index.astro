@@ -145,10 +145,9 @@ function appColorCustom(color: HEXColor): string {
 
 <script>
 	import { isAnimationAllowed } from "@/utils/animation"
-	import { removeSplashScreen } from "@/utils/splash"
 	import CSS from './_index.module.scss'
-import { pxToRem } from "@/utils/css"
-import { AnimationEasing } from "@/enums/animation"
+	import { pxToRem } from "@/utils/css"
+	import { AnimationEasing } from "@/enums/animation"
 
 	const quote = document.getElementById('quote') as HTMLParagraphElement
 	const spans = document.querySelectorAll<HTMLSpanElement>('#quote span')
@@ -206,5 +205,4 @@ import { AnimationEasing } from "@/enums/animation"
 	}
 
 	observer1.observe(quote)
-	removeSplashScreen()
 </script>
