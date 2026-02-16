@@ -1,6 +1,6 @@
 @use '../../styles/units.scss' as u;
 
-.c-sidebar2 {
+.c-sidebar {
 	height: 100%;
 	width: u.Rem(280px);
 	max-width: u.Rem(280px);
@@ -18,7 +18,7 @@
 	}
 }
 
-.c-sidebar2-container {
+.c-sidebar-container {
 	display: flex;
 	flex-direction: column;
 	gap: u.Rem(4px);
@@ -32,7 +32,7 @@
 	border-radius: u.Rem(8px);
 }
 
-.c-sidebar2-content {
+.c-sidebar-content {
 	flex: 1;
 	overflow: auto;
 	display: flex;
@@ -45,7 +45,7 @@
 	overflow-x: hidden;
 }
 
-.c-sidebar2-button.c-button {
+.c-sidebar-button.c-button {
 	justify-content: flex-start;
 	position: relative;
 
@@ -71,21 +71,21 @@
 	}
 }
 
-.c-sidebar2-button-leading {
+.c-sidebar-button-leading {
 }
 
-.c-sidebar2-button-content {
+.c-sidebar-button-content {
 	flex: 1;
 	display: inherit;
 	gap: inherit;
 
-	.c-sidebar2[data-c-sidebar-minimized] & {
+	.c-sidebar[data-c-sidebar-minimized] & {
 		display: none;
 	}
 }
 
-.c-sidebar2-footer,
-.c-sidebar2-header {
+.c-sidebar-footer,
+.c-sidebar-header {
 	overflow: auto;
 	display: flex;
 	flex-direction: column;
@@ -98,6 +98,6 @@
 	overflow-x: hidden;
 }
 
-:is(.c-sidebar2-content, .c-sidebar2-footer, .c-sidebar2-header):empty {
+:is(.c-sidebar-content, .c-sidebar-footer, .c-sidebar-header):empty {
 	display: none;
 }

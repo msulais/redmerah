@@ -20,7 +20,7 @@ export namespace CAppBar {
 	}
 
 	export enum Classes {
-		appbar   = 'c-appbar2',
+		appbar   = 'c-appbar',
 		leading  = appbar + '-leading',
 		trailing = appbar + '-trailing',
 		content  = appbar + '-content',

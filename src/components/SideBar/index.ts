@@ -23,7 +23,7 @@ export namespace CSideBar {
 	}
 
 	export enum Classes {
-		sideBar       = 'c-sidebar2',
+		sideBar       = 'c-sidebar',
 		content       = sideBar + '-content',
 		header        = sideBar + '-header',
 		footer        = sideBar + '-footer',

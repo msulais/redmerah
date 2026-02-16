@@ -1,6 +1,6 @@
 @use '../../styles/units.scss' as u;
 
-.c-appbar2 {
+.c-appbar {
 	width: 100%;
 	padding: u.Rem(8px);
 	display: flex;
@@ -8,7 +8,7 @@
 	gap: u.Rem(4px);
 }
 
-.c-appbar2-content {
+.c-appbar-content {
 	display: flex;
 	align-items: center;
 	gap: u.Rem(8px);
@@ -22,7 +22,7 @@
 	min-height: u.Rem(42px);
 }
 
-.c-appbar2-headline {
+.c-appbar-headline {
 	font-size: var(--g-font-size-m);
 	font-weight: 500;
 	overflow: hidden;
@@ -33,12 +33,12 @@
 	padding-right: u.Rem(8px);
 }
 
-.c-appbar2-flex {
+.c-appbar-flex {
 	flex: 1;
 }
 
-.c-appbar2-leading,
-.c-appbar2-trailing {
+.c-appbar-leading,
+.c-appbar-trailing {
 	display: flex;
 	align-items: center;
 	gap: u.Rem(2px);
@@ -51,10 +51,10 @@
 }
 
 :is(
-	.c-appbar2,
-	.c-appbar2-leading,
-	.c-appbar2-trailing,
-	.c-appbar2-headline
+	.c-appbar,
+	.c-appbar-leading,
+	.c-appbar-trailing,
+	.c-appbar-headline
 ):empty {
 	display: none !important;
 }

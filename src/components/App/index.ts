@@ -22,7 +22,7 @@ export namespace CApp {
 	}
 
 	export enum Classes {
-		app          = 'c-app2',
+		app          = 'c-app',
 		appBar       = app + '-appbar',
 		container    = app + '-container',
 		leftSideBar  = app + '-left-sidebar',
