@@ -1,3 +1,4 @@
+// TODO: use better alternative
 import { AnimationEasing } from "@/enums/animation"
 import { GlobalElementIds } from "@/enums/ids"
 import { FlyoutPosition } from "@/enums/position"
