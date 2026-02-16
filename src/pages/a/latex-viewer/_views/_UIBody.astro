@@ -17,8 +17,8 @@ import { pxToRem } from '@/utils/css'
 <main class={CSSClasses.body}>
 	<Button id={ElementIds.bd_add}
 		style={{'margin-left': pxToRem(16) + 'rem'}}
-		ButtonVariant={CButton.Variant.filled}>
-		<Icon IconCode={IconCodes.add}/>
+		ButtonVariant={CButton.Variant.Filled}>
+		<Icon IconCode={IconCodes.Add}/>
 		New equation
 	</Button>
 	<ul class={CSSClasses.bodyList} data-text-wrap id={ElementIds.bd_list}>
@@ -32,26 +32,26 @@ import { pxToRem } from '@/utils/css'
 				</math>
 			</output>
 			<Button
-				data-command={Commands.eq_new}
-				ButtonVariant={CButton.Variant.outlined}>
-				<Icon IconCode={IconCodes.add}/>
+				data-command={Commands.EquationNew}
+				ButtonVariant={CButton.Variant.Outlined}>
+				<Icon IconCode={IconCodes.Add}/>
 				New equation
 			</Button>
 			<IconButton
-				data-command={Commands.eq_copy}
-				IconButtonCode={IconCodes.copy}
+				data-command={Commands.EquationCopy}
+				IconButtonCode={IconCodes.Copy}
 				aria-label="Copy"
 				data-tooltip="Copy"
 			/>
 			<IconButton
-				data-command={Commands.eq_copyMathML}
-				IconButtonCode={IconCodes.code}
+				data-command={Commands.EquationMathML}
+				IconButtonCode={IconCodes.Code}
 				aria-label="MathML"
 				data-tooltip="MathML"
 			/>
 			<IconButton
-				data-command={Commands.eq_delete}
-				IconButtonCode={IconCodes.delete}
+				data-command={Commands.EquationDelete}
+				IconButtonCode={IconCodes.Delete}
 				aria-label="Delete"
 				data-tooltip="Delete"
 				disabled
@@ -60,7 +60,7 @@ import { pxToRem } from '@/utils/css'
 	</ul>
 </main>
 <Toast id={ElementIds.toa_copied} ToastCloseDelay={1500}>
-	<Icon IconCode={IconCodes.copy} slot="leading"/>
+	<Icon IconCode={IconCodes.Copy} slot="leading"/>
 	Copied
 </Toast>
 <Dialog
@@ -75,7 +75,7 @@ import { pxToRem } from '@/utils/css'
 		rows={10}
 	/>
 	<form style="display:contents" method="dialog" slot="footer">
-		<Button ButtonVariant={CButton.Variant.tonal}>Close</Button>
-		<Button id={ElementIds.bd_mathMLCopy} ButtonVariant={CButton.Variant.filled}>Copy</Button>
+		<Button ButtonVariant={CButton.Variant.Tonal}>Close</Button>
+		<Button id={ElementIds.bd_mathMLCopy} ButtonVariant={CButton.Variant.Filled}>Copy</Button>
 	</form>
 </Dialog>

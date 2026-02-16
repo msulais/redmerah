@@ -25,23 +25,23 @@ const Dynamic = AppBarTagName as 'header'
 const cls = CAppBar.Classes
 ---
 <Dynamic
-	class={joinClassList(cls.appbar, className)}
+	class={joinClassList(cls.Appbar, className)}
 	{...other}>
 	<div
-		class={joinClassList(cls.leading, leadingClass)}
+		class={joinClassList(cls.Leading, leadingClass)}
 		{...leadingOther}><slot name='leading'/></div>
 	<div
-		class={joinClassList(cls.content, contentClass)}
+		class={joinClassList(cls.Content, contentClass)}
 		{...contentOther}>
 		<h2
-			class={joinClassList(cls.headline, headingClass)}
+			class={joinClassList(cls.Headline, headingClass)}
 			{...headingOther}><slot name='headline'/></h2>
 		<slot />
 	</div>
 	<div
-		class={joinClassList(cls.flex, flexClass)}
+		class={joinClassList(cls.Flex, flexClass)}
 		{...flexOther}/>
 	<div
-		class={joinClassList(cls.trailing, trailingClass)}
+		class={joinClassList(cls.Trailing, trailingClass)}
 		{...trailingOther}><slot name='trailing'/></div>
 </Dynamic>

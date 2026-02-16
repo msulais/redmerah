@@ -12,8 +12,8 @@ import { CButton } from '@/components/Button'
 <main class={CSSClasses.body}>
 	<div id={ElementIds.bd_inputContainer}>
 		<div>
-			<Button id={ElementIds.bdTab_markdown} ButtonVariant={CButton.Variant.filled}>Markdown</Button>
-			<Button id={ElementIds.bdTab_css} ButtonVariant={CButton.Variant.outlined}>CSS</Button>
+			<Button id={ElementIds.bdTab_markdown} ButtonVariant={CButton.Variant.Filled}>Markdown</Button>
+			<Button id={ElementIds.bdTab_css} ButtonVariant={CButton.Variant.Outlined}>CSS</Button>
 		</div>
 		<textarea
 			id={ElementIds.bd_markdown}
@@ -32,8 +32,8 @@ import { CButton } from '@/components/Button'
 	<div id={ElementIds.bd_slider} class={CSSClasses.bodySlider}/>
 	<div>
 		<div>
-			<Button id={ElementIds.bdTab_preview} ButtonVariant={CButton.Variant.filled}>Preview</Button>
-			<Button id={ElementIds.bdTab_html} ButtonVariant={CButton.Variant.outlined}>HTML</Button>
+			<Button id={ElementIds.bdTab_preview} ButtonVariant={CButton.Variant.Filled}>Preview</Button>
+			<Button id={ElementIds.bdTab_html} ButtonVariant={CButton.Variant.Outlined}>HTML</Button>
 		</div>
 		<textarea
 			style="display:none"
@@ -49,14 +49,14 @@ import { CButton } from '@/components/Button'
 	</div>
 </main>
 <Toast id={ElementIds.bdToas_copied} ToastCloseDelay={1500}>
-	<Icon IconCode={IconCodes.copy} slot="leading"/>
+	<Icon IconCode={IconCodes.Copy} slot="leading"/>
 	Copied
 </Toast>
 <Toast id={ElementIds.bdToas_noFile} ToastCloseDelay={3000}>
-	<Icon IconCode={IconCodes.documentError} slot="leading"/>
+	<Icon IconCode={IconCodes.DocumentError} slot="leading"/>
 	No file selected
 </Toast>
 <Toast id={ElementIds.bdToas_readError} ToastCloseDelay={3000}>
-	<Icon IconCode={IconCodes.scanText} slot="leading"/>
+	<Icon IconCode={IconCodes.ScanText} slot="leading"/>
 	Unable reading files
 </Toast>

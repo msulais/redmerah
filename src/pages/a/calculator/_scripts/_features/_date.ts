@@ -60,16 +60,16 @@ function _calculate(): void {
 		const store = DateStore.value
 		const operation = store.operation
 		switch (operation) {
-		case DateOperation.add:
-		case DateOperation.subtract:
+		case DateOperation.Add:
+		case DateOperation.Subtract:
 			const d = store.inputFrom
 			const years = store.inputYears
 			const months = store.inputMonths
 			const days = store.inputDays
 			output = new Date(
-				d.getFullYear() + (years * (operation === DateOperation.subtract? -1 : 1)),
-				d.getMonth() + (months * (operation === DateOperation.subtract? -1 : 1)),
-				d.getDate() + (days * (operation === DateOperation.subtract? -1 : 1))
+				d.getFullYear() + (years * (operation === DateOperation.Subtract? -1 : 1)),
+				d.getMonth() + (months * (operation === DateOperation.Subtract? -1 : 1)),
+				d.getDate() + (days * (operation === DateOperation.Subtract? -1 : 1))
 			).toLocaleDateString('en', {
 				year: 'numeric',
 				month: 'long',
@@ -77,7 +77,7 @@ function _calculate(): void {
 			})
 			DateStore.update(v => v.output = output)
 			break
-		case DateOperation.difference: {
+		case DateOperation.Difference: {
 			let days = Math.abs(dateDiffInDays(store.inputFrom, store.inputTo))
 			const diffInDays = days
 			if (days >= 365.25) {
@@ -240,12 +240,12 @@ function _subsOperationView(v: DateStoreType, o: DateStoreType): void {
 
 	_ref_operation.value = operation
 	switch (operation) {
-	case DateOperation.add:
-	case DateOperation.subtract:
+	case DateOperation.Add:
+	case DateOperation.Subtract:
 		_ref_operationAddSub.style.setProperty('display', 'grid')
 		_ref_operationDiff.style.setProperty('display', 'none')
 		break
-	case DateOperation.difference:
+	case DateOperation.Difference:
 		_ref_operationAddSub.style.setProperty('display', 'none')
 		_ref_operationDiff.style.setProperty('display', 'contents')
 		break
@@ -283,25 +283,25 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_ref_datePickerFrom.addEventListener(CDatePicker.Events.change, () => DateStore.update(v =>
+	_ref_datePickerFrom.addEventListener(CDatePicker.Events.Change, () => DateStore.update(v =>
 		v.inputFrom = CDatePicker.getValue(_ref_datePickerFrom)!
 	))
 
 	_ref_datePickerFrom.addEventListener('beforetoggle', ev => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
 		CButton.update(_ref_buttonFrom, {
-			Button: {variant: isOpen? CButton.Variant.outlined : CButton.Variant.tonal}
+			Button: {variant: isOpen? CButton.Variant.Outlined : CButton.Variant.Tonal}
 		})
 	})
 
-	_ref_datePickerTo.addEventListener(CDatePicker.Events.change, () => DateStore.update(v =>
+	_ref_datePickerTo.addEventListener(CDatePicker.Events.Change, () => DateStore.update(v =>
 		v.inputTo = CDatePicker.getValue(_ref_datePickerTo)!
 	))
 
 	_ref_datePickerTo.addEventListener('beforetoggle', ev => {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
 		CButton.update(_ref_buttonTo, {
-			Button: {variant: isOpen? CButton.Variant.outlined : CButton.Variant.tonal}
+			Button: {variant: isOpen? CButton.Variant.Outlined : CButton.Variant.Tonal}
 		})
 	})
 

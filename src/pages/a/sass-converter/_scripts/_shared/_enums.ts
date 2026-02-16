@@ -1,4 +1,4 @@
 export enum InputMode {
-	sass = 'sass',
-	scss = 'scss'
+	SASS = 'sass',
+	SCSS = 'scss'
 }

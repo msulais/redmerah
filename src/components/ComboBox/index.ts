@@ -16,19 +16,19 @@ export namespace CComboBox {
 	}
 
 	export enum Classes {
-		combobox = 'c-combobox',
-		option = combobox + '-option'
+		Combobox = 'c-combobox',
+		Option = Combobox + '-option'
 	}
 
 	export enum Attributes {
-		variant = 'data-c-combobox-variant'
+		Variant = 'data-c-combobox-variant'
 	}
 
 	export enum Variant {
-		filled = 'filled',
-		outlined = 'outlined',
-		tonal = 'tonal',
-		transparent = 'transparent',
+		Filled = 'filled',
+		Outlined = 'outlined',
+		Tonal = 'tonal',
+		Transparent = 'transparent',
 	}
 
 	export function create(options?: UpdateOptions): CElement {
@@ -38,7 +38,7 @@ export namespace CComboBox {
 
 	export function update(ref_combobox: CElement, options?: UpdateOptions): CElement {
 		const opt = options?.ComboBox
-		$classlist(ref_combobox, Classes.combobox)
+		$classlist(ref_combobox, Classes.Combobox)
 
 		if (!ref_combobox.hasAttribute('autocomplete')) {
 			$set_attr(ref_combobox, 'autocomplete', 'off')
@@ -46,7 +46,7 @@ export namespace CComboBox {
 
 		const opt_variant = opt?.variant
 		if (opt_variant && isValidEnumValue(opt_variant, Variant)) {
-			$set_attr(ref_combobox, Attributes.variant, opt_variant)
+			$set_attr(ref_combobox, Attributes.Variant, opt_variant)
 		}
 
 		// children
@@ -85,7 +85,7 @@ export namespace CComboBox {
 			options?: UpdateOptions
 		): CElement {
 			const opt = options?.Option
-			$classlist(ref_option, GCButton.Classes.button, Classes.option)
+			$classlist(ref_option, GCButton.Classes.Button, Classes.Option)
 
 			// children
 			const opt_children = opt?.children

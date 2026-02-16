@@ -40,32 +40,32 @@ const skinTones: {
 	{
 		name: 'Skin Tone: None',
 		color: '#FFC64E',
-		skinTone: SkinToneEmoji.none
+		skinTone: SkinToneEmoji.None
 	},
 	{
 		name: 'Skin Tone: Light',
 		color: '#F7C1B0',
-		skinTone: SkinToneEmoji.light
+		skinTone: SkinToneEmoji.Light
 	},
 	{
 		name: 'Skin Tone: Medium Light',
 		color: '#E4AB94',
-		skinTone: SkinToneEmoji.mediumLight
+		skinTone: SkinToneEmoji.MediumLight
 	},
 	{
 		name: 'Skin Tone: Medium',
 		color: '#B18378',
-		skinTone: SkinToneEmoji.medium
+		skinTone: SkinToneEmoji.Medium
 	},
 	{
 		name: 'Skin Tone: Medium Dark',
 		color: '#8A5D5C',
-		skinTone: SkinToneEmoji.mediumDark
+		skinTone: SkinToneEmoji.MediumDark
 	},
 	{
 		name: 'Skin Tone: Dark',
 		color: '#4B3234',
-		skinTone: SkinToneEmoji.dark
+		skinTone: SkinToneEmoji.Dark
 	},
 ]
 ---
@@ -76,8 +76,8 @@ const skinTones: {
 			position: 'sticky',
 			borderRadius: `0 0 ${pxToRem(1)}rem ${pxToRem(1)}rem`,
 			top: pxToRem(58) + 'rem',
-			backdropFilter: `blur(${AppCSSBlur.glass})`,
-			backgroundColor: `rgba(${AppCSSColors.background},${AppCSSOpacity.glass})`
+			backdropFilter: `blur(${AppCSSBlur.Glass})`,
+			backgroundColor: `rgba(${AppCSSColors.Background},${AppCSSOpacity.Glass})`
 		}}>
 			<h1 id={ElementIds.bd_title}>Smiley & Emotion</h1>
 			<TextField
@@ -102,14 +102,14 @@ const skinTones: {
 						id={ElementIds.bd_dismissInput}
 						data-tooltip="Clear"
 						aria-label="Clear text">
-						<Icon IconCode={IconCodes.dismiss}/>
+						<Icon IconCode={IconCodes.Dismiss}/>
 					</TextFieldButton>
 					<TextFieldButton
 						id={ElementIds.bd_copyInput}
 						data-tooltip="Copy"
 						aria-label="Copy text"
 						style={{'margin-right': pxToRem(4) + 'rem'}}>
-						<Icon IconCode={IconCodes.copy}/>
+						<Icon IconCode={IconCodes.Copy}/>
 					</TextFieldButton>
 				</div>
 			</TextField>
@@ -124,11 +124,11 @@ const skinTones: {
 				}}>
 				{skinTones.map(v =>
 					<label
-						class={[CButton.Classes.button, CButton.Classes.icon].join(' ')}
+						class={[CButton.Classes.Button, CButton.Classes.Icon].join(' ')}
 						aria-label={v.name}
 						data-tooltip={v.name}>
 						<input
-							name={RadioNames.skinTone}
+							name={RadioNames.SkinTone}
 							type="radio"
 							checked={DEFAULT_SKIN_TONE === v.skinTone}
 							autocomplete="off"
@@ -136,7 +136,7 @@ const skinTones: {
 						/>
 						<Icon style={{
 							color: v.color
-						}} IconCode={IconCodes.circle} IconFilled/>
+						}} IconCode={IconCodes.Circle} IconFilled/>
 					</label>
 				)}
 			</div>
@@ -145,7 +145,7 @@ const skinTones: {
 			{new Array(maxEmojiList).fill(0).map((_, i) => {
 				const v = EMOJIS_SMILEY_AND_EMOTION[i]
 				return (<li style={v ? undefined : 'display:none'}><Button
-					ButtonVariant={CButton.Variant.tonal}
+					ButtonVariant={CButton.Variant.Tonal}
 					data-tooltip={v?.[1] ?? ''}
 					data-emoji={v?.[0] ?? ''}>{v?.[0] ?? ''}</Button></li>)
 			})}
@@ -153,6 +153,6 @@ const skinTones: {
 	</section>
 </main>
 <Toast id={ElementIds.toa_copied} ToastCloseDelay={1500}>
-	<Icon IconCode={IconCodes.copy} slot="leading"/>
+	<Icon IconCode={IconCodes.Copy} slot="leading"/>
 	Copied
 </Toast>

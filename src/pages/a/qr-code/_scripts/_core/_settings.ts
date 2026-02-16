@@ -64,26 +64,26 @@ function _subsAnimationChanges(v: SettingsStoreType, o: SettingsStoreType): void
 	const animation = v.animation
 	if (animation === o.animation) return
 
-	localStorage.setItem(LocalStorageKeys.platformAnimation, animation)
+	localStorage.setItem(LocalStorageKeys.PlatformAnimation, animation)
 }
 
 function _subsThemeChanges(v: SettingsStoreType, o: SettingsStoreType): void {
 	const theme = v.theme
 	if (theme === o.theme) return
 
-	localStorage.setItem(LocalStorageKeys.platformTheme, theme)
+	localStorage.setItem(LocalStorageKeys.PlatformTheme, theme)
 }
 
 function _subsAnimationView(v: SettingsStoreType, o: SettingsStoreType): void {
 	const animation = v.animation
 	if (animation === o.animation) return
 
-	_ref_root.setAttribute(RootAttributes.animation, animation)
+	_ref_root.setAttribute(RootAttributes.Animation, animation)
 	const ref_previous = $$(
-		`input[name="${CSS.escape(RadioNames.animation)}"]:checked`
+		`input[name="${CSS.escape(RadioNames.Animation)}"]:checked`
 	) as HTMLInputElement
 	const ref_target = $$(
-		`input[name="${CSS.escape(RadioNames.animation)}"][value="${CSS.escape(animation)}"]`
+		`input[name="${CSS.escape(RadioNames.Animation)}"][value="${CSS.escape(animation)}"]`
 	) as HTMLInputElement
 
 	if (ref_previous === ref_target) {return}
@@ -95,12 +95,12 @@ function _subsThemeView(v: SettingsStoreType, o: SettingsStoreType): void {
 	const theme = v.theme
 	if (theme === o.theme) return
 
-	_ref_root.setAttribute(RootAttributes.theme, theme)
+	_ref_root.setAttribute(RootAttributes.Theme, theme)
 	const ref_previous = $$(
-		`input[name="${CSS.escape(RadioNames.theme)}"]:checked`
+		`input[name="${CSS.escape(RadioNames.Theme)}"]:checked`
 	) as HTMLInputElement
 	const ref_target = $$(
-		`input[name="${CSS.escape(RadioNames.theme)}"][value="${CSS.escape(theme)}"]`
+		`input[name="${CSS.escape(RadioNames.Theme)}"][value="${CSS.escape(theme)}"]`
 	) as HTMLInputElement
 
 	if (ref_previous === ref_target) {return}
@@ -127,10 +127,10 @@ function _subsEncodingModeView(v: SettingsStoreType, o: SettingsStoreType): void
 	if (encoding === o.encodingMode) return
 
 	const ref_previous = $$(
-		`input[name="${CSS.escape(RadioNames.encoding)}"]:checked`
+		`input[name="${CSS.escape(RadioNames.Encoding)}"]:checked`
 	) as HTMLInputElement
 	const ref_target = $$(
-		`input[name="${CSS.escape(RadioNames.encoding)}"][value="${CSS.escape(encoding)}"]`
+		`input[name="${CSS.escape(RadioNames.Encoding)}"][value="${CSS.escape(encoding)}"]`
 	) as HTMLInputElement
 
 	if (ref_previous === ref_target) {return}
@@ -150,10 +150,10 @@ function _subsECLView(v: SettingsStoreType, o: SettingsStoreType): void {
 	if (ecl === o.errorCorrectionLevel) return
 
 	const ref_previous = $$(
-		`input[name="${CSS.escape(RadioNames.correction)}"]:checked`
+		`input[name="${CSS.escape(RadioNames.Correction)}"]:checked`
 	) as HTMLInputElement
 	const ref_target = $$(
-		`input[name="${CSS.escape(RadioNames.correction)}"][value="${CSS.escape(ecl)}"]`
+		`input[name="${CSS.escape(RadioNames.Correction)}"][value="${CSS.escape(ecl)}"]`
 	) as HTMLInputElement
 
 	if (ref_previous === ref_target) {return}
@@ -180,10 +180,10 @@ function _subsVersionView(v: SettingsStoreType, o: SettingsStoreType): void {
 	if (version === o.version) return
 
 	const ref_previous = $$(
-		`input[name="${CSS.escape(RadioNames.version)}"]:checked`
+		`input[name="${CSS.escape(RadioNames.Version)}"]:checked`
 	) as HTMLInputElement
 	const ref_target = $$(
-		`input[name="${CSS.escape(RadioNames.version)}"][value="${CSS.escape(version)}"]`
+		`input[name="${CSS.escape(RadioNames.Version)}"][value="${CSS.escape(version)}"]`
 	) as HTMLInputElement
 
 	if (ref_previous === ref_target) {return}
@@ -261,14 +261,14 @@ function _initEvents(): void {
 		_ref_colorDialog.showModal()
 	})
 
-	_ref_pickerFore.addEventListener(CColorPicker.Events.input, () => {
+	_ref_pickerFore.addEventListener(CColorPicker.Events.Input, () => {
 		const color = CColorPicker.getValue(_ref_pickerFore)
 		requestAnimationFrame(() => {
 			_ref_previewForeground.style.setProperty('fill', color)
 		})
 	})
 
-	_ref_pickerBack.addEventListener(CColorPicker.Events.input, () => {
+	_ref_pickerBack.addEventListener(CColorPicker.Events.Input, () => {
 		const color = CColorPicker.getValue(_ref_pickerBack)
 		requestAnimationFrame(() => {
 			_ref_previewBackground.style.setProperty('background-color', color)
@@ -303,7 +303,7 @@ function _initEvents(): void {
 
 		const target = ev.target as HTMLInputElement
 		const value = target.value
-		if (value === QRVersion.auto) {
+		if (value === QRVersion.Auto) {
 			SettingsStore.update(v => v.version = value)
 			return
 		}
@@ -336,14 +336,14 @@ function _initEvents(): void {
 }
 
 function _initTheme(): void {
-	const theme = localStorage.getItem(LocalStorageKeys.platformTheme) as PlatformThemeMode
+	const theme = localStorage.getItem(LocalStorageKeys.PlatformTheme) as PlatformThemeMode
 	if (!theme || !isValidEnumValue(theme, PlatformThemeMode) || theme === DEFAULT_THEME) return
 
 	SettingsStore.update(v => v.theme = theme)
 }
 
 function _initAnimation(): void {
-	const animation = localStorage.getItem(LocalStorageKeys.platformAnimation) as PlatformAnimationMode
+	const animation = localStorage.getItem(LocalStorageKeys.PlatformAnimation) as PlatformAnimationMode
 	if (!animation || !isValidEnumValue(animation, PlatformAnimationMode)) return
 
 	SettingsStore.update(v => v.animation = animation)

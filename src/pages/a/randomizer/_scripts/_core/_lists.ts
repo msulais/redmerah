@@ -192,7 +192,7 @@ function _subsListView(v: ListsStoreType, o: ListsStoreType): void {
 			}
 		})
 
-		const ref_deleteBtn = $$<CButton.CElement>(`[data-command=${CSS.escape(Commands.deleteList)}]`)
+		const ref_deleteBtn = $$<CButton.CElement>(`[data-command=${CSS.escape(Commands.DeleteList)}]`)
 		if (ref_deleteBtn) {
 			ref_deleteBtn.disabled = sortedList.length <= 1
 		}
@@ -204,33 +204,33 @@ function _subsListView(v: ListsStoreType, o: ListsStoreType): void {
 		const itemLength = list.items.length
 		_ref_lists.append(CList.create({List: {
 			tagname: 'li',
-			variant: CList.Variant.tonal,
+			variant: CList.Variant.Tonal,
 			children: [list.name],
 			subtitle: [[itemLength, 'item' + (itemLength > 1? 's' : '')].join(' ')],
 			leading: [CIcon.create({Icon: {
-				code: IconCodes.textBulletListLtr,
+				code: IconCodes.TextBulletListLtr,
 				filled: true,
 				refs: {icon(ref) {
-					ref.style.setProperty('color', `rgb(${AppCSSColors.accent})`)
+					ref.style.setProperty('color', `rgb(${AppCSSColors.Accent})`)
 				}}
 			}})],
 			trailing: [
 				CButton.CIcon.create({IconButton: {
-					Icon: {code: IconCodes.edit},
+					Icon: {code: IconCodes.Edit},
 					refs: {button(ref) {
 						ref.setAttribute('aria-label', 'Edit')
 						ref.setAttribute('data-tooltip', 'Edit')
-						ref.setAttribute('data-command', Commands.editList)
+						ref.setAttribute('data-command', Commands.EditList)
 					}}
 				}}),
 				CButton.CIcon.create({
 					Button: {disabled: sortedList.length <= 1},
 					IconButton: {
-						Icon: {code: IconCodes.delete},
+						Icon: {code: IconCodes.Delete},
 						refs: {button(ref) {
 							ref.setAttribute('aria-label', 'Delete')
 							ref.setAttribute('data-tooltip', 'Delete')
-							ref.setAttribute('data-command', Commands.deleteList)
+							ref.setAttribute('data-command', Commands.DeleteList)
 						}}
 					}
 				}),
@@ -309,7 +309,7 @@ function _initEvents(): void {
 		}
 
 		switch (command) {
-		case Commands.editList: {
+		case Commands.EditList: {
 			const id = getListId()
 			if (typeof id !== 'number') {return}
 
@@ -327,7 +327,7 @@ function _initEvents(): void {
 			_ref_newDialog.showModal()
 			break
 		}
-		case Commands.deleteList: {
+		case Commands.DeleteList: {
 			const id = getListId()
 			if (typeof id !== 'number') {return}
 

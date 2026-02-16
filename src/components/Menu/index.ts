@@ -27,23 +27,23 @@ export namespace CMenu {
 	}
 
 	export enum Classes {
-		menu             = 'c-menu',
-		content          = menu + '-content',
-		header           = menu + '-header',
-		item             = menu + '-item',
-		indent           = menu + '-indent',
-		radioItem        = menu + '-radio-item',
-		submenu          = menu + '-submenu',
-		checkItem        = menu + '-check-item',
-		submenuItem      = submenu + '-item',
-		radioItemLeading = radioItem + '-leading',
-		radioItemIcon    = radioItem + '-icon',
-		radioItemInput   = radioItem + '-input',
-		radioItemContent = radioItem + '-content',
-		checkItemLeading = checkItem + '-leading',
-		checkItemInput   = checkItem + '-input',
-		checkItemIcon    = checkItem + '-icon',
-		checkItemContent = checkItem + '-content'
+		Menu             = 'c-menu',
+		Content          = Menu + '-content',
+		Header           = Menu + '-header',
+		Item             = Menu + '-item',
+		Indent           = Menu + '-indent',
+		RadioItem        = Menu + '-radio-item',
+		Submenu          = Menu + '-submenu',
+		CheckItem        = Menu + '-check-item',
+		SubmenuItem      = Submenu + '-item',
+		RadioItemLeading = RadioItem + '-leading',
+		RadioItemIcon    = RadioItem + '-icon',
+		RadioItemInput   = RadioItem + '-input',
+		RadioItemContent = RadioItem + '-content',
+		CheckItemLeading = CheckItem + '-leading',
+		CheckItemInput   = CheckItem + '-input',
+		CheckItemIcon    = CheckItem + '-icon',
+		CheckItemContent = CheckItem + '-content'
 	}
 
 	export function create(options?: UpdateOptions): CElement {
@@ -68,7 +68,7 @@ export namespace CMenu {
 			},
 		})
 
-		$classlist(ref_menu, Classes.menu)
+		$classlist(ref_menu, Classes.Menu)
 		if (!$has_attr(ref_menu, 'role')) {
 			$set_attr(ref_menu, 'role', 'menu')
 		}
@@ -83,10 +83,10 @@ export namespace CMenu {
 
 		// content
 		const opt_children = opt?.children
-		let ref_content = $query<HTMLDivElement>(`.${Classes.content}`, ref_popoverContent!)
+		let ref_content = $query<HTMLDivElement>(`.${Classes.Content}`, ref_popoverContent!)
 		if (!ref_content) {
 			ref_content = $create('div')
-			$classlist(ref_content, Classes.content)
+			$classlist(ref_content, Classes.Content)
 		}
 		if ($is_false(opt_children)) {
 			$children(ref_content)
@@ -113,7 +113,7 @@ export namespace CMenu {
 
 		export function update(ref_submenu: CElement, options?: UpdateOptions): CElement {
 			CMenu.update(ref_submenu, options)
-			$classlist(ref_submenu, Classes.submenu)
+			$classlist(ref_submenu, Classes.Submenu)
 			return ref_submenu
 		}
 	}
@@ -138,7 +138,7 @@ export namespace CMenu {
 		function initSubMenuItem(ref_submenuitem: CElement): void {
 			const elements = {
 				get parent() {
-					return ref_submenuitem.closest('.' + Classes.menu) as CSub.CElement | null
+					return ref_submenuitem.closest('.' + Classes.Menu) as CSub.CElement | null
 				},
 				get target() {
 					return ref_submenuitem.popoverTargetElement as CSub.CElement | null
@@ -151,7 +151,7 @@ export namespace CMenu {
 					const isOpen = ev.newState === 'open'
 					if (isOpen) {return}
 
-					for (const ref of $query_all<CSub.CElement>(`.${Classes.submenu}`, ref_parent!)) {
+					for (const ref of $query_all<CSub.CElement>(`.${Classes.Submenu}`, ref_parent!)) {
 						ref.hidePopover()
 					}
 				})
@@ -163,7 +163,7 @@ export namespace CMenu {
 
 					if (!isOpen || !ref_parent) {return}
 
-					for (const ref of $query_all<CSub.CElement>(`.${Classes.submenu}`, ref_parent)) {
+					for (const ref of $query_all<CSub.CElement>(`.${Classes.Submenu}`, ref_parent)) {
 						if (ref === ref_target) {continue}
 						ref.hidePopover()
 					}
@@ -201,7 +201,7 @@ export namespace CMenu {
 		): CElement {
 			const opt = options?.SubMenuItem
 			CItem.update(ref_submenuitem, options)
-			$classlist(ref_submenuitem, Classes.submenuItem)
+			$classlist(ref_submenuitem, Classes.SubmenuItem)
 			const opt_popoverId = opt?.popoverId
 			if (opt_popoverId) {
 				$set_attr(ref_submenuitem, 'popovertarget', opt_popoverId)
@@ -214,7 +214,7 @@ export namespace CMenu {
 
 		export function register(...refs_submenuitem: CElement[]): void {
 			if (refs_submenuitem.length === 0) {
-				refs_submenuitem = [...$query_all<CElement>('.' + Classes.submenuItem)]
+				refs_submenuitem = [...$query_all<CElement>('.' + Classes.SubmenuItem)]
 			}
 
 			for (const ref of refs_submenuitem){
@@ -253,7 +253,7 @@ export namespace CMenu {
 		export function update(ref_menuitem: CElement, options?: UpdateOptions): CElement {
 			const opt = options?.MenuItem
 			GCButton.update(ref_menuitem, options)
-			$classlist(ref_menuitem, Classes.item)
+			$classlist(ref_menuitem, Classes.Item)
 			if (!$has_attr(ref_menuitem, 'role')) {
 				$set_attr(ref_menuitem, 'role', 'menuitem')
 			}
@@ -297,14 +297,14 @@ export namespace CMenu {
 		export function update(ref_checkmenuitem: CElement, options?: UpdateOptions): CElement {
 			const opt = options?.CheckMenuItem
 			const refs = opt?.refs
-			$classlist(ref_checkmenuitem, GCButton.Classes.button, Classes.item, Classes.checkItem)
+			$classlist(ref_checkmenuitem, GCButton.Classes.Button, Classes.Item, Classes.CheckItem)
 
 			// leading
 			const opt_leading = opt?.leading
-			let ref_leading = $query<HTMLDivElement>(`.${Classes.checkItemLeading}`, ref_checkmenuitem)
+			let ref_leading = $query<HTMLDivElement>(`.${Classes.CheckItemLeading}`, ref_checkmenuitem)
 			if (!ref_leading) {
 				ref_leading = $create('div')
-				$classlist(ref_leading, Classes.checkItemLeading)
+				$classlist(ref_leading, Classes.CheckItemLeading)
 			}
 			if ($is_false(opt_leading)) {
 				$children(ref_leading)
@@ -314,10 +314,10 @@ export namespace CMenu {
 			}
 
 			// input
-			let ref_input = $query<HTMLInputElement>(`.${Classes.checkItemInput}`, ref_checkmenuitem)
+			let ref_input = $query<HTMLInputElement>(`.${Classes.CheckItemInput}`, ref_checkmenuitem)
 			if (!ref_input) {
 				ref_input = $create('input')
-				$classlist(ref_input, Classes.checkItemInput)
+				$classlist(ref_input, Classes.CheckItemInput)
 				ref_input.autocomplete = 'off'
 				ref_input.role = 'menuitemcheckbox'
 				ref_input.type = 'checkbox'
@@ -334,26 +334,26 @@ export namespace CMenu {
 			}
 
 			// icon
-			let ref_icon = $query<SVGSVGElement>('.' + Classes.checkItemIcon, ref_checkmenuitem)
+			let ref_icon = $query<SVGSVGElement>('.' + Classes.CheckItemIcon, ref_checkmenuitem)
 			if (!ref_icon) {
 				ref_icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-				$classlist(ref_icon, Classes.checkItemIcon)
+				$classlist(ref_icon, Classes.CheckItemIcon)
 				$set_attr(ref_icon, 'viewBox', '0 -960 960 960')
 				$set_attr(ref_icon, 'width', '20')
 				$set_attr(ref_icon, 'height', '20')
 
 				const ref_path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
 				$set_attr(ref_path, 'd', 'm389-369 299-299q10.91-11 25.45-11Q728-679 739-668t11 25.58q0 14.58-10.61 25.19L415-292q-10.91 11-25.45 11Q375-281 364-292L221-435q-11-11-11-25.5t11-25.5q11-11 25.67-11 14.66 0 25.33 11l117 117Z')
-				$set_attr(ref_path, 'fill', `rgb(${AppCSSColors.accent})`)
+				$set_attr(ref_path, 'fill', `rgb(${AppCSSColors.Accent})`)
 				ref_icon.append(ref_path)
 			}
 
 			// content
 			const opt_children = opt?.children
-			let ref_content = $query<HTMLDivElement>(`.${Classes.checkItemContent}`, ref_checkmenuitem)
+			let ref_content = $query<HTMLDivElement>(`.${Classes.CheckItemContent}`, ref_checkmenuitem)
 			if (!ref_content) {
 				ref_content = $create('div')
-				$classlist(ref_content, Classes.checkItemContent)
+				$classlist(ref_content, Classes.CheckItemContent)
 			}
 			if ($is_false(opt_children)) {
 				$children(ref_content)
@@ -397,14 +397,14 @@ export namespace CMenu {
 
 		export function update(ref_radiomenuitem: CElement, options?: UpdateOptions): CElement {
 			const opt = options?.RadioMenuItem
-			$classlist(ref_radiomenuitem, GCButton.Classes.button, Classes.item, Classes.radioItem)
+			$classlist(ref_radiomenuitem, GCButton.Classes.Button, Classes.Item, Classes.RadioItem)
 
 			// leading
 			const opt_leading = opt?.leading
-			let ref_leading = $query<HTMLDivElement>(`.${Classes.radioItemLeading}`, ref_radiomenuitem)
+			let ref_leading = $query<HTMLDivElement>(`.${Classes.RadioItemLeading}`, ref_radiomenuitem)
 			if (!ref_leading) {
 				ref_leading = $create('div')
-				$classlist(ref_leading, Classes.radioItemLeading)
+				$classlist(ref_leading, Classes.RadioItemLeading)
 			}
 			if ($is_false(opt_leading)) {
 				$children(ref_leading)
@@ -414,10 +414,10 @@ export namespace CMenu {
 			}
 
 			// input
-			let ref_input = $query<HTMLInputElement>(`.${Classes.radioItemInput}`, ref_radiomenuitem)
+			let ref_input = $query<HTMLInputElement>(`.${Classes.RadioItemInput}`, ref_radiomenuitem)
 			if (!ref_input) {
 				ref_input = $create('input')
-				$classlist(ref_input, Classes.radioItemInput)
+				$classlist(ref_input, Classes.RadioItemInput)
 				$set_attr(ref_input, 'role', 'menuitemradio')
 				$set_attr(ref_input, 'type', 'radio')
 				$set_attr(ref_input, 'autocomplete', 'off')
@@ -444,21 +444,21 @@ export namespace CMenu {
 			}
 
 			// icon
-			let ref_icon = $query<GCIcon.CElement>(`.${Classes.radioItemIcon}`, ref_radiomenuitem)
+			let ref_icon = $query<GCIcon.CElement>(`.${Classes.RadioItemIcon}`, ref_radiomenuitem)
 			if (!ref_icon) {
 				ref_icon = GCIcon.create({Icon: {
-					code: IconCodes.circleSmall,
+					code: IconCodes.CircleSmall,
 					filled: true
 				}})
-				$classlist(ref_icon, Classes.radioItemIcon)
+				$classlist(ref_icon, Classes.RadioItemIcon)
 			}
 
 			// content
 			const opt_children = opt?.children
-			let ref_content = $query<HTMLDivElement>(`.${Classes.radioItemContent}`, ref_radiomenuitem)
+			let ref_content = $query<HTMLDivElement>(`.${Classes.RadioItemContent}`, ref_radiomenuitem)
 			if (!ref_content) {
 				ref_content = $create('div')
-				$classlist(ref_content, Classes.radioItemContent)
+				$classlist(ref_content, Classes.RadioItemContent)
 			}
 			if ($is_false(opt_children)) {
 				$children(ref_content)
@@ -496,7 +496,7 @@ export namespace CMenu {
 		export function update(ref_linkmenuitem: CElement, options: UpdateOptions): CElement {
 			const opt = options.LinkMenuItem
 			GCButton.CLink.update(ref_linkmenuitem, options)
-			$classlist(ref_linkmenuitem, Classes.item)
+			$classlist(ref_linkmenuitem, Classes.Item)
 			if (!$has_attr(ref_linkmenuitem, 'role')) {
 				$set_attr(ref_linkmenuitem, 'role', 'menuitem')
 			}
@@ -533,7 +533,7 @@ export namespace CMenu {
 
 		export function update(ref_menuheader: CElement, options?: UpdateOptions): CElement {
 			const opt = options?.MenuHeader
-			$classlist(ref_menuheader, Classes.header)
+			$classlist(ref_menuheader, Classes.Header)
 
 			const opt_children = opt?.children
 			if ($is_false(opt_children)) {
@@ -565,7 +565,7 @@ export namespace CMenu {
 		}
 
 		export function update(ref_indent: CElement, options?: UpdateOptions): CElement {
-			$classlist(ref_indent, Classes.indent)
+			$classlist(ref_indent, Classes.Indent)
 			options?.MenuIndent?.refs?.indent?.(ref_indent)
 			return ref_indent
 		}

@@ -23,20 +23,20 @@ const cls = CSideBar.Classes
 ---
 
 <Dynamic
-	class={joinClassList(cls.sideBar, className)}
+	class={joinClassList(cls.SideBar, className)}
 	data-c-sidebar-minimized={SideBarMinimized? '' : undefined}
 	{...other}>
 	{Astro.slots.has('header') &&
 		<div
-			class={joinClassList(cls.header, headerClass)}
+			class={joinClassList(cls.Header, headerClass)}
 			{...headerOther}><slot name="header"/></div>
 	}
 	<div
-		class={joinClassList(cls.content, contentClass)}
+		class={joinClassList(cls.Content, contentClass)}
 		{...contentOther}><slot /></div>
 	{Astro.slots.has('footer') &&
 		<div
-			class={joinClassList(cls.footer, footerClass)}
+			class={joinClassList(cls.Footer, footerClass)}
 			{...footerOther}><slot name="footer"/></div>
 	}
 </Dynamic>

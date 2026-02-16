@@ -20,14 +20,14 @@ const cls = CSideBar.Classes
 ---
 
 <Button
-	class={joinClassList(cls.button, className)}
+	class={joinClassList(cls.Button, className)}
 	data-c-sidebar-button-selected={SideBarButtonSelected? '' : undefined}
 	{...other}>
 	{Astro.slots.has('leading') && <div
-		class={joinClassList(cls.buttonLeading, leadingClass)}
+		class={joinClassList(cls.ButtonLeading, leadingClass)}
 		{...leadingOther}><slot name="leading"/></div>
 	}
 	<div
-		class={joinClassList(cls.buttonContent, contentClass)}
+		class={joinClassList(cls.ButtonContent, contentClass)}
 		{...contentOther}><slot /></div>
 </Button>

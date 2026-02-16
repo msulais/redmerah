@@ -24,7 +24,7 @@ import { pxToRem } from '@/utils/css'
 		}}>
 		<Fragment slot="header">
 			<Icon
-				IconCode={IconCodes.warning}
+				IconCode={IconCodes.Warning}
 				style={{
 					'--c-icon-size': pxToRem(32) + 'rem'
 				}}
@@ -35,11 +35,11 @@ import { pxToRem } from '@/utils/css'
 			There was a problem preventing the screen from staying on. This might be because of a browser error, a permission block, or battery saver being active.
 		</p>
 		<form style="display:contents" slot="footer" method="dialog">
-			<Button ButtonVariant={CButton.Variant.filled}>Close</Button>
+			<Button ButtonVariant={CButton.Variant.Filled}>Close</Button>
 		</form>
 	</Dialog>
 	<Toast id={ElementIds.toa_copied}>
-		<Icon slot="leading" IconCode={IconCodes.copy}/>
+		<Icon slot="leading" IconCode={IconCodes.Copy}/>
 		Copied
 	</Toast>
 </main>

@@ -27,7 +27,7 @@ export const StopwatchStore = new ObservableStore<_StopwatchStoreType>({
 	running: DEFAULT_STOPWATCH_RUNNING,
 	laps: DEFAULT_STOPWATCH_LAPS
 })
-const _animationOption = {duration: 250, easing: AnimationEasing.spring}
+const _animationOption = {duration: 250, easing: AnimationEasing.Spring}
 const _ref_toastCopied = $(ElementIds.toa_copied) as CToast.CElement
 const _ref_laps = $(ElementIds.pgSw_laps) as HTMLDivElement
 const _ref_lapsContent = $(ElementIds.pgSw_lapsContent) as HTMLDivElement
@@ -38,11 +38,11 @@ const _ref_time = _ref_HMS.parentElement as HTMLHeadingElement
 const _ref_moreButton = $(ElementIds.pgSw_moreBtn) as CButton.CElement
 const _ref_moreMenu = $(ElementIds.pgSw_moreMenu) as HTMLDivElement
 const _ref_resetOrLapButton = $(ElementIds.pgSw_resetLap) as CButton.CElement
-const _ref_resetOrLapIcon = $$(`#${ElementIds.pgSw_resetLap}>.${CIcon.Classes.icon}`) as CIcon.CElement
+const _ref_resetOrLapIcon = $$(`#${ElementIds.pgSw_resetLap}>.${CIcon.Classes.Icon}`) as CIcon.CElement
 const _ref_playOrPauseButton = $(ElementIds.pgSw_playPause) as CButton.CElement
-const _ref_playOrPauseIcon = $$(`#${ElementIds.pgSw_playPause}>.${CIcon.Classes.icon}`) as CIcon.CElement
-const _ref_playOrPauseSpan = $$(`#${ElementIds.pgSw_playPause}>span:not(.${CIcon.Classes.icon})`) as HTMLSpanElement
-const _refs_navigationButtonIcon = $$$(`:is(.${CSideBar.Classes.button},.${CDrawer.Classes.button})[data-page=${Pages.stopwatch}] .${CIcon.Classes.icon}`)
+const _ref_playOrPauseIcon = $$(`#${ElementIds.pgSw_playPause}>.${CIcon.Classes.Icon}`) as CIcon.CElement
+const _ref_playOrPauseSpan = $$(`#${ElementIds.pgSw_playPause}>span:not(.${CIcon.Classes.Icon})`) as HTMLSpanElement
+const _refs_navigationButtonIcon = $$$(`:is(.${CSideBar.Classes.Button},.${CDrawer.Classes.Button})[data-page=${Pages.Stopwatch}] .${CIcon.Classes.Icon}`)
 let _interval: null | number | NodeJS.Timeout = null
 let _isResetOrLapButtonVisible = false
 let _isLapVisible = false
@@ -96,14 +96,14 @@ function _subscribeRunningRefView(v: _StopwatchStoreType, o: _StopwatchStoreType
 	_ref_playOrPauseSpan.textContent = running? 'Pause' : 'Start'
 	CIcon.update(_ref_playOrPauseIcon, {
 		Icon: {
-			code: running? IconCodes.pause : IconCodes.play,
+			code: running? IconCodes.Pause : IconCodes.Play,
 			filled: true
 		}
 	})
 	CButton.CIcon.update(_ref_resetOrLapButton, {
 		IconButton: {
 			Icon: {
-				code: running? IconCodes.flag : IconCodes.arrowReset
+				code: running? IconCodes.Flag : IconCodes.ArrowReset
 			}
 		}
 	})
@@ -127,7 +127,7 @@ function _subscribeRunningRefView(v: _StopwatchStoreType, o: _StopwatchStoreType
 
 	for (const ref of _refs_navigationButtonIcon) {
 		if (running) {
-			ref.style.setProperty('color', `rgb(${AppCSSColors.accent})`)
+			ref.style.setProperty('color', `rgb(${AppCSSColors.Accent})`)
 			ref.animate({
 				rotate: ['0deg', '45deg', '-45deg', '45deg', '0deg']
 			}, {..._animationOption, duration: 1000, iterations: Infinity})
@@ -342,27 +342,27 @@ function _initEvents(): void {
 		const command = ref_btn.dataset.command
 		const closeMenu = () => _ref_moreMenu.hidePopover()
 		switch (command as Commands) {
-		case Commands.swCpLp_time:
+		case Commands.SwCpLp_time:
 			_copyLaps(true, false)
 			closeMenu()
 			break
-		case Commands.swCpLp_total:
+		case Commands.SwCpLp_total:
 			_copyLaps(false, true)
 			closeMenu()
 			break
-		case Commands.swCpLp_all:
+		case Commands.SwCpLp_all:
 			_copyLaps(true, true)
 			closeMenu()
 			break
-		case Commands.swCpLp_timeMS:
+		case Commands.SwCpLp_timeMS:
 			_copyLaps(true, false, true)
 			closeMenu()
 			break
-		case Commands.swCpLp_totalMS:
+		case Commands.SwCpLp_totalMS:
 			_copyLaps(false, true, true)
 			closeMenu()
 			break
-		case Commands.swCpLp_allMS:
+		case Commands.SwCpLp_allMS:
 			_copyLaps(true, true, true)
 			closeMenu()
 			break

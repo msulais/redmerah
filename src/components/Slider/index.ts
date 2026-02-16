@@ -17,11 +17,11 @@ export namespace CSlider {
 	}
 
 	export enum Classes {
-		slider = 'c-slider'
+		Slider = 'c-slider'
 	}
 
 	export enum CSSVars {
-		percent = '--c-slider-percent'
+		Percent = '--c-slider-percent'
 	}
 
 	const REGISTERED_SLIDER: Set<CElement> = new Set<CElement>()
@@ -41,7 +41,7 @@ export namespace CSlider {
 
 	export function register(...refs_slider: CElement[]): void {
 		if (refs_slider.length === 0) {
-			refs_slider = [...$query_all<CElement>('.' + Classes.slider)]
+			refs_slider = [...$query_all<CElement>('.' + Classes.Slider)]
 		}
 
 		for (const ref of refs_slider){
@@ -70,7 +70,7 @@ export namespace CSlider {
 		const v = safeNumber(ref_slider.valueAsNumber, 0)
 		const range = Math_clamp(v / (Math.max(min, max) - Math.min(min, max)) * 100, 0, 100)
 		requestAnimationFrame(() => {
-			$set_style(ref_slider, CSSVars.percent, range + '%')
+			$set_style(ref_slider, CSSVars.Percent, range + '%')
 		})
 	}
 
@@ -91,7 +91,7 @@ export namespace CSlider {
 
 	export function update(ref_slider: CElement, options?: UpdateOptions): CElement {
 		const opt = options?.Slider
-		$classlist(ref_slider, Classes.slider)
+		$classlist(ref_slider, Classes.Slider)
 		ref_slider.type = 'range'
 
 		const opt_min = opt?.min

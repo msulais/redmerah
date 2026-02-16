@@ -89,7 +89,7 @@ function msText(ms: number): string {
 	id={ElementIds.pg_stopwatch}
 	class={[CSSClasses.bodyPage, CSSClasses.bodyPageStopwatch].join(' ')}
 	role="tabpanel"
-	hidden={DEFAULT_PAGE !== Pages.stopwatch}>
+	hidden={DEFAULT_PAGE !== Pages.Stopwatch}>
 	<h2>
 		<span
 			id={ElementIds.pgSw_hhmmss}>{textHHMMSS(DEFAULT_STOPWATCH_MS)}</span
@@ -107,15 +107,15 @@ function msText(ms: number): string {
 				width: pxToRem(92) + 'rem'
 			}}
 			id={ElementIds.pgSw_playPause}
-			ButtonVariant={CButton.Variant.filled}>
-			<Icon IconCode={DEFAULT_STOPWATCH_RUNNING? IconCodes.pause : IconCodes.play} IconFilled/>
+			ButtonVariant={CButton.Variant.Filled}>
+			<Icon IconCode={DEFAULT_STOPWATCH_RUNNING? IconCodes.Pause : IconCodes.Play} IconFilled/>
 			<span>{DEFAULT_STOPWATCH_RUNNING? 'Pause' : 'Start'}</span>
 		</Button>
 		<IconButton
 			style={DEFAULT_STOPWATCH_MS > 0? undefined : "display:none"}
 			id={ElementIds.pgSw_resetLap}
-			ButtonVariant={CButton.Variant.tonal}
-			IconButtonCode={DEFAULT_STOPWATCH_RUNNING? IconCodes.flag : IconCodes.arrowReset}
+			ButtonVariant={CButton.Variant.Tonal}
+			IconButtonCode={DEFAULT_STOPWATCH_RUNNING? IconCodes.Flag : IconCodes.ArrowReset}
 			data-tooltip={DEFAULT_STOPWATCH_RUNNING? 'Lap' : 'Reset'}
 			aria-label={DEFAULT_STOPWATCH_RUNNING? 'Lap' : 'Reset'}
 		/>
@@ -123,50 +123,50 @@ function msText(ms: number): string {
 			style={DEFAULT_STOPWATCH_LAPS.length > 0? undefined : "display:none"}
 			popovertarget={ElementIds.pgSw_moreMenu}
 			id={ElementIds.pgSw_moreBtn}
-			ButtonVariant={CButton.Variant.tonal}
-			IconButtonCode={IconCodes.moreVertical}
+			ButtonVariant={CButton.Variant.Tonal}
+			IconButtonCode={IconCodes.MoreVertical}
 			data-tooltip="More actions"
 			aria-label="More actions"
 		/>
 		<Menu
 			id={ElementIds.pgSw_moreMenu}
 			PopoverAnchorBy={ElementIds.pgSw_moreBtn}>
-			<MenuItem data-command={Commands.swCpLp_time}>
-				<Icon IconCode={IconCodes.copy}/>
+			<MenuItem data-command={Commands.SwCpLp_time}>
+				<Icon IconCode={IconCodes.Copy}/>
 				Copy time
 				<div style="flex:1"/>
 				<MenuIndent/>
 			</MenuItem>
-			<MenuItem data-command={Commands.swCpLp_total}>
-				<Icon IconCode={IconCodes.copy}/>
+			<MenuItem data-command={Commands.SwCpLp_total}>
+				<Icon IconCode={IconCodes.Copy}/>
 				Copy total
 				<div style="flex:1"/>
 				<MenuIndent/>
 			</MenuItem>
-			<MenuItem data-command={Commands.swCpLp_all}>
-				<Icon IconCode={IconCodes.copy}/>
+			<MenuItem data-command={Commands.SwCpLp_all}>
+				<Icon IconCode={IconCodes.Copy}/>
 				Copy all
 				<div style="flex:1"/>
 				<MenuIndent/>
 			</MenuItem>
 			<Divider />
 			<SubMenuItem popovertarget={ElementIds.pgSw_moreMSMenu}>
-				<Icon IconCode={IconCodes.timer}/>
+				<Icon IconCode={IconCodes.Timer}/>
 				Milliseconds
 				<div style="flex:1"/>
-				<Icon IconCode={IconCodes.chevronRight}/>
+				<Icon IconCode={IconCodes.ChevronRight}/>
 			</SubMenuItem>
 			<SubMenu id={ElementIds.pgSw_moreMSMenu}>
-				<MenuItem data-command={Commands.swCpLp_timeMS}>
-					<Icon IconCode={IconCodes.copy}/>
+				<MenuItem data-command={Commands.SwCpLp_timeMS}>
+					<Icon IconCode={IconCodes.Copy}/>
 					Copy time
 				</MenuItem>
-				<MenuItem data-command={Commands.swCpLp_totalMS}>
-					<Icon IconCode={IconCodes.copy}/>
+				<MenuItem data-command={Commands.SwCpLp_totalMS}>
+					<Icon IconCode={IconCodes.Copy}/>
 					Copy total
 				</MenuItem>
-				<MenuItem data-command={Commands.swCpLp_allMS}>
-					<Icon IconCode={IconCodes.copy}/>
+				<MenuItem data-command={Commands.SwCpLp_allMS}>
+					<Icon IconCode={IconCodes.Copy}/>
 					Copy all
 				</MenuItem>
 			</SubMenu>

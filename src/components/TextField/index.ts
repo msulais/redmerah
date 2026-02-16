@@ -42,11 +42,11 @@ export namespace CTextField {
 	}
 
 	export enum Classes {
-		textfield = 'c-textfield',
-		leading   = textfield + '-leading',
-		input     = textfield + '-input',
-		trailing  = textfield + '-trailing',
-		button    = textfield + '-button'
+		Textfield = 'c-textfield',
+		Leading   = Textfield + '-leading',
+		Input     = Textfield + '-input',
+		Trailing  = Textfield + '-trailing',
+		Button    = Textfield + '-button'
 	}
 
 	export function create(options?: UpdateOptions): CElement {
@@ -60,13 +60,13 @@ export namespace CTextField {
 	): CElement {
 		const opt = options?.TextField
 		const refs = opt?.refs
-		$classlist(ref_textfield, Classes.textfield)
+		$classlist(ref_textfield, Classes.Textfield)
 
 		// leading
-		let ref_leading = $query<HTMLDivElement>(`.${Classes.leading}`, ref_textfield)
+		let ref_leading = $query<HTMLDivElement>(`.${Classes.Leading}`, ref_textfield)
 		if (!ref_leading) {
 			ref_leading = $create('div')
-			$classlist(ref_leading, Classes.leading)
+			$classlist(ref_leading, Classes.Leading)
 		}
 
 		const opt_leading = opt?.leading
@@ -78,10 +78,10 @@ export namespace CTextField {
 		}
 
 		// input
-		let ref_input = $query<HTMLInputElement>(`.${Classes.input}`, ref_textfield)
+		let ref_input = $query<HTMLInputElement>(`.${Classes.Input}`, ref_textfield)
 		if (!ref_input) {
 			ref_input = $create('input')
-			$classlist(ref_input, Classes.input)
+			$classlist(ref_input, Classes.Input)
 		}
 
 		const opt_type = opt?.type
@@ -111,10 +111,10 @@ export namespace CTextField {
 		}
 
 		// trailing
-		let ref_trailing = $query<HTMLDivElement>(`.${Classes.trailing}`, ref_textfield)
+		let ref_trailing = $query<HTMLDivElement>(`.${Classes.Trailing}`, ref_textfield)
 		if (!ref_trailing) {
 			ref_trailing = $create('div')
-			$classlist(ref_trailing, Classes.trailing)
+			$classlist(ref_trailing, Classes.Trailing)
 		}
 
 		const opt_trailing = opt?.trailing
@@ -147,7 +147,7 @@ export namespace CTextField {
 			options?: UpdateOptions
 		): CElement {
 			GCButton.update(ref_textfieldBtn, options)
-			$classlist(ref_textfieldBtn, Classes.button)
+			$classlist(ref_textfieldBtn, Classes.Button)
 			return ref_textfieldBtn
 		}
 	}

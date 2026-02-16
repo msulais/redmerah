@@ -16,7 +16,7 @@ const {
 const cls = CIcon.Classes
 ---
 <i
-	class={joinClassList(cls.icon, className)}
+	class={joinClassList(cls.Icon, className)}
 	data-c-icon-inline={IconInline? '' : undefined}
 	translate={translate ?? 'no'}
 	{...other}>{String.fromCharCode(IconCode - (IconFilled? 1 : 0))}</i>

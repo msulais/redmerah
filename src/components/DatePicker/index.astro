@@ -33,17 +33,17 @@ const {
 	...other
 } = Astro.props
 const {'class': headerClass, ...headerOther} = DatePickerHeaderAttr ?? {}
-const {'class': titleClass, ButtonVariant: titleVariant = CButton.Variant.filled, ...titleOther} = DatePickerTitleAttr ?? {}
+const {'class': titleClass, ButtonVariant: titleVariant = CButton.Variant.Filled, ...titleOther} = DatePickerTitleAttr ?? {}
 const {
 	'class': previousClass,
-	ButtonVariant: previousVariant = CButton.Variant.tonal,
-	IconButtonCode: previousIconCode = IconCodes.chevronLeft,
+	ButtonVariant: previousVariant = CButton.Variant.Tonal,
+	IconButtonCode: previousIconCode = IconCodes.ChevronLeft,
 	...previousOther
 } = DatePickerPreviousAttr ?? {}
 const {
 	'class': nextClass,
-	ButtonVariant: nextVariant = CButton.Variant.tonal,
-	IconButtonCode: nextIconCode = IconCodes.chevronRight,
+	ButtonVariant: nextVariant = CButton.Variant.Tonal,
+	IconButtonCode: nextIconCode = IconCodes.ChevronRight,
 	...nextOther
 } = DatePickerNextAttr ?? {}
 const {'class': daysClass, ...daysOther} = DatePickerDaysAttr ?? {}
@@ -57,40 +57,40 @@ const cls = CDatePicker.Classes
 ---
 
 <Popover
-	class={joinClassList(cls.datepicker, className)}
+	class={joinClassList(cls.Datepicker, className)}
 	data-c-datepicker-start={DatePickerStartDate.toISOString()}
 	data-c-datepicker-end={DatePickerEndDate?.toISOString()}
 	data-c-datepicker-value={DatePickerValue?.toISOString()}
-	data-c-datepicker-viewtype={CDatePicker.ViewType.day}
+	data-c-datepicker-viewtype={CDatePicker.ViewType.Day}
 	{...other}>
 	<div
-		class={joinClassList(cls.header, headerClass)}
+		class={joinClassList(cls.Header, headerClass)}
 		{...headerOther}>
 		<Button
 			ButtonVariant={titleVariant}
-			class={joinClassList(cls.title, titleClass)}
+			class={joinClassList(cls.Title, titleClass)}
 			{...titleOther}>
 			January 2025
 		</Button>
 		<IconButton
 			ButtonVariant={previousVariant}
-			class={joinClassList(cls.previous, previousClass)}
+			class={joinClassList(cls.Previous, previousClass)}
 			IconButtonCode={previousIconCode}
 			{...previousOther}
 		/>
 		<IconButton
 			ButtonVariant={nextVariant}
-			class={joinClassList(cls.next, nextClass)}
+			class={joinClassList(cls.Next, nextClass)}
 			IconButtonCode={nextIconCode}
 			{...nextOther}
 		/>
 	</div>
 	<Divider
-		class={joinClassList(cls.divider, dividerClass)}
+		class={joinClassList(cls.Divider, dividerClass)}
 		{...dividerOther}
 	/>
 	<div
-		class={joinClassList(cls.days, daysClass)}
+		class={joinClassList(cls.Days, daysClass)}
 		{...daysOther}>
 		{['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((v, i) => {
 			const {
@@ -99,7 +99,7 @@ const cls = CDatePicker.Classes
 				...other
 			} = DatePickerDayAttr[i] ?? {}
 			return <span
-				class={joinClassList(cls.day, className)}
+				class={joinClassList(cls.Day, className)}
 				data-tooltip={tooltip}
 				{...other}>
 				{v.substring(0, 3)}
@@ -107,7 +107,7 @@ const cls = CDatePicker.Classes
 		})}
 	</div>
 	<div
-		class={joinClassList(cls.year, yearClass)}
+		class={joinClassList(cls.Year, yearClass)}
 		{...yearOther}>
 		{Array(16).fill(2025).map((v, i) => {
 			const {
@@ -115,14 +115,14 @@ const cls = CDatePicker.Classes
 				...other
 			} = DatePickerYearButtonAttr[i] ?? {}
 			return <Button
-				class={joinClassList(cls.yearButton, className)}
+				class={joinClassList(cls.YearButton, className)}
 				{...other}>
 				{v + i}
 			</Button>
 		})}
 	</div>
 	<div
-		class={joinClassList(cls.month, monthClass)}
+		class={joinClassList(cls.Month, monthClass)}
 		{...monthOther}>
 		{[
 			'January', 'February', 'March', 'April',
@@ -131,19 +131,19 @@ const cls = CDatePicker.Classes
 		{
 			const {'class': className, ...other} = DatePickerMonthButtonAttr[i] ?? {}
 			return <Button
-				class={joinClassList(cls.monthButton, className)}
+				class={joinClassList(cls.MonthButton, className)}
 				{...other}>
 				{v}
 			</Button>
 		})}
 	</div>
 	<div
-		class={joinClassList(cls.date, dateClass)}
+		class={joinClassList(cls.Date, dateClass)}
 		{...dateOther}>
 		{Array(6).fill(0).map((_, i) => {
 			const {'class': className, ...other} = DatePickerDateEmptyAttr[i] ?? {}
 			return (<div
-				class={joinClassList(cls.dateEmpty, className)}
+				class={joinClassList(cls.DateEmpty, className)}
 				{...other}
 			/>)
 		})}
@@ -153,14 +153,14 @@ const cls = CDatePicker.Classes
 				...other
 			} = DatePickerDateButtonAttr[i] ?? {}
 			return <Button
-				class={joinClassList(cls.dateButton, className)}
+				class={joinClassList(cls.DateButton, className)}
 				{...other}>
 				{i + 1}
 			</Button>
 		})}
 	</div>
 	<div
-		class={joinClassList(cls.content, contentClass)}
+		class={joinClassList(cls.Content, contentClass)}
 		{...contentOther}><slot /></div>
 </Popover>
 <script>

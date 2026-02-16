@@ -76,11 +76,11 @@ export function updateOutput(): void {
 
 	WordsStore.update(v => v.output = output.map(text => {
 		switch (store.wordCase) {
-		case WordsRandomizerCase.uppercase: text = text.toUpperCase(); break
-		case WordsRandomizerCase.lowercase: text = text.toLowerCase(); break
-		case WordsRandomizerCase.titlecase: text = stringToTitleCase(text); break
-		case WordsRandomizerCase.togglecase: text = stringToToggleCase(text); break
-		case WordsRandomizerCase.none:
+		case WordsRandomizerCase.Uppercase: text = text.toUpperCase(); break
+		case WordsRandomizerCase.Lowercase: text = text.toLowerCase(); break
+		case WordsRandomizerCase.Titlecase: text = stringToTitleCase(text); break
+		case WordsRandomizerCase.Togglecase: text = stringToToggleCase(text); break
+		case WordsRandomizerCase.None:
 		}
 
 		return [store.prefix, text, store.suffix].join('')

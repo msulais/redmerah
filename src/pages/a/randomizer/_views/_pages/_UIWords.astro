@@ -13,11 +13,11 @@ const wordCases: {
 	value: WordsRandomizerCase
 	text: string
 }[] = [
-	{value: WordsRandomizerCase.lowercase, text: 'lower case'},
-	{value: WordsRandomizerCase.lowercase, text: 'UPPER CASE'},
-	{value: WordsRandomizerCase.titlecase, text: 'Title Case'},
-	{value: WordsRandomizerCase.togglecase, text: 'tOGGLE cASE'},
-	{value: WordsRandomizerCase.none, text: 'Default'},
+	{value: WordsRandomizerCase.Lowercase, text: 'lower case'},
+	{value: WordsRandomizerCase.Lowercase, text: 'UPPER CASE'},
+	{value: WordsRandomizerCase.Titlecase, text: 'Title Case'},
+	{value: WordsRandomizerCase.Togglecase, text: 'tOGGLE cASE'},
+	{value: WordsRandomizerCase.None, text: 'Default'},
 ]
 ---
 
@@ -25,7 +25,7 @@ const wordCases: {
 	class={CSSClasses.bodyPage}
 	id={ElementIds.pg_words}
 	role="tabpanel"
-	hidden={DEFAULT_PAGE !== Pages.words}>
+	hidden={DEFAULT_PAGE !== Pages.Words}>
 	<output
 		class:list={[CSSClasses.bodyResult, CSSClasses.resultWords]}
 		id={ElementIds.pgWrd_output}

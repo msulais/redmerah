@@ -19,16 +19,16 @@ export namespace CDrawer {
 	}
 
 	export enum Classes {
-		drawer    = 'c-drawer',
-		container = drawer + '-container',
-		header    = drawer + '-header',
-		content   = drawer + '-content',
-		footer    = drawer + '-footer',
-		button    = drawer + '-button'
+		Drawer    = 'c-drawer',
+		Container = Drawer + '-container',
+		Header    = Drawer + '-header',
+		Content   = Drawer + '-content',
+		Footer    = Drawer + '-footer',
+		Button    = Drawer + '-button'
 	}
 
 	enum Attributes {
-		selected = 'data-c-drawer-button-selected'
+		Selected = 'data-c-drawer-button-selected'
 	}
 
 	export function open(ref_drawer: CElement): void {
@@ -51,21 +51,21 @@ export namespace CDrawer {
 	export function update(ref_drawer: CElement, options?: UpdateOptions): CElement {
 		const opt = options?.Drawer
 		const refs = opt?.refs
-		$classlist(ref_drawer, Classes.drawer)
+		$classlist(ref_drawer, Classes.Drawer)
 		ref_drawer.popover = 'auto'
 
 		// container
-		let ref_container = $query<HTMLDivElement>(`.${Classes.container}`, ref_drawer)
+		let ref_container = $query<HTMLDivElement>(`.${Classes.Container}`, ref_drawer)
 		if (!ref_container) {
 			ref_container = $create('div')
-			$classlist(ref_container, Classes.container)
+			$classlist(ref_container, Classes.Container)
 		}
 
 		// container -> header
-		let ref_header = $query<HTMLDivElement>(`.${Classes.header}`, ref_container)
+		let ref_header = $query<HTMLDivElement>(`.${Classes.Header}`, ref_container)
 		if (!ref_header) {
 			ref_header = $create('div')
-			$classlist(ref_header, Classes.header)
+			$classlist(ref_header, Classes.Header)
 		}
 
 		const opt_header = opt?.header
@@ -77,10 +77,10 @@ export namespace CDrawer {
 		}
 
 		// container -> content
-		let ref_content = $query<HTMLDivElement>(`.${Classes.content}`, ref_container)
+		let ref_content = $query<HTMLDivElement>(`.${Classes.Content}`, ref_container)
 		if (!ref_content) {
 			ref_content = $create('div')
-			$classlist(ref_content, Classes.content)
+			$classlist(ref_content, Classes.Content)
 		}
 
 		const opt_children = opt?.children
@@ -92,10 +92,10 @@ export namespace CDrawer {
 		}
 
 		// container -> footer
-		let ref_footer = $query<HTMLDivElement>(`.${Classes.footer}`, ref_container)
+		let ref_footer = $query<HTMLDivElement>(`.${Classes.Footer}`, ref_container)
 		if (!ref_footer) {
 			ref_footer = $create('div')
-			$classlist(ref_footer, Classes.footer)
+			$classlist(ref_footer, Classes.Footer)
 		}
 
 		const opt_footer = opt?.footer
@@ -136,11 +136,11 @@ export namespace CDrawer {
 			const opt = options?.DrawerButton
 			const refs = opt?.refs
 			GCButton.update(ref_drawerbutton, options)
-			$classlist(ref_drawerbutton, Classes.button)
+			$classlist(ref_drawerbutton, Classes.Button)
 
 			const opt_selected = opt?.selected
 			if ($is_bool(opt_selected)) {
-				$toggle_attr(ref_drawerbutton, Attributes.selected, opt_selected)
+				$toggle_attr(ref_drawerbutton, Attributes.Selected, opt_selected)
 			}
 
 			refs?.button?.(ref_drawerbutton)
@@ -171,11 +171,11 @@ export namespace CDrawer {
 			const opt = options?.DrawerLink
 			const refs = opt?.refs
 			GCButton.CLink.update(ref_linkdrawer, options)
-			$classlist(ref_linkdrawer, Classes.button)
+			$classlist(ref_linkdrawer, Classes.Button)
 
 			const opt_selected = opt?.selected
 			if ($is_bool(opt_selected)) {
-				$toggle_attr(ref_linkdrawer, Attributes.selected, opt_selected)
+				$toggle_attr(ref_linkdrawer, Attributes.Selected, opt_selected)
 			}
 
 			refs?.link?.(ref_linkdrawer)

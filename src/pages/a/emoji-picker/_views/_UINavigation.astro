@@ -20,47 +20,47 @@ const items: {
 	{
 		emoji: '😃',
 		name: 'Smiley & Emotion',
-		page: Pages.smileyEmotion,
+		page: Pages.SmileyEmotion,
 	},
 	{
 		emoji: '🧑',
 		name: 'Person & Body',
-		page: Pages.personBody,
+		page: Pages.PersonBody,
 	},
 	{
 		emoji: '🦖',
 		name: 'Animal & Nature',
-		page: Pages.animalNature,
+		page: Pages.AnimalNature,
 	},
 	{
 		emoji: '🍎',
 		name: 'Food & Drink',
-		page: Pages.foodDrink,
+		page: Pages.FoodDrink,
 	},
 	{
 		emoji: '🌍',
 		name: 'Travel & Places',
-		page: Pages.travelPlaces,
+		page: Pages.TravelPlaces,
 	},
 	{
 		emoji: '🏓',
 		name: 'Activities',
-		page: Pages.activities,
+		page: Pages.Activities,
 	},
 	{
 		emoji: '📒',
 		name: 'Object',
-		page: Pages.object,
+		page: Pages.Object,
 	},
 	{
 		emoji: '🚹',
 		name: 'Symbols',
-		page: Pages.symbols,
+		page: Pages.Symbols,
 	},
 	{
 		emoji: '🚩',
 		name: 'Flags',
-		page: Pages.flags,
+		page: Pages.Flags,
 	},
 ]
 ---
@@ -72,7 +72,7 @@ const items: {
 	aria-label="Navigation">
 	<IconButton
 		style={{width: 'fit-content'}}
-		IconButtonCode={IconCodes.lineHorizontal3}
+		IconButtonCode={IconCodes.LineHorizontal3}
 		data-tooltip="Minimize side bar"
 		id={ElementIds.nav_minimizeBtn}
 	/>
@@ -91,7 +91,7 @@ const items: {
 			'font-size': pxToRem(20) + 'rem',
 			'line-height': pxToRem(20) + 'rem'
 		}}}
-		ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.tonal : undefined}>
+		ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.Tonal : undefined}>
 		<Fragment slot="leading">{v.emoji}</Fragment>
 		{v.name}
 	</SideBarButton>)}
@@ -104,7 +104,7 @@ const items: {
 		style="width:min-content"
 		popovertarget={ElementIds.navigationDrawer}
 		popovertargetaction="hide"
-		IconButtonCode={IconCodes.lineHorizontal3}
+		IconButtonCode={IconCodes.LineHorizontal3}
 	/>
 	{items.map(v => <DrawerButton
 		aria-selected={DEFAULT_PAGE === v.page}
@@ -114,7 +114,7 @@ const items: {
 		}}
 		data-page={v.page}
 		DrawerButtonSelected={DEFAULT_PAGE === v.page}
-		ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.tonal : undefined}>
+		ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.Tonal : undefined}>
 		<span
 			style={{
 				'font-size': pxToRem(20) + 'rem',

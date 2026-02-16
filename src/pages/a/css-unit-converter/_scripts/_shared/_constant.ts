@@ -6,9 +6,9 @@ import { APP_CSS_UNIT_CONVERTER } from "@/constants/apps"
 import { AngleUnits, LengthUnits, TimeUnits } from "./_units"
 
 export const APP: AppItem = APP_CSS_UNIT_CONVERTER
-export const DEFAULT_PAGE: Pages = Pages.length
-export const DEFAULT_THEME: PlatformThemeMode = PlatformThemeMode.auto
-export const DEFAULT_ANIMATION: PlatformAnimationMode = PlatformAnimationMode.auto
+export const DEFAULT_PAGE: Pages = Pages.Length
+export const DEFAULT_THEME: PlatformThemeMode = PlatformThemeMode.Auto
+export const DEFAULT_ANIMATION: PlatformAnimationMode = PlatformAnimationMode.Auto
 export const DEFAULT_PX_PER_REM = 16
 export const DEFAULT_PX_PER_PERCENTAGE = 820
 export const DEFAULT_PX_PER_VIEWPORT_HEIGHT = 820

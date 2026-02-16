@@ -1,3 +1,3 @@
 export enum Links {
-	compatibility = 'https://caniuse.com/netinfo'
+	Compatibility = 'https://caniuse.com/netinfo'
 }

@@ -25,13 +25,13 @@ const cls = CMenu.Classes
 ---
 
 <label
-	class={joinClassList(CButton.Classes.button, cls.item, cls.checkItem, className)}
+	class={joinClassList(CButton.Classes.Button, cls.Item, cls.CheckItem, className)}
 	{...other}>
 	<div
-		class={joinClassList(cls.checkItemLeading, leadingClass)}
+		class={joinClassList(cls.CheckItemLeading, leadingClass)}
 		{...leadingOther}><slot name="leading"/></div>
 	<input
-		class={joinClassList(cls.checkItemInput, inputClass)}
+		class={joinClassList(cls.CheckItemInput, inputClass)}
 		checked={inputChecked}
 		type={inputType}
 		autocomplete={inputAutocomplete}
@@ -40,13 +40,13 @@ const cls = CMenu.Classes
 		{...inputOther}
 	/>
 	<svg
-		class={joinClassList(cls.checkItemIcon, iconClass)}
+		class={joinClassList(cls.CheckItemIcon, iconClass)}
 		xmlns="http://www.w3.org/2000/svg"
 		viewBox="0 -960 960 960"
 		{...iconOther}>
-		<path fill={`rgb(${AppCSSColors.accent})`} d="m389-369 299-299q10.91-11 25.45-11Q728-679 739-668t11 25.58q0 14.58-10.61 25.19L415-292q-10.91 11-25.45 11Q375-281 364-292L221-435q-11-11-11-25.5t11-25.5q11-11 25.67-11 14.66 0 25.33 11l117 117Z"/>
+		<path fill={`rgb(${AppCSSColors.Accent})`} d="m389-369 299-299q10.91-11 25.45-11Q728-679 739-668t11 25.58q0 14.58-10.61 25.19L415-292q-10.91 11-25.45 11Q375-281 364-292L221-435q-11-11-11-25.5t11-25.5q11-11 25.67-11 14.66 0 25.33 11l117 117Z"/>
 	</svg>
 	<div
-		class={joinClassList(cls.checkItemContent, contentClass)}
+		class={joinClassList(cls.CheckItemContent, contentClass)}
 		{...contentOther}><slot /></div>
 </label>

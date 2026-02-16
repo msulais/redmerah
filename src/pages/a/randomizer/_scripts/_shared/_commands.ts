@@ -1,4 +1,4 @@
 export enum Commands {
-	editList = 'edit-list',
-	deleteList = 'delete-list'
+	EditList = 'edit-list',
+	DeleteList = 'delete-list'
 }

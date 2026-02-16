@@ -1,16 +1,16 @@
 export enum Commands {
 	// memo = memory
-	memo_add = 'memo-add',
-	memo_sub = 'memo-subtract',
-	memo_recall = 'memo-recall',
-	memo_clear = 'memo-clear',
+	MemoAdd = 'memo-add',
+	MemoSub = 'memo-subtract',
+	MemoRecall = 'memo-recall',
+	MemoClear = 'memo-clear',
 
 	/** @param char `string` */
-	key_char = 'key-char',
-	key_dec = 'key-decimal',
-	key_plusMin = 'key-plus-min',
-	key_clear = 'key-clear',
-	key_backspace = 'key-backspace',
-	key_equal = 'key-equal',
-	key_unitSwap = 'key-unit-swap',
+	KeyChar = 'key-char',
+	KeyDec = 'key-decimal',
+	KeyPlusMin = 'key-plus-min',
+	KeyClear = 'key-clear',
+	KeyBackspace = 'key-backspace',
+	KeyEqual = 'key-equal',
+	KeyUnitSwap = 'key-unit-swap',
 }

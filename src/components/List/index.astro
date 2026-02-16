@@ -24,22 +24,22 @@ const cls = CList.Classes
 
 ---
 <Dynamic
-	class={joinClassList(cls.list, className)}
+	class={joinClassList(cls.List, className)}
 	data-c-list-variant={ListVariant}
 	{...other}>
 	<div
-		class={joinClassList(cls.leading, leadingClass)}
+		class={joinClassList(cls.Leading, leadingClass)}
 		{...leadingOther}><slot name='leading'/></div>
 	<div
-		class={joinClassList(cls.content, contentClass)}
+		class={joinClassList(cls.Content, contentClass)}
 		{...contentOther}>
 		<slot/>
 		{Astro.slots.has('subtitle') && <div
-			class={joinClassList(cls.subtitle, subtitleClass)}
+			class={joinClassList(cls.Subtitle, subtitleClass)}
 			{...subtitleOther}><slot name='subtitle'/></div>
 		}
 	</div>
 	<div
-		class={joinClassList(cls.trailing, trailingClass)}
+		class={joinClassList(cls.Trailing, trailingClass)}
 		{...trailingOther}><slot name='trailing'/></div>
 </Dynamic>

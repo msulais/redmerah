@@ -38,48 +38,48 @@ export namespace CPopover {
 
 	enum Events {
 		/** `!bubbles | !cancelable | detail` */
-		attributeChange = 'popover:attribute-change',
+		AttributeChange = 'popover:attribute-change',
 
 		/** `!bubbles | !cancelable | detail` */
-		reposition = 'popover:reposition',
+		Reposition = 'popover:reposition',
 	}
 
 	export enum Attributes {
 		/** @param id `string` */
-		anchorBy  = 'data-c-popover-anchorby',
+		AnchorBy  = 'data-c-popover-anchorby',
 
 		/** Useful for other component */
-		draggable = 'data-c-popover-draggable',
-		dragging  = 'data-c-popover-dragging',
+		Draggable = 'data-c-popover-draggable',
+		Dragging  = 'data-c-popover-dragging',
 
 		/** @param value `number` */
-		gap       = 'data-c-popover-gap',
+		Gap       = 'data-c-popover-gap',
 
 		/** @param value `number` */
-		padding   = 'data-c-popover-padding',
+		Padding   = 'data-c-popover-padding',
 
 		/** @param value `PopoverPosition` */
-		position  = 'data-c-popover-position',
+		Position  = 'data-c-popover-position',
 	}
 
 	export enum Classes {
-		popover    = 'c-popover',
-		content    = 'c-popover-content',
-		dragHandle = 'c-popover-draghandle',
+		Popover    = 'c-popover',
+		Content    = 'c-popover-content',
+		DragHandle = 'c-popover-draghandle',
 	}
 
 	export enum CSSVars {
-		left = '--c-popover-left',
-		top = '--c-popover-top',
+		Left = '--c-popover-left',
+		Top = '--c-popover-top',
 	}
 
 	export const Position = FlyoutPosition
 
 	const LISTENED_ATTRIBUTES: string[] = [
-		Attributes.anchorBy,
-		Attributes.gap,
-		Attributes.padding,
-		Attributes.position,
+		Attributes.AnchorBy,
+		Attributes.Gap,
+		Attributes.Padding,
+		Attributes.Position,
 	]
 	const POPOVER_MARGIN = 8
 	const OPENED_POPOVER = new Set<CElement>()
@@ -87,7 +87,7 @@ export namespace CPopover {
 	const MUTATION_OBSERVER = typeof MutationObserver !== 'undefined'
 		? new MutationObserver((entries) => { for (const entry of entries) {
 			entry.target.dispatchEvent(new CustomEvent<EventDetails['attributeChange']>(
-				Events.attributeChange,
+				Events.AttributeChange,
 				{detail: {attributeName: entry.attributeName}}
 			))
 		}}) : undefined
@@ -102,7 +102,7 @@ export namespace CPopover {
 		if (!outOfBoundOnly) {
 			return new Promise((done) => ref_popover.dispatchEvent(
 				new CustomEvent<EventDetails['reposition']>(
-					Events.reposition, {detail: {done}}
+					Events.Reposition, {detail: {done}}
 				)
 			))
 		}
@@ -117,8 +117,8 @@ export namespace CPopover {
 		if (rect_popover.right > screenWidth) left = screenWidth - rect_popover.width - POPOVER_MARGIN
 		if (rect_popover.bottom > screenHeight) top = screenHeight - rect_popover.height - POPOVER_MARGIN
 
-		$set_style(ref_popover, CSSVars.left, pxToRem(left) + 'rem')
-		$set_style(ref_popover, CSSVars.top, pxToRem(top) + 'rem')
+		$set_style(ref_popover, CSSVars.Left, pxToRem(left) + 'rem')
+		$set_style(ref_popover, CSSVars.Top, pxToRem(top) + 'rem')
 		if (!isAnimationAllowed()) {return}
 
 		ref_popover.animate({
@@ -128,7 +128,7 @@ export namespace CPopover {
 			]
 		}, {
 			duration: 250,
-			easing: AnimationEasing.spring
+			easing: AnimationEasing.Spring
 		})
 	}
 
@@ -175,33 +175,33 @@ export namespace CPopover {
 		const ref_body = document.body
 		const attributes = {
 			get anchor(): HTMLElement | null {
-				const value = $get_attr(ref_popover, Attributes.anchorBy)
+				const value = $get_attr(ref_popover, Attributes.AnchorBy)
 				if (!value) return null
 
 				return $id(value)
 			},
 			get gap(): number {
-				const value = $get_attr(ref_popover, Attributes.gap)
+				const value = $get_attr(ref_popover, Attributes.Gap)
 				if (!value) return 0
 
 				return safeNumber(Number.parseFloat(value))
 			},
 			get padding(): number {
-				const value = $get_attr(ref_popover, Attributes.padding)
+				const value = $get_attr(ref_popover, Attributes.Padding)
 				if (!value) return 0
 
 				return safeNumber(Number.parseFloat(value))
 			},
 			get position(): FlyoutPosition {
-				const value = $get_attr(ref_popover, Attributes.position)
+				const value = $get_attr(ref_popover, Attributes.Position)
 				if (!value || !isValidEnumValue(value, Position)) {
-					return Position.centerBottom
+					return Position.CenterBottom
 				}
 
 				return value as FlyoutPosition
 			},
 			get draggable(): boolean {
-				return $has_attr(ref_popover, Attributes.draggable)
+				return $has_attr(ref_popover, Attributes.Draggable)
 			},
 		}
 		let ref_content: HTMLDivElement | null = null
@@ -220,7 +220,7 @@ export namespace CPopover {
 
 		function toggleDragging(drag: boolean): void {
 			isDragging = drag
-			$toggle_attr(ref_popover, Attributes.dragging, drag)
+			$toggle_attr(ref_popover, Attributes.Dragging, drag)
 		}
 
 		function fixPosition(options?: EventDetails['reposition']): void {
@@ -234,8 +234,8 @@ export namespace CPopover {
 			if (rect_popover.right > screenWidth) left = screenWidth - rect_popover.width - POPOVER_MARGIN
 			if (rect_popover.bottom > screenHeight) top = screenHeight - rect_popover.height - POPOVER_MARGIN
 
-			$set_style(ref_popover, CSSVars.left, pxToRem(left) + 'rem')
-			$set_style(ref_popover, CSSVars.top, pxToRem(top) + 'rem')
+			$set_style(ref_popover, CSSVars.Left, pxToRem(left) + 'rem')
+			$set_style(ref_popover, CSSVars.Top, pxToRem(top) + 'rem')
 			if (!isAnimationAllowed()) {
 				return options?.done()
 			}
@@ -247,7 +247,7 @@ export namespace CPopover {
 				]
 			}, {
 				duration: 300,
-				easing: AnimationEasing.spring
+				easing: AnimationEasing.Spring
 			}).finished.then(() => {
 				options?.done()
 			})
@@ -272,8 +272,8 @@ export namespace CPopover {
 			})
 
 			const [x, y] = [rect_popover.left, rect_popover.top]
-			$set_style(ref_popover, CSSVars.left, pxToRem(flyoutPosition.left) + 'rem')
-			$set_style(ref_popover, CSSVars.top, pxToRem(flyoutPosition.top) + 'rem')
+			$set_style(ref_popover, CSSVars.Left, pxToRem(flyoutPosition.left) + 'rem')
+			$set_style(ref_popover, CSSVars.Top, pxToRem(flyoutPosition.top) + 'rem')
 			if (!isAnimationAllowed()) {
 				return options?.done()
 			}
@@ -285,7 +285,7 @@ export namespace CPopover {
 				]
 			}, {
 				duration: 300,
-				easing: AnimationEasing.spring
+				easing: AnimationEasing.Spring
 			}).finished.then(() => {
 				options?.done()
 			})
@@ -323,7 +323,7 @@ export namespace CPopover {
 			ref_popover.animate({
 				translate: ['0 0', `${pxToRem(translateX)}rem ${pxToRem(translateY)}rem`],
 				opacity: [1, 0]
-			}, { duration: 250, easing: AnimationEasing.springBounceInverse })
+			}, { duration: 250, easing: AnimationEasing.SpringBounceInverse })
 		}
 
 		function setOpenPosition(): void {
@@ -338,8 +338,8 @@ export namespace CPopover {
 				pointer: rect_anchor? undefined : {x: POINTER_X, y: POINTER_Y}
 			})
 
-			$set_style(ref_popover, CSSVars.left, pxToRem(flyoutPosition.left) + 'rem')
-			$set_style(ref_popover, CSSVars.top, pxToRem(flyoutPosition.top) + 'rem')
+			$set_style(ref_popover, CSSVars.Left, pxToRem(flyoutPosition.left) + 'rem')
+			$set_style(ref_popover, CSSVars.Top, pxToRem(flyoutPosition.top) + 'rem')
 
 			// `opacity` property set in 'beforetoggle' event
 			$rm_style(ref_popover, 'opacity')
@@ -363,16 +363,16 @@ export namespace CPopover {
 			ref_popover.animate({
 				translate: [`${pxToRem(translateX)}rem ${pxToRem(translateY)}rem`, '0 0'],
 				opacity: [0, 1]
-			}, { duration: 250, easing: AnimationEasing.springBounce })
+			}, { duration: 250, easing: AnimationEasing.SpringBounce })
 		}
 
 		function dragHandleRefOnKeyDown(ev: KeyboardEvent): void {
 			const key = ev.key
 			if (
-				key !== KeyboardValue.arrowUp
-				&& key !== KeyboardValue.arrowDown
-				&& key !== KeyboardValue.arrowLeft
-				&& key !== KeyboardValue.arrowRight
+				key !== KeyboardValue.ArrowUp
+				&& key !== KeyboardValue.ArrowDown
+				&& key !== KeyboardValue.ArrowLeft
+				&& key !== KeyboardValue.ArrowRight
 			) return
 
 			const onePercentWidth = screenWidth / 100
@@ -389,22 +389,22 @@ export namespace CPopover {
 			}
 
 			switch (key) {
-			case KeyboardValue.arrowUp:
+			case KeyboardValue.ArrowUp:
 				keyTop -= onePercentHeight
 				break
-			case KeyboardValue.arrowDown:
+			case KeyboardValue.ArrowDown:
 				keyTop += onePercentHeight
 				break
-			case KeyboardValue.arrowLeft:
+			case KeyboardValue.ArrowLeft:
 				keyLeft -= onePercentWidth
 				break
-			case KeyboardValue.arrowRight:
+			case KeyboardValue.ArrowRight:
 				keyLeft += onePercentWidth
 				break
 			}
 
-			$set_style(ref_popover, CSSVars.left, pxToRem(keyLeft) + 'rem')
-			$set_style(ref_popover, CSSVars.top, pxToRem(keyTop) + 'rem')
+			$set_style(ref_popover, CSSVars.Left, pxToRem(keyLeft) + 'rem')
+			$set_style(ref_popover, CSSVars.Top, pxToRem(keyTop) + 'rem')
 			clearTimeout(time_fixposition)
 			time_fixposition = setTimeout(() => {
 				fixPosition()
@@ -415,8 +415,8 @@ export namespace CPopover {
 			if (!isDragging) return
 
 			requestAnimationFrame(() => {
-				$set_style(ref_popover, CSSVars.left, pxToRem(ev.clientX - diffPositionX) + 'rem')
-				$set_style(ref_popover, CSSVars.top, pxToRem(ev.clientY - diffPositionY) + 'rem')
+				$set_style(ref_popover, CSSVars.Left, pxToRem(ev.clientX - diffPositionX) + 'rem')
+				$set_style(ref_popover, CSSVars.Top, pxToRem(ev.clientY - diffPositionY) + 'rem')
 			})
 		}
 
@@ -439,20 +439,20 @@ export namespace CPopover {
 		}
 
 		function initEvents(): void {
-			$add_event<CustomEvent<EventDetails['attributeChange']>>(ref_popover, Events.attributeChange, (ev) => {
+			$add_event<CustomEvent<EventDetails['attributeChange']>>(ref_popover, Events.AttributeChange, (ev) => {
 				const attr = ev.detail.attributeName
 				if (!isOpen(ref_popover)) {
 					return
 				}
 
 				switch (attr) {
-				case Attributes.gap:
+				case Attributes.Gap:
 					reposition()
 					break
-				case Attributes.padding:
+				case Attributes.Padding:
 					reposition()
 					break
-				case Attributes.position:
+				case Attributes.Position:
 					reposition()
 					break
 				}
@@ -474,7 +474,7 @@ export namespace CPopover {
 					setOpenPosition()
 					OPENED_POPOVER.add(ref_popover)
 					$add_event<CustomEvent<EventDetails["reposition"]>>(
-						ref_popover, Events.reposition, reposition
+						ref_popover, Events.Reposition, reposition
 					)
 					$add_event(ref_draghandle, 'keydown', dragHandleRefOnKeyDown)
 					$add_event(ref_draghandle, 'pointerdown', dragHandleRefOnPointerDown)
@@ -485,7 +485,7 @@ export namespace CPopover {
 				else {
 					OPENED_POPOVER.delete(ref_popover)
 					$rm_event<CustomEvent<EventDetails["reposition"]>>(
-						ref_popover, Events.reposition, reposition
+						ref_popover, Events.Reposition, reposition
 					)
 					$rm_event(ref_draghandle, 'keydown', dragHandleRefOnKeyDown)
 					$rm_event(ref_draghandle, 'pointerdown', dragHandleRefOnPointerDown)
@@ -508,10 +508,10 @@ export namespace CPopover {
 			const rest: Element[] = []
 			for (let i = 0; i < refs_children.length; i++) {
 				const ref = refs_children[i]
-				if (!ref_draghandle && ref.matches('div.' + Classes.dragHandle)) {
+				if (!ref_draghandle && ref.matches('div.' + Classes.DragHandle)) {
 					ref_draghandle = ref as HTMLDivElement
 				}
-				else if (!ref_content && ref.matches('div.' + Classes.content)) {
+				else if (!ref_content && ref.matches('div.' + Classes.Content)) {
 					ref_content = ref as HTMLDivElement
 				}
 				else {
@@ -521,12 +521,12 @@ export namespace CPopover {
 
 			if (!ref_draghandle) {
 				ref_draghandle = document.createElement('div')
-				ref_draghandle.classList.add(Classes.dragHandle)
+				ref_draghandle.classList.add(Classes.DragHandle)
 			}
 
 			if (!ref_content) {
 				ref_content = document.createElement('div')
-				ref_content.classList.add(Classes.content)
+				ref_content.classList.add(Classes.Content)
 			}
 
 			ref_draghandle.tabIndex = 0
@@ -547,7 +547,7 @@ export namespace CPopover {
 
 	export function update(ref_popover: CElement, options?: UpdateOptions): CElement {
 		const opt = options?.Popover
-		$classlist(ref_popover, Classes.popover)
+		$classlist(ref_popover, Classes.Popover)
 
 		if (!$has_attr(ref_popover, 'popover')) {
 			ref_popover.popover = 'auto'
@@ -560,45 +560,45 @@ export namespace CPopover {
 
 		const opt_draggable = opt?.draggable
 		if ($is_bool(opt_draggable)) {
-			$toggle_attr(ref_popover, Attributes.draggable, opt_draggable)
+			$toggle_attr(ref_popover, Attributes.Draggable, opt_draggable)
 		}
 
 		const opt_anchorBy = opt?.anchorBy
 		if ($is_false(opt_anchorBy)) {
-			$rm_attr(ref_popover, Attributes.anchorBy)
+			$rm_attr(ref_popover, Attributes.AnchorBy)
 		}
 		else if ($is_string(opt_anchorBy)) {
-			$set_attr(ref_popover, Attributes.anchorBy, opt_anchorBy)
+			$set_attr(ref_popover, Attributes.AnchorBy, opt_anchorBy)
 		}
 
 		const opt_gap = opt?.gap
 		if ($is_false(opt_gap)) {
-			$rm_attr(ref_popover, Attributes.gap)
+			$rm_attr(ref_popover, Attributes.Gap)
 		}
 		else if ($is_number(opt_gap)) {
-			$set_attr(ref_popover, Attributes.gap, opt_gap + '')
+			$set_attr(ref_popover, Attributes.Gap, opt_gap + '')
 		}
 
 		const opt_padding = opt?.padding
 		if ($is_false(opt_padding)) {
-			$rm_attr(ref_popover, Attributes.padding)
+			$rm_attr(ref_popover, Attributes.Padding)
 		}
 		else if ($is_number(opt_padding)) {
-			$set_attr(ref_popover, Attributes.padding, opt_padding + '')
+			$set_attr(ref_popover, Attributes.Padding, opt_padding + '')
 		}
 
 		const opt_position = opt?.position
 		if ($is_false(opt_position)) {
-			$rm_attr(ref_popover, Attributes.position)
+			$rm_attr(ref_popover, Attributes.Position)
 		}
 		else if ($is_string(opt_position)) {
-			$set_attr(ref_popover, Attributes.position, opt_position)
+			$set_attr(ref_popover, Attributes.Position, opt_position)
 		}
 
-		let ref_content = $query<HTMLDivElement>(`.${Classes.content}`, ref_popover)
+		let ref_content = $query<HTMLDivElement>(`.${Classes.Content}`, ref_popover)
 		if (!ref_content) {
 			ref_content = $create('div')
-			$classlist(ref_content, Classes.content)
+			$classlist(ref_content, Classes.Content)
 		}
 
 		const opt_children = opt?.children
@@ -609,10 +609,10 @@ export namespace CPopover {
 			$children(ref_content, ...opt_children)
 		}
 
-		let ref_draghandle = $query<HTMLDivElement>(`.${Classes.dragHandle}`, ref_popover)
+		let ref_draghandle = $query<HTMLDivElement>(`.${Classes.DragHandle}`, ref_popover)
 		if (!ref_draghandle) {
 			ref_draghandle = $create('div')
-			$classlist(ref_draghandle, Classes.dragHandle)
+			$classlist(ref_draghandle, Classes.DragHandle)
 			$set_attr(ref_draghandle, 'tabindex', '0')
 			$set_attr(ref_draghandle, 'draggable', 'false')
 		}
@@ -628,7 +628,7 @@ export namespace CPopover {
 	export function register(...refs_popover: CElement[]): void {
 		initListener()
 		if (refs_popover.length === 0) {
-			refs_popover = [...document.querySelectorAll<CElement>('div.' + Classes.popover)]
+			refs_popover = [...document.querySelectorAll<CElement>('div.' + Classes.Popover)]
 		}
 
 		for (const ref of refs_popover){

@@ -21,22 +21,22 @@ export namespace CList {
 	}
 
 	export enum Classes {
-		list     = 'c-list',
-		leading  = list + '-leading',
-		trailing = list + '-trailing',
-		content  = list + '-content',
-		subtitle = list + '-subtitle'
+		List     = 'c-list',
+		Leading  = List + '-leading',
+		Trailing = List + '-trailing',
+		Content  = List + '-content',
+		Subtitle = List + '-subtitle'
 	}
 
 	export enum Variant {
-		transparent = 'transparent',
-		tonal       = 'tonal',
-		filled      = 'filled',
-		outlined    = 'outlined'
+		Transparent = 'transparent',
+		Tonal       = 'tonal',
+		Filled      = 'filled',
+		Outlined    = 'outlined'
 	}
 
 	enum Attributes {
-		variant = 'data-c-list-variant'
+		Variant = 'data-c-list-variant'
 	}
 
 	export function create<T extends HTMLElement = CElement>(
@@ -49,48 +49,48 @@ export namespace CList {
 	export function update<T extends HTMLElement = CElement>(ref_list: T, options?: UpdateOptions<T>): T {
 		const opt = options?.List
 		const refs = opt?.refs
-		$classlist(ref_list, Classes.list)
+		$classlist(ref_list, Classes.List)
 
 		const opt_variant = opt?.variant
 		if ($is_false(opt_variant)) {
-			$rm_attr(ref_list, Attributes.variant)
+			$rm_attr(ref_list, Attributes.Variant)
 		}
 		else if ($is_string(opt_variant) && isValidEnumValue(opt_variant, Variant)) {
-			$set_attr(ref_list, Attributes.variant, opt_variant)
+			$set_attr(ref_list, Attributes.Variant, opt_variant)
 		}
 
 		// leading
 		const opt_leading = opt?.leading
-		let ref_leading = $query<HTMLDivElement>(`.${Classes.leading}`, ref_list)
+		let ref_leading = $query<HTMLDivElement>(`.${Classes.Leading}`, ref_list)
 		if ($is_false(opt_leading)) {
 			$children(ref_leading)
 		}
 		else if ($is_array(opt_leading)) {
 			if (!ref_leading) {
 				ref_leading = $create('div')
-				$classlist(ref_leading, Classes.leading)
+				$classlist(ref_leading, Classes.Leading)
 			}
 
 			$children(ref_leading, ...opt_leading)
 		}
 
 		// content
-		let ref_content = $query<HTMLDivElement>(`.${Classes.content}`, ref_list)
+		let ref_content = $query<HTMLDivElement>(`.${Classes.Content}`, ref_list)
 		if (!ref_content) {
 			ref_content = $create('div')
-			$classlist(ref_content, Classes.content)
+			$classlist(ref_content, Classes.Content)
 		}
 
 		// content -> subtitle
 		const opt_subtitle = opt?.subtitle
-		let ref_subtitle = $query<HTMLDivElement>(`.${Classes.subtitle}`, ref_content)
+		let ref_subtitle = $query<HTMLDivElement>(`.${Classes.Subtitle}`, ref_content)
 		if ($is_false(opt_subtitle)) {
 			$children(ref_subtitle)
 		}
 		else if ($is_array(opt_subtitle)) {
 			if (!ref_subtitle) {
 				ref_subtitle = $create('div')
-				$classlist(ref_subtitle, Classes.subtitle)
+				$classlist(ref_subtitle, Classes.Subtitle)
 			}
 
 			$children(ref_subtitle, ...opt_subtitle)
@@ -119,14 +119,14 @@ export namespace CList {
 
 		// trailing
 		const opt_trailing = opt?.trailing
-		let ref_trailing = $query<HTMLDivElement>(`.${Classes.trailing}`, ref_list)
+		let ref_trailing = $query<HTMLDivElement>(`.${Classes.Trailing}`, ref_list)
 		if ($is_false(opt_trailing)) {
 			$children(ref_trailing)
 		}
 		else if ($is_array(opt_trailing)) {
 			if (!ref_trailing) {
 				ref_trailing = $create('div')
-				$classlist(ref_trailing, Classes.trailing)
+				$classlist(ref_trailing, Classes.Trailing)
 			}
 
 			$children(ref_trailing, ...opt_trailing)

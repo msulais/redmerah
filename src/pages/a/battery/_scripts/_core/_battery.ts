@@ -27,7 +27,7 @@ function _initEvents(): void {
 			_ref_textLevel.textContent = Math.round(battery.level * 100) + '%'
 			_ref_statusText.textContent = charging? 'Charging' : 'Discharging'
 			CIcon.update(_ref_statusIcon, {
-				Icon: {code: charging? IconCodes.batteryCharge : IconCodes.battery5}
+				Icon: {code: charging? IconCodes.BatteryCharge : IconCodes.Battery5}
 			})
 		}
 		update()

@@ -17,10 +17,10 @@ export namespace CCheckBox {
 	}
 
 	export enum Classes {
-		checkbox = 'c-checkbox',
-		input    = checkbox + '-input',
-		icon     = checkbox + '-icon',
-		content  = checkbox + '-content'
+		Checkbox = 'c-checkbox',
+		Input    = Checkbox + '-input',
+		Icon     = Checkbox + '-icon',
+		Content  = Checkbox + '-content'
 	}
 
 	export function create(options?: UpdateOptions): CElement {
@@ -34,14 +34,14 @@ export namespace CCheckBox {
 	): CElement {
 		const opt = options?.CheckBox
 		const refs = opt?.refs
-		$classlist(ref_checkbox, Classes.checkbox)
+		$classlist(ref_checkbox, Classes.Checkbox)
 
 		// input
-		let ref_input = $query<HTMLInputElement>('.' + Classes.input, ref_checkbox)
+		let ref_input = $query<HTMLInputElement>('.' + Classes.Input, ref_checkbox)
 		if (!ref_input) {
 			ref_input = $create('input')
 			ref_input.type = 'checkbox'
-			$classlist(ref_input, Classes.input)
+			$classlist(ref_input, Classes.Input)
 		}
 
 		const opt_checked = opt?.checked
@@ -55,10 +55,10 @@ export namespace CCheckBox {
 		}
 
 		// icon
-		let ref_icon = $query<SVGSVGElement>('.' + Classes.icon, ref_checkbox)
+		let ref_icon = $query<SVGSVGElement>('.' + Classes.Icon, ref_checkbox)
 		if (!ref_icon) {
 			ref_icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-			$classlist(ref_icon, Classes.icon)
+			$classlist(ref_icon, Classes.Icon)
 			$set_attr(ref_icon, 'viewBox', '0 -960 960 960')
 
 			const ref_path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
@@ -67,10 +67,10 @@ export namespace CCheckBox {
 		}
 
 		// content
-		let ref_content = $query<HTMLDivElement>('.' + Classes.content, ref_checkbox)
+		let ref_content = $query<HTMLDivElement>('.' + Classes.Content, ref_checkbox)
 		if (!ref_content) {
 			ref_content = $create('div')
-			$classlist(ref_content, Classes.content)
+			$classlist(ref_content, Classes.Content)
 		}
 
 		const opt_children = opt?.children

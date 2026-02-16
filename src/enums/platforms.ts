@@ -1,11 +1,11 @@
 export enum PlatformThemeMode {
-	auto = 'auto',
-	light = 'light',
-	dark = 'dark'
+	Auto = 'auto',
+	Light = 'light',
+	Dark = 'dark'
 }
 
 export enum PlatformAnimationMode {
-	auto = 'auto',
-	on = 'on',
-	off = 'off'
+	Auto = 'auto',
+	On = 'on',
+	Off = 'off'
 }

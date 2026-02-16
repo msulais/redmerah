@@ -11,7 +11,7 @@ const {
 	'class': className,
 	PopoverGap = pxToRem(-4),
 	popover = 'manual',
-	PopoverPosition: position = FlyoutPosition.rightCenterToBottom,
+	PopoverPosition: position = FlyoutPosition.RightCenterToBottom,
 	...other
 } = Astro.props
 
@@ -19,7 +19,7 @@ const cls = CMenu.Classes
 ---
 
 <Menu
-	class={joinClassList(cls.submenu, className)}
+	class={joinClassList(cls.Submenu, className)}
 	PopoverPosition={position}
 	PopoverGap={PopoverGap}
 	popover={popover}

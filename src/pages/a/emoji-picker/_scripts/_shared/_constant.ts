@@ -6,7 +6,7 @@ import type { AppItem } from "@/types/apps"
 
 export const APP: AppItem = APP_EMOJI_PICKER
 export const SCREEN_WIDTH_SMALL = pxToRem(650)
-export const DEFAULT_PAGE: Pages = Pages.smileyEmotion
-export const DEFAULT_THEME = PlatformThemeMode.auto
-export const DEFAULT_ANIMATION = PlatformAnimationMode.auto
-export const DEFAULT_SKIN_TONE = SkinToneEmoji.none
+export const DEFAULT_PAGE: Pages = Pages.SmileyEmotion
+export const DEFAULT_THEME = PlatformThemeMode.Auto
+export const DEFAULT_ANIMATION = PlatformAnimationMode.Auto
+export const DEFAULT_SKIN_TONE = SkinToneEmoji.None

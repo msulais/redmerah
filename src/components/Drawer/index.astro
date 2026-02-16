@@ -22,20 +22,20 @@ const cls = CDrawer.Classes
 ---
 
 <div
-	class={joinClassList(cls.drawer, className)}
+	class={joinClassList(cls.Drawer, className)}
 	popover={popover}
 	{...other}>
 	<div
-		class={joinClassList(cls.container, containerClass)}
+		class={joinClassList(cls.Container, containerClass)}
 		{...containerOther}>
 		<div
-			class={joinClassList(cls.header, headerClass)}
+			class={joinClassList(cls.Header, headerClass)}
 			{...headerOther}><slot name="header"/></div>
 		<div
-			class={joinClassList(cls.content, contentClass)}
+			class={joinClassList(cls.Content, contentClass)}
 			{...contentOther}><slot/></div>
 		<div
-			class={joinClassList(cls.footer, footerClass)}
+			class={joinClassList(cls.Footer, footerClass)}
 			{...footerOther}><slot name="footer"/></div>
 	</div>
 </div>

@@ -1,5 +1,5 @@
 export enum QRVersion {
-	auto = 'auto',
+	Auto = 'auto',
 	v1 = '1',
 	v2 = '2',
 	v3 = '3',
@@ -43,21 +43,21 @@ export enum QRVersion {
 }
 
 export enum ErrorCorrectionLevel {
-	low = 'L',
-	medium = 'M',
-	quartile = 'Q',
-	high = 'H'
+	Low = 'L',
+	Medium = 'M',
+	Quartile = 'Q',
+	High = 'H'
 }
 
 export enum EncodingMode {
-	auto = 'Auto',
-	numeric = 'numeric',
-	alphanumeric = 'alphanumeric',
-	byte = 'byte',
-	kanji = 'kanji'
+	Auto = 'Auto',
+	Numeric = 'numeric',
+	Alphanumeric = 'alphanumeric',
+	Byte = 'byte',
+	Kanji = 'kanji'
 }
 
 export enum Pages {
-	generate = 'generate',
-	scan = 'scan'
+	Generate = 'generate',
+	Scan = 'scan'
 }

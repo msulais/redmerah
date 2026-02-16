@@ -35,7 +35,7 @@ export const prerender = true
 			</defs>
 		</svg>
 	</Splash>
-	<Appbar route={RoutesLinks.apps}/>
+	<Appbar route={RoutesLinks.Apps}/>
 	<main class={CSSClasses.main}>
 		<h1>Apps</h1>
 		<TextField
@@ -46,12 +46,12 @@ export const prerender = true
 				id: ElementIds.searchInput,
 				autocomplete: 'off'
 			}}>
-			<Icon IconCode={IconCodes.search} slot="leading"/>
+			<Icon IconCode={IconCodes.Search} slot="leading"/>
 		</TextField>
 		<ul class={CSSClasses.content} id={ElementIds.appList}>
 			{[...APPS].sort((a,b) => a.name.localeCompare(b.name)).map(app =>
 				<li data-tooltip={app.name}>
-					<LinkButton style={`--color: ${app.color}`} href={app.link} LinkButtonVariant={CButton.Variant.tonal}>
+					<LinkButton style={`--color: ${app.color}`} href={app.link} LinkButtonVariant={CButton.Variant.Tonal}>
 						<img
 							loading="eager"
 							src={app.logoUrl}

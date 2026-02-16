@@ -20,21 +20,21 @@ const items: {
 	controls: string
 }[] = [
 	{
-		icon: IconCodes.clock,
+		icon: IconCodes.Clock,
 		name: 'Clock',
-		page: Pages.clock,
+		page: Pages.Clock,
 		controls: ElementIds.pg_clock,
 	},
 	{
-		icon: IconCodes.timer,
+		icon: IconCodes.Timer,
 		name: 'Stopwatch',
-		page: Pages.stopwatch,
+		page: Pages.Stopwatch,
 		controls: ElementIds.pg_stopwatch,
 	},
 	{
-		icon: IconCodes.hourglass,
+		icon: IconCodes.Hourglass,
 		name: 'Timer',
-		page: Pages.timer,
+		page: Pages.Timer,
 		controls: ElementIds.pg_timer,
 	},
 ]
@@ -47,7 +47,7 @@ const items: {
 	aria-label="Navigation">
 	<IconButton
 		style={{width: 'fit-content'}}
-		IconButtonCode={IconCodes.lineHorizontal3}
+		IconButtonCode={IconCodes.LineHorizontal3}
 		data-tooltip="Minimize side bar"
 		id={ElementIds.nav_minimizeBtn}
 	/>
@@ -57,7 +57,7 @@ const items: {
 		aria-selected={DEFAULT_PAGE === v.page}
 		aria-controls={v.controls}
 		SideBarButtonSelected={DEFAULT_PAGE === v.page}
-		ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.tonal : undefined}>
+		ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.Tonal : undefined}>
 		<Icon
 			slot="leading"
 			IconCode={v.icon}
@@ -74,14 +74,14 @@ const items: {
 		style="width:min-content"
 		popovertarget={ElementIds.nav_drawer}
 		popovertargetaction="hide">
-		<Icon IconCode={IconCodes.lineHorizontal3}/>
+		<Icon IconCode={IconCodes.LineHorizontal3}/>
 	</Button>
 	{items.map(v => <DrawerButton
 		aria-selected={DEFAULT_PAGE === v.page}
 		aria-controls={v.controls}
 		data-page={v.page}
 		DrawerButtonSelected={DEFAULT_PAGE === v.page}
-		ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.tonal : undefined}>
+		ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.Tonal : undefined}>
 		<Icon
 			IconCode={v.icon}
 		/>

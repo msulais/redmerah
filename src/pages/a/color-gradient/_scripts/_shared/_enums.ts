@@ -1,18 +1,18 @@
 export enum ColorSpace {
-	hex = 'hex',
-	rgba = 'rgba',
-	hsla = 'hsla'
+	HEX = 'hex',
+	RGBA = 'rgba',
+	HSLA = 'hsla'
 }
 
 export enum GradientType {
-	linear = 'linear',
-	radial = 'radial',
-	conic = 'conic'
+	Linear = 'linear',
+	Radial = 'radial',
+	Conic = 'conic'
 }
 
 export enum RadialGradientShape {
-	ellipse = 'ellipse',
-	circle = 'circle'
+	Ellipse = 'ellipse',
+	Circle = 'circle'
 }
 
 /**
@@ -20,32 +20,32 @@ export enum RadialGradientShape {
  * Currently not recommended to use in production.
 */
 export enum RectangularColorSpace {
-	auto = 'auto',
-	srgb = 'srgb',
-	srgbLinear = 'srgb-linear',
-	displayP3 = 'display-p3',
-	a98Rgb = 'a98-rgb',
-	prophotoRgb = 'prophoto-rgb',
-	rec2020 = 'rec2020',
-	lab = 'lab',
-	oklab = 'oklab',
-	xyz = 'xyz',
-	xyzD50 = 'xyz-d50',
-	xyzD65 = 'xyz-d65',
+	Auto = 'auto',
+	Srgb = 'srgb',
+	SrgbLinear = 'srgb-linear',
+	DisplayP3 = 'display-p3',
+	A98Rgb = 'a98-rgb',
+	ProphotoRgb = 'prophoto-rgb',
+	Rec2020 = 'rec2020',
+	Lab = 'lab',
+	Oklab = 'oklab',
+	Xyz = 'xyz',
+	XyzD50 = 'xyz-d50',
+	XyzD65 = 'xyz-d65',
 }
 
 export enum PolarColorSpace {
-	auto = 'auto',
-	hsl = 'hsl',
-	hwb = 'hwb',
-	lch = 'lch',
-	oklch = 'oklch'
+	Auto = 'auto',
+	Hsl = 'hsl',
+	Hwb = 'hwb',
+	Lch = 'lch',
+	Oklch = 'oklch'
 }
 
 export enum HueInterpolationMethod {
-	auto = 'auto',
-	shorter = 'shorter',
-	longer = 'longer',
-	increasing = 'increasing',
-	decreasing = 'decreasing'
+	Auto = 'auto',
+	Shorter = 'shorter',
+	Longer = 'longer',
+	Increasing = 'increasing',
+	Decreasing = 'decreasing'
 }

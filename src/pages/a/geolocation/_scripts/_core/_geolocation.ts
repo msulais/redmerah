@@ -28,7 +28,7 @@ export const GeolocationStore = new ObservableStore<GeolocationStoreType>({
 })
 
 const _ref_startPauseBtn = $(ElementIds.bd_startPause) as CButton.CElement
-const _ref_startPauseIcon = $$('.' + CIcon.Classes.icon, _ref_startPauseBtn) as CIcon.CElement
+const _ref_startPauseIcon = $$('.' + CIcon.Classes.Icon, _ref_startPauseBtn) as CIcon.CElement
 const _ref_accuracy = $(ElementIds.bd_accuracy) as HTMLSpanElement
 const _ref_altitude = $(ElementIds.bd_altitude) as HTMLSpanElement
 const _ref_altitudeAccuracy = $(ElementIds.bd_altitudeAccuracy) as HTMLSpanElement
@@ -79,14 +79,14 @@ function _initSubscriber(): void {
 
 		if (isWatching) {
 			CButton.update(_ref_startPauseBtn, {Button: {
-				variant: CButton.Variant.tonal,
+				variant: CButton.Variant.Tonal,
 				children: [_ref_startPauseIcon, 'Pause my location']
 			}})
 			_watchGeolocation()
 		}
 		else {
 			CButton.update(_ref_startPauseBtn, {Button: {
-				variant: CButton.Variant.filled,
+				variant: CButton.Variant.Filled,
 				children: [_ref_startPauseIcon, 'Show my location']
 			}})
 			if (typeof _geoWatchId === 'number'){

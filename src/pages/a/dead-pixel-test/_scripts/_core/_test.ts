@@ -76,7 +76,7 @@ function _initEvents(): void {
 
 	document.addEventListener('keydown', ev => {
 		const key = ev.key
-		if (key !== KeyboardValue.space && key !== KeyboardValue.enter) {return}
+		if (key !== KeyboardValue.Space && key !== KeyboardValue.Enter) {return}
 
 		ev.preventDefault()
 		_nextColor()

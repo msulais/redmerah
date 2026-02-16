@@ -142,61 +142,61 @@ export namespace CColorPicker {
 	}
 
 	export enum Attributes {
-		disabledOpacity = 'data-c-colorpicker-disabled-opacity',
-		value           = 'data-c-colorpicker-value',
-		hueOnly         = 'data-c-colorpicker-hueonly',
-		colorSpace      = 'data-c-colorpicker-colorspace'
+		DisabledOpacity = 'data-c-colorpicker-disabled-opacity',
+		Value           = 'data-c-colorpicker-value',
+		HueOnly         = 'data-c-colorpicker-hueonly',
+		ColorSpace      = 'data-c-colorpicker-colorspace'
 	}
 
 	export enum Classes {
-		colorpicker      = 'c-colorpicker',
-		content          = colorpicker + '-content',
-		rect             = colorpicker + '-rect',
-		options          = colorpicker + '-options',
-		preview          = colorpicker + '-preview',
-		eyedropper       = colorpicker + '-eyedropper',
-		slider           = colorpicker + '-slider',
-		input            = colorpicker + '-input',
-		label            = colorpicker + '-label',
-		textfield        = colorpicker + '-textfield',
-		swap             = colorpicker + '-swap',
-		swapIcon         = swap        + '-icon',
-		sliderHue        = slider      + '-hue',
-		sliderOpacity    = slider      + '-opacity',
-		labelColor       = label       + '-color',
-		labelOpacity     = label       + '-opacity',
-		textfieldColor   = textfield   + '-color',
-		textfieldOpacity = textfield   + '-opacity'
+		Colorpicker      = 'c-colorpicker',
+		Content          = Colorpicker + '-content',
+		Rect             = Colorpicker + '-rect',
+		Options          = Colorpicker + '-options',
+		Preview          = Colorpicker + '-preview',
+		Eyedropper       = Colorpicker + '-eyedropper',
+		Slider           = Colorpicker + '-slider',
+		Input            = Colorpicker + '-input',
+		Label            = Colorpicker + '-label',
+		Textfield        = Colorpicker + '-textfield',
+		Swap             = Colorpicker + '-swap',
+		SwapIcon         = Swap        + '-icon',
+		SliderHue        = Slider      + '-hue',
+		SliderOpacity    = Slider      + '-opacity',
+		LabelColor       = Label       + '-color',
+		LabelOpacity     = Label       + '-opacity',
+		TextfieldColor   = Textfield   + '-color',
+		TextfieldOpacity = Textfield   + '-opacity'
 	}
 
 	export enum Events {
 		/** `!bubbles | !cancelable | !detail` */
-		input  = 'colorpicker:input',
+		Input  = 'colorpicker:input',
 
 		/** `!bubbles | !cancelable | !detail` */
-		change = 'colorpicker:change',
+		Change = 'colorpicker:change',
 
 		/** ATTENTION: Don't use this event. It was meant for update in
 		 * `updateColorPickerRef()`.
 		 *
 		 * `!bubbles | !cancelable | detail` */
-		update = 'colorpicker:update'
+		Update = 'colorpicker:update'
 	}
 
 	export enum CSSVars {
-		sliderHueBorderColor = '--c-colorpicker-slider-hue-border-color',
-		color                = '--c-colorpicker-color',
-		colorWithAlpha       = '--c-colorpicker-color-with-alpha',
-		hue                  = '--c-colorpicker-hue-color',
-		rectBorderColor      = '--c-colorpicker-rect-border-color',
-		rectX                = '--c-colorpicker-rect-x',
-		rectY                = '--c-colorpicker-rect-y',
+		SliderHueBorderColor = '--c-colorpicker-slider-hue-border-color',
+		Color                = '--c-colorpicker-color',
+		ColorWithAlpha       = '--c-colorpicker-color-with-alpha',
+		Hue                  = '--c-colorpicker-hue-color',
+		RectBorderColor      = '--c-colorpicker-rect-border-color',
+		RectX                = '--c-colorpicker-rect-x',
+		RectY                = '--c-colorpicker-rect-y',
 	}
 
 	export enum ColorSpace {
-		rgb = 'rgb',
-		hsl = 'hsl',
-		hex = 'hex'
+		RGB = 'rgb',
+		HSL = 'hsl',
+		HEX = 'hex'
 	}
 
 	const REGISTERED_COLORPICKER: Set<CElement> = new Set<CElement>()
@@ -204,19 +204,19 @@ export namespace CColorPicker {
 	function initColorPicker(ref_colorPicker: CElement): void {
 		const attributes = {
 			get value(): HEXColor {
-				return ($get_attr(ref_colorPicker, Attributes.value) ?? '#FF0000') as HEXColor
+				return ($get_attr(ref_colorPicker, Attributes.Value) ?? '#FF0000') as HEXColor
 			},
 			get disabledOpacity(): boolean {
-				return $has_attr(ref_colorPicker, Attributes.disabledOpacity)
+				return $has_attr(ref_colorPicker, Attributes.DisabledOpacity)
 			},
 			get hueOnly(): boolean {
-				return $has_attr(ref_colorPicker, Attributes.hueOnly)
+				return $has_attr(ref_colorPicker, Attributes.HueOnly)
 			},
 			get colorSpace(): ColorSpace {
-				const space = $get_attr(ref_colorPicker, Attributes.colorSpace)
+				const space = $get_attr(ref_colorPicker, Attributes.ColorSpace)
 				return isValidEnumValue(space, ColorSpace)
 					? (space as ColorSpace)
-					: ColorSpace.hex
+					: ColorSpace.HEX
 			}
 		}
 		const hsla: (HSLColor & {a: number}) = {h: 0, s: 1, l: 0.5, a: 1}
@@ -225,7 +225,7 @@ export namespace CColorPicker {
 		let isDisabledOpacity = false
 		let rectX = 0
 		let rectY = 0
-		let colorSpace: ColorSpace = ColorSpace.hex
+		let colorSpace: ColorSpace = ColorSpace.HEX
 		let rectRect: DOMRect | null = null
 		let rectDragging = false
 		let ref_rect: HTMLDivElement | null = null
@@ -259,16 +259,16 @@ export namespace CColorPicker {
 			const hexColorWithAlpha = hexColor + $round(hsla.a * 0xff).toString(16).padStart(2, '0').toUpperCase()
 			const hueHexColor = hslToHex({h: hsla.h, s: 1, l: 0.5}).toUpperCase()
 			requestAnimationFrame(() => {
-				$set_style(ref_colorPicker, CSSVars.color, hexColor)
-				$set_style(ref_colorPicker, CSSVars.colorWithAlpha, hexColorWithAlpha)
-				$set_style(ref_colorPicker, CSSVars.hue, hueHexColor)
+				$set_style(ref_colorPicker, CSSVars.Color, hexColor)
+				$set_style(ref_colorPicker, CSSVars.ColorWithAlpha, hexColorWithAlpha)
+				$set_style(ref_colorPicker, CSSVars.Hue, hueHexColor)
 				$set_style(ref_colorPicker,
-					CSSVars.rectBorderColor,
+					CSSVars.RectBorderColor,
 					colorContrastPercentage(hslToRgb(hsla), {r: 0, g: 0, b: 0}) > 50
 						? '#000' : '#fff'
 				)
 				$set_style(ref_colorPicker,
-					CSSVars.sliderHueBorderColor,
+					CSSVars.SliderHueBorderColor,
 					colorContrastPercentage(hslToRgb({...hsla, s: 1, l: 0.5}), {r: 0, g: 0, b: 0}) > 50
 						? '#000' : '#fff'
 				)
@@ -276,7 +276,7 @@ export namespace CColorPicker {
 			if (options?.rect ?? true) {
 				rectX = 0
 				rectY = 0
-				if (colorSpace === ColorSpace.hsl) {
+				if (colorSpace === ColorSpace.HSL) {
 					rectX = hsla.s * 100
 					rectY = (1 - hsla.l) * 100
 				} else {
@@ -286,8 +286,8 @@ export namespace CColorPicker {
 				}
 
 				requestAnimationFrame(() => {
-					$set_style(ref_colorPicker, CSSVars.rectX, rectX + '%')
-					$set_style(ref_colorPicker, CSSVars.rectY, rectY + '%')
+					$set_style(ref_colorPicker, CSSVars.RectX, rectX + '%')
+					$set_style(ref_colorPicker, CSSVars.RectY, rectY + '%')
 				})
 			}
 			if ((options?.sliderHue ?? true) && ref_sliderHue) {
@@ -305,7 +305,7 @@ export namespace CColorPicker {
 				let placeholder = ''
 				let name = ''
 				switch (colorSpace) {
-				case ColorSpace.rgb:
+				case ColorSpace.RGB:
 					const rgb = hslToRgb(hsla)
 					text = [
 						$round(rgb.r * 0xff),
@@ -315,7 +315,7 @@ export namespace CColorPicker {
 					placeholder = '0-255, 0-255, 0-255'
 					name = 'RGB:'
 					break
-				case ColorSpace.hsl:
+				case ColorSpace.HSL:
 					text = [
 						$round(hsla.h * 360) + '°',
 						$round(hsla.s * 100) + '%',
@@ -324,7 +324,7 @@ export namespace CColorPicker {
 					placeholder = '0-360°, 0-100%, 0-100%'
 					name = 'HSL:'
 					break
-				case ColorSpace.hex:
+				case ColorSpace.HEX:
 					text = hexColor
 					placeholder = '#RRGGBB'
 					name = 'HEX:'
@@ -339,7 +339,7 @@ export namespace CColorPicker {
 						ref_labelColor.animate({
 							opacity: [0, 1],
 							translate: [`0 ${pxToRem(8)}rem`, '0 0'],
-						}, {duration: 300, easing: AnimationEasing.spring})
+						}, {duration: 300, easing: AnimationEasing.Spring})
 					}
 				}
 			}
@@ -351,11 +351,11 @@ export namespace CColorPicker {
 
 			if (options?.valueAttribute ?? true) {
 				const hex = hsla.a < 1? hexColorWithAlpha : hexColor
-				$set_attr(ref_colorPicker, Attributes.value, hex)
+				$set_attr(ref_colorPicker, Attributes.Value, hex)
 			}
 
 			if (options?.inputEvent ?? true) {
-				ref_colorPicker.dispatchEvent(new CustomEvent(Events.input))
+				ref_colorPicker.dispatchEvent(new CustomEvent(Events.Input))
 			}
 		}
 
@@ -365,11 +365,11 @@ export namespace CColorPicker {
 			rectX = Math_clamp(x, 0, 100)
 			rectY = Math_clamp(y, 0, 100)
 			requestAnimationFrame(() => {
-				$set_style(ref_colorPicker, CSSVars.rectX, rectX + '%')
-				$set_style(ref_colorPicker, CSSVars.rectY, rectY + '%')
+				$set_style(ref_colorPicker, CSSVars.RectX, rectX + '%')
+				$set_style(ref_colorPicker, CSSVars.RectY, rectY + '%')
 			})
 
-			if (colorSpace === ColorSpace.hsl) {
+			if (colorSpace === ColorSpace.HSL) {
 				hsla.s = rectX / 100
 				hsla.l = 1 - (rectY / 100)
 			} else {
@@ -397,7 +397,7 @@ export namespace CColorPicker {
 			let value = ref_inputColor!.value
 			let hsl: HSLColor = {h: 0, s: 1, l: 0.5}
 			switch (colorSpace) {
-			case ColorSpace.rgb: {
+			case ColorSpace.RGB: {
 				value = value.replace(/[^\d,]/g, '').trim()
 				const rgbArr: number[] = (value
 					.split(',')
@@ -411,7 +411,7 @@ export namespace CColorPicker {
 				})
 				break
 			}
-			case ColorSpace.hsl:
+			case ColorSpace.HSL:
 				value = value.replace(/[^\d,]/g, '').trim()
 				const hslArr: number[] = (value
 					.split(',')
@@ -427,7 +427,7 @@ export namespace CColorPicker {
 				hsl.s = hslArr[1]
 				hsl.l = hslArr[2]
 				break
-			case ColorSpace.hex:
+			case ColorSpace.HEX:
 				value = '#' + value.replace(/[^\da-fA-F]/g, '').padEnd(6, '0').substring(0, 6).trim()
 				hsl = hexToHsl(value as HEXColor)
 				break
@@ -458,27 +458,27 @@ export namespace CColorPicker {
 		function ref_rect_onKeyDown(ev: KeyboardEvent): void {
 			const key = ev.key
 			switch (key) {
-			case KeyboardValue.arrowRight:
+			case KeyboardValue.ArrowRight:
 				++rectX
 				break
-			case KeyboardValue.arrowLeft:
+			case KeyboardValue.ArrowLeft:
 				--rectX
 				break
-			case KeyboardValue.arrowDown:
+			case KeyboardValue.ArrowDown:
 				++rectY
 				break
-			case KeyboardValue.arrowUp:
+			case KeyboardValue.ArrowUp:
 				--rectY
 				break
 			}
 			rectX = Math_clamp(rectX, 0, 100)
 			rectY = Math_clamp(rectY, 0, 100)
 			requestAnimationFrame(() => {
-				$set_style(ref_colorPicker, CSSVars.rectX, rectX + '%')
-				$set_style(ref_colorPicker, CSSVars.rectY, rectY + '%')
+				$set_style(ref_colorPicker, CSSVars.RectX, rectX + '%')
+				$set_style(ref_colorPicker, CSSVars.RectY, rectY + '%')
 			})
 
-			if (colorSpace === ColorSpace.hsl) {
+			if (colorSpace === ColorSpace.HSL) {
 				hsla.s = rectX / 100
 				hsla.l = 1 - (rectY / 100)
 			} else {
@@ -515,18 +515,18 @@ export namespace CColorPicker {
 
 		function ref_swap_onClick(): void {
 			switch (colorSpace) {
-			case ColorSpace.rgb:
-				colorSpace = ColorSpace.hsl
+			case ColorSpace.RGB:
+				colorSpace = ColorSpace.HSL
 				break
-			case ColorSpace.hsl:
-				colorSpace = ColorSpace.hex
+			case ColorSpace.HSL:
+				colorSpace = ColorSpace.HEX
 				break
-			case ColorSpace.hex:
-				colorSpace = ColorSpace.rgb
+			case ColorSpace.HEX:
+				colorSpace = ColorSpace.RGB
 				break
 			}
 
-			$set_attr(ref_colorPicker, Attributes.colorSpace, colorSpace)
+			$set_attr(ref_colorPicker, Attributes.ColorSpace, colorSpace)
 			updateColor({
 				inputColor: true,
 				inputEvent: false,
@@ -570,7 +570,7 @@ export namespace CColorPicker {
 		}
 
 		function initColor(): void {
-			const value = $get_attr(ref_colorPicker, Attributes.value)
+			const value = $get_attr(ref_colorPicker, Attributes.Value)
 			if (value && isColorValidWithAlpha(value)) {
 				let alpha = 1
 
@@ -594,15 +594,15 @@ export namespace CColorPicker {
 
 		function initStructure(): void {
 			update(ref_colorPicker)
-			ref_rect = $query<HTMLDivElement>('.' + Classes.rect, ref_colorPicker)
-			ref_eyeDropper = $query<GCButton.CIcon.CElement>('.' + Classes.eyedropper, ref_colorPicker)
-			ref_sliderHue = $query<HTMLInputElement>('.' + Classes.sliderHue, ref_colorPicker)
-			ref_sliderOpacity = $query<HTMLInputElement>('.' + Classes.sliderOpacity, ref_colorPicker)
-			ref_labelColor = $query<HTMLLabelElement>('.' + Classes.labelColor, ref_colorPicker)
-			ref_labelOpacity = $query<HTMLLabelElement>('.' + Classes.labelOpacity, ref_colorPicker)
-			ref_swap = $query<GCButton.CIcon.CElement>('.' + Classes.swap, ref_colorPicker)
-			ref_inputColor = $query<HTMLInputElement>(`.${Classes.textfieldColor} .${GCTextField.Classes.input}`, ref_colorPicker)
-			ref_inputOpacity = $query<HTMLInputElement>(`.${Classes.textfieldOpacity} .${GCTextField.Classes.input}`, ref_colorPicker)
+			ref_rect = $query<HTMLDivElement>('.' + Classes.Rect, ref_colorPicker)
+			ref_eyeDropper = $query<GCButton.CIcon.CElement>('.' + Classes.Eyedropper, ref_colorPicker)
+			ref_sliderHue = $query<HTMLInputElement>('.' + Classes.SliderHue, ref_colorPicker)
+			ref_sliderOpacity = $query<HTMLInputElement>('.' + Classes.SliderOpacity, ref_colorPicker)
+			ref_labelColor = $query<HTMLLabelElement>('.' + Classes.LabelColor, ref_colorPicker)
+			ref_labelOpacity = $query<HTMLLabelElement>('.' + Classes.LabelOpacity, ref_colorPicker)
+			ref_swap = $query<GCButton.CIcon.CElement>('.' + Classes.Swap, ref_colorPicker)
+			ref_inputColor = $query<HTMLInputElement>(`.${Classes.TextfieldColor} .${GCTextField.Classes.Input}`, ref_colorPicker)
+			ref_inputOpacity = $query<HTMLInputElement>(`.${Classes.TextfieldOpacity} .${GCTextField.Classes.Input}`, ref_colorPicker)
 
 			if (ref_inputColor) {
 				let id = ref_inputColor.id
@@ -625,7 +625,7 @@ export namespace CColorPicker {
 		}
 
 		function initEvents(): void {
-			$add_event(ref_colorPicker, Events.update, () => initColor())
+			$add_event(ref_colorPicker, Events.Update, () => initColor())
 
 			$add_event<ToggleEvent>(ref_colorPicker, 'toggle', ev => {
 				const isOpen = ev.newState === 'open'
@@ -660,7 +660,7 @@ export namespace CColorPicker {
 					$rm_event(ref_inputColor, 'blur', ref_inputColor_onBlur)
 					$rm_event(ref_inputOpacity, 'blur', ref_inputOpacity_onBlur)
 					if (startColor !== attributes.value) {
-						ref_colorPicker.dispatchEvent(new CustomEvent(Events.change))
+						ref_colorPicker.dispatchEvent(new CustomEvent(Events.Change))
 					}
 				}
 			})
@@ -673,7 +673,7 @@ export namespace CColorPicker {
 
 	export function register(...refs_colorPicker: CElement[]): void {
 		if (refs_colorPicker.length === 0) {
-			refs_colorPicker = [...document.querySelectorAll<CElement>('.' + Classes.colorpicker)]
+			refs_colorPicker = [...document.querySelectorAll<CElement>('.' + Classes.Colorpicker)]
 		}
 
 		GCPopover.register(...refs_colorPicker)
@@ -706,15 +706,15 @@ export namespace CColorPicker {
 		const opt = options?.ColorPicker
 		const refs = opt?.refs
 		GCPopover.update(ref_colorpicker, options)
-		$classlist(ref_colorpicker, Classes.colorpicker)
+		$classlist(ref_colorpicker, Classes.Colorpicker)
 
 		const opt_value = opt?.value
 		if ($is_false(opt_value)) {
-			$rm_attr(ref_colorpicker, Attributes.value)
+			$rm_attr(ref_colorpicker, Attributes.Value)
 		}
 		else if ($is_string(opt_value) && isColorValidWithAlpha(opt_value)) {
-			$set_attr(ref_colorpicker, Attributes.value, opt_value)
-			ref_colorpicker.dispatchEvent(new CustomEvent<EventDetails['update']>(Events.update, {
+			$set_attr(ref_colorpicker, Attributes.Value, opt_value)
+			ref_colorpicker.dispatchEvent(new CustomEvent<EventDetails['update']>(Events.Update, {
 				bubbles: false, cancelable: false,
 				detail: {
 					color: opt_value as HEXColor
@@ -724,73 +724,73 @@ export namespace CColorPicker {
 
 		const opt_colorSpace = opt?.colorSpace
 		if ($is_false(opt_colorSpace)) {
-			$rm_attr(ref_colorpicker, Attributes.colorSpace)
+			$rm_attr(ref_colorpicker, Attributes.ColorSpace)
 		}
 		else if ($is_string(opt_colorSpace) && isValidEnumValue(opt_colorSpace, ColorSpace)) {
-			$set_attr(ref_colorpicker, Attributes.colorSpace, opt_colorSpace)
+			$set_attr(ref_colorpicker, Attributes.ColorSpace, opt_colorSpace)
 		}
 
 		const opt_disabledOpacity = opt?.disabledOpacity
 		if ($is_bool(opt_disabledOpacity)) {
-			$toggle_attr(ref_colorpicker, Attributes.disabledOpacity, opt_disabledOpacity)
+			$toggle_attr(ref_colorpicker, Attributes.DisabledOpacity, opt_disabledOpacity)
 		}
 
 		const opt_hueOnly = opt?.hueOnly
 		if ($is_bool(opt_hueOnly)) {
-			$toggle_attr(ref_colorpicker, Attributes.hueOnly, opt_hueOnly)
+			$toggle_attr(ref_colorpicker, Attributes.HueOnly, opt_hueOnly)
 		}
 
 		// rect
-		let ref_rect = $query<HTMLDivElement>(`.${Classes.rect}`, ref_colorpicker)
+		let ref_rect = $query<HTMLDivElement>(`.${Classes.Rect}`, ref_colorpicker)
 		if (!ref_rect) {
 			ref_rect = $create('div')
-			$classlist(ref_rect, Classes.rect)
+			$classlist(ref_rect, Classes.Rect)
 			ref_rect.tabIndex = 0
 			ref_rect.draggable = false
 		}
 
 		// options
-		let ref_options = $query<HTMLDivElement>(`.${Classes.options}`, ref_colorpicker)
+		let ref_options = $query<HTMLDivElement>(`.${Classes.Options}`, ref_colorpicker)
 		if (!ref_options) {
 			ref_options = $create('div')
-			$classlist(ref_options, Classes.options)
+			$classlist(ref_options, Classes.Options)
 		}
 
 		// options -> preview
-		let ref_preview = $query<HTMLDivElement>(`.${Classes.preview}`, ref_options)
+		let ref_preview = $query<HTMLDivElement>(`.${Classes.Preview}`, ref_options)
 		if (!ref_preview) {
 			ref_preview = $create('div')
-			$classlist(ref_preview, Classes.preview)
+			$classlist(ref_preview, Classes.Preview)
 		}
 
 		// options -> eyedropper
-		let ref_eyeDropper = $query<GCButton.CIcon.CElement>(`.${Classes.eyedropper}`, ref_options)
+		let ref_eyeDropper = $query<GCButton.CIcon.CElement>(`.${Classes.Eyedropper}`, ref_options)
 		if (!ref_eyeDropper) {
 			ref_eyeDropper = GCButton.CIcon.create({
 				Button: {
-					variant: GCButton.Variant.tonal
+					variant: GCButton.Variant.Tonal
 				},
 				IconButton: {
 					Icon: {
-						code: IconCodes.eyedropper
+						code: IconCodes.Eyedropper
 					},
 				},
 			})
-			$classlist(ref_eyeDropper, Classes.eyedropper)
+			$classlist(ref_eyeDropper, Classes.Eyedropper)
 		}
 
 		// options -> slider
-		let ref_slider = $query<HTMLDivElement>(`.${Classes.slider}`, ref_options)
+		let ref_slider = $query<HTMLDivElement>(`.${Classes.Slider}`, ref_options)
 		if (!ref_slider) {
 			ref_slider = $create('div')
-			$classlist(ref_slider, Classes.slider)
+			$classlist(ref_slider, Classes.Slider)
 		}
 
 		// options -> slider -> hue
-		let ref_sliderHue = $query<HTMLInputElement>(`.${Classes.sliderHue}`, ref_slider)
+		let ref_sliderHue = $query<HTMLInputElement>(`.${Classes.SliderHue}`, ref_slider)
 		if (!ref_sliderHue) {
 			ref_sliderHue = $create('input')
-			$classlist(ref_sliderHue, Classes.sliderHue)
+			$classlist(ref_sliderHue, Classes.SliderHue)
 			ref_sliderHue.type = 'range'
 			ref_sliderHue.name = 'Hue'
 			ref_sliderHue.min = '0'
@@ -798,10 +798,10 @@ export namespace CColorPicker {
 		}
 
 		// options -> slider -> opacity
-		let ref_sliderOpacity = $query<HTMLInputElement>(`.${Classes.sliderOpacity}`, ref_slider)
+		let ref_sliderOpacity = $query<HTMLInputElement>(`.${Classes.SliderOpacity}`, ref_slider)
 		if (!ref_sliderOpacity) {
 			ref_sliderOpacity = $create('input')
-			$classlist(ref_sliderOpacity, Classes.sliderOpacity)
+			$classlist(ref_sliderOpacity, Classes.SliderOpacity)
 			ref_sliderOpacity.type = 'range'
 			ref_sliderOpacity.name = 'Opacity'
 			ref_sliderOpacity.min = '0'
@@ -812,63 +812,63 @@ export namespace CColorPicker {
 		$children(ref_options, ref_preview, ref_eyeDropper, ref_slider)
 
 		// input
-		let ref_input = $query<HTMLDivElement>(`.${Classes.input}`, ref_colorpicker)
+		let ref_input = $query<HTMLDivElement>(`.${Classes.Input}`, ref_colorpicker)
 		if (!ref_input) {
 			ref_input = $create('div')
-			$classlist(ref_input, Classes.input)
+			$classlist(ref_input, Classes.Input)
 		}
 
 		// input -> label
-		let ref_label = $query<HTMLDivElement>(`.${Classes.label}`, ref_input)
+		let ref_label = $query<HTMLDivElement>(`.${Classes.Label}`, ref_input)
 		if (!ref_label) {
 			ref_label = $create('div')
-			$classlist(ref_label, Classes.label)
+			$classlist(ref_label, Classes.Label)
 		}
 
 		// input -> label -> color
-		let ref_labelColor = $query<HTMLLabelElement>(`.${Classes.labelColor}`, ref_label)
+		let ref_labelColor = $query<HTMLLabelElement>(`.${Classes.LabelColor}`, ref_label)
 		if (!ref_labelColor) {
 			ref_labelColor = $create('label')
-			$classlist(ref_labelColor, Classes.labelColor)
+			$classlist(ref_labelColor, Classes.LabelColor)
 			ref_labelColor.textContent = 'HEX:'
 		}
 
 		// input -> label -> opacity
-		let ref_labelOpacity = $query<HTMLLabelElement>(`.${Classes.labelOpacity}`, ref_label)
+		let ref_labelOpacity = $query<HTMLLabelElement>(`.${Classes.LabelOpacity}`, ref_label)
 		if (!ref_labelOpacity) {
 			ref_labelOpacity = $create('label')
-			$classlist(ref_labelOpacity, Classes.labelOpacity)
+			$classlist(ref_labelOpacity, Classes.LabelOpacity)
 			ref_labelOpacity.textContent = 'Opacity:'
 		}
 
 		$children(ref_label, ref_labelColor, ref_labelOpacity)
 
 		// input -> textfield
-		let ref_textfield = $query<HTMLDivElement>(`.${Classes.textfield}`, ref_input)
+		let ref_textfield = $query<HTMLDivElement>(`.${Classes.Textfield}`, ref_input)
 		if (!ref_textfield) {
 			ref_textfield = $create('div')
-			$classlist(ref_textfield, Classes.textfield)
+			$classlist(ref_textfield, Classes.Textfield)
 		}
 
 		// input -> textfield -> color
-		let ref_textfieldColor = $query<GCTextField.CElement>(`.${Classes.textfieldColor}`, ref_textfield)
+		let ref_textfieldColor = $query<GCTextField.CElement>(`.${Classes.TextfieldColor}`, ref_textfield)
 		if (!ref_textfieldColor) {
 			ref_textfieldColor = GCTextField.create()
-			$classlist(ref_textfieldColor, Classes.textfieldColor)
+			$classlist(ref_textfieldColor, Classes.TextfieldColor)
 		}
 
 		// input -> textfield -> color -> swap
-		let ref_swap = $query<GCTextField.CButton.CElement>(`.${Classes.swap}`, ref_textfieldColor)
+		let ref_swap = $query<GCTextField.CButton.CElement>(`.${Classes.Swap}`, ref_textfieldColor)
 		if (!ref_swap) {
-			ref_swap = GCTextField.CButton.create({Button: {variant: GCButton.Variant.tonal}})
-			$classlist(ref_swap, Classes.swap)
+			ref_swap = GCTextField.CButton.create({Button: {variant: GCButton.Variant.Tonal}})
+			$classlist(ref_swap, Classes.Swap)
 		}
 
 		// input -> textfield -> color -> swap -> icon
-		let ref_swapIcon = $query<GCIcon.CElement>(`.${Classes.swapIcon}`, ref_swap)
+		let ref_swapIcon = $query<GCIcon.CElement>(`.${Classes.SwapIcon}`, ref_swap)
 		if (!ref_swapIcon) {
-			ref_swapIcon = GCIcon.create({Icon: {code: IconCodes.chevronUpDown}})
-			$classlist(ref_swapIcon, Classes.swapIcon)
+			ref_swapIcon = GCIcon.create({Icon: {code: IconCodes.ChevronUpDown}})
+			$classlist(ref_swapIcon, Classes.SwapIcon)
 		}
 
 		GCTextField.CButton.update(ref_swap, {
@@ -880,20 +880,20 @@ export namespace CColorPicker {
 		})
 
 		// input -> textfield -> opacity
-		let ref_textfieldOpacity = $query<GCTextField.CElement>(`.${Classes.textfieldOpacity}`, ref_textfield)
+		let ref_textfieldOpacity = $query<GCTextField.CElement>(`.${Classes.TextfieldOpacity}`, ref_textfield)
 		if (!ref_textfieldOpacity) {
 			ref_textfieldOpacity = GCTextField.create()
-			$classlist(ref_textfieldOpacity, Classes.textfieldOpacity)
+			$classlist(ref_textfieldOpacity, Classes.TextfieldOpacity)
 		}
 
 		$children(ref_textfield, ref_textfieldColor, ref_textfieldOpacity)
 		$children(ref_input, ref_label, ref_textfield)
 
 		// content
-		let ref_content = $query<HTMLDivElement>(`.${Classes.content}`, ref_colorpicker)
+		let ref_content = $query<HTMLDivElement>(`.${Classes.Content}`, ref_colorpicker)
 		if (!ref_content) {
 			ref_content = $create('div')
-			$classlist(ref_content, Classes.content)
+			$classlist(ref_content, Classes.Content)
 		}
 
 		const opt_children = opt?.children
@@ -929,6 +929,6 @@ export namespace CColorPicker {
 	}
 
 	export function getValue(ref_colorpicker: CElement): HEXColor {
-		return (ref_colorpicker.getAttribute(Attributes.value) as HEXColor) ?? '#FFFFFF'
+		return (ref_colorpicker.getAttribute(Attributes.Value) as HEXColor) ?? '#FFFFFF'
 	}
 }

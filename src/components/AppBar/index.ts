@@ -20,12 +20,12 @@ export namespace CAppBar {
 	}
 
 	export enum Classes {
-		appbar   = 'c-appbar',
-		leading  = appbar + '-leading',
-		trailing = appbar + '-trailing',
-		content  = appbar + '-content',
-		headline = appbar + '-headline',
-		flex = appbar + '-flex'
+		Appbar   = 'c-appbar',
+		Leading  = Appbar + '-leading',
+		Trailing = Appbar + '-trailing',
+		Content  = Appbar + '-content',
+		Headline = Appbar + '-headline',
+		Flex = Appbar + '-flex'
 	}
 
 	export function create<T extends CElement<HTMLElement>>(
@@ -41,40 +41,40 @@ export namespace CAppBar {
 	): T {
 		const opt = options?.AppBar
 		const refs = opt?.refs
-		$classlist(ref_appBar, Classes.appbar)
+		$classlist(ref_appBar, Classes.Appbar)
 
 		// leading
 		const opt_leading = opt?.leading
-		let ref_leading = $query<HTMLDivElement>(`.${Classes.leading}`, ref_appBar)
+		let ref_leading = $query<HTMLDivElement>(`.${Classes.Leading}`, ref_appBar)
 		if ($is_false(opt_leading)) {
 			$children(ref_leading)
 		}
 		else if ($is_array(opt_leading)) {
 			if (!ref_leading) {
 				ref_leading = $create('div')
-				$classlist(ref_leading, Classes.leading)
+				$classlist(ref_leading, Classes.Leading)
 			}
 
 			$children(ref_leading, ...opt_leading)
 		}
 
 		// content
-		let ref_content = $query<HTMLDivElement>(`.${Classes.content}`, ref_appBar)
+		let ref_content = $query<HTMLDivElement>(`.${Classes.Content}`, ref_appBar)
 		if (!ref_content) {
 			ref_content = $create('div')
-			$classlist(ref_content, Classes.content)
+			$classlist(ref_content, Classes.Content)
 		}
 
 		// content -> headline
 		const opt_headline = opt?.headline
-		let ref_headline = $query<HTMLHeadingElement>(`.${Classes.headline}`, ref_content)
+		let ref_headline = $query<HTMLHeadingElement>(`.${Classes.Headline}`, ref_content)
 		if ($is_false(opt_headline)) {
 			$children(ref_headline)
 		}
 		else if ($is_array(opt_headline)) {
 			if (!ref_headline) {
 				ref_headline = $create('h2')
-				$classlist(ref_headline, Classes.headline)
+				$classlist(ref_headline, Classes.Headline)
 			}
 
 			$children(ref_headline, ...opt_headline)
@@ -100,22 +100,22 @@ export namespace CAppBar {
 		$children(ref_content, ...[ref_headline, ...children].filter($is_node) as Node[])
 
 		// flex
-		let ref_flex = $query<HTMLDivElement>(`.${Classes.flex}`, ref_appBar)
+		let ref_flex = $query<HTMLDivElement>(`.${Classes.Flex}`, ref_appBar)
 		if (!ref_flex) {
 			ref_flex = $create('div')
-			$classlist(ref_flex, Classes.flex)
+			$classlist(ref_flex, Classes.Flex)
 		}
 
 		// trailing
 		const opt_trailing = opt?.trailing
-		let ref_trailing = $query<HTMLDivElement>(`.${Classes.trailing}`, ref_appBar)
+		let ref_trailing = $query<HTMLDivElement>(`.${Classes.Trailing}`, ref_appBar)
 		if ($is_false(opt_trailing)) {
 			$children(ref_trailing)
 		}
 		else if ($is_array(opt_trailing)) {
 			if (!ref_trailing) {
 				ref_trailing = $create('div')
-				$classlist(ref_trailing, Classes.trailing)
+				$classlist(ref_trailing, Classes.Trailing)
 			}
 
 			$children(ref_trailing, ...opt_trailing)

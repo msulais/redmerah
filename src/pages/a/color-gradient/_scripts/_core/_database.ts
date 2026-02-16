@@ -31,27 +31,27 @@ type _StorageItems = {
 type _StorageKeys = keyof _StorageItems
 
 enum _ObjectStoreNames {
-	storage = 'storage',
-	gradients = 'gradients'
+	Storage = 'storage',
+	Gradients = 'gradients'
 }
 
 const _db = new IDB(DatabaseNames.colorGradient)
 
 export function saveStorageItem<K extends _StorageKeys>(key: K, value: _StorageItems[K]) {
 	return _db
-		.writeStore(_ObjectStoreNames.storage)
+		.writeStore(_ObjectStoreNames.Storage)
 		?.put({key, value} satisfies _IDBStoreStorage<_StorageItems[K]>)
 }
 
 export function saveGradientDB(id: string, gradients: GradientItem[]) {
-	return _db.writeStore(_ObjectStoreNames.gradients)?.put({
+	return _db.writeStore(_ObjectStoreNames.Gradients)?.put({
 		id: id,
 		gradients: JSON.stringify(gradients)
 	} satisfies _IDBStoreGradients)
 }
 
 export function removeGradientDB(id: string) {
-	return _db.writeStore(_ObjectStoreNames.gradients)?.delete(id)
+	return _db.writeStore(_ObjectStoreNames.Gradients)?.delete(id)
 }
 
 function _readStorageAll(store: IDBObjectStore): void {
@@ -90,7 +90,7 @@ function _readStorageAll(store: IDBObjectStore): void {
 }
 
 function _readGradients(): void {
-	const store = _db.readStore(_ObjectStoreNames.gradients)
+	const store = _db.readStore(_ObjectStoreNames.Gradients)
 	if (!store) {return}
 
 	_db.getAll<_IDBStoreGradients>(store).then((v) => {
@@ -162,7 +162,7 @@ function _readGradients(): void {
 }
 
 function _readStorage(): void {
-	const store = _db.readStore(_ObjectStoreNames.storage)
+	const store = _db.readStore(_ObjectStoreNames.Storage)
 	if (!store) {return}
 
 	_readStorageAll(store)
@@ -176,13 +176,13 @@ function _initDatabase(): void {
 		},
 		onUpgrade(_, db) {
 			db.createStore<_IDBStoreStorage>({
-				name: _ObjectStoreNames.storage,
+				name: _ObjectStoreNames.Storage,
 				keyPath: 'key',
 				indexs: ['key', 'value']
 			})
 
 			db.createStore<_IDBStoreGradients>({
-				name: _ObjectStoreNames.gradients,
+				name: _ObjectStoreNames.Gradients,
 				keyPath: 'id',
 				indexs: ['id', 'gradients']
 			})

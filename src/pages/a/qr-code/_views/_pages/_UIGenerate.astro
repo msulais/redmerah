@@ -16,7 +16,7 @@ import { CButton } from '@/components/Button'
 	id={ElementIds.pg_generate}
 	class={[CSSClasses.bodyPage, CSSClasses.pageGenerate].join(' ')}
 	role="tabpanel"
-	hidden={DEFAULT_PAGE !== Pages.generate}>
+	hidden={DEFAULT_PAGE !== Pages.Generate}>
 	<TextAreaField
 		style={{
 			'max-width': `min(100%,${pxToRem(720)}rem)`
@@ -38,13 +38,13 @@ import { CButton } from '@/components/Button'
 			width: pxToRem(192) + 'rem'
 		}}>
 			<p style="font-size:var(--g-font-size-xs);">Donwload:</p>
-			<Button id={ElementIds.pgGen_png} disabled ButtonVariant={CButton.Variant.tonal}>PNG</Button>
-			<Button id={ElementIds.pgGen_jpg} disabled ButtonVariant={CButton.Variant.tonal}>JPEG</Button>
-			<Button id={ElementIds.pgGen_svg} disabled ButtonVariant={CButton.Variant.tonal}>SVG</Button>
+			<Button id={ElementIds.pgGen_png} disabled ButtonVariant={CButton.Variant.Tonal}>PNG</Button>
+			<Button id={ElementIds.pgGen_jpg} disabled ButtonVariant={CButton.Variant.Tonal}>JPEG</Button>
+			<Button id={ElementIds.pgGen_svg} disabled ButtonVariant={CButton.Variant.Tonal}>SVG</Button>
 		</div>
 	</div>
 </div>
 <Toast id={ElementIds.toa_generateError} ToastCloseDelay={5000}>
-	<Icon IconCode={IconCodes.warning} slot="leading"/>
+	<Icon IconCode={IconCodes.Warning} slot="leading"/>
 	<span id={ElementIds.toa_generateErrorMessage}/>
 </Toast>

@@ -29,24 +29,24 @@ export namespace CDialog {
 	}
 
 	export enum Classes {
-		dialog    = 'c-dialog',
-		container = dialog + '-container',
-		header    = dialog + '-header',
-		content   = dialog + '-content',
-		footer    = dialog + '-footer',
+		Dialog    = 'c-dialog',
+		Container = Dialog + '-container',
+		Header    = Dialog + '-header',
+		Content   = Dialog + '-content',
+		Footer    = Dialog + '-footer',
 	}
 
 	export enum Attributes {
-		important = 'data-c-dialog-important',
-		focus     = 'data-c-dialog-focus'
+		Important = 'data-c-dialog-important',
+		Focus     = 'data-c-dialog-focus'
 	}
 
 	export enum Events {
 		/** `!bubbles | !cancelable | detail` */
-		attributeChange = 'dialog:attribute-change',
+		AttributeChange = 'dialog:attribute-change',
 
 		/** `!bubbles | !cancelable | detail` */
-		toggleOpen      = 'dialog:toggle-open',
+		ToggleOpen      = 'dialog:toggle-open',
 	}
 
 	const LISTENED_ATTRIBUTES: string[] = ['open']
@@ -58,7 +58,7 @@ export namespace CDialog {
 
 			entry.target.dispatchEvent(
 				new CustomEvent<EventDetails['attributeChange']>(
-					Events.attributeChange,
+					Events.AttributeChange,
 					{detail: {attributeName: attr}}
 				)
 			)
@@ -67,7 +67,7 @@ export namespace CDialog {
 	function initDialog(ref_dialog: CElement): void {
 		const attributes = {
 			get important(): boolean {
-				return ref_dialog.hasAttribute(Attributes.important)
+				return ref_dialog.hasAttribute(Attributes.Important)
 			}
 		}
 		let time_focus: number | NodeJS.Timeout | null = null
@@ -75,15 +75,15 @@ export namespace CDialog {
 		function focusDialog(): void {
 			if (time_focus !== null) clearTimeout(time_focus)
 
-			$toggle_attr(ref_dialog, Attributes.focus, true)
+			$toggle_attr(ref_dialog, Attributes.Focus, true)
 			time_focus = setTimeout(() => {
-				$toggle_attr(ref_dialog, Attributes.focus, false)
+				$toggle_attr(ref_dialog, Attributes.Focus, false)
 				time_focus = null
 			}, 1000)
 		}
 
 		function ref_dialog_onKeyDown(ev: KeyboardEvent): void {
-			if (ev.key === KeyboardValue.escape
+			if (ev.key === KeyboardValue.Escape
 				&& !ev.altKey
 				&& !ev.ctrlKey
 				&& !ev.metaKey
@@ -104,13 +104,13 @@ export namespace CDialog {
 		function initEvents(): void {
 			$add_event<
 				CustomEvent<EventDetails['attributeChange']>
-			>(ref_dialog, Events.attributeChange, ev => {
+			>(ref_dialog, Events.AttributeChange, ev => {
 				const attr = ev.detail.attributeName
 				switch (attr) {
 				case 'open':
 					const isOpen = ref_dialog.open
 					ref_dialog.dispatchEvent(new CustomEvent<EventDetails['toggleOpen']>(
-						Events.toggleOpen, {detail: {isOpen}}
+						Events.ToggleOpen, {detail: {isOpen}}
 					))
 
 					if (isOpen) {
@@ -139,26 +139,26 @@ export namespace CDialog {
 	export function update(ref_dialog: CElement, options?: UpdateOptions): CElement {
 		const opt = options?.Dialog
 		const refs = opt?.refs
-		$classlist(ref_dialog, Classes.dialog)
+		$classlist(ref_dialog, Classes.Dialog)
 
 		const opt_important = opt?.important
 		if ($is_bool(opt_important)) {
-			$toggle_attr(ref_dialog, Attributes.important, opt_important)
+			$toggle_attr(ref_dialog, Attributes.Important, opt_important)
 		}
 
 		// container
-		let ref_container = $query<HTMLDivElement>(`.${Classes.container}`, ref_dialog)
+		let ref_container = $query<HTMLDivElement>(`.${Classes.Container}`, ref_dialog)
 		if (!ref_container) {
 			ref_container = $create('div')
-			$classlist(ref_container, Classes.container)
+			$classlist(ref_container, Classes.Container)
 		}
 
 		// header
 		const opt_header = opt?.header
-		let ref_header = $query<HTMLDivElement>(`.${Classes.header}`, ref_container)
+		let ref_header = $query<HTMLDivElement>(`.${Classes.Header}`, ref_container)
 		if (!ref_header) {
 			ref_header = $create('div')
-			$classlist(ref_header, Classes.header)
+			$classlist(ref_header, Classes.Header)
 		}
 		if ($is_false(opt_header)) {
 			$children(ref_header)
@@ -169,10 +169,10 @@ export namespace CDialog {
 
 		// content
 		const opt_content = opt?.children
-		let ref_content = $query<HTMLDivElement>(`.${Classes.content}`, ref_container)
+		let ref_content = $query<HTMLDivElement>(`.${Classes.Content}`, ref_container)
 		if (!ref_content) {
 			ref_content = $create('div')
-			$classlist(ref_content, Classes.header)
+			$classlist(ref_content, Classes.Header)
 		}
 		if ($is_false(opt_content)) {
 			$children(ref_content)
@@ -183,10 +183,10 @@ export namespace CDialog {
 
 		// footer
 		const opt_footer = opt?.footer
-		let ref_footer = $query<HTMLDivElement>(`.${Classes.footer}`, ref_container)
+		let ref_footer = $query<HTMLDivElement>(`.${Classes.Footer}`, ref_container)
 		if (!ref_footer) {
 			ref_footer = $create('div')
-			$classlist(ref_footer, Classes.header)
+			$classlist(ref_footer, Classes.Header)
 		}
 		if ($is_false(opt_footer)) {
 			$children(ref_footer)
@@ -207,7 +207,7 @@ export namespace CDialog {
 
 	export function register(...refs_dialog: CElement[]): void {
 		if (refs_dialog.length === 0) {
-			refs_dialog = [...document.querySelectorAll<CElement>('.' + Classes.dialog)]
+			refs_dialog = [...document.querySelectorAll<CElement>('.' + Classes.Dialog)]
 		}
 
 		for (const ref of refs_dialog){

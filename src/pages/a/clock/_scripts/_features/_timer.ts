@@ -40,11 +40,11 @@ const _editHoursRef = $(ElementIds.pgTm_hours) as HTMLInputElement
 const _editMinutesRef = $(ElementIds.pgTm_minutes) as HTMLInputElement
 const _editSecondsRef = $(ElementIds.pgTm_seconds) as HTMLInputElement
 const _editSaveButtonRef = $(ElementIds.pgTm_save) as CButton.CElement
-const _playPauseIconRef = $$(`.${CIcon.Classes.icon}`, _playPauseButtonRef) as CIcon.CElement
-const _playPauseTextRef = $$(`span:not(.${CIcon.Classes.icon})`, _playPauseButtonRef) as HTMLSpanElement
+const _playPauseIconRef = $$(`.${CIcon.Classes.Icon}`, _playPauseButtonRef) as CIcon.CElement
+const _playPauseTextRef = $$(`span:not(.${CIcon.Classes.Icon})`, _playPauseButtonRef) as HTMLSpanElement
 const _editResetButtonRef = $(ElementIds.pgTm_editReset) as CButton.CIcon.CElement
-const _editResetIconRef = $$(`#${ElementIds.pgTm_editReset}>.${CIcon.Classes.icon}`) as CIcon.CElement
-const _navigationButtonIconRefs = $$$(`:is(.${CSideBar.Classes.button},.${CDrawer.Classes.button})[data-page=${Pages.timer}] .${CIcon.Classes.icon}`)
+const _editResetIconRef = $$(`#${ElementIds.pgTm_editReset}>.${CIcon.Classes.Icon}`) as CIcon.CElement
+const _navigationButtonIconRefs = $$$(`:is(.${CSideBar.Classes.Button},.${CDrawer.Classes.Button})[data-page=${Pages.Timer}] .${CIcon.Classes.Icon}`)
 let intervalRunningId: number | NodeJS.Timeout | null = null
 
 function _doneAlert(): void {
@@ -91,7 +91,7 @@ function _subscribeRunningRefView(v: TimerStoreType, o: TimerStoreType): void {
 	_playPauseTextRef.textContent = running? 'Pause' : 'Start'
 	CIcon.update(_playPauseIconRef, {
 		Icon: {
-			code: running? IconCodes.pause : IconCodes.play,
+			code: running? IconCodes.Pause : IconCodes.Play,
 			filled: true
 		}
 	})
@@ -106,14 +106,14 @@ function _subscribeRunningRefView(v: TimerStoreType, o: TimerStoreType): void {
 		_editResetButtonRef.style.removeProperty('display')
 		CIcon.update(_editResetIconRef, {
 			Icon: {
-				code: v.timerInSeconds === v.currentSeconds? IconCodes.edit : IconCodes.history
+				code: v.timerInSeconds === v.currentSeconds? IconCodes.Edit : IconCodes.History
 			}
 		})
 		_editResetButtonRef.setAttribute('data-tooltip', v.timerInSeconds === v.currentSeconds? 'Edit timer' : 'Reset timer')
 	}
 	else {
 		_editResetButtonRef.style.setProperty('display', 'none')
-		_timerViewRef.style.setProperty('color', `rgb(${AppCSSColors.accent})`)
+		_timerViewRef.style.setProperty('color', `rgb(${AppCSSColors.Accent})`)
 		const cancel = () => {
 			_doneAlert()
 			TimerStore.update(v => {
@@ -139,7 +139,7 @@ function _subscribeRunningRefView(v: TimerStoreType, o: TimerStoreType): void {
 	}
 
 	if (isAnimationAllowed()) {
-		const options = {duration: 250, easing: AnimationEasing.spring}
+		const options = {duration: 250, easing: AnimationEasing.Spring}
 		const btnRect2 = _playPauseButtonRef.getBoundingClientRect()
 		_editResetButtonRef.animate({
 			scale: [0, 1],
@@ -158,7 +158,7 @@ function _subscribeRunningRefView(v: TimerStoreType, o: TimerStoreType): void {
 		}, options)
 		if (running) {
 			for (const ref of _navigationButtonIconRefs) {
-				ref.style.setProperty('color', `rgb(${AppCSSColors.accent})`)
+				ref.style.setProperty('color', `rgb(${AppCSSColors.Accent})`)
 				ref.animate({
 					scale: [1, .85, 1],
 					rotate: ['0deg', '180deg']
@@ -232,14 +232,14 @@ function _initEvents(): void {
 				TimerStore.update(v => v.currentSeconds = v.timerInSeconds)
 				_editResetButtonRef.setAttribute('data-tooltip', 'Edit timer')
 				CIcon.update(_editResetIconRef, {
-					Icon: {code: IconCodes.edit}
+					Icon: {code: IconCodes.Edit}
 				})
 
 				if (isAnimationAllowed()) {
 					_editResetIconRef.animate({
 						scale: [0, 1],
 						opacity: [0, 1]
-					}, {duration: 250, easing: AnimationEasing.spring})
+					}, {duration: 250, easing: AnimationEasing.Spring})
 				}
 			}
 		}

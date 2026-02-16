@@ -19,17 +19,17 @@ export namespace CSideBar {
 	}
 
 	export enum Attributes {
-		minimized = 'data-c-sidebar-minimized'
+		Minimized = 'data-c-sidebar-minimized'
 	}
 
 	export enum Classes {
-		sideBar       = 'c-sidebar',
-		content       = sideBar + '-content',
-		header        = sideBar + '-header',
-		footer        = sideBar + '-footer',
-		button        = sideBar + '-button',
-		buttonContent = button + '-content',
-		buttonLeading = button + '-leading',
+		SideBar       = 'c-sidebar',
+		Content       = SideBar + '-content',
+		Header        = SideBar + '-header',
+		Footer        = SideBar + '-footer',
+		Button        = SideBar + '-button',
+		ButtonContent = Button + '-content',
+		ButtonLeading = Button + '-leading',
 	}
 
 	export function create<T extends CElement>(
@@ -42,33 +42,33 @@ export namespace CSideBar {
 	export function update<T extends CElement>(ref_sidebar: T, options?: UpdateOptions<T>): T {
 		const opt = options?.SideBar
 		const refs = opt?.refs
-		$classlist(ref_sidebar, Classes.sideBar)
+		$classlist(ref_sidebar, Classes.SideBar)
 
 		const opt_minimized = opt?.minimized
 		if ($is_bool(opt_minimized)) {
-			$toggle_attr(ref_sidebar, Attributes.minimized, opt_minimized)
+			$toggle_attr(ref_sidebar, Attributes.Minimized, opt_minimized)
 		}
 
 		// header
 		const opt_header = opt?.header
-		let ref_header = $query<HTMLDivElement>(`.${Classes.header}`, ref_sidebar)
+		let ref_header = $query<HTMLDivElement>(`.${Classes.Header}`, ref_sidebar)
 		if ($is_false(opt_header)) {
 			$children(ref_header)
 		}
 		else if ($is_array(opt_header)) {
 			if (!ref_header) {
 				ref_header = $create('div')
-				$classlist(ref_header, Classes.header)
+				$classlist(ref_header, Classes.Header)
 			}
 
 			$children(ref_header, ...opt_header)
 		}
 
 		// content
-		let ref_content = $query<HTMLDivElement>(`.${Classes.content}`, ref_sidebar)
+		let ref_content = $query<HTMLDivElement>(`.${Classes.Content}`, ref_sidebar)
 		if (!ref_content) {
 			ref_content = $create('div')
-			$classlist(ref_content, Classes.content)
+			$classlist(ref_content, Classes.Content)
 		}
 
 		const opt_children = opt?.children
@@ -81,14 +81,14 @@ export namespace CSideBar {
 
 		// footer
 		const opt_footer = opt?.footer
-		let ref_footer = $query<HTMLDivElement>(`.${Classes.footer}`, ref_sidebar)
+		let ref_footer = $query<HTMLDivElement>(`.${Classes.Footer}`, ref_sidebar)
 		if ($is_false(opt_footer)) {
 			$children(ref_footer)
 		}
 		else if ($is_array(opt_footer)) {
 			if (!ref_footer) {
 				ref_footer = $create('div')
-				$classlist(ref_footer, Classes.footer)
+				$classlist(ref_footer, Classes.Footer)
 			}
 
 			$children(ref_footer, ...opt_footer)
@@ -118,7 +118,7 @@ export namespace CSideBar {
 		}
 
 		export enum Attributes {
-			selected = 'data-c-sidebar-button-selected'
+			Selected = 'data-c-sidebar-button-selected'
 		}
 
 		export function create(options?: UpdateOptions): CElement {
@@ -130,33 +130,33 @@ export namespace CSideBar {
 			const opt = options?.SideBarButton
 			const refs = opt?.refs
 			GCButton.update(ref_sideBarButton, options)
-			$classlist(ref_sideBarButton, Classes.button)
+			$classlist(ref_sideBarButton, Classes.Button)
 
 			const opt_selected = opt?.selected
 			if ($is_bool(opt_selected)) {
-				$toggle_attr(ref_sideBarButton, Attributes.selected, opt_selected)
+				$toggle_attr(ref_sideBarButton, Attributes.Selected, opt_selected)
 			}
 
 			// leading
 			const opt_leading = opt?.leading
-			let ref_leading = $query<HTMLDivElement>(`.${Classes.buttonLeading}`, ref_sideBarButton)
+			let ref_leading = $query<HTMLDivElement>(`.${Classes.ButtonLeading}`, ref_sideBarButton)
 			if ($is_false(opt_leading)) {
 				$children(ref_leading)
 			}
 			else if ($is_array(opt_leading)) {
 				if (!ref_leading) {
 					ref_leading = $create('div')
-					$classlist(ref_leading, Classes.buttonLeading)
+					$classlist(ref_leading, Classes.ButtonLeading)
 				}
 
 				$children(ref_leading, ...opt_leading)
 			}
 
 			// content
-			let ref_content = $query<HTMLDivElement>(`.${Classes.buttonContent}`, ref_sideBarButton)
+			let ref_content = $query<HTMLDivElement>(`.${Classes.ButtonContent}`, ref_sideBarButton)
 			if (!ref_content) {
 				ref_content = $create('div')
-				$classlist(ref_content, Classes.content)
+				$classlist(ref_content, Classes.Content)
 			}
 
 			const opt_children = opt?.children

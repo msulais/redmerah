@@ -927,16 +927,16 @@ function _initEvents(): void {
 			const dataset = ref_target.dataset
 			const command = dataset.command as Commands
 			switch (command) {
-			case Commands.copyColor: {
+			case Commands.CopyColor: {
 				const colorSpace = dataset.colorSpace as ColorSpace
 				let text = ''
 				sw2: switch (colorSpace) {
-				case ColorSpace.hex : text = _ref_inp_hex .value; break sw2
-				case ColorSpace.rgb : text = _ref_inp_rgb .value; break sw2
-				case ColorSpace.hsl : text = _ref_inp_hsl .value; break sw2
-				case ColorSpace.hsv : text = _ref_inp_hsv .value; break sw2
-				case ColorSpace.hwb : text = _ref_inp_hwb .value; break sw2
-				case ColorSpace.cmyk: text = _ref_inp_cmyk.value; break sw2
+				case ColorSpace.HEX : text = _ref_inp_hex .value; break sw2
+				case ColorSpace.RGB : text = _ref_inp_rgb .value; break sw2
+				case ColorSpace.HSL : text = _ref_inp_hsl .value; break sw2
+				case ColorSpace.HSV : text = _ref_inp_hsv .value; break sw2
+				case ColorSpace.HWB : text = _ref_inp_hwb .value; break sw2
+				case ColorSpace.CMYK: text = _ref_inp_cmyk.value; break sw2
 				}
 
 				if (text.trim().length === 0) {break}

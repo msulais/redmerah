@@ -3,8 +3,8 @@ import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
 import type { AppItem } from "@/types/apps"
 
 export const APP: AppItem = APP_LATEX_VIEWER
-export const DEFAULT_THEME: PlatformThemeMode = PlatformThemeMode.auto
-export const DEFAULT_ANIMATION: PlatformAnimationMode = PlatformAnimationMode.auto
+export const DEFAULT_THEME: PlatformThemeMode = PlatformThemeMode.Auto
+export const DEFAULT_ANIMATION: PlatformAnimationMode = PlatformAnimationMode.Auto
 export const DEFAULT_TEXT_WRAP: boolean = true
 export const DEFAULT_PREFIX = '\\['
 export const DEFAULT_SUFFIX = '\\]'

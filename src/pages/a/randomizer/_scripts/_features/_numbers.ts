@@ -84,14 +84,14 @@ export function updateOutput(): void {
 				values.push(i)
 			}
 
-			if (sort === NumbersRandomizerSort.none) {
+			if (sort === NumbersRandomizerSort.None) {
 				shuffleArray(values)
 			}
 		}
 	}
 
-	if (sort !== NumbersRandomizerSort.none) {
-		values.sort((a, b) => sort == NumbersRandomizerSort.ascending? a - b : b - a)
+	if (sort !== NumbersRandomizerSort.None) {
+		values.sort((a, b) => sort == NumbersRandomizerSort.Ascending? a - b : b - a)
 	}
 
 	NumbersStore.update(v => v.output = values.map(v => [

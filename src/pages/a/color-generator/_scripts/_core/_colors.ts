@@ -27,11 +27,11 @@ export const ColorsStore = new ObservableStore<ColorsStoreType>({
 	seed: DEFAULT_COLOR,
 	palette: DEFAULT_PALETTE
 })
-const _animationOption = {duration: 250, easing: AnimationEasing.spring}
+const _animationOption = {duration: 250, easing: AnimationEasing.Spring}
 const _ref_saveBtn = $(ElementIds.bd_saveBtn) as CButton.CIcon.CElement
 const _ref_toastCopied = $(ElementIds.toa_copied) as CToast.CElement
 const _ref_paletteList = $$(`.${CSSClasses.bodyList}`) as HTMLDivElement
-const _ref_colorAccent = $(GlobalElementIds.colorAccent) as HTMLStyleElement
+const _ref_colorAccent = $(GlobalElementIds.ColorAccent) as HTMLStyleElement
 const _ref_colorPicker = $(ElementIds.bd_picker) as CColorPicker.CElement
 const _ref_colorPickerButtonSpan = $(ElementIds.bd_pickerBtnSpan) as HTMLSpanElement
 const _ref_paletteAccentLight = $(ElementIds.bd_accentLight) as HTMLSpanElement
@@ -64,23 +64,23 @@ function _subscribePaletteRefView(v: ColorsStoreType, o: ColorsStoreType): void 
 
 			const icon = CIcon.create({
 				Icon: {
-					code: IconCodes.circle,
+					code: IconCodes.Circle,
 					filled: true
 				}
 			})
 			icon.style.setProperty('color', seed)
 
 			const copyButton = CButton.CIcon.create({
-				IconButton: {Icon: {code: IconCodes.copy}}
+				IconButton: {Icon: {code: IconCodes.Copy}}
 			})
-			copyButton.setAttribute('data-command', Commands.pal_copy)
+			copyButton.setAttribute('data-command', Commands.PaletteCopy)
 			copyButton.setAttribute('aria-label', 'Copy')
 			copyButton.setAttribute('data-tooltip', 'Copy')
 
 			const delButton = CButton.CIcon.create({
-				IconButton: {Icon: {code: IconCodes.delete}}
+				IconButton: {Icon: {code: IconCodes.Delete}}
 			})
-			delButton.setAttribute('data-command', Commands.pal_delete)
+			delButton.setAttribute('data-command', Commands.PaletteDelete)
 			delButton.setAttribute('aria-label', 'Delete')
 			delButton.setAttribute('data-tooltip', 'Delete')
 
@@ -220,7 +220,7 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_ref_colorPicker.addEventListener(CColorPicker.Events.input, () => {
+	_ref_colorPicker.addEventListener(CColorPicker.Events.Input, () => {
 		ColorsStore.update(v => v.seed = CColorPicker.getValue(_ref_colorPicker))
 	})
 
@@ -238,13 +238,13 @@ function _initEvents(): void {
 		}
 
 		switch (command) {
-		case Commands.pal_copy:{
+		case Commands.PaletteCopy:{
 			const seed = getSeedColor()
 			if (seed) {
 				copyColorPalette(seed)
 			}
 		}	break
-		case Commands.pal_delete: {
+		case Commands.PaletteDelete: {
 			const seed = getSeedColor()
 			if (seed) {
 				ColorsStore.update(v => v.palette = v.palette.filter(v => v !== seed))

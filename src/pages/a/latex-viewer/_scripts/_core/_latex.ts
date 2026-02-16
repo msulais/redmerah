@@ -50,15 +50,15 @@ function _updateLatexList(index: number): void {
 	let ref_li = $$<HTMLLIElement>(`li:nth-child(${index + 1})`, _ref_latexList)
 	let ref_textarea = $$<HTMLTextAreaElement>(`textarea`, ref_li)
 	let ref_output = $$<HTMLOutputElement>(`output`, ref_li)
-	let ref_delete = $$<CButton.CElement>(`[data-command="${CSS.escape(Commands.eq_delete)}"]`, ref_li)
+	let ref_delete = $$<CButton.CElement>(`[data-command="${CSS.escape(Commands.EquationDelete)}"]`, ref_li)
 	if (!ref_output) {
 		const refs_children = [..._ref_latexList.children]
 		ref_delete = CButton.CIcon.create({IconButton: {
-			Icon: {code: IconCodes.delete},
+			Icon: {code: IconCodes.Delete},
 			refs: {button(ref) {
 				ref.setAttribute('aria-label', 'Delete')
 				ref.setAttribute('data-tooltip', 'Delete')
-				ref.setAttribute('data-command', Commands.eq_delete)
+				ref.setAttribute('data-command', Commands.EquationDelete)
 			}}
 		}})
 
@@ -71,28 +71,28 @@ function _updateLatexList(index: number): void {
 		ref_li.replaceChildren(ref_textarea, ref_output,
 			CButton.create({Button: {
 				children: [
-					CIcon.create({Icon: {code: IconCodes.add}}),
+					CIcon.create({Icon: {code: IconCodes.Add}}),
 					'New equation'
 				],
-				variant: CButton.Variant.outlined,
+				variant: CButton.Variant.Outlined,
 				refs: {button(ref) {
-					ref.setAttribute('data-command', Commands.eq_new)
+					ref.setAttribute('data-command', Commands.EquationNew)
 				}}
 			}}),
 			CButton.CIcon.create({IconButton: {
-				Icon: {code: IconCodes.copy},
+				Icon: {code: IconCodes.Copy},
 				refs: {button(ref) {
 					ref.setAttribute('aria-label', 'Copy')
 					ref.setAttribute('data-tooltip', 'Copy')
-					ref.setAttribute('data-command', Commands.eq_copy)
+					ref.setAttribute('data-command', Commands.EquationCopy)
 				}}
 			}}),
 			CButton.CIcon.create({IconButton: {
-				Icon: {code: IconCodes.code},
+				Icon: {code: IconCodes.Code},
 				refs: {button(ref) {
 					ref.setAttribute('aria-label', 'MathML')
 					ref.setAttribute('data-tooltip', 'MathML')
-					ref.setAttribute('data-command', Commands.eq_copyMathML)
+					ref.setAttribute('data-command', Commands.EquationMathML)
 				}}
 			}}),
 			ref_delete
@@ -131,7 +131,7 @@ function _updateLatexList(index: number): void {
 	ref_output.innerHTML = katex.renderToString(latex, {
 		displayMode: true,
 		output: 'mathml',
-		errorColor: `rgb(${AppCSSColors.error})`,
+		errorColor: `rgb(${AppCSSColors.Error})`,
 		throwOnError: false
 	})
 }
@@ -183,11 +183,11 @@ function _initEvents(): void {
 
 		const settings = SettingsStore.value
 		switch (command) {
-		case Commands.eq_new:
+		case Commands.EquationNew:
 			_selectedLatexIndex = getLatexIndex()
 			_addLatex(_selectedLatexIndex + 1)
 			break
-		case Commands.eq_copy:
+		case Commands.EquationCopy:
 			_selectedLatexIndex = getLatexIndex()
 			navigator.clipboard.writeText([
 				settings.prefix,
@@ -197,7 +197,7 @@ function _initEvents(): void {
 				_ref_toastCopied.showPopover()
 			})
 			break
-		case Commands.eq_copyMathML:
+		case Commands.EquationMathML:
 			_selectedLatexIndex = getLatexIndex()
 			_ref_mathmlDialog.showModal()
 			_ref_mathMLInput.value = html_beautify(
@@ -205,7 +205,7 @@ function _initEvents(): void {
 				{indent_size: 2}
 			)
 			break
-		case Commands.eq_delete:
+		case Commands.EquationDelete:
 			_selectedLatexIndex = getLatexIndex()
 			LatexStore.update(v => v.latex.splice(_selectedLatexIndex, 1))
 			break

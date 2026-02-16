@@ -21,11 +21,11 @@ const cls = CMenu.Classes
 
 <Popover
 	role={role ?? 'menu'}
-	class={joinClassList(cls.menu, className)}
+	class={joinClassList(cls.Menu, className)}
 	PopoverGap={PopoverGap}
 	PopoverPadding={PopoverPadding}
 	{...other}>
 	<div
-		class={joinClassList(cls.content, contentClass)}
+		class={joinClassList(cls.Content, contentClass)}
 		{...contentOther}><slot /></div>
 </Popover>

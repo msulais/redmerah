@@ -58,7 +58,7 @@ function _subscribeInputChanges(v: MinifyStoreType, o: MinifyStoreType): void {
 		_ref_copyOutput.disabled = _ref_downloadOutput.disabled = false
 	}).catch((er) => {
 		_ref_copyOutput.disabled = _ref_downloadOutput.disabled = true
-		_ref_output.style.setProperty('color', `rgb(${AppCSSColors.error})`)
+		_ref_output.style.setProperty('color', `rgb(${AppCSSColors.Error})`)
 		_ref_output.value = er + ''
 	})
 }

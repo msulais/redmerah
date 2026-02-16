@@ -22,13 +22,13 @@ export namespace CApp {
 	}
 
 	export enum Classes {
-		app          = 'c-app',
-		appBar       = app + '-appbar',
-		container    = app + '-container',
-		leftSideBar  = app + '-left-sidebar',
-		rightSideBar = app + '-right-sidebar',
-		bottomBar    = app + '-bottombar',
-		body         = app + '-body'
+		App          = 'c-app',
+		AppBar       = App + '-appbar',
+		Container    = App + '-container',
+		LeftSideBar  = App + '-left-sidebar',
+		RightSideBar = App + '-right-sidebar',
+		BottomBar    = App + '-bottombar',
+		Body         = App + '-body'
 	}
 
 	export function create<T extends CElement>(
@@ -43,50 +43,50 @@ export namespace CApp {
 	): T {
 		const opt = options?.App
 		const refs = opt?.refs
-		$classlist(ref_app, Classes.app)
+		$classlist(ref_app, Classes.App)
 
 		// appbar
 		const opt_appBar = opt?.appBar
-		let ref_appBar = $query<HTMLDivElement>(`.${Classes.appBar}`, ref_app)
+		let ref_appBar = $query<HTMLDivElement>(`.${Classes.AppBar}`, ref_app)
 		if ($is_false(opt_appBar)) {
 			$children(ref_appBar)
 		}
 		else if ($is_array(opt_appBar)) {
 			if (!ref_appBar) {
 				ref_appBar = $create('div')
-				$classlist(ref_appBar, Classes.appBar)
+				$classlist(ref_appBar, Classes.AppBar)
 			}
 
 			$children(ref_appBar, ...opt_appBar)
 		}
 
 		// container
-		let ref_container = $query<HTMLDivElement>(`.${Classes.container}`, ref_app)
+		let ref_container = $query<HTMLDivElement>(`.${Classes.Container}`, ref_app)
 		if (!ref_container) {
 			ref_container = $create('div')
-			$classlist(ref_container, Classes.container)
+			$classlist(ref_container, Classes.Container)
 		}
 
 		// container -> leftsidebar
 		const opt_leftSideBar = opt?.leftSideBar
-		let ref_leftSideBar = $query<HTMLDivElement>(`.${Classes.leftSideBar}`, ref_container)
+		let ref_leftSideBar = $query<HTMLDivElement>(`.${Classes.LeftSideBar}`, ref_container)
 		if ($is_false(opt_leftSideBar)) {
 			$children(ref_leftSideBar)
 		}
 		else if ($is_array(opt_leftSideBar)) {
 			if (!ref_leftSideBar) {
 				ref_leftSideBar = $create('div')
-				$classlist(ref_leftSideBar, Classes.leftSideBar)
+				$classlist(ref_leftSideBar, Classes.LeftSideBar)
 			}
 
 			$children(ref_leftSideBar, ...opt_leftSideBar)
 		}
 
 		// container -> body
-		let ref_body = $query<HTMLDivElement>(`.${Classes.body}`, ref_app)
+		let ref_body = $query<HTMLDivElement>(`.${Classes.Body}`, ref_app)
 		if (!ref_body) {
 			ref_body = $create('div')
-			$classlist(ref_body, Classes.body)
+			$classlist(ref_body, Classes.Body)
 		}
 
 		const opt_children = opt?.children
@@ -99,14 +99,14 @@ export namespace CApp {
 
 		// container -> rightsidebar
 		const opt_rightSideBar = opt?.rightSideBar
-		let ref_rightSideBar = $query<HTMLDivElement>(`.${Classes.rightSideBar}`, ref_app)
+		let ref_rightSideBar = $query<HTMLDivElement>(`.${Classes.RightSideBar}`, ref_app)
 		if ($is_false(opt_rightSideBar)) {
 			$children(ref_rightSideBar)
 		}
 		else if ($is_array(opt_rightSideBar)) {
 			if (!ref_rightSideBar) {
 				ref_rightSideBar = $create('div')
-				$classlist(ref_rightSideBar, Classes.rightSideBar)
+				$classlist(ref_rightSideBar, Classes.RightSideBar)
 			}
 
 			$children(ref_rightSideBar, ...opt_rightSideBar)
@@ -114,14 +114,14 @@ export namespace CApp {
 
 		// bottombar
 		const opt_bottomBar = opt?.bottomBar
-		let ref_bottomBar = $query<HTMLDivElement>(`.${Classes.bottomBar}`, ref_app)
+		let ref_bottomBar = $query<HTMLDivElement>(`.${Classes.BottomBar}`, ref_app)
 		if ($is_false(opt_bottomBar)) {
 			$children(ref_bottomBar)
 		}
 		else if ($is_array(opt_bottomBar)) {
 			if (!ref_bottomBar) {
 				ref_bottomBar = $create('div')
-				$classlist(ref_bottomBar, Classes.bottomBar)
+				$classlist(ref_bottomBar, Classes.BottomBar)
 			}
 
 			$children(ref_bottomBar, ...opt_bottomBar)

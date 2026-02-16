@@ -22,18 +22,18 @@ const cls = CDialog.Classes
 ---
 
 <dialog
-	class={joinClassList(cls.dialog, className)}
+	class={joinClassList(cls.Dialog, className)}
 	data-c-dialog-important={DialogImportant? '' : undefined}
 	{...other}>
-	<div class={joinClassList(cls.container, containerClass)} {...containerOther}>
+	<div class={joinClassList(cls.Container, containerClass)} {...containerOther}>
 		<div
-			class={joinClassList(cls.header, headerClass)}
+			class={joinClassList(cls.Header, headerClass)}
 			{...headerOther}><slot name="header"/></div>
 		<div
-			class={joinClassList(cls.content, contentClass)}
+			class={joinClassList(cls.Content, contentClass)}
 			{...contentOther}><slot /></div>
 		<div
-			class={joinClassList(cls.footer, footerClass)}
+			class={joinClassList(cls.Footer, footerClass)}
 			{...footerOther}><slot name="footer"/></div>
 	</div>
 </dialog>

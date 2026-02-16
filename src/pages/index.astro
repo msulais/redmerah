@@ -70,7 +70,7 @@ function appColorCustom(color: HEXColor): string {
 			</defs>
 		</svg>
 	</Splash>
-	<Appbar route={RoutesLinks.home}/>
+	<Appbar route={RoutesLinks.Home}/>
 	<div class={CSS.body}>
 		<section class={CSS.header}>
 			<div>
@@ -87,11 +87,11 @@ function appColorCustom(color: HEXColor): string {
 					</ul>
 					<p>Discover a suite of powerful apps designed to simplify your tasks and enhance your productivity</p>
 					<LinkButton
-						LinkButtonVariant={CButton.Variant.filled}
-						href={RoutesLinks.apps}
+						LinkButtonVariant={CButton.Variant.Filled}
+						href={RoutesLinks.Apps}
 						style={{width: 'fit-content'}}>
 						Browse apps
-						<Icon IconFilled IconCode={IconCodes.arrowRight}/>
+						<Icon IconFilled IconCode={IconCodes.ArrowRight}/>
 					</LinkButton>
 				</div>
 			</div>
@@ -107,16 +107,16 @@ function appColorCustom(color: HEXColor): string {
 						<h3>{v.name}</h3>
 						<p style="flex:1">{v.description}</p>
 						<LinkButton
-							LinkButtonVariant={CButton.Variant.filled}
-							href={v.link}><Icon IconCode={IconCodes.openFolder}/> Open</LinkButton>
+							LinkButtonVariant={CButton.Variant.Filled}
+							href={v.link}><Icon IconCode={IconCodes.OpenFolder}/> Open</LinkButton>
 					</li>}</>)}
 				</ul>
 				<LinkButton
 					class={CSS.fadeOnView}
-					LinkButtonVariant={CButton.Variant.filled}
-					href={RoutesLinks.apps}>
+					LinkButtonVariant={CButton.Variant.Filled}
+					href={RoutesLinks.Apps}>
 					See {APPS.length-3} more apps
-					<Icon IconFilled IconCode={IconCodes.arrowRight}/>
+					<Icon IconFilled IconCode={IconCodes.ArrowRight}/>
 				</LinkButton>
 			</div>
 		</section>
@@ -186,7 +186,7 @@ function appColorCustom(color: HEXColor): string {
 						translate: [`0 ${pxToRem(64)}rem`, '0 0']
 					}, {
 						duration: 1000,
-						easing: AnimationEasing.spring
+						easing: AnimationEasing.Spring
 					})
 				}
 				targets.add(ref_target)

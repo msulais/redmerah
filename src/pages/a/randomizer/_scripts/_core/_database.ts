@@ -80,25 +80,25 @@ type _StorageItems = {
 type _StorageKeys = keyof _StorageItems
 
 enum _ObjectStoreNames {
-	storage = 'storage',
-	lists = 'lists'
+	Storage = 'storage',
+	Lists = 'lists'
 }
 
-const _db = new IDB(DatabaseNames.randomizer)
+const _db = new IDB(DatabaseNames.Randomizer)
 
 export function saveListItem(list: ListItem) {
-	return _db.writeStore(_ObjectStoreNames.lists)?.put(
+	return _db.writeStore(_ObjectStoreNames.Lists)?.put(
 		deepCopy(list) satisfies _IDBStoreLists
 	)
 }
 
 export function deleteListItem(listId: ListItem['id']) {
-	return _db.writeStore(_ObjectStoreNames.lists)?.delete(listId)
+	return _db.writeStore(_ObjectStoreNames.Lists)?.delete(listId)
 }
 
 export function saveStorageItem<K extends _StorageKeys>(key: K, value: _StorageItems[K]) {
 	return _db
-		.writeStore(_ObjectStoreNames.storage)
+		.writeStore(_ObjectStoreNames.Storage)
 		?.put({key, value: deepCopy(value)} satisfies _IDBStoreStorage<_StorageItems[K]>)
 }
 
@@ -335,14 +335,14 @@ function _readStorageAll(store: IDBObjectStore): void {
 }
 
 function _readStorage(): void {
-	const store = _db.readStore(_ObjectStoreNames.storage)
+	const store = _db.readStore(_ObjectStoreNames.Storage)
 	if (!store) {return}
 
 	_readStorageAll(store)
 }
 
 function _readLists(): void {
-	const store = _db.readStore(_ObjectStoreNames.lists)
+	const store = _db.readStore(_ObjectStoreNames.Lists)
 	if (!store) {return}
 
 	_db.getAll<ListItem>(store).then((values) => {
@@ -368,13 +368,13 @@ function _initDatabase(): void {
 		},
 		onUpgrade(_, db) {
 			db.createStore<_IDBStoreStorage>({
-				name: _ObjectStoreNames.storage,
+				name: _ObjectStoreNames.Storage,
 				keyPath: 'key',
 				indexs: ['key', 'value']
 			})
 
 			const listStore = db.createStore<_IDBStoreLists>({
-				name: _ObjectStoreNames.lists,
+				name: _ObjectStoreNames.Lists,
 				keyPath: 'id',
 				indexs: ['id', 'name', 'items']
 			})

@@ -20,7 +20,7 @@ export const ScanStore = new ObservableStore<ScanStoreType>({
 })
 const _animationOptions = {
 	duration: 250,
-	easing: AnimationEasing.spring
+	easing: AnimationEasing.Spring
 }
 const _barcodeFormat: BarcodeFormat[] = [
 	BarcodeFormat.QR_CODE,

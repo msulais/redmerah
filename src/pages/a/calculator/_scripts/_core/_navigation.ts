@@ -38,8 +38,8 @@ function _subsPageView(v: NavigationStoreType, o: NavigationStoreType): void {
 	if (page === o.page) return
 
 	const ref_selectedPanel = $$<HTMLDivElement>(`:is(.${CSSClasses.bd_page},.${CSSClasses.bdPage_date})[role=tabpanel]:not([hidden])`)
-	const refs_selectedTab = $$$<CButton.CElement>(`:is(.${CSideBar.Classes.button},.${CDrawer.Classes.button})[aria-selected=true]`)
-	const refs_targetTab = $$$<CButton.CElement>(`:is(.${CSideBar.Classes.button},.${CDrawer.Classes.button})[data-page="${page}"]`)
+	const refs_selectedTab = $$$<CButton.CElement>(`:is(.${CSideBar.Classes.Button},.${CDrawer.Classes.Button})[aria-selected=true]`)
+	const refs_targetTab = $$$<CButton.CElement>(`:is(.${CSideBar.Classes.Button},.${CDrawer.Classes.Button})[data-page="${page}"]`)
 
 	const panelId = refs_targetTab[0]?.getAttribute('aria-controls')
 	if (!panelId) return
@@ -55,15 +55,15 @@ function _subsPageView(v: NavigationStoreType, o: NavigationStoreType): void {
 	for (const tab of refs_targetTab) {
 		const classList = tab.classList
 		tab.setAttribute('aria-selected', 'true')
-		if (classList.contains(CSideBar.Classes.button)) {
+		if (classList.contains(CSideBar.Classes.Button)) {
 			CSideBar.CButton.update(tab, {
-				Button: {variant: CButton.Variant.tonal},
+				Button: {variant: CButton.Variant.Tonal},
 				SideBarButton: {selected: true}
 			})
 		}
-		else if (classList.contains(CDrawer.Classes.button)) {
+		else if (classList.contains(CDrawer.Classes.Button)) {
 			CDrawer.CButton.update(tab, {
-				Button: {variant: CButton.Variant.tonal},
+				Button: {variant: CButton.Variant.Tonal},
 				DrawerButton: {selected: true}
 			})
 		}
@@ -72,15 +72,15 @@ function _subsPageView(v: NavigationStoreType, o: NavigationStoreType): void {
 	for (const tab of refs_selectedTab) {
 		const classList = tab.classList
 		tab.setAttribute('aria-selected', 'false')
-		if (classList.contains(CSideBar.Classes.button)) {
+		if (classList.contains(CSideBar.Classes.Button)) {
 			CSideBar.CButton.update(tab, {
-				Button: {variant: CButton.Variant.transparent},
+				Button: {variant: CButton.Variant.Transparent},
 				SideBarButton: {selected: false}
 			})
 		}
-		else if (classList.contains(CDrawer.Classes.button)) {
+		else if (classList.contains(CDrawer.Classes.Button)) {
 			CDrawer.CButton.update(tab, {
-				Button: {variant: CButton.Variant.transparent},
+				Button: {variant: CButton.Variant.Transparent},
 				DrawerButton: {selected: false}
 			})
 		}
@@ -88,20 +88,20 @@ function _subsPageView(v: NavigationStoreType, o: NavigationStoreType): void {
 
 	if (!isAnimationAllowed()) return
 
-	const borderColor = `rgba(${AppCSSColors.onSurface},${AppCSSOpacity.o3})`
+	const borderColor = `rgba(${AppCSSColors.OnSurface},${AppCSSOpacity.O3})`
 	ref_targetPanel.animate({
 		transform: ['scale(.9)', 'scale(1)'],
 		borderRadius: [pxToRem(8) + 'rem', pxToRem(8) + 'rem'],
-		borderRightColor: page === Pages.date
+		borderRightColor: page === Pages.Date
 			? [borderColor, borderColor]
 			: [],
-		borderBottomColor: page === Pages.date
+		borderBottomColor: page === Pages.Date
 			? [borderColor, borderColor]
 			: [],
 		opacity: [0, 1]
 	}, {
 		duration: 500,
-		easing: AnimationEasing.spring
+		easing: AnimationEasing.Spring
 	})
 }
 
@@ -112,7 +112,7 @@ function _initSubscriber(): void {
 
 function _initEvents(): void {
 	_ref_sideBar?.addEventListener('click', (ev) => {
-		const ref_target = (ev.target as HTMLElement).closest<CButton.CElement>(`.${CSideBar.Classes.button}[data-page]`)
+		const ref_target = (ev.target as HTMLElement).closest<CButton.CElement>(`.${CSideBar.Classes.Button}[data-page]`)
 		if (!ref_target) return
 
 		const page = ref_target.dataset.page
@@ -122,7 +122,7 @@ function _initEvents(): void {
 	})
 
 	_ref_drawerBtn?.addEventListener('click', (ev) => {
-		const ref_target = (ev.target as HTMLElement).closest<CButton.CElement>(`.${CDrawer.Classes.button}[data-page]`)
+		const ref_target = (ev.target as HTMLElement).closest<CButton.CElement>(`.${CDrawer.Classes.Button}[data-page]`)
 		if (!ref_target) return
 
 		const page = ref_target.dataset.page
@@ -135,7 +135,7 @@ function _initEvents(): void {
 	_ref_minimizeBtn?.addEventListener('click', () => {
 		if (!_ref_sideBar) {return}
 
-		const isMinimized = _ref_sideBar.hasAttribute(CSideBar.Attributes.minimized)
+		const isMinimized = _ref_sideBar.hasAttribute(CSideBar.Attributes.Minimized)
 		_ref_minimizeBtn.setAttribute('data-tooltip',
 			isMinimized? 'Minimize side bar' : 'Maximize side bar'
 		)

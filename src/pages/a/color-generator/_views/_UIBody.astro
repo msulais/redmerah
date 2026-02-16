@@ -20,17 +20,17 @@ import { pxToRem } from '@/utils/css'
 			gap: pxToRem(4) + 'rem'
 		}}>
 			<Button
-				ButtonVariant={CButton.Variant.filled}
+				ButtonVariant={CButton.Variant.Filled}
 				id={ElementIds.bd_pickerBtn}
 				popovertarget={ElementIds.bd_picker}
 				data-tooltip="Pick color">
-				<Icon IconCode={IconCodes.eyedropper} IconFilled/>
+				<Icon IconCode={IconCodes.Eyedropper} IconFilled/>
 				<span style="font-weight:bold" id={ElementIds.bd_pickerBtnSpan}>{DEFAULT_COLOR}</span>
 			</Button>
 			<IconButton
 				id={ElementIds.bd_saveBtn}
-				ButtonVariant={CButton.Variant.tonal}
-				IconButtonCode={IconCodes.save}
+				ButtonVariant={CButton.Variant.Tonal}
+				IconButtonCode={IconCodes.Save}
 				aria-label="Save palette"
 				data-tooltip="Save palette"
 			/>
@@ -75,7 +75,7 @@ import { pxToRem } from '@/utils/css'
 				<p>
 					<Icon
 						IconFilled
-						IconCode={IconCodes.circle}
+						IconCode={IconCodes.Circle}
 						style={`color:${seed}`}
 					/>
 					{seed}
@@ -83,14 +83,14 @@ import { pxToRem } from '@/utils/css'
 					<IconButton
 						aria-label="Copy"
 						data-tooltip="Copy"
-						data-command={Commands.pal_copy}
-						IconButtonCode={IconCodes.copy}
+						data-command={Commands.PaletteCopy}
+						IconButtonCode={IconCodes.Copy}
 					/>
 					<IconButton
 						aria-label="Delete"
 						data-tooltip="Delete"
-						data-command={Commands.pal_delete}
-						IconButtonCode={IconCodes.delete}
+						data-command={Commands.PaletteDelete}
+						IconButtonCode={IconCodes.Delete}
 					/>
 				</p>
 				<div style={`background-color:${pal.color};color:${pal.onColor}`}>
@@ -123,6 +123,6 @@ import { pxToRem } from '@/utils/css'
 	PopoverPadding={pxToRem(12)}
 />
 <Toast id={ElementIds.toa_copied} ToastCloseDelay={1500}>
-	<Icon IconCode={IconCodes.copy} slot="leading"/>
+	<Icon IconCode={IconCodes.Copy} slot="leading"/>
 	Copied
 </Toast>

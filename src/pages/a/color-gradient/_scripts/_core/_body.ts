@@ -26,9 +26,9 @@ function _initEvents(): void {
 		const summary = $$<HTMLElement>(`summary`, ref)
 		const callback = () => {
 			if (ref.open) {
-				summary?.setAttribute(CButton.Attributes.variant, CButton.Variant.filled)
+				summary?.setAttribute(CButton.Attributes.Variant, CButton.Variant.Filled)
 			}	else {
-				summary?.removeAttribute(CButton.Attributes.variant)
+				summary?.removeAttribute(CButton.Attributes.Variant)
 			}
 		}
 		callback()
@@ -39,8 +39,8 @@ function _initEvents(): void {
 		const summary = $$<HTMLElement>(`summary`, ref)
 		const callback = () => {
 			summary?.setAttribute(
-				CButton.Attributes.variant,
-				ref.open? CButton.Variant.filled : CButton.Variant.tonal
+				CButton.Attributes.Variant,
+				ref.open? CButton.Variant.Filled : CButton.Variant.Tonal
 			)
 		}
 		callback()

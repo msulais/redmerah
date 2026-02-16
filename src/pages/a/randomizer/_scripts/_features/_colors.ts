@@ -84,7 +84,7 @@ export function updateOutput(): void {
 	}
 
 	switch (store.colorSpace) {
-	case ColorsRandomizerSpace.rgb: {
+	case ColorsRandomizerSpace.RGB: {
 		for (let i = 0; i < count; i++) {
 			const r = random(store.rgbRMin, store.rgbRMax) / 0xff
 			const g = random(store.rgbGMin, store.rgbGMax) / 0xff
@@ -93,7 +93,7 @@ export function updateOutput(): void {
 		}
 		break
 	}
-	case ColorsRandomizerSpace.hsl: {
+	case ColorsRandomizerSpace.HSL: {
 		for (let i = 0; i < count; i++) {
 			const h = random(store.hslHMin, store.hslHMax) / 360
 			const s = random(store.hslSMin, store.hslSMax) / 100
@@ -102,7 +102,7 @@ export function updateOutput(): void {
 		}
 		break
 	}
-	case ColorsRandomizerSpace.hex: {
+	case ColorsRandomizerSpace.HEX: {
 		for (let i = 0; i < count; i++) {
 			const value = random(store.hexMin, store.hexMax)
 			colors.push(('#' + value.toString(16).padStart(6, '0')).toUpperCase() as HEXColor)
@@ -183,13 +183,13 @@ function _subsColorSpacesView(v: ColorsStoreType, o: ColorsStoreType): void {
 	_ref_space.value = colorSpace
 	let ref_selected = _ref_hex
 	switch (colorSpace) {
-	case ColorsRandomizerSpace.rgb:
+	case ColorsRandomizerSpace.RGB:
 		ref_selected = _ref_rgb
 		break
-	case ColorsRandomizerSpace.hsl:
+	case ColorsRandomizerSpace.HSL:
 		ref_selected = _ref_hsl
 		break
-	case ColorsRandomizerSpace.hex:
+	case ColorsRandomizerSpace.HEX:
 		ref_selected = _ref_hex
 		break
 	}

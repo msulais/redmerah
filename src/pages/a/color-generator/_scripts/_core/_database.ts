@@ -17,14 +17,14 @@ type _StorageItems = {
 type _StorageKeys = keyof _StorageItems
 
 enum _ObjectStoreNames {
-	storage = 'storage'
+	Storage = 'storage'
 }
 
-const _db = new IDB(DatabaseNames.colorGenerator)
+const _db = new IDB(DatabaseNames.ColorGenerator)
 
 export function saveStorageItem<K extends _StorageKeys>(key: K, value: _StorageItems[K]) {
 	return _db
-		.writeStore(_ObjectStoreNames.storage)
+		.writeStore(_ObjectStoreNames.Storage)
 		?.put({key, value} satisfies _IDBStoreStorage<_StorageItems[K]>)
 }
 
@@ -53,7 +53,7 @@ function _readStorageAll(store: IDBObjectStore): void {
 }
 
 function _readStorage(): void {
-	const store = _db.readStore(_ObjectStoreNames.storage)
+	const store = _db.readStore(_ObjectStoreNames.Storage)
 	if (!store) return
 
 	_readStorageAll(store)
@@ -66,7 +66,7 @@ function _initDatabase(): void {
 		},
 		onUpgrade(_, db) {
 			db.createStore<_IDBStoreStorage>({
-				name: _ObjectStoreNames.storage,
+				name: _ObjectStoreNames.Storage,
 				keyPath: 'key',
 				indexs: ['key', 'value']
 			})

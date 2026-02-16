@@ -33,9 +33,9 @@ import { pxToRem } from '@/utils/css'
 	<div class={CSSClasses.bodyEditor}>
 		<details>
 			<summary
-				class={CButton.Classes.button}>
+				class={CButton.Classes.Button}>
 				Saved gradient
-				<Icon IconCode={IconCodes.chevronDown}/>
+				<Icon IconCode={IconCodes.ChevronDown}/>
 			</summary>
 			<ul
 				style={{
@@ -57,20 +57,20 @@ import { pxToRem } from '@/utils/css'
 					width: pxToRem(128) + 'rem'
 				}}
 				id={ElementIds.bdSv_menu}
-				PopoverPosition={FlyoutPosition.centerBottomToRight}>
-				<MenuItem id={ElementIds.bdSv_view}><Icon IconCode={IconCodes.eye}/>View</MenuItem>
-				<MenuItem id={ElementIds.bdSv_copy}><Icon IconCode={IconCodes.copy}/>Copy</MenuItem>
+				PopoverPosition={FlyoutPosition.CenterBottomToRight}>
+				<MenuItem id={ElementIds.bdSv_view}><Icon IconCode={IconCodes.Eye}/>View</MenuItem>
+				<MenuItem id={ElementIds.bdSv_copy}><Icon IconCode={IconCodes.Copy}/>Copy</MenuItem>
 				<Divider />
-				<MenuItem id={ElementIds.bdSv_delete}><Icon IconCode={IconCodes.delete}/>Delete</MenuItem>
+				<MenuItem id={ElementIds.bdSv_delete}><Icon IconCode={IconCodes.Delete}/>Delete</MenuItem>
 			</Menu>
 		</details>
 		<Divider/>
 		<details open>
 			<summary
-				class={CButton.Classes.button}
-				data-c-button-variant={CButton.Variant.filled}>
+				class={CButton.Classes.Button}
+				data-c-button-variant={CButton.Variant.Filled}>
 				Properties
-				<Icon IconCode={IconCodes.chevronDown}/>
+				<Icon IconCode={IconCodes.ChevronDown}/>
 			</summary>
 			<div data-css-content class={CSSClasses.bodyProperties}>
 				<label for={ElementIds.bdProp_borderRadius}>Border radius (px):</label>
@@ -116,11 +116,11 @@ import { pxToRem } from '@/utils/css'
 						marginTop: pxToRem(2) + 'rem',
 						translate: `${pxToRem(-8)}rem 0`,
 						padding: `${pxToRem(2)}rem ${pxToRem(8)}rem`,
-						color: `rgb(${AppCSSColors.accent})`
+						color: `rgb(${AppCSSColors.Accent})`
 					}}
 					href="https://developer.mozilla.org/en-US/docs/Web/CSS/clip-path"
 					LinkButtonNewTab>
-					<Icon IconCode={IconCodes.info}/>
+					<Icon IconCode={IconCodes.Info}/>
 					How to use clip path
 				</LinkButton>
 			</div>
@@ -128,10 +128,10 @@ import { pxToRem } from '@/utils/css'
 		<Divider/>
 		<details open>
 			<summary
-				class={CButton.Classes.button}
-				data-c-button-variant={CButton.Variant.filled}>
+				class={CButton.Classes.Button}
+				data-c-button-variant={CButton.Variant.Filled}>
 				Gradient
-				<Icon IconCode={IconCodes.chevronDown}/>
+				<Icon IconCode={IconCodes.ChevronDown}/>
 			</summary>
 			<div
 				style={{
@@ -145,10 +145,10 @@ import { pxToRem } from '@/utils/css'
 	</div>
 </main>
 <Toast id={ElementIds.toa_copied} ToastCloseDelay={1500}>
-	<Icon IconCode={IconCodes.copy} slot="leading"/>
+	<Icon IconCode={IconCodes.Copy} slot="leading"/>
 	Copied
 </Toast>
 <Toast id={ElementIds.toa_saved} ToastCloseDelay={1500}>
-	<Icon IconCode={IconCodes.save} slot="leading"/>
+	<Icon IconCode={IconCodes.Save} slot="leading"/>
 	Saved
 </Toast>

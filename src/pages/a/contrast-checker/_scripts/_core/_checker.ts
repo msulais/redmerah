@@ -93,7 +93,7 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_ref_forePicker.addEventListener(CColorPicker.Events.input, () => {
+	_ref_forePicker.addEventListener(CColorPicker.Events.Input, () => {
 		CheckerStore.update(v => v.foreground = CColorPicker.getValue(_ref_forePicker))
 	})
 
@@ -107,7 +107,7 @@ function _initEvents(): void {
 		})
 	})
 
-	_ref_backPicker.addEventListener(CColorPicker.Events.input, () => {
+	_ref_backPicker.addEventListener(CColorPicker.Events.Input, () => {
 		CheckerStore.update(v => v.background = CColorPicker.getValue(_ref_backPicker))
 	})
 

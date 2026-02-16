@@ -12,15 +12,15 @@ import { pxToRem } from '@/utils/css'
 ---
 
 <div
-	data-picker-mode={ColorPickerMode.image}
-	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.image}>
+	data-picker-mode={ColorPickerMode.Image}
+	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.Image}>
 	<Button
 		id={ElementIds.bdPick_imageButton}
-		ButtonVariant={CButton.Variant.filled}
+		ButtonVariant={CButton.Variant.Filled}
 		style={{
 			'margin-top': pxToRem(8) + 'rem'
 		}}>
-		<Icon IconCode={IconCodes.image}/>
+		<Icon IconCode={IconCodes.Image}/>
 		Pick image
 	</Button>
 	<div
@@ -45,8 +45,8 @@ import { pxToRem } from '@/utils/css'
 </div>
 
 <div
-	data-picker-mode={ColorPickerMode.rectangle}
-	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.rectangle}>
+	data-picker-mode={ColorPickerMode.Rectangle}
+	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.Rectangle}>
 	<div id={ElementIds.bdPick_rectangleRect} tabindex="0" class={CSSClasses.pickerRect} style={{
 		'--color': DEFAULT_COLOR,
 		'--hue': DEFAULT_COLOR_IN_HSV.h * 360,
@@ -76,8 +76,8 @@ import { pxToRem } from '@/utils/css'
 </div>
 
 <div
-	data-picker-mode={ColorPickerMode.rectangleHsl}
-	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.rectangleHsl}>
+	data-picker-mode={ColorPickerMode.RectangleHsl}
+	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.RectangleHsl}>
 	<div id={ElementIds.bdPick_rectangleHslRect} tabindex="0" class={CSSClasses.pickerRect} style={{
 		'--color': DEFAULT_COLOR,
 		'--hue': DEFAULT_COLOR_IN_HSL.h * 360,
@@ -106,8 +106,8 @@ import { pxToRem } from '@/utils/css'
 </div>
 
 <div
-	data-picker-mode={ColorPickerMode.spectrum}
-	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.spectrum}>
+	data-picker-mode={ColorPickerMode.Spectrum}
+	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.Spectrum}>
 	<div id={ElementIds.bdPick_spectrumRect} tabindex="0" class={CSSClasses.pickerRect} style={{
 		'--color': hsvToHex({...DEFAULT_COLOR_IN_HSV, v: 1}),
 		'--position-x': (DEFAULT_COLOR_IN_HSV.h * 100) + '%',
@@ -136,8 +136,8 @@ import { pxToRem } from '@/utils/css'
 </div>
 
 <div
-	data-picker-mode={ColorPickerMode.sliderRgb}
-	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.sliderRgb}>
+	data-picker-mode={ColorPickerMode.SliderRgb}
+	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.SliderRgb}>
 	<label for={ElementIds.bdPick_rgbRed} style={{'margin-top': pxToRem(16) + 'rem'}}>Red: {Math.round(DEFAULT_COLOR_IN_RGB.r * 0xff)} ({Math.round(DEFAULT_COLOR_IN_RGB.r * 100)}%)</label>
 	<input
 		id={ElementIds.bdPick_rgbRed}
@@ -188,8 +188,8 @@ import { pxToRem } from '@/utils/css'
 </div>
 
 <div
-	data-picker-mode={ColorPickerMode.sliderHsl}
-	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.sliderHsl}>
+	data-picker-mode={ColorPickerMode.SliderHsl}
+	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.SliderHsl}>
 	<label for={ElementIds.bdPick_hslHue} style={{'margin-top': pxToRem(16) + 'rem'}}>Hue: {Math.round(DEFAULT_COLOR_IN_HSL.h * 360)}° ({Math.round(DEFAULT_COLOR_IN_HSL.h * 100)}%)</label>
 	<input
 		id={ElementIds.bdPick_hslHue}
@@ -241,8 +241,8 @@ import { pxToRem } from '@/utils/css'
 </div>
 
 <div
-	data-picker-mode={ColorPickerMode.sliderCmyk}
-	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.sliderCmyk}>
+	data-picker-mode={ColorPickerMode.SliderCmyk}
+	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.SliderCmyk}>
 	<label for={ElementIds.bdPick_cmykCyan} style={{'margin-top': pxToRem(16) + 'rem'}}>Cyan: {Math.round(DEFAULT_COLOR_IN_CMYK.c * 100)}%</label>
 	<input
 		id={ElementIds.bdPick_cmykCyan}
@@ -309,8 +309,8 @@ import { pxToRem } from '@/utils/css'
 </div>
 
 <div
-	data-picker-mode={ColorPickerMode.sliderHex}
-	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.sliderHex}>
+	data-picker-mode={ColorPickerMode.SliderHex}
+	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.SliderHex}>
 	<label for={ElementIds.bdPick_hex} style={{'margin-top': pxToRem(16) + 'rem'}}>Hex: {DEFAULT_COLOR} ({DEFAULT_COLOR_IN_VALUE})</label>
 	<input
 		id={ElementIds.bdPick_hex}
@@ -329,8 +329,8 @@ import { pxToRem } from '@/utils/css'
 </div>
 
 <div
-	data-picker-mode={ColorPickerMode.sliderHsv}
-	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.sliderHsv}>
+	data-picker-mode={ColorPickerMode.SliderHsv}
+	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.SliderHsv}>
 	<label for={ElementIds.bdPick_hsvHue} style={{'margin-top': pxToRem(16) + 'rem'}}>Hue: {Math.round(DEFAULT_COLOR_IN_HSV.h * 360)}° ({Math.round(DEFAULT_COLOR_IN_HSV.h * 100)}%)</label>
 	<input
 		id={ElementIds.bdPick_hsvHue}
@@ -383,8 +383,8 @@ import { pxToRem } from '@/utils/css'
 </div>
 
 <div
-	data-picker-mode={ColorPickerMode.sliderHwb}
-	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.sliderHwb}>
+	data-picker-mode={ColorPickerMode.SliderHwb}
+	hidden={DEFAULT_PICKER_MODE !== ColorPickerMode.SliderHwb}>
 	<label for={ElementIds.bdPick_hwbHue} style={{'margin-top': pxToRem(16) + 'rem'}}>Hue: {Math.round(DEFAULT_COLOR_IN_HWB.h * 360)}° ({Math.round(DEFAULT_COLOR_IN_HWB.h * 100)}%)</label>
 	<input
 		id={ElementIds.bdPick_hwbHue}

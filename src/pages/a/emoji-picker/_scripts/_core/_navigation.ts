@@ -24,7 +24,7 @@ const _ref_drawerBtn = $(ElementIds.navigationDrawer)
 
 function _initEvents(): void {
 	_ref_drawerBtn?.addEventListener('click', (ev) => {
-		const ref_target = (ev.target as HTMLElement).closest<CSideBar.CButton.CElement>(`.${CDrawer.Classes.button}[data-page]`)
+		const ref_target = (ev.target as HTMLElement).closest<CSideBar.CButton.CElement>(`.${CDrawer.Classes.Button}[data-page]`)
 		if (!ref_target) return
 
 		const page = ref_target.dataset.page
@@ -35,7 +35,7 @@ function _initEvents(): void {
 	})
 
 	_ref_sideBar?.addEventListener('click', (ev) => {
-		const ref_target = (ev.target as HTMLElement).closest<CSideBar.CButton.CElement>(`.${CSideBar.Classes.button}[data-page]`)
+		const ref_target = (ev.target as HTMLElement).closest<CSideBar.CButton.CElement>(`.${CSideBar.Classes.Button}[data-page]`)
 		if (!ref_target) return
 
 		const page = ref_target.dataset.page
@@ -47,7 +47,7 @@ function _initEvents(): void {
 	_ref_minimizeBtn?.addEventListener('click', () => {
 		if (!_ref_sideBar) {return}
 
-		const isMinimized = _ref_sideBar.hasAttribute(CSideBar.Attributes.minimized)
+		const isMinimized = _ref_sideBar.hasAttribute(CSideBar.Attributes.Minimized)
 		_ref_minimizeBtn.setAttribute('data-tooltip',
 			isMinimized? 'Minimize side bar' : 'Maximize side bar'
 		)

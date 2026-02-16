@@ -112,7 +112,7 @@ function _showTooltip(
 		opacity: [0, 1],
 		scale: [0.9, 1],
 		...transition
-	}, {duration: isAnimationAllowed()? duration : 0, easing: AnimationEasing.spring})
+	}, {duration: isAnimationAllowed()? duration : 0, easing: AnimationEasing.Spring})
 }
 
 function _hideTooltip() {

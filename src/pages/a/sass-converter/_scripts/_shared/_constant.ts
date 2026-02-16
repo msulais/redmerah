@@ -4,11 +4,11 @@ import type { AppItem } from "@/types/apps"
 import { APP_SASS_CONVERTER } from "@/constants/apps"
 
 export const APP: AppItem = APP_SASS_CONVERTER
-export const DEFAULT_THEME = PlatformThemeMode.auto
-export const DEFAULT_ANIMATION = PlatformAnimationMode.auto
+export const DEFAULT_THEME = PlatformThemeMode.Auto
+export const DEFAULT_ANIMATION = PlatformAnimationMode.Auto
 export const DEFAULT_TEXT_WRAP = true
 export const DEFAULT_MINIFY_CSS = false
-export const DEFAULT_INPUT_MODE: InputMode = InputMode.sass
+export const DEFAULT_INPUT_MODE: InputMode = InputMode.SASS
 export const DEFAULT_SASS_TEXT = `p.my-paragraph
     color: red
     background-color: white

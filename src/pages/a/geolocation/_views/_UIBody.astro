@@ -13,32 +13,32 @@ import { pxToRem } from '@/utils/css'
 	<Button
 		id={ElementIds.bd_startPause}
 		style={{'margin-bottom': pxToRem(16) + 'rem'}}
-		ButtonVariant={CButton.Variant.filled}>
-		<Icon IconCode={IconCodes.location} IconFilled/>
+		ButtonVariant={CButton.Variant.Filled}>
+		<Icon IconCode={IconCodes.Location} IconFilled/>
 		Show my location
 	</Button>
 	<ul>
 		<li>
-			<Icon IconCode={IconCodes.road}/>
+			<Icon IconCode={IconCodes.Road}/>
 			<div>Accuracy:<br/><span id={ElementIds.bd_accuracy}>N/A</span></div></li>
 		<li>
-			<Icon IconCode={IconCodes.arrowBidirectionalUpDown}/>
+			<Icon IconCode={IconCodes.ArrowBidirectionalUpDown}/>
 			<div>Latitude:<br/><span id={ElementIds.bd_latitude}>N/A</span></div></li>
 		<li>
-			<Icon IconCode={IconCodes.arrowBidirectionalLeftRight}/>
+			<Icon IconCode={IconCodes.ArrowBidirectionalLeftRight}/>
 			<div>Longitude:<br/><span id={ElementIds.bd_longitude}>N/A</span></div></li>
 		<li>
-			<Icon IconCode={IconCodes.mountainLocationTop}/>
+			<Icon IconCode={IconCodes.MountainLocationTop}/>
 			<div>Altitude:<br/><span id={ElementIds.bd_altitude}>N/A</span></div></li>
 		<li>
-			<Icon IconCode={IconCodes.locationCheckmark}/>
+			<Icon IconCode={IconCodes.LocationCheckmark}/>
 			<div>Altitude accuracy:<br/><span id={ElementIds.bd_altitudeAccuracy}>N/A</span></div></li>
 		<li>
-			<Icon IconCode={IconCodes.topSpeed}/>
+			<Icon IconCode={IconCodes.TopSpeed}/>
 			<div>Speed:<br/><span id={ElementIds.bd_speed}>N/A</div></span>
 		</li>
 		<li>
-			<Icon IconCode={IconCodes.compassNorthwest}/>
+			<Icon IconCode={IconCodes.CompassNorthwest}/>
 			<div>
 				Heading:<br/><span id={ElementIds.bd_heading}>N/A</span>
 			</div>
@@ -53,7 +53,7 @@ import { pxToRem } from '@/utils/css'
 		'padding-top': pxToRem(8) + 'rem',
 		'padding-bottom': pxToRem(8) + 'rem',
 	}}}>
-	<Icon IconCode={IconCodes.globeOff} slot="leading"/>
+	<Icon IconCode={IconCodes.GlobeOff} slot="leading"/>
 	Unable to retrive geolocation. Make sure to:
 	<ol style="margin-left:1em">
 		<li>Allow location permission.</li>
@@ -62,6 +62,6 @@ import { pxToRem } from '@/utils/css'
 	</ol>
 </Toast>
 <Toast id={ElementIds.toa_permission} ToastCloseDelay={10000}>
-	<Icon IconCode={IconCodes.globeShield} slot="leading"/>
+	<Icon IconCode={IconCodes.GlobeShield} slot="leading"/>
 	Permission to use geolocation is denied. Please allow location permission to use this app.
 </Toast>

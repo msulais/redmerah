@@ -20,21 +20,21 @@ const items: {
 	controls: string
 }[] = [
 	{
-		icon: IconCodes.remote,
+		icon: IconCodes.Remote,
 		name: 'Angle',
-		page: Pages.angle,
+		page: Pages.Angle,
 		controls: ElementIds.bd_angle,
 	},
 	{
-		icon: IconCodes.ruler,
+		icon: IconCodes.Ruler,
 		name: 'Length',
-		page: Pages.length,
+		page: Pages.Length,
 		controls: ElementIds.bd_length,
 	},
 	{
-		icon: IconCodes.timer,
+		icon: IconCodes.Timer,
 		name: 'Time',
-		page: Pages.time,
+		page: Pages.Time,
 		controls: ElementIds.bd_time,
 	},
 ]
@@ -47,7 +47,7 @@ const items: {
 	aria-label="Navigation">
 	<IconButton
 		style={{width: 'fit-content'}}
-		IconButtonCode={IconCodes.lineHorizontal3}
+		IconButtonCode={IconCodes.LineHorizontal3}
 		data-tooltip="Minimize side bar"
 		id={ElementIds.nav_minimizeBtn}
 	/>
@@ -58,7 +58,7 @@ const items: {
 		aria-controls={v.controls}
 		data-tooltip={v.name}
 		SideBarButtonSelected={DEFAULT_PAGE === v.page}
-		ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.tonal : undefined}>
+		ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.Tonal : undefined}>
 		<Icon
 			slot="leading"
 			IconCode={v.icon}
@@ -74,14 +74,14 @@ const items: {
 		style="width:min-content"
 		popovertarget={ElementIds.nav_drawer}
 		popovertargetaction="hide">
-		<Icon IconCode={IconCodes.lineHorizontal3}/>
+		<Icon IconCode={IconCodes.LineHorizontal3}/>
 	</Button>
 	{items.map(v => <DrawerButton
 		aria-selected={DEFAULT_PAGE === v.page}
 		aria-controls={v.controls}
 		data-page={v.page}
 		DrawerButtonSelected={DEFAULT_PAGE === v.page}
-		ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.tonal : undefined}>
+		ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.Tonal : undefined}>
 		<Icon
 			IconCode={v.icon}
 		/>

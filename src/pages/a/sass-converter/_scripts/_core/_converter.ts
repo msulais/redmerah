@@ -66,10 +66,10 @@ export function updateCSSOutput(): void {
 		const settings = SettingsStore.value
 		const mode = settings.inputMode
 		const minify = settings.minifyCSS
-		const text = mode === InputMode.sass? store.sass : store.scss
+		const text = mode === InputMode.SASS? store.sass : store.scss
 		compileStringAsync(text, {
 			style: minify? 'compressed' : 'expanded',
-			syntax: mode === InputMode.sass? 'indented' : 'scss',
+			syntax: mode === InputMode.SASS? 'indented' : 'scss',
 		})
 		.then((v) => _ref_out_css.value = v.css)
 		.catch(() => _ref_out_css.value = '')

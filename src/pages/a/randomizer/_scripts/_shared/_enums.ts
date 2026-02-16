@@ -1,10 +1,10 @@
 export enum Pages {
-	string = 'string',
-	words = 'words',
-	numbers = 'numbers',
-	colors = 'colors',
-	selection = 'selection',
-	teams = 'teams'
+	String = 'string',
+	Words = 'words',
+	Numbers = 'numbers',
+	Colors = 'colors',
+	Selection = 'selection',
+	Teams = 'teams'
 }
 
 export class NumbersRandomizerType {
@@ -15,21 +15,21 @@ export class NumbersRandomizerType {
 }
 
 export enum NumbersRandomizerSort {
-	ascending = 'asc',
-	descending = 'desc',
-	none = 'none',
+	Ascending = 'asc',
+	Descending = 'desc',
+	None = 'none',
 }
 
 export enum WordsRandomizerCase {
-	uppercase = 'upper',
-	lowercase = 'lower',
-	titlecase = 'title',
-	togglecase = 'toggle',
-	none = 'none'
+	Uppercase = 'upper',
+	Lowercase = 'lower',
+	Titlecase = 'title',
+	Togglecase = 'toggle',
+	None = 'none'
 }
 
 export enum ColorsRandomizerSpace {
-	rgb = 'rgb',
-	hsl = 'hsl',
-	hex = 'hex'
+	RGB = 'rgb',
+	HSL = 'hsl',
+	HEX = 'hex'
 }

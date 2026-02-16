@@ -41,7 +41,7 @@ function _initEvents(): void {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
 		CButton.CIcon.update(_ref_searchButton, {
 			Button: {
-				variant: isOpen? CButton.Variant.filled : CButton.Variant.transparent
+				variant: isOpen? CButton.Variant.Filled : CButton.Variant.Transparent
 			}
 		})
 	})

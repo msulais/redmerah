@@ -1,31 +1,31 @@
 import { FlyoutPosition } from "@/enums/position"
 
 const FLYOUT_MARGIN = 8
-const LEFT_TOP = FlyoutPosition.leftTop
-const LEFT_CENTER_TO_BOTTOM = FlyoutPosition.leftCenterToBottom
-const LEFT_CENTER = FlyoutPosition.leftCenter
-const LEFT_CENTER_TO_TOP = FlyoutPosition.leftCenterToTop
-const LEFT_BOTTOM = FlyoutPosition.leftBottom
-const CENTER_TOP_TO_RIGHT = FlyoutPosition.centerTopToRight
-const CENTER_CENTER_LEFT_TOP = FlyoutPosition.centerCenterLeftTop
-const CENTER_CENTER_LEFT = FlyoutPosition.centerCenterLeft
-const CENTER_CENTER_LEFT_BOTTOM = FlyoutPosition.centerCenterLeftBottom
-const CENTER_BOTTOM_TO_RIGHT = FlyoutPosition.centerBottomToRight
-const CENTER_TOP = FlyoutPosition.centerTop
-const CENTER_CENTER_TOP = FlyoutPosition.centerCenterTop
-const CENTER_CENTER = FlyoutPosition.centerCenter
-const CENTER_CENTER_BOTTOM = FlyoutPosition.centerCenterBottom
-const CENTER_BOTTOM = FlyoutPosition.centerBottom
-const CENTER_TOP_TO_LEFT = FlyoutPosition.centerTopToLeft
-const CENTER_CENTER_RIGHT_TOP = FlyoutPosition.centerCenterRightTop
-const CENTER_CENTER_RIGHT = FlyoutPosition.centerCenterRight
-const CENTER_CENTER_RIGHT_BOTTOM = FlyoutPosition.centerCenterRightBottom
-const CENTER_BOTTOM_TO_LEFT = FlyoutPosition.centerBottomToLeft
-const RIGHT_TOP = FlyoutPosition.rightTop
-const RIGHT_CENTER_TO_BOTTOM = FlyoutPosition.rightCenterToBottom
-const RIGHT_CENTER = FlyoutPosition.rightCenter
-const RIGHT_CENTER_TO_TOP = FlyoutPosition.rightCenterToTop
-const RIGHT_BOTTOM = FlyoutPosition.rightBottom
+const LEFT_TOP = FlyoutPosition.LeftTop
+const LEFT_CENTER_TO_BOTTOM = FlyoutPosition.LeftCenterToBottom
+const LEFT_CENTER = FlyoutPosition.LeftCenter
+const LEFT_CENTER_TO_TOP = FlyoutPosition.LeftCenterToTop
+const LEFT_BOTTOM = FlyoutPosition.LeftBottom
+const CENTER_TOP_TO_RIGHT = FlyoutPosition.CenterTopToRight
+const CENTER_CENTER_LEFT_TOP = FlyoutPosition.CenterCenterLeftTop
+const CENTER_CENTER_LEFT = FlyoutPosition.CenterCenterLeft
+const CENTER_CENTER_LEFT_BOTTOM = FlyoutPosition.CenterCenterLeftBottom
+const CENTER_BOTTOM_TO_RIGHT = FlyoutPosition.CenterBottomToRight
+const CENTER_TOP = FlyoutPosition.CenterTop
+const CENTER_CENTER_TOP = FlyoutPosition.CenterCenterTop
+const CENTER_CENTER = FlyoutPosition.CenterCenter
+const CENTER_CENTER_BOTTOM = FlyoutPosition.CenterCenterBottom
+const CENTER_BOTTOM = FlyoutPosition.CenterBottom
+const CENTER_TOP_TO_LEFT = FlyoutPosition.CenterTopToLeft
+const CENTER_CENTER_RIGHT_TOP = FlyoutPosition.CenterCenterRightTop
+const CENTER_CENTER_RIGHT = FlyoutPosition.CenterCenterRight
+const CENTER_CENTER_RIGHT_BOTTOM = FlyoutPosition.CenterCenterRightBottom
+const CENTER_BOTTOM_TO_LEFT = FlyoutPosition.CenterBottomToLeft
+const RIGHT_TOP = FlyoutPosition.RightTop
+const RIGHT_CENTER_TO_BOTTOM = FlyoutPosition.RightCenterToBottom
+const RIGHT_CENTER = FlyoutPosition.RightCenter
+const RIGHT_CENTER_TO_TOP = FlyoutPosition.RightCenterToTop
+const RIGHT_BOTTOM = FlyoutPosition.RightBottom
 
 type GetFlyoutPositionParams = {
 	flyout: { width: number; height: number } | DOMRect
@@ -46,7 +46,7 @@ type FlyoutPositionResult = {
 export function getFlyoutPosition({
 	flyout,
 	anchor,
-	position = FlyoutPosition.centerBottom,
+	position = FlyoutPosition.CenterBottom,
 	gap = 8,
 	padding = 0,
 	pointer

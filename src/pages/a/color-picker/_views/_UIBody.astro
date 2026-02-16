@@ -15,18 +15,18 @@ import { hexToRgb, hexToHsl, hexToHsv, hexToHwb, hexToCmyk } from '@/utils/color
 import { Commands } from '../_scripts/_shared/_commands'
 
 const modes: {text: string, mode: ColorPickerMode}[] = [
-	{mode: ColorPickerMode.image, text: 'Image'},
-	{mode: ColorPickerMode.rectangle, text: 'Rectangle'},
-	{mode: ColorPickerMode.rectangleHsl, text: 'Rectangle HSL'},
+	{mode: ColorPickerMode.Image, text: 'Image'},
+	{mode: ColorPickerMode.Rectangle, text: 'Rectangle'},
+	{mode: ColorPickerMode.RectangleHsl, text: 'Rectangle HSL'},
 	// {mode: ColorPickerMode.palette, text: 'Palette'},
-	{mode: ColorPickerMode.spectrum, text: 'Spectrum'},
+	{mode: ColorPickerMode.Spectrum, text: 'Spectrum'},
 	// {mode: ColorPickerMode.wheel, text: 'Wheel'},
-	{mode: ColorPickerMode.sliderRgb, text: 'Slider RGB'},
-	{mode: ColorPickerMode.sliderHsl, text: 'Slider HSL'},
-	{mode: ColorPickerMode.sliderCmyk, text: 'Slider CMYK'},
-	{mode: ColorPickerMode.sliderHex, text: 'Slider HEX'},
-	{mode: ColorPickerMode.sliderHsv, text: 'Slider HSV'},
-	{mode: ColorPickerMode.sliderHwb, text: 'Slider HWB'},
+	{mode: ColorPickerMode.SliderRgb, text: 'Slider RGB'},
+	{mode: ColorPickerMode.SliderHsl, text: 'Slider HSL'},
+	{mode: ColorPickerMode.SliderCmyk, text: 'Slider CMYK'},
+	{mode: ColorPickerMode.SliderHex, text: 'Slider HEX'},
+	{mode: ColorPickerMode.SliderHsv, text: 'Slider HSV'},
+	{mode: ColorPickerMode.SliderHwb, text: 'Slider HWB'},
 ]
 ---
 
@@ -56,12 +56,12 @@ const modes: {text: string, mode: ColorPickerMode}[] = [
 					value: DEFAULT_COLOR
 				}}>
 				<TextFieldButton
-					data-command={Commands.copyColor}
-					data-color-space={ColorSpace.hex}
+					data-command={Commands.CopyColor}
+					data-color-space={ColorSpace.HEX}
 					slot="trailing"
 					aria-label="Copy"
 					data-tooltip="Copy">
-					<Icon IconCode={IconCodes.copy}/>
+					<Icon IconCode={IconCodes.Copy}/>
 				</TextFieldButton>
 			</TextField>
 			<label for={ElementIds.bdInp_hex}>Hex</label>
@@ -79,12 +79,12 @@ const modes: {text: string, mode: ColorPickerMode}[] = [
 				})()
 			}}>
 				<TextFieldButton
-					data-command={Commands.copyColor}
-					data-color-space={ColorSpace.rgb}
+					data-command={Commands.CopyColor}
+					data-color-space={ColorSpace.RGB}
 					slot="trailing"
 					aria-label="Copy"
 					data-tooltip="Copy">
-					<Icon IconCode={IconCodes.copy}/>
+					<Icon IconCode={IconCodes.Copy}/>
 				</TextFieldButton>
 			</TextField>
 			<label for={ElementIds.bdInp_rgb}>RGB</label>
@@ -102,12 +102,12 @@ const modes: {text: string, mode: ColorPickerMode}[] = [
 				})()
 			}}>
 				<TextFieldButton
-					data-command={Commands.copyColor}
-					data-color-space={ColorSpace.hsl}
+					data-command={Commands.CopyColor}
+					data-color-space={ColorSpace.HSL}
 					slot="trailing"
 					aria-label="Copy"
 					data-tooltip="Copy">
-					<Icon IconCode={IconCodes.copy}/>
+					<Icon IconCode={IconCodes.Copy}/>
 				</TextFieldButton>
 			</TextField>
 			<label for={ElementIds.bdInp_hsl}>HSL</label>
@@ -125,12 +125,12 @@ const modes: {text: string, mode: ColorPickerMode}[] = [
 				})()
 			}}>
 				<TextFieldButton
-					data-command={Commands.copyColor}
-					data-color-space={ColorSpace.hsv}
+					data-command={Commands.CopyColor}
+					data-color-space={ColorSpace.HSV}
 					slot="trailing"
 					aria-label="Copy"
 					data-tooltip="Copy">
-					<Icon IconCode={IconCodes.copy}/>
+					<Icon IconCode={IconCodes.Copy}/>
 				</TextFieldButton>
 			</TextField>
 			<label for={ElementIds.bdInp_hsv}>HSV</label>
@@ -148,12 +148,12 @@ const modes: {text: string, mode: ColorPickerMode}[] = [
 				})()
 			}}>
 				<TextFieldButton
-					data-command={Commands.copyColor}
-					data-color-space={ColorSpace.hwb}
+					data-command={Commands.CopyColor}
+					data-color-space={ColorSpace.HWB}
 					slot="trailing"
 					aria-label="Copy"
 					data-tooltip="Copy">
-					<Icon IconCode={IconCodes.copy}/>
+					<Icon IconCode={IconCodes.Copy}/>
 				</TextFieldButton>
 			</TextField>
 			<label for={ElementIds.bdInp_hwb}>HWB</label>
@@ -172,12 +172,12 @@ const modes: {text: string, mode: ColorPickerMode}[] = [
 				})()
 			}}>
 				<TextFieldButton
-					data-command={Commands.copyColor}
-					data-color-space={ColorSpace.cmyk}
+					data-command={Commands.CopyColor}
+					data-color-space={ColorSpace.CMYK}
 					slot="trailing"
 					aria-label="Copy"
 					data-tooltip="Copy">
-					<Icon IconCode={IconCodes.copy}/>
+					<Icon IconCode={IconCodes.Copy}/>
 				</TextFieldButton>
 			</TextField>
 			<label for={ElementIds.bdInp_cmyk}>CMYK</label>
@@ -185,6 +185,6 @@ const modes: {text: string, mode: ColorPickerMode}[] = [
 	</div>
 </main>
 <Toast id={ElementIds.toa_copied} ToastCloseDelay={1500}>
-	<Icon IconCode={IconCodes.copy} slot="leading"/>
+	<Icon IconCode={IconCodes.Copy} slot="leading"/>
 	Copied
 </Toast>

@@ -18,25 +18,25 @@ import videoFile from '@/assets/video/271161_small.mp4'
 		src={videoFile}/>
 </main>
 <Toast id={ElementIds.toa_invalid} ToastCloseDelay={5000}>
-	<Icon IconCode={IconCodes.documentError} slot="leading"/>
+	<Icon IconCode={IconCodes.DocumentError} slot="leading"/>
 	File type is not valid. Only image, audio, and video are allowed.
 </Toast>
 <Toast id={ElementIds.toa_noFile} ToastCloseDelay={3000}>
-	<Icon IconCode={IconCodes.documentError} slot="leading"/>
+	<Icon IconCode={IconCodes.DocumentError} slot="leading"/>
 	No file selected
 </Toast>
 <Toast id={ElementIds.toa_error} ToastCloseDelay={3000}>
-	<Icon IconCode={IconCodes.scanText} slot="leading"/>
+	<Icon IconCode={IconCodes.ScanText} slot="leading"/>
 	Error: Unable to load media file
 </Toast>
 <Toast id={ElementIds.toa_loading} ToastCloseDelay={Infinity}>
-	<Icon IconCode={IconCodes.arrowDownload} slot="leading"/>
+	<Icon IconCode={IconCodes.ArrowDownload} slot="leading"/>
 	Loading ...
 	<IconButton
 		slot="trailing"
-		IconButtonCode={IconCodes.dismiss}
+		IconButtonCode={IconCodes.Dismiss}
 		aria-label="Abort loading"
-		ButtonVariant={CButton.Variant.tonal}
+		ButtonVariant={CButton.Variant.Tonal}
 		id={ElementIds.toa_loadingAbort}
 	/>
 </Toast>

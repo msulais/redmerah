@@ -13,9 +13,9 @@ const sorts: {
 	text: string
 	value: NumbersRandomizerSort
 }[] = [
-	{value: NumbersRandomizerSort.ascending, text: 'Ascending'},
-	{value: NumbersRandomizerSort.descending, text: 'Descending'},
-	{value: NumbersRandomizerSort.none, text: 'None'}
+	{value: NumbersRandomizerSort.Ascending, text: 'Ascending'},
+	{value: NumbersRandomizerSort.Descending, text: 'Descending'},
+	{value: NumbersRandomizerSort.None, text: 'None'}
 ]
 
 const types: {
@@ -33,7 +33,7 @@ const types: {
 	class={CSSClasses.bodyPage}
 	id={ElementIds.pg_numbers}
 	role="tabpanel"
-	hidden={DEFAULT_PAGE !== Pages.numbers}>
+	hidden={DEFAULT_PAGE !== Pages.Numbers}>
 	<output
 		id={ElementIds.pgNum_output}
 		class:list={[CSSClasses.bodyResult, CSSClasses.resultNumbers]}

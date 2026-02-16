@@ -14,9 +14,9 @@ import { IconCodes } from '@/enums/icons'
 	id={ElementIds.pg_scan}
 	class={[CSSClasses.bodyPage, CSSClasses.pageScan].join(' ')}
 	role="tabpanel"
-	hidden={DEFAULT_PAGE !== Pages.scan}>
-	<Button ButtonVariant={CButton.Variant.filled} id={ElementIds.pgScan_pickImg}>
-		<Icon IconCode={IconCodes.qrCode}/>
+	hidden={DEFAULT_PAGE !== Pages.Scan}>
+	<Button ButtonVariant={CButton.Variant.Filled} id={ElementIds.pgScan_pickImg}>
+		<Icon IconCode={IconCodes.QrCode}/>
 		Pick QR code image
 	</Button>
 	<label for={ElementIds.pgScan_output}>Data:</label>

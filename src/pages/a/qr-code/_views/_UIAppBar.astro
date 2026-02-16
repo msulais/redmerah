@@ -34,19 +34,19 @@ const animations: {
 	icon: number
 }[] = [
 	{
-		value: PlatformAnimationMode.auto,
+		value: PlatformAnimationMode.Auto,
 		text: 'Automatic',
-		icon: IconCodes.videoClipOptimize
+		icon: IconCodes.VideoClipOptimize
 	},
 	{
-		value: PlatformAnimationMode.on,
+		value: PlatformAnimationMode.On,
 		text: 'On',
-		icon: IconCodes.videoClip
+		icon: IconCodes.VideoClip
 	},
 	{
-		value: PlatformAnimationMode.off,
+		value: PlatformAnimationMode.Off,
 		text: 'Off',
-		icon: IconCodes.videoClipOff
+		icon: IconCodes.VideoClipOff
 	},
 ]
 const themes: {
@@ -55,19 +55,19 @@ const themes: {
 	icon: number
 }[] = [
 	{
-		value: PlatformThemeMode.auto,
+		value: PlatformThemeMode.Auto,
 		text: 'Automatic',
-		icon: IconCodes.laptopSettings
+		icon: IconCodes.LaptopSettings
 	},
 	{
-		value: PlatformThemeMode.light,
+		value: PlatformThemeMode.Light,
 		text: 'Light',
-		icon: IconCodes.weatherSunny
+		icon: IconCodes.WeatherSunny
 	},
 	{
-		value: PlatformThemeMode.dark,
+		value: PlatformThemeMode.Dark,
 		text: 'Dark',
-		icon: IconCodes.weatherMoon
+		icon: IconCodes.WeatherMoon
 	},
 ]
 ---
@@ -79,7 +79,7 @@ const themes: {
 		<IconButton
 			class={CSSClasses.smallScreenOnly}
 			id={ElementIds.ap_openDrawerBtn}
-			IconButtonCode={IconCodes.lineHorizontal3}
+			IconButtonCode={IconCodes.LineHorizontal3}
 		/>
 	</Fragment>
 	<Fragment slot="headline">
@@ -98,17 +98,17 @@ const themes: {
 			id={ElementIds.apInf_btn}
 			data-tooltip="Info"
 			aria-label="Info"
-			IconButtonCode={IconCodes.info}
+			IconButtonCode={IconCodes.Info}
 			popovertarget={ElementIds.apInf_menu}
 		/>
 		<Menu id={ElementIds.apInf_menu} PopoverAnchorBy={ElementIds.apInf_btn}>
 			<MenuHeader>{APP.name}</MenuHeader>
 			<MenuItem id={ElementIds.apInf_shareBtn}>
-				<Icon IconCode={IconCodes.shareAndroid}/>
+				<Icon IconCode={IconCodes.ShareAndroid}/>
 				Share
 			</MenuItem>
-			<LinkMenuItem href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + encodeURI(APP.name)}>
-				<Icon IconCode={IconCodes.chat}/>
+			<LinkMenuItem href={'mailto:' + ExternalLinks.ContactEmail + '?subject=' + encodeURI(APP.name)}>
+				<Icon IconCode={IconCodes.Chat}/>
 				Send feedback
 			</LinkMenuItem>
 			<Divider />
@@ -116,25 +116,25 @@ const themes: {
 				<img src={logoRedmerah.src} style={{width: pxToRem(20) + 'rem'}}/>
 				Redmerah
 			</LinkMenuItem>
-			<LinkMenuItem href={RoutesLinks.apps}>
-				<Icon IconCode={IconCodes.apps}/>
+			<LinkMenuItem href={RoutesLinks.Apps}>
+				<Icon IconCode={IconCodes.Apps}/>
 				More apps
 			</LinkMenuItem>
-			<LinkMenuItem href={RoutesLinks.about}>
-				<Icon IconCode={IconCodes.info}/>
+			<LinkMenuItem href={RoutesLinks.About}>
+				<Icon IconCode={IconCodes.Info}/>
 				About us
 			</LinkMenuItem>
-			<LinkMenuItem href={RoutesLinks.privacy}>
-				<Icon IconCode={IconCodes.shieldCheckmark}/>
+			<LinkMenuItem href={RoutesLinks.Privacy}>
+				<Icon IconCode={IconCodes.ShieldCheckmark}/>
 				Privacy policy
 			</LinkMenuItem>
-			<LinkMenuItem href={RoutesLinks.terms}>
-				<Icon IconCode={IconCodes.receipt}/>
+			<LinkMenuItem href={RoutesLinks.Terms}>
+				<Icon IconCode={IconCodes.Receipt}/>
 				Terms & conditions
 				<MenuIndent />
 			</LinkMenuItem>
-			<LinkMenuItem href={ExternalLinks.donate} LinkButtonNewTab>
-				<Icon IconCode={IconCodes.gift}/>
+			<LinkMenuItem href={ExternalLinks.Donate} LinkButtonNewTab>
+				<Icon IconCode={IconCodes.Gift}/>
 				Donate
 			</LinkMenuItem>
 			<MenuHeader>&copy; {new Date().getFullYear()} Redmerah</MenuHeader>
@@ -143,22 +143,22 @@ const themes: {
 		<IconButton
 			id={ElementIds.apSett_btn}
 			data-tooltip="Settings"
-			IconButtonCode={IconCodes.settings}
+			IconButtonCode={IconCodes.Settings}
 			aria-label="Settings"
 			popovertarget={ElementIds.apSett_menu}
 		/>
 		<Menu id={ElementIds.apSett_menu} PopoverAnchorBy={ElementIds.apSett_btn}>
 			<SubMenuItem
 				popovertarget={ElementIds.apSett_animationMenu}>
-				<Icon IconCode={IconCodes.playCircleHint}/>
+				<Icon IconCode={IconCodes.PlayCircleHint}/>
 				Animation
 				<div style="flex:1"/>
-				<Icon IconCode={IconCodes.chevronRight}/>
+				<Icon IconCode={IconCodes.ChevronRight}/>
 			</SubMenuItem>
 			<SubMenu style={{width: pxToRem(150) + 'rem'}} id={ElementIds.apSett_animationMenu}>
 				{animations.map(v =>
 					<RadioMenuItem
-						RadioMenuItemName={RadioNames.animation}
+						RadioMenuItemName={RadioNames.Animation}
 						RadioMenuItemChecked={DEFAULT_ANIMATION === v.value}
 						RadioMenuItemValue={v.value}>
 						<Icon IconCode={v.icon}/>
@@ -169,15 +169,15 @@ const themes: {
 
 			<SubMenuItem
 				popovertarget={ElementIds.apSett_themeMenu}>
-				<Icon IconCode={IconCodes.weatherSunny}/>
+				<Icon IconCode={IconCodes.WeatherSunny}/>
 				Theme
 				<div style="flex:1"/>
-				<Icon IconCode={IconCodes.chevronRight}/>
+				<Icon IconCode={IconCodes.ChevronRight}/>
 			</SubMenuItem>
 			<SubMenu style={{width: pxToRem(150) + 'rem'}} id={ElementIds.apSett_themeMenu}>
 				{themes.map(v =>
 					<RadioMenuItem
-						RadioMenuItemName={RadioNames.theme}
+						RadioMenuItemName={RadioNames.Theme}
 						RadioMenuItemChecked={DEFAULT_THEME === v.value}
 						RadioMenuItemValue={v.value}>
 						<Icon IconCode={v.icon}/>
@@ -191,17 +191,17 @@ const themes: {
 
 			<SubMenuItem
 				popovertarget={ElementIds.apSett_correctionMenu}>
-				<Icon IconCode={IconCodes.errorCircleSettings}/>
+				<Icon IconCode={IconCodes.ErrorCircleSettings}/>
 				Error correction level
 				<div style="flex:1"/>
-				<Icon IconCode={IconCodes.chevronRight}/>
+				<Icon IconCode={IconCodes.ChevronRight}/>
 			</SubMenuItem>
 			<SubMenu id={ElementIds.apSett_correctionMenu}>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioNames.correction,
-						checked: DEFAULT_ERROR_CORRECTION_LEVEL === ErrorCorrectionLevel.low,
-						value: ErrorCorrectionLevel.low
+						name: RadioNames.Correction,
+						checked: DEFAULT_ERROR_CORRECTION_LEVEL === ErrorCorrectionLevel.Low,
+						value: ErrorCorrectionLevel.Low
 					}}>
 					Low
 					<div style="flex:1"/>
@@ -209,9 +209,9 @@ const themes: {
 				</RadioMenuItem>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioNames.correction,
-						checked: DEFAULT_ERROR_CORRECTION_LEVEL === ErrorCorrectionLevel.medium,
-						value: ErrorCorrectionLevel.medium
+						name: RadioNames.Correction,
+						checked: DEFAULT_ERROR_CORRECTION_LEVEL === ErrorCorrectionLevel.Medium,
+						value: ErrorCorrectionLevel.Medium
 					}}>
 					Medium
 					<div style="flex:1"/>
@@ -219,9 +219,9 @@ const themes: {
 				</RadioMenuItem>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioNames.correction,
-						checked: DEFAULT_ERROR_CORRECTION_LEVEL === ErrorCorrectionLevel.quartile,
-						value: ErrorCorrectionLevel.quartile
+						name: RadioNames.Correction,
+						checked: DEFAULT_ERROR_CORRECTION_LEVEL === ErrorCorrectionLevel.Quartile,
+						value: ErrorCorrectionLevel.Quartile
 					}}>
 					Quartile
 					<div style="flex:1"/>
@@ -229,9 +229,9 @@ const themes: {
 				</RadioMenuItem>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioNames.correction,
-						checked: DEFAULT_ERROR_CORRECTION_LEVEL === ErrorCorrectionLevel.high,
-						value: ErrorCorrectionLevel.high
+						name: RadioNames.Correction,
+						checked: DEFAULT_ERROR_CORRECTION_LEVEL === ErrorCorrectionLevel.High,
+						value: ErrorCorrectionLevel.High
 					}}>
 					High
 					<div style="flex:1"/>
@@ -241,49 +241,49 @@ const themes: {
 
 			<SubMenuItem
 				popovertarget={ElementIds.apSett_encodingMenu}>
-				<Icon IconCode={IconCodes.translate}/>
+				<Icon IconCode={IconCodes.Translate}/>
 				Encoding mode
 				<div style="flex:1"/>
-				<Icon IconCode={IconCodes.chevronRight}/>
+				<Icon IconCode={IconCodes.ChevronRight}/>
 			</SubMenuItem>
 			<SubMenu id={ElementIds.apSett_encodingMenu}>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioNames.encoding,
-						checked: DEFAULT_ENCODING_MODE === EncodingMode.auto,
-						value: EncodingMode.auto
+						name: RadioNames.Encoding,
+						checked: DEFAULT_ENCODING_MODE === EncodingMode.Auto,
+						value: EncodingMode.Auto
 					}}>
 					Automatic
 				</RadioMenuItem>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioNames.encoding,
-						checked: DEFAULT_ENCODING_MODE === EncodingMode.alphanumeric,
-						value: EncodingMode.alphanumeric
+						name: RadioNames.Encoding,
+						checked: DEFAULT_ENCODING_MODE === EncodingMode.Alphanumeric,
+						value: EncodingMode.Alphanumeric
 					}}>
 					Alphanumeric
 				</RadioMenuItem>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioNames.encoding,
-						checked: DEFAULT_ENCODING_MODE === EncodingMode.byte,
-						value: EncodingMode.byte
+						name: RadioNames.Encoding,
+						checked: DEFAULT_ENCODING_MODE === EncodingMode.Byte,
+						value: EncodingMode.Byte
 					}}>
 					Byte
 				</RadioMenuItem>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioNames.encoding,
-						checked: DEFAULT_ENCODING_MODE === EncodingMode.kanji,
-						value: EncodingMode.kanji
+						name: RadioNames.Encoding,
+						checked: DEFAULT_ENCODING_MODE === EncodingMode.Kanji,
+						value: EncodingMode.Kanji
 					}}>
 					Kanji
 				</RadioMenuItem>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioNames.encoding,
-						checked: DEFAULT_ENCODING_MODE === EncodingMode.numeric,
-						value: EncodingMode.numeric
+						name: RadioNames.Encoding,
+						checked: DEFAULT_ENCODING_MODE === EncodingMode.Numeric,
+						value: EncodingMode.Numeric
 					}}>
 					Numeric
 				</RadioMenuItem>
@@ -291,24 +291,24 @@ const themes: {
 
 			<SubMenuItem
 				popovertarget={ElementIds.apSett_versionMenu}>
-				<Icon IconCode={IconCodes.numberRow}/>
+				<Icon IconCode={IconCodes.NumberRow}/>
 				Version
 				<div style="flex:1"/>
-				<Icon IconCode={IconCodes.chevronRight}/>
+				<Icon IconCode={IconCodes.ChevronRight}/>
 			</SubMenuItem>
 			<SubMenu id={ElementIds.apSett_versionMenu}>
 				<RadioMenuItem
 					RadioMenuItemInputAttr={{
-						name: RadioNames.version,
-						checked: DEFAULT_VERSION === QRVersion.auto,
-						value: QRVersion.auto
+						name: RadioNames.Version,
+						checked: DEFAULT_VERSION === QRVersion.Auto,
+						value: QRVersion.Auto
 					}}>
 					Automatic
 				</RadioMenuItem>
 				{new Array(40).fill(1).map((_, i) =>
 					<RadioMenuItem
 						RadioMenuItemInputAttr={{
-							name: RadioNames.version,
+							name: RadioNames.Version,
 							checked: DEFAULT_VERSION === String(i + 1),
 							value: String(i + 1)
 						}}>
@@ -318,12 +318,12 @@ const themes: {
 			</SubMenu>
 
 			<MenuItem id={ElementIds.apSett_colorBtn}>
-				<Icon IconCode={IconCodes.color}/>
+				<Icon IconCode={IconCodes.Color}/>
 				Color
 				<MenuIndent />
 			</MenuItem>
 			<MenuItem id={ElementIds.apSett_marginBtn}>
-				<Icon IconCode={IconCodes.checkboxIndeterminate} IconFilled/>
+				<Icon IconCode={IconCodes.CheckboxIndeterminate} IconFilled/>
 				Margin
 				<MenuIndent />
 			</MenuItem>
@@ -371,7 +371,7 @@ const themes: {
 					'margin-top': pxToRem(4) + 'rem',
 					width: '100%'
 				}}
-				ButtonVariant={CButton.Variant.tonal}
+				ButtonVariant={CButton.Variant.Tonal}
 				id={ElementIds.apSett_colorForePickerBtn}
 				popovertarget={ElementIds.apSett_colorForePicker}
 				>{DEFAULT_COLOR}</Button>
@@ -379,7 +379,7 @@ const themes: {
 				id={ElementIds.apSett_colorForePicker}
 				ColorPickerValue={DEFAULT_COLOR}
 				PopoverAnchorBy={ElementIds.apSett_colorForePickerBtn}
-				PopoverPosition={FlyoutPosition.centerCenterLeftTop}
+				PopoverPosition={FlyoutPosition.CenterCenterLeftTop}
 			/>
 
 			<p style={{
@@ -393,7 +393,7 @@ const themes: {
 					'margin-top': pxToRem(4) + 'rem',
 					width: '100%'
 				}}
-				ButtonVariant={CButton.Variant.tonal}
+				ButtonVariant={CButton.Variant.Tonal}
 				id={ElementIds.apSett_colorBackPickerBtn2}
 				popovertarget={ElementIds.apSett_colorBackPicker}
 				>{DEFAULT_BACKGROUND_COLOR}</Button>
@@ -401,13 +401,13 @@ const themes: {
 				id={ElementIds.apSett_colorBackPicker}
 				ColorPickerValue={DEFAULT_BACKGROUND_COLOR}
 				PopoverAnchorBy={ElementIds.apSett_colorBackPickerBtn2}
-				PopoverPosition={FlyoutPosition.centerCenterLeftTop}
+				PopoverPosition={FlyoutPosition.CenterCenterLeftTop}
 			/>
 		</div>
 	</div>
 	<form style="display:contents" method="dialog" slot="footer">
-		<Button ButtonVariant={CButton.Variant.tonal}>Cancel</Button>
-		<Button ButtonVariant={CButton.Variant.filled} id={ElementIds.apSett_colorSave}>Save</Button>
+		<Button ButtonVariant={CButton.Variant.Tonal}>Cancel</Button>
+		<Button ButtonVariant={CButton.Variant.Filled} id={ElementIds.apSett_colorSave}>Save</Button>
 	</form>
 </Dialog>
 <Dialog id={ElementIds.apSett_marginDialog} style={{width: pxToRem(360) + 'rem'}}>
@@ -420,7 +420,7 @@ const themes: {
 		min: '0'
 	}}/>
 	<form style="display:contents" method="dialog" slot="footer">
-		<Button ButtonVariant={CButton.Variant.tonal}>Cancel</Button>
-		<Button ButtonVariant={CButton.Variant.filled} id={ElementIds.apSett_marginSave}>Save</Button>
+		<Button ButtonVariant={CButton.Variant.Tonal}>Cancel</Button>
+		<Button ButtonVariant={CButton.Variant.Filled} id={ElementIds.apSett_marginSave}>Save</Button>
 	</form>
 </Dialog>

@@ -27,20 +27,20 @@ import { DEFAULT_STOP_COLOR_1, DEFAULT_STOP_COLOR_2 } from '../../_scripts/_shar
 import { pxToRem } from '@/utils/css'
 
 const gradientTypes: [type: GradientType, text: string, selected: boolean][] = [
-	[GradientType.linear, 'Linear', true],
-	[GradientType.radial, 'Radial', false],
-	[GradientType.conic, 'Conic', false]
+	[GradientType.Linear, 'Linear', true],
+	[GradientType.Radial, 'Radial', false],
+	[GradientType.Conic, 'Conic', false]
 ]
 const colorSpaces: [space: PolarColorSpace | RectangularColorSpace, text: string, selected: boolean][] = [
-	[PolarColorSpace.auto, 'Auto', true],
+	[PolarColorSpace.Auto, 'Auto', true],
 	// [RectangularColorSpace.a98Rgb, 'A98 RGB', false],
 	// [RectangularColorSpace.displayP3, 'Display P3', false],
-	[PolarColorSpace.hsl, 'HSL', false],
-	[PolarColorSpace.hwb, 'HWB', false],
+	[PolarColorSpace.Hsl, 'HSL', false],
+	[PolarColorSpace.Hwb, 'HWB', false],
 	// [RectangularColorSpace.lab, 'LAB', false],
-	[PolarColorSpace.lch, 'LCH', false],
+	[PolarColorSpace.Lch, 'LCH', false],
 	// [RectangularColorSpace.oklab, 'Oklab', false],
-	[PolarColorSpace.oklch, 'OKLCH', false],
+	[PolarColorSpace.Oklch, 'OKLCH', false],
 	// [RectangularColorSpace.prophotoRgb, 'ProPhoto RGB', false],
 	// [RectangularColorSpace.rec2020, 'Rec. 2020', false],
 	// [RectangularColorSpace.srgb, 'sRGB', false],
@@ -50,15 +50,15 @@ const colorSpaces: [space: PolarColorSpace | RectangularColorSpace, text: string
 	// [RectangularColorSpace.xyzD65, 'XYZ D65', false],
 ]
 const hueInterpolation: [method: HueInterpolationMethod, t: string, s: boolean][] = [
-	[HueInterpolationMethod.auto, 'Auto', true],
-	[HueInterpolationMethod.decreasing, 'Decreasing', false],
-	[HueInterpolationMethod.increasing, 'Increasing', false],
-	[HueInterpolationMethod.longer, 'Longer', false],
-	[HueInterpolationMethod.shorter, 'Shorter', false],
+	[HueInterpolationMethod.Auto, 'Auto', true],
+	[HueInterpolationMethod.Decreasing, 'Decreasing', false],
+	[HueInterpolationMethod.Increasing, 'Increasing', false],
+	[HueInterpolationMethod.Longer, 'Longer', false],
+	[HueInterpolationMethod.Shorter, 'Shorter', false],
 ]
 const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
-	[RadialGradientShape.circle, 'Circle', true],
-	[RadialGradientShape.ellipse, 'Ellipse', false],
+	[RadialGradientShape.Circle, 'Circle', true],
+	[RadialGradientShape.Ellipse, 'Ellipse', false],
 ]
 ---
 <div
@@ -67,8 +67,8 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 		display: 'flex',
 		gap: pxToRem(2) + 'rem'
 	}}>
-	<Button id={ElementIds.bdGrad_add} ButtonVariant={CButton.Variant.outlined}>
-		<Icon IconCode={IconCodes.add}/>
+	<Button id={ElementIds.bdGrad_add} ButtonVariant={CButton.Variant.Outlined}>
+		<Icon IconCode={IconCodes.Add}/>
 		Add gradient
 	</Button>
 	<IconButton
@@ -76,13 +76,13 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 		style={{
 			'margin-left': pxToRem(8) + 'rem'
 		}}
-		IconButtonCode={IconCodes.copy}
+		IconButtonCode={IconCodes.Copy}
 		data-tooltip="Copy"
 		aria-label="Copy"
 	/>
 	<IconButton
 		id={ElementIds.bdGrad_save}
-		IconButtonCode={IconCodes.save}
+		IconButtonCode={IconCodes.Save}
 		data-tooltip="Save"
 		aria-label="Save"
 	/>
@@ -90,18 +90,18 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 <ul id={ElementIds.bd_gradients}>
 	<li>
 		<Button
-			data-command={Commands.grad_edit}
+			data-command={Commands.GradientEdit}
 			popovertargetaction='show'
 			popovertarget={ElementIds.bdGrad_controlPopover}>
 			<div style={`background: linear-gradient(to right, ${DEFAULT_STOP_COLOR_1}, ${DEFAULT_STOP_COLOR_2})`}></div>
 		</Button>
 		<IconButton
-			data-command={Commands.grad_openActions}
+			data-command={Commands.GradientOpenActions}
 			popovertarget={ElementIds.bdGrad_actionsMenu}
 			popovertargetaction={'show'}
 			data-tooltip="Actions"
 			aria-label="Actions"
-			IconButtonCode={IconCodes.moreHorizontal}
+			IconButtonCode={IconCodes.MoreHorizontal}
 		/>
 	</li>
 </ul>
@@ -116,13 +116,13 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 	PopoverContentAttr={{
 		class: CSSClasses.bodyGradientControl
 	}}
-	PopoverPosition={FlyoutPosition.leftCenterToBottom}>
+	PopoverPosition={FlyoutPosition.LeftCenterToBottom}>
 	<details>
 		<summary
-			class={CButton.Classes.button}
-			data-c-button-variant={CButton.Variant.tonal}>
+			class={CButton.Classes.Button}
+			data-c-button-variant={CButton.Variant.Tonal}>
 			Properties
-			<Icon IconCode={IconCodes.chevronDown}/>
+			<Icon IconCode={IconCodes.ChevronDown}/>
 		</summary>
 		<div data-css-properties>
 			<div style={{
@@ -258,10 +258,10 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 	<Divider/>
 	<details open>
 		<summary
-			class={CButton.Classes.button}
-			data-c-button-variant={CButton.Variant.filled}>
+			class={CButton.Classes.Button}
+			data-c-button-variant={CButton.Variant.Filled}>
 			Stops
-			<Icon IconCode={IconCodes.chevronDown}/>
+			<Icon IconCode={IconCodes.ChevronDown}/>
 		</summary>
 		<div data-css-stops>
 			<div style={{
@@ -269,14 +269,14 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 				gap: pxToRem(8) + 'rem',
 				marginTop: pxToRem(8) + 'rem'
 			}}>
-				<Button id={ElementIds.bdGradStop_add} ButtonVariant={CButton.Variant.outlined}>
-					<Icon IconCode={IconCodes.add}/>
+				<Button id={ElementIds.bdGradStop_add} ButtonVariant={CButton.Variant.Outlined}>
+					<Icon IconCode={IconCodes.Add}/>
 					Add color stop
 				</Button>
 				<IconButton
 					data-tooltip="Sort"
 					id={ElementIds.bdGradStop_sort}
-					IconButtonCode={IconCodes.arrowSort}
+					IconButtonCode={IconCodes.ArrowSort}
 				/>
 			</div>
 			<ul id={ElementIds.bdGradCtrl_colorStops}>
@@ -289,16 +289,16 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 								<TextFieldButton
 									popovertarget={ElementIds.bdGradStop_colorPicker}
 									popovertargetaction={'show'}
-									data-command={Commands.gradStop_pickColor}
+									data-command={Commands.GradientStopPickColor}
 									data-tooltip="Pick color">
-									<Icon IconCode={IconCodes.circle} IconFilled/>
+									<Icon IconCode={IconCodes.Circle} IconFilled/>
 								</TextFieldButton>
 								<TextFieldButton
 									popovertarget={ElementIds.bdGradStop_actions}
 									popovertargetaction={'show'}
-									data-command={Commands.gradStop_actions}
+									data-command={Commands.GradientStopActions}
 									data-tooltip="More">
-									<Icon IconCode={IconCodes.moreHorizontal}/>
+									<Icon IconCode={IconCodes.MoreHorizontal}/>
 								</TextFieldButton>
 							</Fragment>
 						</TextField>
@@ -314,16 +314,16 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 								<TextFieldButton
 									popovertarget={ElementIds.bdGradStop_colorPicker}
 									popovertargetaction={'show'}
-									data-command={Commands.gradStop_pickColor}
+									data-command={Commands.GradientStopPickColor}
 									data-tooltip="Pick color">
-									<Icon IconCode={IconCodes.circle} IconFilled/>
+									<Icon IconCode={IconCodes.Circle} IconFilled/>
 								</TextFieldButton>
 								<TextFieldButton
 									popovertarget={ElementIds.bdGradStop_actions}
 									popovertargetaction={'show'}
-									data-command={Commands.gradStop_actions}
+									data-command={Commands.GradientStopActions}
 									data-tooltip="More">
-									<Icon IconCode={IconCodes.moreHorizontal}/>
+									<Icon IconCode={IconCodes.MoreHorizontal}/>
 								</TextFieldButton>
 							</Fragment>
 						</TextField>
@@ -337,15 +337,15 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 <Menu
 	id={ElementIds.bdGrad_actionsMenu}
 	PopoverGap={pxToRem(8)}
-	PopoverPosition={FlyoutPosition.leftCenterToBottom}>
+	PopoverPosition={FlyoutPosition.LeftCenterToBottom}>
 	<MenuItem id={ElementIds.bdGradAct_copy}>
-		<Icon IconCode={IconCodes.copy}/>
+		<Icon IconCode={IconCodes.Copy}/>
 		Copy
 		<div style="flex:1"/>
 		<MenuIndent/>
 	</MenuItem>
 	<MenuItem id={ElementIds.bdGradAct_delete}>
-		<Icon IconCode={IconCodes.delete}/>
+		<Icon IconCode={IconCodes.Delete}/>
 		Delete
 		<div style="flex:1"/>
 		<MenuIndent/>
@@ -354,35 +354,35 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 	<SubMenuItem
 		popovertarget={ElementIds.bdGradAct_moveMenu}
 		id={ElementIds.bdGradAct_move}>
-		<Icon IconCode={IconCodes.arrowSort}/>
+		<Icon IconCode={IconCodes.ArrowSort}/>
 		Move
 		<div style="flex:1"/>
-		<Icon IconCode={IconCodes.chevronRight}/>
+		<Icon IconCode={IconCodes.ChevronRight}/>
 	</MenuItem>
 	<SubMenu id={ElementIds.bdGradAct_moveMenu}>
 		<MenuItem id={ElementIds.bdGradAct_moveTop}>
-			<Icon IconCode={IconCodes.arrowUp}/>
+			<Icon IconCode={IconCodes.ArrowUp}/>
 			Top
 		</MenuItem>
 		<MenuItem id={ElementIds.bdGradAct_moveBottom}>
-			<Icon IconCode={IconCodes.arrowDown}/>
+			<Icon IconCode={IconCodes.ArrowDown}/>
 			Bottom
 		</MenuItem>
 	</SubMenu>
 
 	<SubMenuItem popovertarget={ElementIds.bdGradAct_newMenu}>
-		<Icon IconCode={IconCodes.collections}/>
+		<Icon IconCode={IconCodes.Collections}/>
 		New gradient
 		<div style="flex:1"/>
-		<Icon IconCode={IconCodes.chevronRight}/>
+		<Icon IconCode={IconCodes.ChevronRight}/>
 	</SubMenuItem>
 	<SubMenu id={ElementIds.bdGradAct_newMenu}>
 		<MenuItem id={ElementIds.bdGradAct_newTop}>
-			<Icon IconCode={IconCodes.arrowUp}/>
+			<Icon IconCode={IconCodes.ArrowUp}/>
 			Top
 		</MenuItem>
 		<MenuItem id={ElementIds.bdGradAct_newBottom}>
-			<Icon IconCode={IconCodes.arrowDown}/>
+			<Icon IconCode={IconCodes.ArrowDown}/>
 			Bottom
 		</MenuItem>
 	</SubMenu>
@@ -390,43 +390,43 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 <Menu
 	id={ElementIds.bdGradStop_actions}
 	PopoverGap={pxToRem(8)}
-	PopoverPosition={FlyoutPosition.rightCenterToBottom}>
+	PopoverPosition={FlyoutPosition.RightCenterToBottom}>
 	<MenuItem id={ElementIds.bdGradStopAct_delete}>
-		<Icon IconCode={IconCodes.delete}/>
+		<Icon IconCode={IconCodes.Delete}/>
 		Delete
 	</MenuItem>
 	<Divider />
 
 	<SubMenuItem popovertarget={ElementIds.bdGradStopAct_newMenu}>
-		<Icon IconCode={IconCodes.collections}/>
+		<Icon IconCode={IconCodes.Collections}/>
 		New stop color
 		<div style="flex:1"/>
-		<Icon IconCode={IconCodes.chevronRight}/>
+		<Icon IconCode={IconCodes.ChevronRight}/>
 	</SubMenuItem>
 	<SubMenu id={ElementIds.bdGradStopAct_newMenu}>
 		<MenuItem id={ElementIds.bdGradStopAct_newTop}>
-			<Icon IconCode={IconCodes.arrowUp}/>
+			<Icon IconCode={IconCodes.ArrowUp}/>
 			Top
 		</MenuItem>
 		<MenuItem id={ElementIds.bdGradStopAct_newBottom}>
-			<Icon IconCode={IconCodes.arrowDown}/>
+			<Icon IconCode={IconCodes.ArrowDown}/>
 			Bottom
 		</MenuItem>
 	</SubMenu>
 
 	<SubMenuItem popovertarget={ElementIds.bdGradStopAct_moveMenu}>
-		<Icon IconCode={IconCodes.arrowSort}/>
+		<Icon IconCode={IconCodes.ArrowSort}/>
 		Move stop color
 		<div style="flex:1"/>
-		<Icon IconCode={IconCodes.chevronRight}/>
+		<Icon IconCode={IconCodes.ChevronRight}/>
 	</SubMenuItem>
 	<SubMenu id={ElementIds.bdGradStopAct_moveMenu}>
 		<MenuItem id={ElementIds.bdGradStopAct_moveTop}>
-			<Icon IconCode={IconCodes.arrowUp}/>
+			<Icon IconCode={IconCodes.ArrowUp}/>
 			Top
 		</MenuItem>
 		<MenuItem id={ElementIds.bdGradStopAct_moveBottom}>
-			<Icon IconCode={IconCodes.arrowDown}/>
+			<Icon IconCode={IconCodes.ArrowDown}/>
 			Bottom
 		</MenuItem>
 	</SubMenu>
@@ -435,5 +435,5 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 	id={ElementIds.bdGradStop_colorPicker}
 	PopoverGap={pxToRem(8)}
 	PopoverDraggable
-	PopoverPosition={FlyoutPosition.rightCenterToBottom}
+	PopoverPosition={FlyoutPosition.RightCenterToBottom}
 />

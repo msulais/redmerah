@@ -19,17 +19,17 @@ const cls = CTextField.Classes
 ---
 
 <div
-	class={joinClassList(cls.textfield, className)}
+	class={joinClassList(cls.Textfield, className)}
 	{...other}>
 	<div
-		class={joinClassList(cls.leading, leadingClass)}
+		class={joinClassList(cls.Leading, leadingClass)}
 		{...leadingOther}><slot name="leading"/></div>
 	<input
 		type={inputType}
-		class={joinClassList(cls.input, inputClass)}
+		class={joinClassList(cls.Input, inputClass)}
 		{...inputOther}
 	/>
 	<div
-		class={joinClassList(cls.trailing, trailingClass)}
+		class={joinClassList(cls.Trailing, trailingClass)}
 		{...trailingOther}><slot name="trailing"/></div>
 </div>

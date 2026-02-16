@@ -1,9 +1,9 @@
 export enum Commands {
-	// swCpLp = stopwatch copy lap
-	swCpLp_time = 'swCpLap-time',
-	swCpLp_total = 'swCpLap-total',
-	swCpLp_all = 'swCpLap-all',
-	swCpLp_timeMS = 'swCpLap-time-ms',
-	swCpLp_totalMS = 'swCpLap-total-ms',
-	swCpLp_allMS = 'swCpLap-all-ms',
+	// SwCpLp = stopwatch copy lap
+	SwCpLp_time = 'swCpLap-time',
+	SwCpLp_total = 'swCpLap-total',
+	SwCpLp_all = 'swCpLap-all',
+	SwCpLp_timeMS = 'swCpLap-time-ms',
+	SwCpLp_totalMS = 'swCpLap-total-ms',
+	SwCpLp_allMS = 'swCpLap-all-ms',
 }

@@ -18,7 +18,7 @@ const _ref_animationMenu = $(ID + ElementIds.appbarSettingsAnimationMenu) as HTM
 const _ref_themeMenu = $(ID + ElementIds.appbarSettingsThemeMenu) as HTMLDivElement
 const _ref_colorPicker = $(ID + ElementIds.appbarColorPicker) as HTMLDivElement
 const _ref_accentBtn = $(ID + ElementIds.appbarSettingsAccentButton) as HTMLButtonElement
-const _ref_accentColor = $(GlobalElementIds.colorAccent) as HTMLStyleElement
+const _ref_accentColor = $(GlobalElementIds.ColorAccent) as HTMLStyleElement
 let _time_accent: number | NodeJS.Timeout | null = null
 
 function _rgbToCSS (rgb: RGBColor) {
@@ -27,10 +27,10 @@ function _rgbToCSS (rgb: RGBColor) {
 
 function _initSettings(): void {
 	function initTheme(): void {
-		const theme = localStorage.getItem(LocalStorageKeys.platformTheme)
+		const theme = localStorage.getItem(LocalStorageKeys.PlatformTheme)
 		if (!theme || !isValidEnumValue(theme, PlatformThemeMode)) return
 
-		_ref_root.setAttribute(RootAttributes.theme, theme)
+		_ref_root.setAttribute(RootAttributes.Theme, theme)
 		const ref_previous = $$(
 			`input[name="${CSS.escape(RadioGroupNames.settingsTheme)}"]:checked`
 		) as HTMLInputElement
@@ -44,10 +44,10 @@ function _initSettings(): void {
 	}
 
 	function initAnimation(): void {
-		const animation = localStorage.getItem(LocalStorageKeys.platformAnimation)
+		const animation = localStorage.getItem(LocalStorageKeys.PlatformAnimation)
 		if (!animation || !isValidEnumValue(animation, PlatformAnimationMode)) return
 
-		_ref_root.setAttribute(RootAttributes.animation, animation)
+		_ref_root.setAttribute(RootAttributes.Animation, animation)
 		const ref_previous = $$(
 			`input[name="${CSS.escape(RadioGroupNames.settingsAnimation)}"]:checked`
 		) as HTMLInputElement
@@ -61,7 +61,7 @@ function _initSettings(): void {
 	}
 
 	function initAccentColor(): void {
-		const accent = localStorage.getItem(LocalStorageKeys.platformAccentColor)
+		const accent = localStorage.getItem(LocalStorageKeys.PlatformAccentColor)
 		if (!accent || !isColorValid(accent)) return
 
 		const rgbToCSS = (rgb: RGBColor) => `${Math.round(rgb.r * 0xff)}, ${Math.round(rgb.g * 0xff)}, ${Math.round(rgb.b * 0xff)}`
@@ -96,8 +96,8 @@ function _initEvents(): void {
 		const value = target?.value
 		if (!value || !isValidEnumValue(value, PlatformAnimationMode)) return
 
-		localStorage.setItem(LocalStorageKeys.platformAnimation, value)
-		_ref_root.setAttribute(RootAttributes.animation, value)
+		localStorage.setItem(LocalStorageKeys.PlatformAnimation, value)
+		_ref_root.setAttribute(RootAttributes.Animation, value)
 		_ref_menu.hidePopover()
 	})
 
@@ -106,19 +106,19 @@ function _initEvents(): void {
 		const value = target?.value
 		if (!value || !isValidEnumValue(value, PlatformThemeMode)) return
 
-		localStorage.setItem(LocalStorageKeys.platformTheme, value)
-		_ref_root.setAttribute(RootAttributes.theme, value)
+		localStorage.setItem(LocalStorageKeys.PlatformTheme, value)
+		_ref_root.setAttribute(RootAttributes.Theme, value)
 		_ref_menu.hidePopover()
 	})
 
-	_ref_colorPicker.addEventListener(CColorPicker.Events.input, () => {
+	_ref_colorPicker.addEventListener(CColorPicker.Events.Input, () => {
 		if (_time_accent !== null) clearTimeout(_time_accent)
 
 		_time_accent = setTimeout(() => {
 			const accent = CColorPicker.getValue(_ref_colorPicker)! as HEXColor
 			const palette = generateColorPalette(accent)
 			_ref_accentColor.innerHTML = `:root{--g-color-accent-light: ${_rgbToCSS(hexToRgb(palette.color))};--g-color-accent-dark: ${_rgbToCSS(hexToRgb(palette.colorDark))};--g-color-on-accent-light: ${_rgbToCSS(hexToRgb(palette.onColor))};--g-color-on-accent-dark: ${_rgbToCSS(hexToRgb(palette.onColorDark))};}`;
-			localStorage.setItem(LocalStorageKeys.platformAccentColor, accent)
+			localStorage.setItem(LocalStorageKeys.PlatformAccentColor, accent)
 		}, 50)
 	})
 }

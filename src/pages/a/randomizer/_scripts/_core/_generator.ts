@@ -28,7 +28,7 @@ export const GeneratorStore = new ObservableStore<GeneratorStoreType>({
 	isGenerating: false
 })
 const _ref_generatorBtn = $(ElementIds.ap_generator) as CButton.CElement
-const _ref_generatorIcon = $$(`#${CSS.escape(ElementIds.ap_generator)}>.${CIcon.Classes.icon}`) as CIcon.CElement
+const _ref_generatorIcon = $$(`#${CSS.escape(ElementIds.ap_generator)}>.${CIcon.Classes.Icon}`) as CIcon.CElement
 const _ref_generatorText = $$(`#${CSS.escape(ElementIds.ap_generator)}>div`) as HTMLDivElement
 const _ref_toastCopied = $(ElementIds.toa_copied) as CToast.CElement
 const _ref_copyBtn = $(ElementIds.ap_copyBtn) as CButton.CIcon.CElement
@@ -41,8 +41,8 @@ let _interval: NodeJS.Timeout | number | null = null
 
 function _subsIsGeneratingView(v: GeneratorStoreType): void {
 	const isGenerating = v.isGenerating
-	document.body.toggleAttribute(BodyAttributes.noPointerEvent, isGenerating)
-	_ref_generatorBtn.toggleAttribute(GlobalAttributes.keepPointerEvent, isGenerating)
+	document.body.toggleAttribute(BodyAttributes.NoPointerEvent, isGenerating)
+	_ref_generatorBtn.toggleAttribute(GlobalAttributes.KeepPointerEvent, isGenerating)
 	_ref_generatorText.textContent = isGenerating? 'Generating' : 'Generate'
 
 	for (const anim of _ref_generatorIcon.getAnimations()) {
@@ -51,7 +51,7 @@ function _subsIsGeneratingView(v: GeneratorStoreType): void {
 
 	if (!isAnimationAllowed() || SettingsStore.value.instantResult) {return}
 
-	const easing = AnimationEasing.spring
+	const easing = AnimationEasing.Spring
 	_ref_generatorText.animate({
 		translate: [`0 ${pxToRem(isGenerating? -12 : 12)}rem`, '0 0'],
 		scale: [.9, 1],
@@ -82,22 +82,22 @@ function _subsIsGeneratingChanges(v: GeneratorStoreType, o: GeneratorStoreType):
 	const page = NavigationStore.value.page
 	const generate = () => {
 		switch (page) {
-		case Pages.string:
+		case Pages.String:
 			updateStringOutput()
 			break
-		case Pages.numbers:
+		case Pages.Numbers:
 			updateNumbersOutput()
 			break
-		case Pages.colors:
+		case Pages.Colors:
 			updateColorsOutput()
 			break
-		case Pages.words:
+		case Pages.Words:
 			updateWordsOutput()
 			break
-		case Pages.selection:
+		case Pages.Selection:
 			updateSelectionOutput()
 			break
-		case Pages.teams:
+		case Pages.Teams:
 			updateTeamsOutput()
 		}
 	}
@@ -136,19 +136,19 @@ function _initEvents(): void {
 			_ref_toastCopied.showPopover()
 		})).catch()
 		switch (NavigationStore.value.page) {
-		case Pages.string:
+		case Pages.String:
 			copy(StringStore.value.output)
 			break
-		case Pages.words:
+		case Pages.Words:
 			copy(WordsStore.value.output)
 			break
-		case Pages.numbers:
+		case Pages.Numbers:
 			copy(NumbersStore.value.output)
 			break
-		case Pages.colors:
+		case Pages.Colors:
 			_ref_copyColorsDialog.showModal()
 			break
-		case Pages.selection: {
+		case Pages.Selection: {
 			const store = SelectionStore.value
 			const output = store.output
 			const items = store.listItems
@@ -161,7 +161,7 @@ function _initEvents(): void {
 			copy(text.join('\n'))
 			break
 		}
-		case Pages.teams: {
+		case Pages.Teams: {
 			const output = TeamsStore.value.output
 			copy(output.map(v => [`# ${v[0]}`, ...v.slice(1)].join('\n')).join('\n\n'))
 			break

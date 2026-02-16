@@ -16,7 +16,7 @@ const _ref_date = $(ElementIds.pgClk_date) as HTMLParagraphElement
 
 function _initDateTime(): void {
 	setInterval(() => {
-		if (NavigationStore.value.page !== Pages.clock) return
+		if (NavigationStore.value.page !== Pages.Clock) return
 
 		ClockStore.update(v => v.datetime = new Date())
 	}, 250)

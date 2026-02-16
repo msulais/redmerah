@@ -16,11 +16,11 @@ export namespace CIcon {
 	}
 
 	export enum Attributes {
-		inline = 'data-c-icon-inline'
+		Inline = 'data-c-icon-inline'
 	}
 
 	export enum Classes {
-		icon = 'c-icon',
+		Icon = 'c-icon',
 	}
 
 	export function create(
@@ -32,12 +32,12 @@ export namespace CIcon {
 
 	export function update(ref_icon: CElement, options?: UpdateOptions): CElement {
 		const opt = options?.Icon
-		$classlist(ref_icon, Classes.icon)
+		$classlist(ref_icon, Classes.Icon)
 		ref_icon.translate = false
 
 		const opt_inline = opt?.inline
 		if ($is_bool(opt_inline)) {
-			$toggle_attr(ref_icon, Attributes.inline, opt_inline)
+			$toggle_attr(ref_icon, Attributes.Inline, opt_inline)
 		}
 
 		const opt_filled = opt?.filled

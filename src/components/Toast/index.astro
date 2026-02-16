@@ -11,13 +11,13 @@ const {
 	popover = 'auto',
 	ToastAutoclose = true,
 	ToastCloseDelay = 5000,
-	ToastPosition: position = CToast.Position.topCenter,
+	ToastPosition: position = CToast.Position.TopCenter,
 	ToastContentAttr,
 	...other
 } = Astro.props
 const {
 	'class': contentClass,
-	ListVariant: contentVariant = CList.Variant.transparent,
+	ListVariant: contentVariant = CList.Variant.Transparent,
 	...toastOther
 } = ToastContentAttr ?? {}
 
@@ -26,14 +26,14 @@ const cls = CToast.Classes
 
 <div
 	popover={popover}
-	class={joinClassList(cls.toast, className)}
+	class={joinClassList(cls.Toast, className)}
 	data-c-toast-position={position}
 	data-c-toast-close-delay={ToastCloseDelay}
 	data-c-toast-autoclose={ToastAutoclose? '' : undefined}
 	{...other}>
 	<List
 		ListVariant={contentVariant}
-		class={joinClassList(cls.content, contentClass)}
+		class={joinClassList(cls.Content, contentClass)}
 		{...toastOther}>
 		<slot />
 		<slot name="leading" slot="leading"/>

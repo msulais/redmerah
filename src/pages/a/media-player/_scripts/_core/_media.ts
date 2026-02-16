@@ -8,9 +8,9 @@ import { CDialog } from "@/components/Dialog"
 import { CToast } from "@/components/Toast"
 
 export enum MediaType {
-	audio,
-	video,
-	image
+	Audio,
+	Video,
+	Image
 }
 
 export type MediaStoreType = {
@@ -20,7 +20,7 @@ export type MediaStoreType = {
 
 export const MediaStore = new ObservableStore<MediaStoreType>({
 	blob: null,
-	type: MediaType.video
+	type: MediaType.Video
 })
 
 const _ref_open_btn = $(ElementIds.apOpen_btn) as CButton.CElement
@@ -48,13 +48,13 @@ async function _updateMediaFromBlob(blob: Blob): Promise<void> {
 	const bType = blob.type
 	let mediaType: MediaType | null = null
 	if (bType.startsWith('image/')) {
-		mediaType = MediaType.image
+		mediaType = MediaType.Image
 	}
 	else if (bType.startsWith('video/')) {
-		mediaType = MediaType.video
+		mediaType = MediaType.Video
 	}
 	else if (bType.startsWith('audio/')) {
-		mediaType = MediaType.audio
+		mediaType = MediaType.Audio
 	}
 
 	if (mediaType === null) {
@@ -74,17 +74,17 @@ function _subsView(v: MediaStoreType, o: MediaStoreType): void {
 
 	const src = URL.createObjectURL(blob)
 	switch (v.type) {
-	case MediaType.audio:
+	case MediaType.Audio:
 		_ref_media_image.hidden = _ref_media_video.hidden = true
 		_ref_media_audio.hidden = false
 		_ref_media_audio.src = src
 		break
-	case MediaType.video:
+	case MediaType.Video:
 		_ref_media_image.hidden = _ref_media_audio.hidden = true
 		_ref_media_video.hidden = false
 		_ref_media_video.src = src
 		break
-	case MediaType.image:
+	case MediaType.Image:
 		_ref_media_audio.hidden = _ref_media_video.hidden = true
 		_ref_media_image.hidden = false
 		_ref_media_image.src = src

@@ -63,9 +63,9 @@ function _initEvents(): void {
 		const value = target?.value as PlatformThemeMode
 		if (!value || !isValidEnumValue(value, PlatformThemeMode)) {return}
 
-		_ref_root.setAttribute(RootAttributes.theme, value)
+		_ref_root.setAttribute(RootAttributes.Theme, value)
 		_ref_settingsMenu.hidePopover()
-		localStorage.setItem(LocalStorageKeys.platformTheme, value)
+		localStorage.setItem(LocalStorageKeys.PlatformTheme, value)
 		SettingsStore.update(v => v.theme = value, null)
 	})
 
@@ -74,23 +74,23 @@ function _initEvents(): void {
 		const value = target?.value as PlatformAnimationMode
 		if (!value || !isValidEnumValue(value, PlatformAnimationMode)) {return}
 
-		_ref_root.setAttribute(RootAttributes.animation, value)
+		_ref_root.setAttribute(RootAttributes.Animation, value)
 		_ref_settingsMenu.hidePopover()
-		localStorage.setItem(LocalStorageKeys.platformAnimation, value)
+		localStorage.setItem(LocalStorageKeys.PlatformAnimation, value)
 		SettingsStore.update(v => v.animation = value, null)
 	})
 }
 
 function _initTheme(): void {
-	const theme = localStorage.getItem(LocalStorageKeys.platformTheme)
+	const theme = localStorage.getItem(LocalStorageKeys.PlatformTheme)
 	if (!theme || !isValidEnumValue(theme, PlatformThemeMode) || theme === DEFAULT_THEME) return
 
-	_ref_root.setAttribute(RootAttributes.theme, theme)
+	_ref_root.setAttribute(RootAttributes.Theme, theme)
 	const ref_previous = $$(
-		`input[name="${CSS.escape(RadioNames.theme)}"]:checked`
+		`input[name="${CSS.escape(RadioNames.Theme)}"]:checked`
 	) as HTMLInputElement
 	const ref_target = $$(
-		`input[name="${CSS.escape(RadioNames.theme)}"][value="${CSS.escape(theme)}"]`
+		`input[name="${CSS.escape(RadioNames.Theme)}"][value="${CSS.escape(theme)}"]`
 	) as HTMLInputElement
 
 	if (ref_previous === ref_target) {return}
@@ -99,15 +99,15 @@ function _initTheme(): void {
 }
 
 function _initAnimation(): void {
-	const animation = localStorage.getItem(LocalStorageKeys.platformAnimation)
+	const animation = localStorage.getItem(LocalStorageKeys.PlatformAnimation)
 	if (!animation || !isValidEnumValue(animation, PlatformAnimationMode)) return
 
-	_ref_root.setAttribute(RootAttributes.animation, animation)
+	_ref_root.setAttribute(RootAttributes.Animation, animation)
 	const ref_previous = $$(
-		`input[name="${CSS.escape(RadioNames.animation)}"]:checked`
+		`input[name="${CSS.escape(RadioNames.Animation)}"]:checked`
 	) as HTMLInputElement
 	const ref_target = $$(
-		`input[name="${CSS.escape(RadioNames.animation)}"][value="${CSS.escape(animation)}"]`
+		`input[name="${CSS.escape(RadioNames.Animation)}"][value="${CSS.escape(animation)}"]`
 	) as HTMLInputElement
 
 	if (ref_previous === ref_target) {return}
@@ -140,11 +140,11 @@ function _subsDecimalFormatChanges(v: SettingsStoreType, o: SettingsStoreType): 
 	// @ts-ignore
 	if (decimalFormat === oldGroupingFormat) {
 		switch (decimalFormat) {
-		case DecimalNumberFormat.point:
-			grouping = GroupingNumberFormat.comma
+		case DecimalNumberFormat.Point:
+			grouping = GroupingNumberFormat.Comma
 			break
-		case DecimalNumberFormat.comma:
-			grouping = GroupingNumberFormat.point
+		case DecimalNumberFormat.Comma:
+			grouping = GroupingNumberFormat.Point
 			break
 		}
 
@@ -162,7 +162,7 @@ function _subsDecimalFormatChanges(v: SettingsStoreType, o: SettingsStoreType): 
 	BasicStore.update(v => v.input = format(v.input))
 	ScientificStore.update(v => v.input = format(v.input))
 	ConverterStore.update(v => v.input = format(v.input))
-	if (ProgrammerStore.value.numberType === NumberType.decimal) {
+	if (ProgrammerStore.value.numberType === NumberType.Decimal) {
 		ProgrammerStore.update(v => v.input = format(v.input))
 	}
 }
@@ -179,15 +179,15 @@ function _subsGroupingFormatChanges(v: SettingsStoreType, o: SettingsStoreType):
 	// @ts-ignore
 	if (groupingFormat === oldDecimalFormat) {
 		switch (groupingFormat) {
-		case GroupingNumberFormat.none:
-		case GroupingNumberFormat.space:
-		case GroupingNumberFormat.underscore:
+		case GroupingNumberFormat.None:
+		case GroupingNumberFormat.Space:
+		case GroupingNumberFormat.Underscore:
 			break
-		case GroupingNumberFormat.point:
-			decimal = DecimalNumberFormat.comma
+		case GroupingNumberFormat.Point:
+			decimal = DecimalNumberFormat.Comma
 			break
-		case GroupingNumberFormat.comma:
-			decimal = DecimalNumberFormat.point
+		case GroupingNumberFormat.Comma:
+			decimal = DecimalNumberFormat.Point
 			break
 		}
 
@@ -205,7 +205,7 @@ function _subsGroupingFormatChanges(v: SettingsStoreType, o: SettingsStoreType):
 	BasicStore.update(v => v.input = format(v.input))
 	ScientificStore.update(v => v.input = format(v.input))
 	ConverterStore.update(v => v.input = format(v.input))
-	if (ProgrammerStore.value.numberType === NumberType.decimal) {
+	if (ProgrammerStore.value.numberType === NumberType.Decimal) {
 		ProgrammerStore.update(v => v.input = format(v.input))
 	}
 }
@@ -214,13 +214,13 @@ function _subsDecimalFormatView(v: SettingsStoreType, o: SettingsStoreType): voi
 	const decimalFormat = v.decimalFormat
 	if (decimalFormat === o.decimalFormat) return
 
-	for (const ref of $$$<CButton.CElement>(`[data-command="${CSS.escape(Commands.key_dec)}"]`)) {
+	for (const ref of $$$<CButton.CElement>(`[data-command="${CSS.escape(Commands.KeyDec)}"]`)) {
 		ref.textContent = v.decimalFormat
 	}
 
-	const ref_prev = $$<HTMLInputElement>(`input[name="${RadioNames.decimal}"]:checked`)
+	const ref_prev = $$<HTMLInputElement>(`input[name="${RadioNames.Decimal}"]:checked`)
 	const ref_target = $$<HTMLInputElement>(
-		`input[name="${RadioNames.decimal}"][value="${decimalFormat}"]`
+		`input[name="${RadioNames.Decimal}"][value="${decimalFormat}"]`
 	)
 
 	if (ref_prev === ref_target) return
@@ -232,9 +232,9 @@ function _subsGroupingFormatView(v: SettingsStoreType, o: SettingsStoreType): vo
 	const groupingFormat = v.groupingFormat
 	if (groupingFormat === o.groupingFormat) return
 
-	const ref_prev = $$<HTMLInputElement>(`input[name="${RadioNames.grouping}"]:checked`)
+	const ref_prev = $$<HTMLInputElement>(`input[name="${RadioNames.Grouping}"]:checked`)
 	const ref_target = $$<HTMLInputElement>(
-		`input[name="${RadioNames.grouping}"][value="${groupingFormat}"]`
+		`input[name="${RadioNames.Grouping}"][value="${groupingFormat}"]`
 	)
 
 	if (ref_prev === ref_target) return

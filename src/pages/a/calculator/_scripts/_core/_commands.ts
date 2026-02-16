@@ -14,40 +14,40 @@ function _initCommandsEvents(): void {
 		const dataset = target.dataset
 		const type = dataset.command as Commands
 		switch (type) {
-		case Commands.memo_add:
+		case Commands.MemoAdd:
 			updateMemory('add')
 			break
-		case Commands.memo_sub:
+		case Commands.MemoSub:
 			updateMemory('min')
 			break
-		case Commands.memo_recall:
+		case Commands.MemoRecall:
 			recallMemory()
 			break
-		case Commands.memo_clear:
+		case Commands.MemoClear:
 			clearMemory()
 			break
-		case Commands.key_char: {
+		case Commands.KeyChar: {
 			const char = dataset.char
 			if (!char) break
 
 			insertKeyChar(char)
 		}; break
-		case Commands.key_dec:
+		case Commands.KeyDec:
 			insertKeyChar(SettingsStore.value.decimalFormat)
 			break
-		case Commands.key_plusMin:
+		case Commands.KeyPlusMin:
 			insertKeyPlusMinus()
 			break
-		case Commands.key_clear:
+		case Commands.KeyClear:
 			insertKeyClear()
 			break
-		case Commands.key_backspace:
+		case Commands.KeyBackspace:
 			insertKeyBackspace()
 			break
-		case Commands.key_equal:
+		case Commands.KeyEqual:
 			insertKeyEqual()
 			break
-		case Commands.key_unitSwap:
+		case Commands.KeyUnitSwap:
 			insertKeySwap()
 			break
 		}

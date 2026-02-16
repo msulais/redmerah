@@ -26,7 +26,7 @@ function _initObserver(): void {
 						translate: [`0 ${pxToRem(64)}rem`, '0 0']
 					}, {
 						duration: 1000,
-						easing: AnimationEasing.spring
+						easing: AnimationEasing.Spring
 					})
 				}
 				targets.add(ref_target)

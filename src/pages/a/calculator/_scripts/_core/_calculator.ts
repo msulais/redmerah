@@ -113,7 +113,7 @@ export function convertUnit(
 	outputUnit: ConverterUnit,
 ): number {
 	const isEqual = (unit: ConverterUnit, from = inputUnit) => from.equals(unit)
-	if (type == ConverterType.angle) {
+	if (type == ConverterType.Angle) {
 		let degree: number = 0
 		if (isEqual(AngleUnits.degree)) degree = input
 		else if (isEqual(AngleUnits.radian)) degree = input * 180 / Math.PI
@@ -125,7 +125,7 @@ export function convertUnit(
 
 		return input
 	}
-	if (type == ConverterType.temperature) {
+	if (type == ConverterType.Temperature) {
 		let celsius: number = 0
 		if (isEqual(TemperatureUnits.celcius)) celsius = input
 		else if (isEqual(TemperatureUnits.kelvin)) celsius = input - 273.15
@@ -167,24 +167,24 @@ export function calculate(input: string): string {
 	const fnOperation = (input: string) => input.replace(fnRegex, (_, fnName, value) => {
 		let parsedValue: number = Number.parseFloat(value)
 		const angleToRadian = (value: number) => {
-			if (pages.page !== Pages.scientific) return value
+			if (pages.page !== Pages.Scientific) return value
 
 			const angle = ScientificStore.value.angle
 			let unit: ConverterUnit = AngleUnits.radian
 			if (angle === ScientificAngleType.DEG) unit = AngleUnits.degree
 			else if (angle === ScientificAngleType.GRAD) unit = AngleUnits.gradian
 
-			return convertUnit(value, ConverterType.angle, unit, AngleUnits.radian)
+			return convertUnit(value, ConverterType.Angle, unit, AngleUnits.radian)
 		}
 		const radianToAngle = (value: number) => {
-			if (pages.page !== Pages.scientific) return value
+			if (pages.page !== Pages.Scientific) return value
 
 			const angle = ScientificStore.value.angle
 			let unit: ConverterUnit = AngleUnits.radian
 			if (angle == ScientificAngleType.DEG) unit = AngleUnits.degree
 			else if (angle == ScientificAngleType.GRAD) unit = AngleUnits.gradian
 
-			return convertUnit(value, ConverterType.angle, AngleUnits.radian, unit)
+			return convertUnit(value, ConverterType.Angle, AngleUnits.radian, unit)
 		}
 
 		switch (fnName) {

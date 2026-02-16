@@ -24,7 +24,7 @@ const {'class': contentClass   , ...contentOther   } = PopoverContentAttr
 const cls = CPopover.Classes
 ---
 <div
-	class={joinClassList(cls.popover, className)}
+	class={joinClassList(cls.Popover, className)}
 	popover={popover ?? 'auto'}
 	data-c-popover-anchorby={PopoverAnchorBy}
 	data-c-popover-draggable={PopoverDraggable? '' : undefined}
@@ -33,12 +33,12 @@ const cls = CPopover.Classes
 	data-c-popover-position={PopoverPosition}
 	{...other}>
 	<div
-		class={joinClassList(cls.content, contentClass)}
+		class={joinClassList(cls.Content, contentClass)}
 		{...contentOther}><slot /></div>
 
 	{/* Keep below content to avoid auto focus */}
 	<div
-		class={joinClassList(cls.dragHandle, dragHandleClass)}
+		class={joinClassList(cls.DragHandle, dragHandleClass)}
 		draggable={dragHandleDraggable}
 		tabindex="0"
 		{...dragHandleOther}

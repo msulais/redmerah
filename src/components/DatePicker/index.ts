@@ -39,46 +39,46 @@ export namespace CDatePicker {
 	}
 
 	export enum Classes {
-		datepicker  = 'c-datepicker',
-		header      = datepicker + '-header',
-		title       = datepicker + '-title',
-		previous    = datepicker + '-previous',
-		next        = datepicker + '-next',
-		days        = datepicker + '-days',
-		day         = datepicker + '-day',
-		divider     = datepicker + '-divider',
-		year        = datepicker + '-year',
-		month       = datepicker + '-month',
-		date        = datepicker + '-date',
-		content     = datepicker + '-content',
-		yearButton  = year + '-button',
-		monthButton = month + '-button',
-		dateButton  = date + '-button',
-		dateEmpty   = date + '-empty',
+		Datepicker  = 'c-datepicker',
+		Header      = Datepicker + '-header',
+		Title       = Datepicker + '-title',
+		Previous    = Datepicker + '-previous',
+		Next        = Datepicker + '-next',
+		Days        = Datepicker + '-days',
+		Day         = Datepicker + '-day',
+		Divider     = Datepicker + '-divider',
+		Year        = Datepicker + '-year',
+		Month       = Datepicker + '-month',
+		Date        = Datepicker + '-date',
+		Content     = Datepicker + '-content',
+		YearButton  = Year + '-button',
+		MonthButton = Month + '-button',
+		DateButton  = Date + '-button',
+		DateEmpty   = Date + '-empty',
 	}
 
 	export enum ViewType {
-		day  = 'day',
-		month = 'month',
-		year  = 'year'
+		Day  = 'day',
+		Month = 'month',
+		Year  = 'year'
 	}
 
 	export enum Attributes {
-		start     = 'data-c-datepicker-start',
-		end       = 'data-c-datepicker-end',
-		value     = 'data-c-datepicker-value',
+		Start     = 'data-c-datepicker-start',
+		End       = 'data-c-datepicker-end',
+		Value     = 'data-c-datepicker-value',
 
 		/** @param value `ViewType` */
 		viewType  = 'data-c-datepicker-viewtype'
 	}
 
 	enum ButtonAttributes {
-		date = 'data-date'
+		Date = 'data-date'
 	}
 
 	export enum Events {
 		/** `!bubbles | !cancelable | !detail` */
-		change = 'datepicker:change'
+		Change = 'datepicker:change'
 	}
 
 	const REGISTERED_DATEPICKER: Set<CElement> = new Set<CElement>()
@@ -86,7 +86,7 @@ export namespace CDatePicker {
 	function initDatePicker(ref_datepicker: CElement): void {
 		const attributes = {
 			get startDate(): Date | null {
-				const startDate = $get_attr(ref_datepicker, Attributes.start)
+				const startDate = $get_attr(ref_datepicker, Attributes.Start)
 				if (!startDate) return null
 
 				const date = $parse_date(startDate)
@@ -95,7 +95,7 @@ export namespace CDatePicker {
 				return new Date(date)
 			},
 			get endDate(): Date | null {
-				const endDate = $get_attr(ref_datepicker, Attributes.end)
+				const endDate = $get_attr(ref_datepicker, Attributes.End)
 				if (!endDate) return null
 
 				const date = $parse_date(endDate)
@@ -104,7 +104,7 @@ export namespace CDatePicker {
 				return new Date(date)
 			},
 			get value(): Date | null {
-				const valueDate = $get_attr(ref_datepicker, Attributes.value)
+				const valueDate = $get_attr(ref_datepicker, Attributes.Value)
 				if (!valueDate) return null
 
 				const date = $parse_date(valueDate)
@@ -114,7 +114,7 @@ export namespace CDatePicker {
 			},
 			get viewtype(): ViewType {
 				const type = $get_attr(ref_datepicker, Attributes.viewType)
-				if (!type || !isValidEnumValue(type, ViewType)) return ViewType.day
+				if (!type || !isValidEnumValue(type, ViewType)) return ViewType.Day
 
 				return type as ViewType
 			}
@@ -124,9 +124,9 @@ export namespace CDatePicker {
 		function next(): void {
 			const newDate = new Date(currentView)
 			switch (attributes.viewtype) {
-			case ViewType.day: newDate.setMonth(newDate.getMonth() + 1); break
-			case ViewType.month: newDate.setFullYear(newDate.getFullYear() + 1); break
-			case ViewType.year: newDate.setFullYear(newDate.getFullYear() + 16); break
+			case ViewType.Day: newDate.setMonth(newDate.getMonth() + 1); break
+			case ViewType.Month: newDate.setFullYear(newDate.getFullYear() + 1); break
+			case ViewType.Year: newDate.setFullYear(newDate.getFullYear() + 16); break
 			}
 
 			updateView(newDate)
@@ -136,9 +136,9 @@ export namespace CDatePicker {
 		function previous(): void {
 			const newDate = new Date(currentView)
 			switch (attributes.viewtype) {
-			case ViewType.day: newDate.setMonth(newDate.getMonth() - 1); break
-			case ViewType.month: newDate.setFullYear(newDate.getFullYear() - 1); break
-			case ViewType.year: newDate.setFullYear(newDate.getFullYear() - 16); break
+			case ViewType.Day: newDate.setMonth(newDate.getMonth() - 1); break
+			case ViewType.Month: newDate.setFullYear(newDate.getFullYear() - 1); break
+			case ViewType.Year: newDate.setFullYear(newDate.getFullYear() - 16); break
 			}
 
 			updateView(newDate)
@@ -160,19 +160,19 @@ export namespace CDatePicker {
 			// april, june, september, november
 			else if ([3, 5, 8, 10].includes(currentView.getMonth())) daysPerMonth = 30
 
-			const ref_title = $query<GCButton.CElement>('.' + Classes.title, ref_datepicker)!
+			const ref_title = $query<GCButton.CElement>('.' + Classes.Title, ref_datepicker)!
 			const value = attributes.value!
 			const now = new Date()
 			const startDate = attributes.startDate!
 			const endDate = attributes.endDate!
 			const variant = GCButton.Variant
 			switch (attributes.viewtype) {
-			case ViewType.day: {
+			case ViewType.Day: {
 				const titleText = currentView.toLocaleDateString('en', {month: 'long', year: 'numeric'})
 				ref_title.textContent = titleText
 
-				const refs_empty = $query_all<HTMLDivElement>('.' + Classes.dateEmpty, ref_datepicker)
-				const refs_date = $query_all<GCButton.CElement>('.' + Classes.dateButton, ref_datepicker)
+				const refs_empty = $query_all<HTMLDivElement>('.' + Classes.DateEmpty, ref_datepicker)
+				const refs_date = $query_all<GCButton.CElement>('.' + Classes.DateButton, ref_datepicker)
 				for (let i = 0; i < refs_empty.length; i++) {
 					const ref = refs_empty[i]
 					if (i < startDay) {
@@ -194,55 +194,55 @@ export namespace CDatePicker {
 						currentView.getMonth(),
 						i + 1
 					)
-					$set_attr(ref, ButtonAttributes.date, date.toISOString())
+					$set_attr(ref, ButtonAttributes.Date, date.toISOString())
 					ref.disabled = isDateOutRange_YMD(date, startDate, endDate)
 
 					GCButton.update(ref, {Button: {variant: isDateEqual_YMD(date, value)
-						? variant.filled
+						? variant.Filled
 						: isDateEqual_YMD(date, now)
-							? variant.tonal
-							: variant.transparent
+							? variant.Tonal
+							: variant.Transparent
 					}})
 				}
 				break
 			}
-			case ViewType.month: {
+			case ViewType.Month: {
 				const year = currentView.getFullYear()
 				const titleText = currentView.toLocaleDateString('en', {year: 'numeric'})
 				ref_title.textContent = titleText
 
-				const refs_month = $query_all<GCButton.CElement>('.' + Classes.monthButton, ref_datepicker)
+				const refs_month = $query_all<GCButton.CElement>('.' + Classes.MonthButton, ref_datepicker)
 				for (let i = 0; i < refs_month.length; i++) {
 					const ref = refs_month[i]
 					const date = new Date(year, i, 1)
-					$set_attr(ref, ButtonAttributes.date, date.toISOString())
+					$set_attr(ref, ButtonAttributes.Date, date.toISOString())
 					ref.disabled = isDateOutRange_YM(date, startDate, endDate)
 					GCButton.update(ref, {Button: {variant: isDateEqual_YM(date, value)
-						? variant.filled
+						? variant.Filled
 						: isDateEqual_YM(date, now)
-							? variant.tonal
-							: variant.transparent
+							? variant.Tonal
+							: variant.Transparent
 					}})
 				}
 				break
 			}
-			case ViewType.year: {
+			case ViewType.Year: {
 				const year = currentView.getFullYear()
 				const titleText = year + '-' + (year + 15)
 				ref_title.textContent = titleText
 
-				const refs_year = $query_all<GCButton.CElement>('.' + Classes.yearButton, ref_datepicker)
+				const refs_year = $query_all<GCButton.CElement>('.' + Classes.YearButton, ref_datepicker)
 				for (let i = 0; i < refs_year.length; i++) {
 					const ref = refs_year[i]
 					const date = new Date(year + i, 0, 1)
 					ref.textContent = year + i + ''
-					ref.setAttribute(ButtonAttributes.date, date.toISOString())
+					ref.setAttribute(ButtonAttributes.Date, date.toISOString())
 					ref.disabled = isDateOutRange_Y(date, startDate, endDate)
 					GCButton.update(ref, {Button: {variant: isDateEqual_Y(date, value)
-						? variant.filled
+						? variant.Filled
 						: isDateEqual_Y(date, now)
-							? variant.tonal
-							: variant.transparent
+							? variant.Tonal
+							: variant.Transparent
 					}})
 				}
 				break
@@ -250,15 +250,15 @@ export namespace CDatePicker {
 		}
 
 		function initDates(): void {
-			$set_attr(ref_datepicker, Attributes.viewType, ViewType.day)
+			$set_attr(ref_datepicker, Attributes.viewType, ViewType.Day)
 			if (attributes.startDate === null) {
-				$set_attr(ref_datepicker, Attributes.start, new Date(0).toISOString())
+				$set_attr(ref_datepicker, Attributes.Start, new Date(0).toISOString())
 			}
 
 			if (attributes.endDate === null) {
 				$set_attr(
 					ref_datepicker,
-					Attributes.end,
+					Attributes.End,
 					new Date(new Date().getFullYear() + 200, 0, 1).toISOString()
 				)
 			}
@@ -266,7 +266,7 @@ export namespace CDatePicker {
 			if (attributes.value === null) {
 				$set_attr(
 					ref_datepicker,
-					Attributes.value,
+					Attributes.Value,
 					new Date().toISOString()
 				)
 			}
@@ -274,34 +274,34 @@ export namespace CDatePicker {
 
 		function changeViewType(type: ViewType): void {
 			switch (type) {
-			case ViewType.day:
-				$set_attr(ref_datepicker, Attributes.viewType, ViewType.day)
+			case ViewType.Day:
+				$set_attr(ref_datepicker, Attributes.viewType, ViewType.Day)
 				if (isAnimationAllowed()) {
-					const ref_date = $query<HTMLDivElement>('.' + Classes.date, ref_datepicker)
+					const ref_date = $query<HTMLDivElement>('.' + Classes.Date, ref_datepicker)
 					ref_date?.animate({
 						scale: [0.85, 1],
 						opacity: [0, 1]
-					}, {duration: 250, easing: AnimationEasing.spring})
+					}, {duration: 250, easing: AnimationEasing.Spring})
 				}
 				break
-			case ViewType.month:
-				$set_attr(ref_datepicker, Attributes.viewType, ViewType.month)
+			case ViewType.Month:
+				$set_attr(ref_datepicker, Attributes.viewType, ViewType.Month)
 				if (isAnimationAllowed()) {
-					const ref_month = $query<HTMLDivElement>('.' + Classes.month, ref_datepicker)
+					const ref_month = $query<HTMLDivElement>('.' + Classes.Month, ref_datepicker)
 					ref_month?.animate({
 						scale: [0.85, 1],
 						opacity: [0, 1]
-					}, {duration: 250, easing: AnimationEasing.spring})
+					}, {duration: 250, easing: AnimationEasing.Spring})
 				}
 				break
-			case ViewType.year:
-				$set_attr(ref_datepicker, Attributes.viewType, ViewType.year)
+			case ViewType.Year:
+				$set_attr(ref_datepicker, Attributes.viewType, ViewType.Year)
 				if (isAnimationAllowed()) {
-					const ref_year = $query<HTMLDivElement>('.' + Classes.year, ref_datepicker)
+					const ref_year = $query<HTMLDivElement>('.' + Classes.Year, ref_datepicker)
 					ref_year?.animate({
 						scale: [0.85, 1],
 						opacity: [0, 1]
-					}, {duration: 250, easing: AnimationEasing.spring})
+					}, {duration: 250, easing: AnimationEasing.Spring})
 				}
 				break
 			}
@@ -313,14 +313,14 @@ export namespace CDatePicker {
 		function selectDate(date: Date): void {
 			updateView(date)
 			switch (attributes.viewtype) {
-			case ViewType.day: {
-				$set_attr(ref_datepicker, Attributes.value, date.toISOString())
-				ref_datepicker.dispatchEvent(new CustomEvent(Events.change))
+			case ViewType.Day: {
+				$set_attr(ref_datepicker, Attributes.Value, date.toISOString())
+				ref_datepicker.dispatchEvent(new CustomEvent(Events.Change))
 				ref_datepicker.hidePopover()
 				break
 			}
-			case ViewType.month: changeViewType(ViewType.day); break
-			case ViewType.year: changeViewType(ViewType.month); break
+			case ViewType.Month: changeViewType(ViewType.Day); break
+			case ViewType.Year: changeViewType(ViewType.Month); break
 			}
 		}
 
@@ -329,18 +329,18 @@ export namespace CDatePicker {
 			if (!ref) return
 
 			const classList = ref.classList
-			if (classList.contains(Classes.next)) {
+			if (classList.contains(Classes.Next)) {
 				next()
 			}
-			else if (classList.contains(Classes.previous)) {
+			else if (classList.contains(Classes.Previous)) {
 				previous()
 			}
-			else if (classList.contains(Classes.title)) {
+			else if (classList.contains(Classes.Title)) {
 				const viewtype = attributes.viewtype
-				changeViewType(viewtype === ViewType.month? ViewType.year : ViewType.month)
+				changeViewType(viewtype === ViewType.Month? ViewType.Year : ViewType.Month)
 			}
-			else if (ref.hasAttribute(ButtonAttributes.date)) {
-				const parsed = Date.parse(ref.getAttribute(ButtonAttributes.date)!)
+			else if (ref.hasAttribute(ButtonAttributes.Date)) {
+				const parsed = Date.parse(ref.getAttribute(ButtonAttributes.Date)!)
 				if (isNumberNotDefined(parsed)) return
 
 				const date = new Date(parsed)
@@ -375,7 +375,7 @@ export namespace CDatePicker {
 
 	export function register(...refs_datepicker: CElement[]): void {
 		if (refs_datepicker.length === 0) {
-			refs_datepicker = [...$query_all<CElement>('.' + Classes.datepicker)]
+			refs_datepicker = [...$query_all<CElement>('.' + Classes.Datepicker)]
 		}
 
 		GCPopover.register(...refs_datepicker)
@@ -407,124 +407,124 @@ export namespace CDatePicker {
 	): CElement {
 		const opt = options?.DatePicker
 		GCPopover.update(ref_datepicker, options)
-		$classlist(ref_datepicker, Classes.datepicker)
-		$set_attr(ref_datepicker, Attributes.viewType, ViewType.day)
+		$classlist(ref_datepicker, Classes.Datepicker)
+		$set_attr(ref_datepicker, Attributes.viewType, ViewType.Day)
 
-		if (!$has_attr(ref_datepicker, Attributes.start)) {
-			$set_attr(ref_datepicker, Attributes.start, new Date(0).toISOString())
+		if (!$has_attr(ref_datepicker, Attributes.Start)) {
+			$set_attr(ref_datepicker, Attributes.Start, new Date(0).toISOString())
 		}
 
-		if (!$has_attr(ref_datepicker, Attributes.value)) {
-			$set_attr(ref_datepicker, Attributes.value, new Date().toISOString())
+		if (!$has_attr(ref_datepicker, Attributes.Value)) {
+			$set_attr(ref_datepicker, Attributes.Value, new Date().toISOString())
 		}
 
-		if (!$has_attr(ref_datepicker, Attributes.end)) {
-			$set_attr(ref_datepicker, Attributes.end, new Date(new Date().getFullYear() + 200, 0, 1).toISOString())
+		if (!$has_attr(ref_datepicker, Attributes.End)) {
+			$set_attr(ref_datepicker, Attributes.End, new Date(new Date().getFullYear() + 200, 0, 1).toISOString())
 		}
 
 		const opt_startDate = opt?.startDate
 		if (opt_startDate) {
-			$set_attr(ref_datepicker, Attributes.start, opt_startDate.toISOString())
+			$set_attr(ref_datepicker, Attributes.Start, opt_startDate.toISOString())
 		}
 
 		const opt_endDate = opt?.endDate
 		if (opt_endDate) {
-			$set_attr(ref_datepicker, Attributes.end, opt_endDate.toISOString())
+			$set_attr(ref_datepicker, Attributes.End, opt_endDate.toISOString())
 		}
 
 		const opt_value = opt?.value
 		if (opt_value) {
-			$set_attr(ref_datepicker, Attributes.value, opt_value.toISOString())
+			$set_attr(ref_datepicker, Attributes.Value, opt_value.toISOString())
 		}
 
 		// header
-		let ref_header = $query<HTMLDivElement>('.' + Classes.header, ref_datepicker)
+		let ref_header = $query<HTMLDivElement>('.' + Classes.Header, ref_datepicker)
 		if (!ref_header) {
 			ref_header = $create('div')
-			$classlist(ref_header, Classes.header)
+			$classlist(ref_header, Classes.Header)
 		}
 
 		// header -> title
-		let ref_title = $query<GCButton.CElement>('.' + Classes.title, ref_header)
+		let ref_title = $query<GCButton.CElement>('.' + Classes.Title, ref_header)
 		if (!ref_title) {
-			ref_title = GCButton.create({Button: {variant: GCButton.Variant.filled}})
-			$classlist(ref_title, Classes.title)
+			ref_title = GCButton.create({Button: {variant: GCButton.Variant.Filled}})
+			$classlist(ref_title, Classes.Title)
 		}
 
 		// header -> previous
-		let ref_previous = $query<GCButton.CIcon.CElement>('.' + Classes.previous, ref_header)
+		let ref_previous = $query<GCButton.CIcon.CElement>('.' + Classes.Previous, ref_header)
 		if (!ref_previous) {
 			ref_previous = GCButton.CIcon.create({
-				IconButton: {Icon: {code: IconCodes.chevronLeft}},
-				Button: {variant: GCButton.Variant.tonal}
+				IconButton: {Icon: {code: IconCodes.ChevronLeft}},
+				Button: {variant: GCButton.Variant.Tonal}
 			})
-			$classlist(ref_previous, Classes.previous)
+			$classlist(ref_previous, Classes.Previous)
 		}
 
 		// header -> next
-		let ref_next = $query<GCButton.CIcon.CElement>('.' + Classes.next, ref_header)
+		let ref_next = $query<GCButton.CIcon.CElement>('.' + Classes.Next, ref_header)
 		if (!ref_next) {
 			ref_next = GCButton.CIcon.create({
-				IconButton: {Icon: {code: IconCodes.chevronRight}},
-				Button: {variant: GCButton.Variant.tonal}
+				IconButton: {Icon: {code: IconCodes.ChevronRight}},
+				Button: {variant: GCButton.Variant.Tonal}
 			})
-			$classlist(ref_next, Classes.next)
+			$classlist(ref_next, Classes.Next)
 		}
 
 		// days
-		let ref_days = $query<HTMLDivElement>('.' + Classes.days, ref_datepicker)
+		let ref_days = $query<HTMLDivElement>('.' + Classes.Days, ref_datepicker)
 		if (!ref_days) {
 			ref_days = $create('div')
-			$classlist(ref_days, Classes.days)
+			$classlist(ref_days, Classes.Days)
 		}
 
 		// days -> day[]
-		let refs_day = [...$query_all<HTMLSpanElement>('.' + Classes.day, ref_days)]
+		let refs_day = [...$query_all<HTMLSpanElement>('.' + Classes.Day, ref_days)]
 		if (refs_day.length < 7) {
 			refs_day.length = 0
 			for (const day of ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']) {
 				const ref_span = $create('span')
 				ref_span.textContent = day.substring(0, 3)
 				$set_attr(ref_span, TooltipAttributes.Tooltip, day)
-				$classlist(ref_span, Classes.day)
+				$classlist(ref_span, Classes.Day)
 				refs_day.push(ref_span)
 			}
 		}
 
 		// divider
-		let ref_divider = $query<GCDivider.CElement>('.' + Classes.divider, ref_datepicker)
+		let ref_divider = $query<GCDivider.CElement>('.' + Classes.Divider, ref_datepicker)
 		if (!ref_divider) {
 			ref_divider = GCDivider.create()
-			$classlist(ref_divider, Classes.divider)
+			$classlist(ref_divider, Classes.Divider)
 		}
 
 		// year
-		let ref_year = $query<HTMLDivElement>('.' + Classes.year, ref_datepicker)
+		let ref_year = $query<HTMLDivElement>('.' + Classes.Year, ref_datepicker)
 		if (!ref_year) {
 			ref_year = $create('div')
-			$classlist(ref_year, Classes.year)
+			$classlist(ref_year, Classes.Year)
 		}
 
 		// year -> yearButton[]
-		let refs_year = [...$query_all<GCButton.CElement>('.' + Classes.yearButton, ref_year)]
+		let refs_year = [...$query_all<GCButton.CElement>('.' + Classes.YearButton, ref_year)]
 		if (refs_year.length < 16) {
 			refs_year.length = 0
 			for (let i = 0; i < 16; i++) {
 				const ref = GCButton.create()
-				$classlist(ref, Classes.yearButton)
+				$classlist(ref, Classes.YearButton)
 				refs_year.push(ref)
 			}
 		}
 
 		// month
-		let ref_month = $query<HTMLDivElement>('.' + Classes.month, ref_datepicker)
+		let ref_month = $query<HTMLDivElement>('.' + Classes.Month, ref_datepicker)
 		if (!ref_month) {
 			ref_month = $create('div')
-			$classlist(ref_month, Classes.month)
+			$classlist(ref_month, Classes.Month)
 		}
 
 		// month -> monthButton[]
-		let refs_month = [...$query_all<GCButton.CElement>('.' + Classes.monthButton, ref_month)]
+		let refs_month = [...$query_all<GCButton.CElement>('.' + Classes.MonthButton, ref_month)]
 		if (refs_month.length < 12) {
 			refs_month.length = 0
 			for (const name of [
@@ -533,47 +533,47 @@ export namespace CDatePicker {
 				'October', 'November', 'December'
 			]) {
 				const ref = GCButton.create({Button: {children: [name]}})
-				$classlist(ref, Classes.monthButton)
+				$classlist(ref, Classes.MonthButton)
 				refs_month.push(ref)
 			}
 		}
 
 		// date
-		let ref_date = $query<HTMLDivElement>('.' + Classes.date, ref_datepicker)
+		let ref_date = $query<HTMLDivElement>('.' + Classes.Date, ref_datepicker)
 		if (!ref_date) {
 			ref_date = $create('div')
-			$classlist(ref_date, Classes.date)
+			$classlist(ref_date, Classes.Date)
 		}
 
 		// date -> dateEmpty[]
-		let refs_empty = [...$query_all<HTMLDivElement>('.' + Classes.dateEmpty, ref_date)]
+		let refs_empty = [...$query_all<HTMLDivElement>('.' + Classes.DateEmpty, ref_date)]
 		if (refs_empty.length < 6) {
 			refs_empty.length = 0
 			for (let i = 0; i < 6; i++) {
 				const ref = $create('div')
-				$classlist(ref, Classes.dateEmpty)
+				$classlist(ref, Classes.DateEmpty)
 				refs_empty.push(ref)
 			}
 		}
 
 		// date -> dateButton[]
-		let refs_date = [...$query_all<GCButton.CElement>('.' + Classes.dateButton, ref_date)]
+		let refs_date = [...$query_all<GCButton.CElement>('.' + Classes.DateButton, ref_date)]
 		if (refs_date.length < 31) {
 			refs_date.length = 0
 			for (let i = 0; i < 31; i++) {
 				const ref = GCButton.create({
 					Button: {children: [`${i + 1}`]}
 				})
-				$classlist(ref, Classes.dateButton)
+				$classlist(ref, Classes.DateButton)
 				refs_date.push(ref)
 			}
 		}
 
 		// content
-		let ref_content = $query<HTMLDivElement>('.' + Classes.content, ref_datepicker)
+		let ref_content = $query<HTMLDivElement>('.' + Classes.Content, ref_datepicker)
 		if (!ref_content) {
 			ref_content = $create('div')
-			$classlist(ref_content, Classes.content)
+			$classlist(ref_content, Classes.Content)
 		}
 
 		const opt_children = opt?.children
@@ -615,7 +615,7 @@ export namespace CDatePicker {
 	}
 
 	export function getValue(ref_datepicker: CElement): Date | null {
-		const value = $get_attr(ref_datepicker, Attributes.value)
+		const value = $get_attr(ref_datepicker, Attributes.Value)
 		if (value) {
 			const date = new Date(value)
 			if (isNumberDefined(date.valueOf())) {

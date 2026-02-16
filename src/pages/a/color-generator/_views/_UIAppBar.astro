@@ -26,19 +26,19 @@ const animations: {
 	icon: number
 }[] = [
 	{
-		value: PlatformAnimationMode.auto,
+		value: PlatformAnimationMode.Auto,
 		text: 'Automatic',
-		icon: IconCodes.videoClipOptimize
+		icon: IconCodes.VideoClipOptimize
 	},
 	{
-		value: PlatformAnimationMode.on,
+		value: PlatformAnimationMode.On,
 		text: 'On',
-		icon: IconCodes.videoClip
+		icon: IconCodes.VideoClip
 	},
 	{
-		value: PlatformAnimationMode.off,
+		value: PlatformAnimationMode.Off,
 		text: 'Off',
-		icon: IconCodes.videoClipOff
+		icon: IconCodes.VideoClipOff
 	},
 ]
 const themes: {
@@ -47,19 +47,19 @@ const themes: {
 	icon: number
 }[] = [
 	{
-		value: PlatformThemeMode.auto,
+		value: PlatformThemeMode.Auto,
 		text: 'Automatic',
-		icon: IconCodes.laptopSettings
+		icon: IconCodes.LaptopSettings
 	},
 	{
-		value: PlatformThemeMode.light,
+		value: PlatformThemeMode.Light,
 		text: 'Light',
-		icon: IconCodes.weatherSunny
+		icon: IconCodes.WeatherSunny
 	},
 	{
-		value: PlatformThemeMode.dark,
+		value: PlatformThemeMode.Dark,
 		text: 'Dark',
-		icon: IconCodes.weatherMoon
+		icon: IconCodes.WeatherMoon
 	},
 ]
 ---
@@ -81,17 +81,17 @@ const themes: {
 			id={ElementIds.apInf_btn}
 			data-tooltip="Info"
 			aria-label="Info"
-			IconButtonCode={IconCodes.info}
+			IconButtonCode={IconCodes.Info}
 			popovertarget={ElementIds.apInf_menu}
 		/>
 		<Menu id={ElementIds.apInf_menu} PopoverAnchorBy={ElementIds.apInf_btn}>
 			<MenuHeader>{APP.name}</MenuHeader>
 			<MenuItem id={ElementIds.apInf_shareBtn}>
-				<Icon IconCode={IconCodes.shareAndroid}/>
+				<Icon IconCode={IconCodes.ShareAndroid}/>
 				Share
 			</MenuItem>
-			<LinkMenuItem href={'mailto:' + ExternalLinks.contactEmail + '?subject=' + encodeURI(APP.name)}>
-				<Icon IconCode={IconCodes.chat}/>
+			<LinkMenuItem href={'mailto:' + ExternalLinks.ContactEmail + '?subject=' + encodeURI(APP.name)}>
+				<Icon IconCode={IconCodes.Chat}/>
 				Send feedback
 			</LinkMenuItem>
 			<Divider />
@@ -99,25 +99,25 @@ const themes: {
 				<img src={logoRedmerah.src} style={{width: pxToRem(20) + 'rem'}}/>
 				Redmerah
 			</LinkMenuItem>
-			<LinkMenuItem href={RoutesLinks.apps}>
-				<Icon IconCode={IconCodes.apps}/>
+			<LinkMenuItem href={RoutesLinks.Apps}>
+				<Icon IconCode={IconCodes.Apps}/>
 				More apps
 			</LinkMenuItem>
-			<LinkMenuItem href={RoutesLinks.about}>
-				<Icon IconCode={IconCodes.info}/>
+			<LinkMenuItem href={RoutesLinks.About}>
+				<Icon IconCode={IconCodes.Info}/>
 				About us
 			</LinkMenuItem>
-			<LinkMenuItem href={RoutesLinks.privacy}>
-				<Icon IconCode={IconCodes.shieldCheckmark}/>
+			<LinkMenuItem href={RoutesLinks.Privacy}>
+				<Icon IconCode={IconCodes.ShieldCheckmark}/>
 				Privacy policy
 			</LinkMenuItem>
-			<LinkMenuItem href={RoutesLinks.terms}>
-				<Icon IconCode={IconCodes.receipt}/>
+			<LinkMenuItem href={RoutesLinks.Terms}>
+				<Icon IconCode={IconCodes.Receipt}/>
 				Terms & conditions
 				<MenuIndent />
 			</LinkMenuItem>
-			<LinkMenuItem href={ExternalLinks.donate} LinkButtonNewTab>
-				<Icon IconCode={IconCodes.gift}/>
+			<LinkMenuItem href={ExternalLinks.Donate} LinkButtonNewTab>
+				<Icon IconCode={IconCodes.Gift}/>
 				Donate
 			</LinkMenuItem>
 			<MenuHeader>&copy; {new Date().getFullYear()} Redmerah</MenuHeader>
@@ -126,17 +126,17 @@ const themes: {
 		<IconButton
 			id={ElementIds.apSett_btn}
 			data-tooltip="Settings"
-			IconButtonCode={IconCodes.settings}
+			IconButtonCode={IconCodes.Settings}
 			aria-label="Settings"
 			popovertarget={ElementIds.apSett_menu}
 		/>
 		<Menu id={ElementIds.apSett_menu} PopoverAnchorBy={ElementIds.apSett_btn}>
 			<SubMenuItem
 				popovertarget={ElementIds.apSett_animationMenu}>
-				<Icon IconCode={IconCodes.playCircleHint}/>
+				<Icon IconCode={IconCodes.PlayCircleHint}/>
 				Animation
 				<div style="flex:1"/>
-				<Icon IconCode={IconCodes.chevronRight}/>
+				<Icon IconCode={IconCodes.ChevronRight}/>
 			</SubMenuItem>
 			<SubMenu
 				style={{
@@ -145,7 +145,7 @@ const themes: {
 				id={ElementIds.apSett_animationMenu}>
 				{animations.map(v =>
 					<RadioMenuItem
-						RadioMenuItemName={RadioNames.animation}
+						RadioMenuItemName={RadioNames.Animation}
 						RadioMenuItemChecked={DEFAULT_ANIMATION === v.value}
 						RadioMenuItemValue={v.value}>
 						<Icon IconCode={v.icon}/>
@@ -156,10 +156,10 @@ const themes: {
 
 			<SubMenuItem
 				popovertarget={ElementIds.apSett_themeMenu}>
-				<Icon IconCode={IconCodes.weatherSunny}/>
+				<Icon IconCode={IconCodes.WeatherSunny}/>
 				Theme
 				<div style="flex:1"/>
-				<Icon IconCode={IconCodes.chevronRight}/>
+				<Icon IconCode={IconCodes.ChevronRight}/>
 			</SubMenuItem>
 			<SubMenu
 				style={{
@@ -168,7 +168,7 @@ const themes: {
 				id={ElementIds.apSett_themeMenu}>
 				{themes.map(v =>
 					<RadioMenuItem
-						RadioMenuItemName={RadioNames.theme}
+						RadioMenuItemName={RadioNames.Theme}
 						RadioMenuItemChecked={DEFAULT_THEME === v.value}
 						RadioMenuItemValue={v.value}>
 						<Icon IconCode={v.icon}/>
@@ -181,7 +181,7 @@ const themes: {
 		<IconButton
 			id={ElementIds.ap_copyBtn}
 			data-tooltip="Copy palette"
-			IconButtonCode={IconCodes.copy}
+			IconButtonCode={IconCodes.Copy}
 			aria-label="Copy palette"
 		/>
 	</Fragment>

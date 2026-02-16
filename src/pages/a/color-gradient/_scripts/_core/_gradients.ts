@@ -71,23 +71,23 @@ export type GradientStoreType = Readonly<{
 	selected: ObservableStore<Readonly<GradientItem>>
 	gradients: ObservableStore<Readonly<GradientItem>>[]
 }>
-const _animationOption = {duration: 250, easing: AnimationEasing.spring}
+const _animationOption = {duration: 250, easing: AnimationEasing.Spring}
 const _defaultGradient = new ObservableStore<Readonly<GradientItem>>({
 	angle: 0,
-	colorMethod: PolarColorSpace.auto,
+	colorMethod: PolarColorSpace.Auto,
 	stops: [
 		{size: 0, color: DEFAULT_STOP_COLOR_1},
 		{size: 100, color: DEFAULT_STOP_COLOR_2}
 	],
-	hueMethod: HueInterpolationMethod.auto,
+	hueMethod: HueInterpolationMethod.Auto,
 	positionX: 0,
 	positionY: 0,
 	repeat: false,
-	shape: RadialGradientShape.circle,
+	shape: RadialGradientShape.Circle,
 	height: 0,
 	size: 0,
 	width: 0,
-	type: GradientType.linear
+	type: GradientType.Linear
 })
 export const GradientStore = new ObservableStore<GradientStoreType>({
 	selected: _defaultGradient,
@@ -161,16 +161,16 @@ const _ref_actionsMenu = $(ElementIds.bdGrad_actionsMenu) as CMenu.CElement
 const _ref_controlPopover = $(ElementIds.bdGrad_controlPopover) as CMenu.CElement
 const _ref_gradientBody = $$<HTMLDivElement>(`.${CSSClasses.bodyGradients}`)!
 const _refs_actionButton = () => $$$<CButton.CElement>(
-	`.${CSSClasses.bodyGradients} [data-command="${Commands.grad_openActions}"]`
+	`.${CSSClasses.bodyGradients} [data-command="${Commands.GradientOpenActions}"]`
 )
 const _refs_editButton = () => $$$<CButton.CElement>(
-	`.${CSSClasses.bodyGradients} [data-command="${Commands.grad_edit}"]`
+	`.${CSSClasses.bodyGradients} [data-command="${Commands.GradientEdit}"]`
 )
 const _refs_ctrlStop_pickColor = () => $$$<CTextField.CButton.CElement>(
-	`[data-command=${CSS.escape(Commands.gradStop_pickColor)}]`
+	`[data-command=${CSS.escape(Commands.GradientStopPickColor)}]`
 )
 const _refs_ctrlStop_action = () => $$$<CTextField.CButton.CElement>(
-	`[data-command=${CSS.escape(Commands.gradStop_actions)}]`
+	`[data-command=${CSS.escape(Commands.GradientStopActions)}]`
 )
 let _selectedStopIndex = 0
 let _selectedGradientIndex = 0
@@ -203,14 +203,14 @@ function _updateGradientControlView(updateStops = true): void {
 
 		const hidden = new Set<HTMLElement>()
 		if (![
-			PolarColorSpace.hsl, PolarColorSpace.hwb,
-			PolarColorSpace.lch, PolarColorSpace.oklch
+			PolarColorSpace.Hsl, PolarColorSpace.Hwb,
+			PolarColorSpace.Lch, PolarColorSpace.Oklch
 		].includes(gradient.colorMethod as PolarColorSpace)) {
 			hidden.add(_ref_ctrlProp_hueInterpolation)
 			hidden.add(_ref_ctrlPropLbl_hueInterpolation)
 		}
 
-		if (type !== GradientType.radial) {
+		if (type !== GradientType.Radial) {
 			hidden.add(_ref_ctrlProp_radialShape)
 			hidden.add(_ref_ctrlPropLbl_radialShape)
 			hidden.add(_ref_ctrlPropGrp_widthHeight)
@@ -218,22 +218,22 @@ function _updateGradientControlView(updateStops = true): void {
 			hidden.add(_ref_ctrlPropLbl_size)
 		}
 		else {
-			if (shape !== RadialGradientShape.circle) {
+			if (shape !== RadialGradientShape.Circle) {
 				hidden.add(_ref_ctrlProp_size.parentElement!)
 				hidden.add(_ref_ctrlPropLbl_size)
 			}
 
-			if (shape !== RadialGradientShape.ellipse) {
+			if (shape !== RadialGradientShape.Ellipse) {
 				hidden.add(_ref_ctrlPropGrp_widthHeight)
 			}
 		}
 
-		if (![GradientType.conic, GradientType.linear].includes(type)) {
+		if (![GradientType.Conic, GradientType.Linear].includes(type)) {
 			hidden.add(_ref_ctrlProp_angle.parentElement!)
 			hidden.add(_ref_ctrlPropLbl_angle)
 		}
 
-		if (![GradientType.conic, GradientType.radial].includes(type)) {
+		if (![GradientType.Conic, GradientType.Radial].includes(type)) {
 			hidden.add(_ref_ctrlPropGrp_positionXY)
 		}
 
@@ -433,9 +433,9 @@ function _updateGradientControlView(updateStops = true): void {
 			}
 
 			const ref_sizeInput = $$<HTMLInputElement>('.' + CSSGroup.stopSizeInput, ref)
-			const ref_sizeSlider = $$<CSlider.CElement>(`.${CSlider.Classes.slider}`, ref)
+			const ref_sizeSlider = $$<CSlider.CElement>(`.${CSlider.Classes.Slider}`, ref)
 			const ref_colorInput = $$<HTMLInputElement>('.' + CSSGroup.stopColorInput, ref)
-			const ref_colorButton = $$<CTextField.CButton.CElement>(`[data-command="${Commands.gradStop_pickColor}"]`, ref)
+			const ref_colorButton = $$<CTextField.CButton.CElement>(`[data-command="${Commands.GradientStopPickColor}"]`, ref)
 			updateControlEvents(i, ref_sizeInput, ref_sizeSlider, ref_colorInput, ref_colorButton)
 		}
 
@@ -455,21 +455,21 @@ function _updateGradientControlView(updateStops = true): void {
 				trailing: [
 					CTextField.CButton.create({Button: {
 						refs: {button(ref) {
-							ref.setAttribute('data-command', Commands.gradStop_pickColor)
+							ref.setAttribute('data-command', Commands.GradientStopPickColor)
 							ref.setAttribute('data-tooltip', 'Pick color')
 							ref.setAttribute('popovertarget', ElementIds.bdGradStop_colorPicker)
 							ref.popoverTargetAction = 'show'
 							updateControlEvents(index, null, null, null, ref)
 						}},
 						children: [CIcon.create({Icon: {
-							code: IconCodes.circle,
+							code: IconCodes.Circle,
 							filled: true
 						}})]
 					}}),
 					CTextField.CButton.create({Button: {
-						children: [CIcon.create({Icon: {code: IconCodes.moreHorizontal}})],
+						children: [CIcon.create({Icon: {code: IconCodes.MoreHorizontal}})],
 						refs: {button(ref) {
-							ref.setAttribute('data-command', Commands.gradStop_actions)
+							ref.setAttribute('data-command', Commands.GradientStopActions)
 							ref.setAttribute('popovertarget', ElementIds.bdGradStop_actions)
 							ref.popoverTargetAction = 'show'
 							ref.setAttribute('data-tooltip', 'More')
@@ -510,11 +510,11 @@ function _updateGradientListView(): void {
 		if (!grad) {continue}
 
 		const ref_preview = $$<HTMLDivElement>(
-			`[data-command="${CSS.escape(Commands.grad_edit)}"]>div`, ref
+			`[data-command="${CSS.escape(Commands.GradientEdit)}"]>div`, ref
 		)
 		ref_preview?.style.setProperty('background', gradientToCSSText(
-			{...grad.value, angle: 90, type: GradientType.linear},
-			ColorSpace.hex,
+			{...grad.value, angle: 90, type: GradientType.Linear},
+			ColorSpace.HEX,
 			false
 		))
 	}
@@ -527,20 +527,20 @@ function _updateGradientListView(): void {
 		const ref_button = CButton.create({Button: { children: [(() => {
 			const div = document.createElement('div')
 			div.style.setProperty('background', gradientToCSSText(
-				{...grad.value, angle: 90, type: GradientType.linear},
-				ColorSpace.hex,
+				{...grad.value, angle: 90, type: GradientType.Linear},
+				ColorSpace.HEX,
 				false
 			))
 			return div
 		})()]}})
-		ref_button.setAttribute('data-command', Commands.grad_edit)
+		ref_button.setAttribute('data-command', Commands.GradientEdit)
 		ref_button.setAttribute('popovertarget', ElementIds.bdGrad_controlPopover)
 		ref_button.setAttribute('popovertargetaction', 'show')
 
 		const ref_iconBtn = CButton.CIcon.create({
-			IconButton: {Icon: {code: IconCodes.moreHorizontal}},
+			IconButton: {Icon: {code: IconCodes.MoreHorizontal}},
 		})
-		ref_iconBtn.setAttribute('data-command', Commands.grad_openActions)
+		ref_iconBtn.setAttribute('data-command', Commands.GradientOpenActions)
 		ref_iconBtn.setAttribute('popovertarget', ElementIds.bdGrad_actionsMenu)
 		ref_iconBtn.setAttribute('popovertargetaction', 'show')
 		ref_iconBtn.setAttribute('data-tooltip', 'Actions')
@@ -580,18 +580,18 @@ function _initEvents(): void {
 			updateGradient(v => {
 				v.type = value
 				switch (value) {
-				case GradientType.linear:
+				case GradientType.Linear:
 					v.angle = 0
 					break
-				case GradientType.radial:
+				case GradientType.Radial:
 					v.positionX = 50
 					v.positionY = 50
-					v.shape = RadialGradientShape.ellipse
+					v.shape = RadialGradientShape.Ellipse
 					v.height = 100
 					v.size = 350
 					v.width = 100
 					break
-				case GradientType.conic:
+				case GradientType.Conic:
 					v.angle = 0
 					v.positionX = 50
 					v.positionY = 50
@@ -652,7 +652,7 @@ function _initEvents(): void {
 	}
 
 	function controlStops(): void {
-		_ref_ctrlStop_colorPicker.addEventListener(CColorPicker.Events.input, () => {
+		_ref_ctrlStop_colorPicker.addEventListener(CColorPicker.Events.Input, () => {
 			if (_selectedStopIndex <= -1) {return}
 
 			const stop = GradientStore.value.selected.value.stops[_selectedStopIndex]
@@ -816,7 +816,7 @@ function _initEvents(): void {
 			}
 
 			switch (command) {
-			case Commands.gradStop_pickColor: {
+			case Commands.GradientStopPickColor: {
 				if (!hasStopIndex()) {
 					return ev.preventDefault()
 				}
@@ -836,7 +836,7 @@ function _initEvents(): void {
 						'.' + CSSGroup.stopColorInput
 					)
 					ref_stopColorPickerButton = liRef?.querySelector<CButton.CElement>(
-						`[data-command=${CSS.escape(Commands.gradStop_pickColor)}]`
+						`[data-command=${CSS.escape(Commands.GradientStopPickColor)}]`
 					)
 					CPopover.reposition(_ref_ctrlStop_colorPicker)
 					for (const ref of _refs_ctrlStop_pickColor()) {
@@ -846,7 +846,7 @@ function _initEvents(): void {
 					}
 				})
 			} break
-			case Commands.gradStop_actions: {
+			case Commands.GradientStopActions: {
 				if (!hasStopIndex()) {
 					return ev.preventDefault()
 				}
@@ -909,7 +909,7 @@ function _initEvents(): void {
 			}
 
 			switch (command) {
-			case Commands.grad_edit: {
+			case Commands.GradientEdit: {
 				const id = getButtonId()
 				const gradientItem = getGradientItem()
 				if (!gradientItem) {
@@ -933,7 +933,7 @@ function _initEvents(): void {
 					}
 				})
 			} break
-			case Commands.grad_openActions: {
+			case Commands.GradientOpenActions: {
 				const id = getButtonId()
 				const gradientItem = getGradientItem()
 				if (!gradientItem) {
@@ -1041,7 +1041,7 @@ function _initEvents(): void {
 function _updatePreviewBoxRefView(): void {
 	const gradients: string[] = []
 	for (const grad of GradientStore.value.gradients) {
-		gradients.push(gradientToCSSText(grad.value, ColorSpace.hex, false))
+		gradients.push(gradientToCSSText(grad.value, ColorSpace.HEX, false))
 	}
 
 	requestAnimationFrame(() => {
@@ -1060,11 +1060,11 @@ function _subscribeGradientPreviewRefView(v: Readonly<GradientItem>): void {
 
 			// hell yeah, query. At least I make selector faster though...
 			$$<HTMLDivElement>(
-				`li:nth-child(${index+1})>[data-command="${CSS.escape(Commands.grad_edit)}"]>div`,
+				`li:nth-child(${index+1})>[data-command="${CSS.escape(Commands.GradientEdit)}"]>div`,
 				_ref_gradients
 			)?.style.setProperty(
 				'background',
-				gradientToCSSText({...v, angle: 90, type: GradientType.linear}, ColorSpace.hex, false)
+				gradientToCSSText({...v, angle: 90, type: GradientType.Linear}, ColorSpace.HEX, false)
 			)
 		}
 

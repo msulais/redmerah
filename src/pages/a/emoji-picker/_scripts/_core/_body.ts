@@ -18,7 +18,7 @@ import { pxToRem } from "@/utils/css"
 
 const _animationOptions = {
 	duration: 250,
-	easing: AnimationEasing.spring
+	easing: AnimationEasing.Spring
 }
 const _ref_body = $(ElementIds.body) as HTMLElement
 const _ref_emojiList = $(ElementIds.bd_emojiList) as HTMLUListElement
@@ -29,7 +29,7 @@ const _ref_toastCopied = $(ElementIds.toa_copied) as CToast.CElement
 const _ref_textField = $(ElementIds.bd_input) as HTMLInputElement
 const _ref_copyTextField = $(ElementIds.bd_copyInput) as CTextField.CButton.CElement
 const _ref_dismissTextField = $(ElementIds.bd_dismissInput) as CTextField.CButton.CElement
-let _prevPage = Pages.smileyEmotion
+let _prevPage = Pages.SmileyEmotion
 let _prevEmojiList = EMOJIS_SMILEY_AND_EMOTION.map(v => v[0]).join()
 
 function _initEvents(): void {
@@ -74,58 +74,58 @@ export function updateEmojiList(page: Pages = NavigationStore.value.page): void 
 	let text = ''
 	let isUseSkinTone = false
 	switch (page) {
-	case Pages.smileyEmotion:
+	case Pages.SmileyEmotion:
 		text = 'Smiley & Emotion'
 		emojis = EMOJIS_SMILEY_AND_EMOTION
 		break
-	case Pages.personBody:
+	case Pages.PersonBody:
 		text = 'Person & Body'
 		emojis = EMOJIS_PERSON_AND_BODY
 		isUseSkinTone = true
 		LEVEL_2: switch (SettingsStore.value.skinTone) {
-		case SkinToneEmoji.none: break LEVEL_2
-		case SkinToneEmoji.light:
+		case SkinToneEmoji.None: break LEVEL_2
+		case SkinToneEmoji.Light:
 			emojis = EMOJIS_PERSON_AND_BODY_LIGHT_SKIN_TONE
 			break LEVEL_2
-		case SkinToneEmoji.mediumLight:
+		case SkinToneEmoji.MediumLight:
 			emojis = EMOJIS_PERSON_AND_BODY_MEDIUM_LIGHT_SKIN_TONE
 			break LEVEL_2
-		case SkinToneEmoji.medium:
+		case SkinToneEmoji.Medium:
 			emojis = EMOJIS_PERSON_AND_BODY_MEDIUM_SKIN_TONE
 			break LEVEL_2
-		case SkinToneEmoji.mediumDark:
+		case SkinToneEmoji.MediumDark:
 			emojis = EMOJIS_PERSON_AND_BODY_MEDIUM_DARK_SKIN_TONE
 			break LEVEL_2
-		case SkinToneEmoji.dark:
+		case SkinToneEmoji.Dark:
 			emojis = EMOJIS_PERSON_AND_BODY_DARK_SKIN_TONE
 			break LEVEL_2
 		}
 		break
-	case Pages.animalNature:
+	case Pages.AnimalNature:
 		text = 'Animal & Nature'
 		emojis = EMOJIS_ANIMAL_AND_NATURE
 		break
-	case Pages.foodDrink:
+	case Pages.FoodDrink:
 		text = 'Food & Drink'
 		emojis = EMOJIS_FOOD_AND_DRINK
 		break
-	case Pages.travelPlaces:
+	case Pages.TravelPlaces:
 		text = 'Travel & Places'
 		emojis = EMOJIS_TRAVEL_AND_PLACES
 		break
-	case Pages.activities:
+	case Pages.Activities:
 		text = 'Activities'
 		emojis = EMOJIS_ACTIVITIES
 		break
-	case Pages.object:
+	case Pages.Object:
 		text = 'Object'
 		emojis = EMOJIS_OBJECT
 		break
-	case Pages.symbols:
+	case Pages.Symbols:
 		text = 'Symbols'
 		emojis = EMOJIS_SYMBOLS
 		break
-	case Pages.flags:
+	case Pages.Flags:
 		text = 'Flags'
 		emojis = EMOJIS_FLAGS
 		break
@@ -150,21 +150,21 @@ export function updateEmojiList(page: Pages = NavigationStore.value.page): void 
 	_prevEmojiList = emojisText
 
 	if (!isSamePage){
-		const refs_selectedTab = $$$<CButton.CElement>(`:is(.${CSideBar.Classes.button},.${CDrawer.Classes.button})[aria-selected=true]`)
-		const refs_targetTab = $$$<CButton.CElement>(`:is(.${CSideBar.Classes.button},.${CDrawer.Classes.button})[data-page="${page}"]`)
+		const refs_selectedTab = $$$<CButton.CElement>(`:is(.${CSideBar.Classes.Button},.${CDrawer.Classes.Button})[aria-selected=true]`)
+		const refs_targetTab = $$$<CButton.CElement>(`:is(.${CSideBar.Classes.Button},.${CDrawer.Classes.Button})[data-page="${page}"]`)
 		_ref_skinToneOption.style.setProperty('display', isUseSkinTone? 'flex' : 'none')
 		for (const tab of refs_targetTab) {
 			const classList = tab.classList
 			tab.setAttribute('aria-selected', 'true')
-			if (classList.contains(CSideBar.Classes.button)) {
+			if (classList.contains(CSideBar.Classes.Button)) {
 				CSideBar.CButton.update(tab, {
-					Button: {variant: CButton.Variant.tonal},
+					Button: {variant: CButton.Variant.Tonal},
 					SideBarButton: {selected: true}
 				})
 			}
-			else if (classList.contains(CDrawer.Classes.button)) {
+			else if (classList.contains(CDrawer.Classes.Button)) {
 				CDrawer.CButton.update(tab, {
-					Button: {variant: CButton.Variant.tonal},
+					Button: {variant: CButton.Variant.Tonal},
 					DrawerButton: {selected: true}
 				})
 			}
@@ -173,15 +173,15 @@ export function updateEmojiList(page: Pages = NavigationStore.value.page): void 
 		for (const tab of refs_selectedTab) {
 			const classList = tab.classList
 			tab.setAttribute('aria-selected', 'false')
-			if (classList.contains(CSideBar.Classes.button)) {
+			if (classList.contains(CSideBar.Classes.Button)) {
 				CSideBar.CButton.update(tab, {
-					Button: {variant: CButton.Variant.transparent},
+					Button: {variant: CButton.Variant.Transparent},
 					SideBarButton: {selected: false}
 				})
 			}
-			else if (classList.contains(CDrawer.Classes.button)) {
+			else if (classList.contains(CDrawer.Classes.Button)) {
 				CDrawer.CButton.update(tab, {
-					Button: {variant: CButton.Variant.transparent},
+					Button: {variant: CButton.Variant.Transparent},
 					DrawerButton: {selected: false}
 				})
 			}

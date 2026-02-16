@@ -18,7 +18,7 @@ export type ProgrammerStoreType = Readonly<{
 }>
 
 export enum ProgrammerStoreCustomKeys {
-	calculate = 'calculate'
+	Calculate = 'calculate'
 }
 
 export const ProgrammerStore = new ObservableStore<ProgrammerStoreType>({
@@ -50,21 +50,21 @@ let _time_saveInput: null | number | NodeJS.Timeout = null
 
 function _inputToDecimal(input: string): string {
 	const type = ProgrammerStore.value.numberType
-	if (type !== NumberType.decimal) {
+	if (type !== NumberType.Decimal) {
 		input = input.replace(/[,\.]+/g, '')
 	}
 
 	switch (type) {
-	case NumberType.decimal: break
-	case NumberType.hexadecimal:
+	case NumberType.Decimal: break
+	case NumberType.Hexadecimal:
 		input = input.replace(/[0-9A-F]+/g, (v) => Number.parseInt(v, 16).toString())
 		break
-	case NumberType.octal:
+	case NumberType.Octal:
 		if (/[89]/.test(input)) throw Error()
 
 		input = input.replace(/[0-7]+/g, (v) => Number.parseInt(v, 8).toString())
 		break
-	case NumberType.binary:
+	case NumberType.Binary:
 		if (/[2-9]/.test(input)) throw Error()
 
 		input = input.replace(/[01]+/g, (v) => Number.parseInt(v, 2).toString())
@@ -100,14 +100,14 @@ function _subsNumberTypeChanges(v: ProgrammerStoreType, o: ProgrammerStoreType):
 	const bin = numberToBinary(output)
 	const parsedBin = Number.parseInt(bin, 2)
 	switch (ProgrammerStore.value.numberType) {
-	case NumberType.decimal: break
-	case NumberType.hexadecimal:
+	case NumberType.Decimal: break
+	case NumberType.Hexadecimal:
 		text = parsedBin.toString(16).toUpperCase()
 		break
-	case NumberType.octal:
+	case NumberType.Octal:
 		text = parsedBin.toString(8)
 		break
-	case NumberType.binary:
+	case NumberType.Binary:
 		text = bin
 		break
 	}
@@ -169,19 +169,19 @@ function _subsButtonsView(v: ProgrammerStoreType, o: ProgrammerStoreType): void 
 	let elements = _refs_decButton
 
 	switch (numberType) {
-	case NumberType.decimal:
+	case NumberType.Decimal:
 		cls = CSSClasses.bdPageProg_btnDec
 		elements = _refs_decButton
 		break
-	case NumberType.hexadecimal:
+	case NumberType.Hexadecimal:
 		cls = CSSClasses.bdPageProg_btnHex
 		elements = _refs_hexButton
 		break
-	case NumberType.octal:
+	case NumberType.Octal:
 		cls = CSSClasses.bdPageProg_btnOct
 		elements = _refs_octButton
 		break
-	case NumberType.binary:
+	case NumberType.Binary:
 		cls = CSSClasses.bdPageProg_btnBin
 		elements = _refs_binButton
 		break
@@ -205,25 +205,25 @@ function _subsNumberTypeView(v: ProgrammerStoreType, o: ProgrammerStoreType): vo
 	}
 
 	for (const ref of [_ref_hexButton, _ref_decButton, _ref_octButton, _ref_binButton]) {
-		CButton.update(ref!, {Button: {variant: CButton.Variant.transparent}})
+		CButton.update(ref!, {Button: {variant: CButton.Variant.Transparent}})
 	}
 
 	switch (v.numberType) {
-	case NumberType.decimal:
+	case NumberType.Decimal:
 		_ref_outputGroupDec.setAttribute('aria-selected', 'true')
-		CButton.update(_ref_decButton!, {Button: {variant: CButton.Variant.filled}})
+		CButton.update(_ref_decButton!, {Button: {variant: CButton.Variant.Filled}})
 		break
-	case NumberType.hexadecimal:
+	case NumberType.Hexadecimal:
 		_ref_outputGroupHex.setAttribute('aria-selected', 'true')
-		CButton.update(_ref_hexButton!, {Button: {variant: CButton.Variant.filled}})
+		CButton.update(_ref_hexButton!, {Button: {variant: CButton.Variant.Filled}})
 		break
-	case NumberType.octal:
+	case NumberType.Octal:
 		_ref_outputGroupOct.setAttribute('aria-selected', 'true')
-		CButton.update(_ref_octButton!, {Button: {variant: CButton.Variant.filled}})
+		CButton.update(_ref_octButton!, {Button: {variant: CButton.Variant.Filled}})
 		break
-	case NumberType.binary:
+	case NumberType.Binary:
 		_ref_outputGroupBin.setAttribute('aria-selected', 'true')
-		CButton.update(_ref_binButton!, {Button: {variant: CButton.Variant.filled}})
+		CButton.update(_ref_binButton!, {Button: {variant: CButton.Variant.Filled}})
 		break
 	}
 }
@@ -242,12 +242,12 @@ function _initEvents(): void {
 		const ref_btn = document.activeElement as CButton.CElement
 		if (!isTargetValidElement(_ref_output, ref_btn, el => el.tagName === 'BUTTON')) return
 
-		let type: NumberType = NumberType.decimal
+		let type: NumberType = NumberType.Decimal
 		switch (ref_btn) {
-		case _ref_hexButton: type = NumberType.hexadecimal; break
-		case _ref_decButton: type = NumberType.decimal; break
-		case _ref_octButton: type = NumberType.octal; break
-		case _ref_binButton: type = NumberType.binary; break
+		case _ref_hexButton: type = NumberType.Hexadecimal; break
+		case _ref_decButton: type = NumberType.Decimal; break
+		case _ref_octButton: type = NumberType.Octal; break
+		case _ref_binButton: type = NumberType.Binary; break
 		}
 
 		ProgrammerStore.update(v => v.numberType = type)

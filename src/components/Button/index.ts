@@ -19,20 +19,20 @@ export namespace CButton {
 	}
 
 	export enum Attributes {
-		variant = 'data-c-button-variant',
-		focused = 'data-c-button-focused'
+		Variant = 'data-c-button-variant',
+		Focused = 'data-c-button-focused'
 	}
 
 	export enum Variant {
-		filled      = 'filled',
-		outlined    = 'outlined',
-		tonal       = 'tonal',
-		transparent = 'transparent',
+		Filled      = 'filled',
+		Outlined    = 'outlined',
+		Tonal       = 'tonal',
+		Transparent = 'transparent',
 	}
 
 	export enum Classes {
-		button = 'c-button',
-		icon   = 'c-icon-button'
+		Button = 'c-button',
+		Icon   = 'c-icon-button'
 	}
 
 	export function create(options?: UpdateOptions): CElement {
@@ -43,19 +43,19 @@ export namespace CButton {
 	export function update(ref_button: CElement, options?: UpdateOptions): CElement {
 		const opt = options?.Button
 		const refs = opt?.refs
-		$classlist(ref_button, Classes.button)
+		$classlist(ref_button, Classes.Button)
 
 		const opt_variant = opt?.variant
 		if ($is_false(opt_variant)) {
-			$rm_attr(ref_button, Attributes.variant)
+			$rm_attr(ref_button, Attributes.Variant)
 		}
 		else if ($is_string(opt_variant) && isValidEnumValue(opt_variant, Variant)) {
-			$set_attr(ref_button, Attributes.variant, opt_variant)
+			$set_attr(ref_button, Attributes.Variant, opt_variant)
 		}
 
 		const opt_focused = opt?.focused
 		if (opt_focused !== undefined) {
-			$toggle_attr(ref_button, Attributes.focused, opt_focused)
+			$toggle_attr(ref_button, Attributes.Focused, opt_focused)
 		}
 
 		const opt_disabled = opt?.disabled
@@ -104,17 +104,17 @@ export namespace CButton {
 			const opt = options?.IconButton
 			const refs = opt?.refs
 			CButton.update(ref_iconButton, options)
-			$classlist(ref_iconButton, Classes.icon)
+			$classlist(ref_iconButton, Classes.Icon)
 
 			const opt_icon = opt
 			let ref_icon = $query<GCIcon.CElement>(
-				`.${GCIcon.Classes.icon}`, ref_iconButton
+				`.${GCIcon.Classes.Icon}`, ref_iconButton
 			)
 			if (ref_icon) {
 				GCIcon.update(ref_icon, opt_icon)
 			}
 			else {
-				ref_icon = GCIcon.create({Icon: {code: IconCodes.add as any} as any, ...opt_icon})
+				ref_icon = GCIcon.create({Icon: {code: IconCodes.Add as any} as any, ...opt_icon})
 				$children(ref_iconButton, ref_icon)
 			}
 
@@ -151,7 +151,7 @@ export namespace CButton {
 		): CElement {
 			const opt = options?.LinkButton
 			const refs = opt?.refs
-			$classlist(ref_linkButton, Classes.button)
+			$classlist(ref_linkButton, Classes.Button)
 
 			const opt_href = opt?.href
 			if ($is_false(opt_href)) {
@@ -163,10 +163,10 @@ export namespace CButton {
 
 			const opt_variant = opt?.variant
 			if ($is_false(opt_variant)) {
-				$rm_attr(ref_linkButton, Attributes.variant)
+				$rm_attr(ref_linkButton, Attributes.Variant)
 			}
 			else if ($is_string(opt_variant) && isValidEnumValue(opt_variant, Variant)) {
-				$set_attr(ref_linkButton, Attributes.variant, opt_variant)
+				$set_attr(ref_linkButton, Attributes.Variant, opt_variant)
 			}
 
 			const opt_newTab = opt?.newTab
@@ -181,7 +181,7 @@ export namespace CButton {
 
 			const opt_focused = opt?.focused
 			if ($is_bool(opt_focused)) {
-				$toggle_attr(ref_linkButton, Attributes.focused, opt_focused)
+				$toggle_attr(ref_linkButton, Attributes.Focused, opt_focused)
 			}
 
 			const opt_children = opt?.children
@@ -232,17 +232,17 @@ export namespace CButton {
 			const opt = options?.IconButton
 			const refs = opt?.refs
 			CLink.update(ref_iconButton, options)
-			$classlist(ref_iconButton, Classes.icon)
+			$classlist(ref_iconButton, Classes.Icon)
 
 			const opt_icon = opt
 			let ref_icon = $query<GCIcon.CElement>(
-				`.${GCIcon.Classes.icon}`, ref_iconButton
+				`.${GCIcon.Classes.Icon}`, ref_iconButton
 			)
 			if (ref_icon) {
 				GCIcon.update(ref_icon, opt_icon)
 			}
 			else {
-				ref_icon = GCIcon.create({Icon: {icon: IconCodes.add as any} as any, ...opt_icon})
+				ref_icon = GCIcon.create({Icon: {icon: IconCodes.Add as any} as any, ...opt_icon})
 				$children(ref_iconButton, ref_icon)
 			}
 

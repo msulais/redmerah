@@ -20,39 +20,39 @@ const items: {
 	controls: string
 }[] = [
 	{
-		icon: IconCodes.textNumberFormat,
+		icon: IconCodes.TextNumberFormat,
 		name: 'String',
-		page: Pages.string,
+		page: Pages.String,
 		controls: ElementIds.pg_string,
 	},
 	{
-		icon: IconCodes.codeText,
+		icon: IconCodes.CodeText,
 		name: 'Words',
-		page: Pages.words,
+		page: Pages.Words,
 		controls: ElementIds.pg_words,
 	},
 	{
-		icon: IconCodes.numberRow,
+		icon: IconCodes.NumberRow,
 		name: 'Numbers',
-		page: Pages.numbers,
+		page: Pages.Numbers,
 		controls: ElementIds.pg_numbers,
 	},
 	{
-		icon: IconCodes.color,
+		icon: IconCodes.Color,
 		name: 'Colors',
-		page: Pages.colors,
+		page: Pages.Colors,
 		controls: ElementIds.pg_colors,
 	},
 	{
-		icon: IconCodes.textBulletListSquare,
+		icon: IconCodes.TextBulletListSquare,
 		name: 'Selection',
-		page: Pages.selection,
+		page: Pages.Selection,
 		controls: ElementIds.pg_selection,
 	},
 	{
-		icon: IconCodes.people,
+		icon: IconCodes.People,
 		name: 'Teams',
-		page: Pages.teams,
+		page: Pages.Teams,
 		controls: ElementIds.pg_teams,
 	},
 ]
@@ -65,7 +65,7 @@ const items: {
 	aria-label="Navigation">
 	<IconButton
 		style={{width: 'fit-content'}}
-		IconButtonCode={IconCodes.lineHorizontal3}
+		IconButtonCode={IconCodes.LineHorizontal3}
 		data-tooltip="Minimize side bar"
 		id={ElementIds.nav_minimizeBtn}
 	/>
@@ -75,7 +75,7 @@ const items: {
 		aria-selected={DEFAULT_PAGE === v.page}
 		aria-controls={v.controls}
 		SideBarButtonSelected={DEFAULT_PAGE === v.page}
-		ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.tonal : undefined}>
+		ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.Tonal : undefined}>
 		<Icon
 			slot="leading"
 			IconCode={v.icon}
@@ -93,7 +93,7 @@ const items: {
 		style="width:min-content"
 		popovertarget={ElementIds.nav_drawer}
 		popovertargetaction="hide">
-		<Icon IconCode={IconCodes.lineHorizontal3}/>
+		<Icon IconCode={IconCodes.LineHorizontal3}/>
 	</Button>
 	{items.map(v => <DrawerButton
 		role="tab"
@@ -101,7 +101,7 @@ const items: {
 		aria-controls={v.controls}
 		data-page={v.page}
 		DrawerButtonSelected={DEFAULT_PAGE === v.page}
-		ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.tonal : undefined}>
+		ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.Tonal : undefined}>
 		<Icon
 			IconCode={v.icon}
 		/>

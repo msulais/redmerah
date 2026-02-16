@@ -4,8 +4,8 @@ import type { AppItem } from "@/types/apps"
 import { pxToRem } from "@/utils/css"
 
 export const APP: AppItem = APP_MARKDOWN_CONVERTER
-export const DEFAULT_THEME = PlatformThemeMode.auto
-export const DEFAULT_ANIMATION = PlatformAnimationMode.auto
+export const DEFAULT_THEME = PlatformThemeMode.Auto
+export const DEFAULT_ANIMATION = PlatformAnimationMode.Auto
 export const DEFAULT_TEXT_WRAP = true
 export const DEFAULT_CSS_TEXT = `:root {
     --g-color-background-light: 250, 250, 250;

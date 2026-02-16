@@ -15,25 +15,25 @@ import { InputMode } from '../_scripts/_shared/_enums'
 		<div>
 			<Button
 				id={ElementIds.bdTab_scss}
-				ButtonVariant={DEFAULT_INPUT_MODE === InputMode.scss
-					? CButton.Variant.filled
-					: CButton.Variant.outlined
+				ButtonVariant={DEFAULT_INPUT_MODE === InputMode.SCSS
+					? CButton.Variant.Filled
+					: CButton.Variant.Outlined
 				}>SCSS</Button>
 			<Button
 				id={ElementIds.bdTab_sass}
-				ButtonVariant={DEFAULT_INPUT_MODE === InputMode.sass
-					? CButton.Variant.filled
-					: CButton.Variant.outlined}>SASS</Button>
+				ButtonVariant={DEFAULT_INPUT_MODE === InputMode.SASS
+					? CButton.Variant.Filled
+					: CButton.Variant.Outlined}>SASS</Button>
 		</div>
 		<textarea
-			style={DEFAULT_INPUT_MODE === InputMode.sass? "display:none" : undefined}
+			style={DEFAULT_INPUT_MODE === InputMode.SASS? "display:none" : undefined}
 			id={ElementIds.bd_scss}
 			placeholder="Type your SCSS here ..."
 			data-text-wrap={DEFAULT_TEXT_WRAP? '' : undefined}>{
 			DEFAULT_SCSS_TEXT
 		}</textarea>
 		<textarea
-			style={DEFAULT_INPUT_MODE === InputMode.scss? "display:none" : undefined}
+			style={DEFAULT_INPUT_MODE === InputMode.SCSS? "display:none" : undefined}
 			id={ElementIds.bd_sass}
 			placeholder="Type your SASS here ..."
 			data-text-wrap={DEFAULT_TEXT_WRAP? '' : undefined}>{
@@ -43,7 +43,7 @@ import { InputMode } from '../_scripts/_shared/_enums'
 	<div id={ElementIds.bd_slider} class={CSSClasses.bodySlider}/>
 	<div>
 		<div>
-			<Button id={ElementIds.bdTab_css} ButtonVariant={CButton.Variant.filled}>CSS</Button>
+			<Button id={ElementIds.bdTab_css} ButtonVariant={CButton.Variant.Filled}>CSS</Button>
 		</div>
 		<textarea
 			id={ElementIds.bd_css}
@@ -53,14 +53,14 @@ import { InputMode } from '../_scripts/_shared/_enums'
 	</div>
 </main>
 <Toast id={ElementIds.bdToas_copied} ToastCloseDelay={1500}>
-	<Icon IconCode={IconCodes.copy} slot="leading"/>
+	<Icon IconCode={IconCodes.Copy} slot="leading"/>
 	Copied
 </Toast>
 <Toast id={ElementIds.bdToas_noFile} ToastCloseDelay={3000}>
-	<Icon IconCode={IconCodes.documentError} slot="leading"/>
+	<Icon IconCode={IconCodes.DocumentError} slot="leading"/>
 	No file selected
 </Toast>
 <Toast id={ElementIds.bdToas_readError} ToastCloseDelay={3000}>
-	<Icon IconCode={IconCodes.scanText} slot="leading"/>
+	<Icon IconCode={IconCodes.ScanText} slot="leading"/>
 	Unable reading files
 </Toast>

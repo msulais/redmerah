@@ -29,12 +29,12 @@ const { route } = Astro.props
 			data-tooltip="Navigation"
 			aria-label="Open navigation"
 			popovertarget={ID + ElementIds.drawer}
-			IconButtonCode={IconCodes.lineHorizontal3}
+			IconButtonCode={IconCodes.LineHorizontal3}
 		/>
 	</div>
 	<div data-css-float>
 		<LinkButton
-			href={RoutesLinks.home}
+			href={RoutesLinks.Home}
 			style={{
 				'padding-left': `${pxToRem(6)}rem`,
 				'padding-top': `0`,
@@ -66,35 +66,35 @@ const { route } = Astro.props
 	<nav data-css-float>
 		<LinkButton
 			class={CSS.desktop_only}
-			LinkButtonVariant={route == RoutesLinks.apps? CButton.Variant.filled : undefined}
-			href={RoutesLinks.apps}>
+			LinkButtonVariant={route == RoutesLinks.Apps? CButton.Variant.Filled : undefined}
+			href={RoutesLinks.Apps}>
 			<Icon
-				IconCode={IconCodes.apps}
-				IconFilled={route == RoutesLinks.apps}
+				IconCode={IconCodes.Apps}
+				IconFilled={route == RoutesLinks.Apps}
 			/>
 			Apps
 		</LinkButton>
 		<LinkButton
 			class={CSS.desktop_only}
-			LinkButtonVariant={route == RoutesLinks.about? CButton.Variant.filled : undefined}
-			href={RoutesLinks.about}>
+			LinkButtonVariant={route == RoutesLinks.About? CButton.Variant.Filled : undefined}
+			href={RoutesLinks.About}>
 			<Icon
-				IconCode={IconCodes.info}
-				IconFilled={route == RoutesLinks.about}
+				IconCode={IconCodes.Info}
+				IconFilled={route == RoutesLinks.About}
 			/>
 			About
 		</LinkButton>
 		<LinkButton
 			class={CSS.desktop_only}
-			href={ExternalLinks.donate}
+			href={ExternalLinks.Donate}
 			LinkButtonNewTab>
-			<Icon IconCode={IconCodes.gift}/>
+			<Icon IconCode={IconCodes.Gift}/>
 			Donate
 		</LinkButton>
 		<IconButton
 			data-tooltip="Settings"
 			aria-label="Open settings"
-			IconButtonCode={IconCodes.settings}
+			IconButtonCode={IconCodes.Settings}
 			id={ID + ElementIds.appbarSettingsButton}
 			popovertarget={ID + ElementIds.appbarSettingsMenu}
 		/>
@@ -109,55 +109,55 @@ const { route } = Astro.props
 			style="width:min-content"
 			data-tooltip="Close"
 			popovertargetaction="hide">
-			<Icon IconCode={IconCodes.lineHorizontal3}/>
+			<Icon IconCode={IconCodes.LineHorizontal3}/>
 		</Button>
 	</Fragment>
 	<LinkDrawerButton
-		href={RoutesLinks.home}
-		LinkDrawerButtonSelected={route === RoutesLinks.home}
-		LinkButtonVariant={route === RoutesLinks.home? CButton.Variant.tonal : undefined}>
-		<Icon IconCode={IconCodes.home}/>
+		href={RoutesLinks.Home}
+		LinkDrawerButtonSelected={route === RoutesLinks.Home}
+		LinkButtonVariant={route === RoutesLinks.Home? CButton.Variant.Tonal : undefined}>
+		<Icon IconCode={IconCodes.Home}/>
 		Home
 	</LinkDrawerButton>
 	<LinkDrawerButton
-		href={RoutesLinks.apps}
-		LinkDrawerButtonSelected={route === RoutesLinks.apps}
-		LinkButtonVariant={route === RoutesLinks.apps? CButton.Variant.tonal : undefined}>
-		<Icon IconCode={IconCodes.apps}/>
+		href={RoutesLinks.Apps}
+		LinkDrawerButtonSelected={route === RoutesLinks.Apps}
+		LinkButtonVariant={route === RoutesLinks.Apps? CButton.Variant.Tonal : undefined}>
+		<Icon IconCode={IconCodes.Apps}/>
 		Apps
 	</LinkDrawerButton>
 	<LinkDrawerButton
-		href={RoutesLinks.about}
-		LinkDrawerButtonSelected={route === RoutesLinks.about}
-		LinkButtonVariant={route === RoutesLinks.about? CButton.Variant.tonal : undefined}>
-		<Icon IconCode={IconCodes.info}/>
+		href={RoutesLinks.About}
+		LinkDrawerButtonSelected={route === RoutesLinks.About}
+		LinkButtonVariant={route === RoutesLinks.About? CButton.Variant.Tonal : undefined}>
+		<Icon IconCode={IconCodes.Info}/>
 		About
 	</LinkDrawerButton>
 	<LinkDrawerButton
-		href={RoutesLinks.privacy}
-		LinkDrawerButtonSelected={route === RoutesLinks.privacy}
-		LinkButtonVariant={route === RoutesLinks.privacy? CButton.Variant.tonal : undefined}>
-		<Icon IconCode={IconCodes.shieldCheckmark}/>
+		href={RoutesLinks.Privacy}
+		LinkDrawerButtonSelected={route === RoutesLinks.Privacy}
+		LinkButtonVariant={route === RoutesLinks.Privacy? CButton.Variant.Tonal : undefined}>
+		<Icon IconCode={IconCodes.ShieldCheckmark}/>
 		Privacy policy
 	</LinkDrawerButton>
 	<LinkDrawerButton
-		href={RoutesLinks.terms}
-		LinkDrawerButtonSelected={route === RoutesLinks.terms}
-		LinkButtonVariant={route === RoutesLinks.terms? CButton.Variant.tonal : undefined}>
-		<Icon IconCode={IconCodes.receipt}/>
+		href={RoutesLinks.Terms}
+		LinkDrawerButtonSelected={route === RoutesLinks.Terms}
+		LinkButtonVariant={route === RoutesLinks.Terms? CButton.Variant.Tonal : undefined}>
+		<Icon IconCode={IconCodes.Receipt}/>
 		Terms & conditions
 	</LinkDrawerButton>
 	<Fragment slot="footer">
 		<Divider />
 		<LinkDrawerButton
-			href={'mailto:' + ExternalLinks.contactEmail}>
-			<Icon IconCode={IconCodes.call}/>
+			href={'mailto:' + ExternalLinks.ContactEmail}>
+			<Icon IconCode={IconCodes.Call}/>
 			Contact
 		</LinkDrawerButton>
 		<LinkDrawerButton
-			href={ExternalLinks.donate}
+			href={ExternalLinks.Donate}
 			LinkButtonNewTab>
-			<Icon IconCode={IconCodes.gift}/>
+			<Icon IconCode={IconCodes.Gift}/>
 			Donate
 		</LinkDrawerButton>
 	</Fragment>

@@ -1,20 +1,20 @@
 export enum Pages {
-	smileyEmotion = 'smiley-emotion',
-	personBody = 'person-body',
-	animalNature = 'animal-nature',
-	foodDrink = 'food-drink',
-	travelPlaces = 'travel-places',
-	activities = 'activities',
-	object = 'object',
-	symbols = 'symbols',
-	flags = 'flags'
+	SmileyEmotion = 'smiley-emotion',
+	PersonBody = 'person-body',
+	AnimalNature = 'animal-nature',
+	FoodDrink = 'food-drink',
+	TravelPlaces = 'travel-places',
+	Activities = 'activities',
+	Object = 'object',
+	Symbols = 'symbols',
+	Flags = 'flags'
 }
 
 export enum SkinToneEmoji {
-	none = 'none',
-	light = 'light',
-	mediumLight = 'medium-light',
-	medium = 'medium',
-	mediumDark = 'medium-dark',
-	dark = 'dark'
+	None = 'none',
+	Light = 'light',
+	MediumLight = 'medium-light',
+	Medium = 'medium',
+	MediumDark = 'medium-dark',
+	Dark = 'dark'
 }

@@ -125,15 +125,15 @@ function _initEvents(): void {
 		const isOpen = (ev as ToggleEvent).newState === 'open'
 		_ref_fn_Btn.setAttribute('aria-expanded', String(isOpen))
 		CButton.update(_ref_fn_Btn, {
-			Button: {variant: isOpen? CButton.Variant.filled : CButton.Variant.tonal}
+			Button: {variant: isOpen? CButton.Variant.Filled : CButton.Variant.Tonal}
 		})
 
-		const iconRef = _ref_fn_Btn.querySelector<HTMLElement>('.' + CIcon.Classes.icon + ":last-child")
+		const iconRef = _ref_fn_Btn.querySelector<HTMLElement>('.' + CIcon.Classes.Icon + ":last-child")
 		iconRef?.style.setProperty('transform', isOpen? 'rotate(180deg)' : null)
 		if (isAnimationAllowed()) {
 			iconRef?.animate({
 				transform: [`rotate(${isOpen? 0 : 180}deg)`, `rotate(${isOpen? 180 : 0}deg)`]
-			}, {duration: 250, easing: AnimationEasing.spring})
+			}, {duration: 250, easing: AnimationEasing.Spring})
 		}
 	})
 

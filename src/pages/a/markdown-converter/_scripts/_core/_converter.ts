@@ -274,29 +274,29 @@ function _initEvents(): void {
 		_ref_tabPreview.addEventListener('click', () => {
 			_ref_out_html.style.setProperty('display', 'none')
 			_out_ref_preview.style.removeProperty('display')
-			CButton.update(_ref_tabPreview, {Button: {variant: CButton.Variant.filled}})
-			CButton.update(_ref_tabHTML, {Button: {variant: CButton.Variant.outlined}})
+			CButton.update(_ref_tabPreview, {Button: {variant: CButton.Variant.Filled}})
+			CButton.update(_ref_tabHTML, {Button: {variant: CButton.Variant.Outlined}})
 		})
 
 		_ref_tabHTML.addEventListener('click', () => {
 			_out_ref_preview.style.setProperty('display', 'none')
 			_ref_out_html.style.removeProperty('display')
-			CButton.update(_ref_tabHTML, {Button: {variant: CButton.Variant.filled}})
-			CButton.update(_ref_tabPreview, {Button: {variant: CButton.Variant.outlined}})
+			CButton.update(_ref_tabHTML, {Button: {variant: CButton.Variant.Filled}})
+			CButton.update(_ref_tabPreview, {Button: {variant: CButton.Variant.Outlined}})
 		})
 
 		_ref_tabMarkdown.addEventListener('click', () => {
 			_ref_inp_css.style.setProperty('display', 'none')
 			_ref_inp_markdown.style.removeProperty('display')
-			CButton.update(_ref_tabMarkdown, {Button: {variant: CButton.Variant.filled}})
-			CButton.update(_ref_tabCSS, {Button: {variant: CButton.Variant.outlined}})
+			CButton.update(_ref_tabMarkdown, {Button: {variant: CButton.Variant.Filled}})
+			CButton.update(_ref_tabCSS, {Button: {variant: CButton.Variant.Outlined}})
 		})
 
 		_ref_tabCSS.addEventListener('click', () => {
 			_ref_inp_markdown.style.setProperty('display', 'none')
 			_ref_inp_css.style.removeProperty('display')
-			CButton.update(_ref_tabCSS, {Button: {variant: CButton.Variant.filled}})
-			CButton.update(_ref_tabMarkdown, {Button: {variant: CButton.Variant.outlined}})
+			CButton.update(_ref_tabCSS, {Button: {variant: CButton.Variant.Filled}})
+			CButton.update(_ref_tabMarkdown, {Button: {variant: CButton.Variant.Outlined}})
 		})
 	}
 

@@ -38,15 +38,15 @@ let _time_saveInput: NodeJS.Timeout | number | null = null
 function _changeUnit(type: 'input' | 'output', unitId: string): void {
 	let units = LengthUnits.all
 	switch (ConverterStore.value.converter) {
-	case ConverterType.length     : units = LengthUnits     .all; break
-	case ConverterType.area       : units = AreaUnits       .all; break
-	case ConverterType.volume     : units = VolumeUnits     .all; break
-	case ConverterType.temperature: units = TemperatureUnits.all; break
-	case ConverterType.time       : units = TimeUnits       .all; break
-	case ConverterType.weight     : units = WeightUnits     .all; break
-	case ConverterType.frequency  : units = FrequencyUnits  .all; break
-	case ConverterType.pressure   : units = PressureUnits   .all; break
-	case ConverterType.angle      : units = AngleUnits      .all; break
+	case ConverterType.Length     : units = LengthUnits     .all; break
+	case ConverterType.Area       : units = AreaUnits       .all; break
+	case ConverterType.Volume     : units = VolumeUnits     .all; break
+	case ConverterType.Temperature: units = TemperatureUnits.all; break
+	case ConverterType.Time       : units = TimeUnits       .all; break
+	case ConverterType.Weight     : units = WeightUnits     .all; break
+	case ConverterType.Frequency  : units = FrequencyUnits  .all; break
+	case ConverterType.Pressure   : units = PressureUnits   .all; break
+	case ConverterType.Angle      : units = AngleUnits      .all; break
 	}
 
 	const unit = units.find(v => v.id === unitId)
@@ -81,22 +81,22 @@ function _subsConverterChanges(value: ConverterStoreType, old: ConverterStoreTyp
 	let units = LengthUnits.all
 	saveStorageItem('calc:converter/type', type)
 	switch (type) {
-	case ConverterType.length     : units = LengthUnits     .all; break
-	case ConverterType.area       : units = AreaUnits       .all; break
-	case ConverterType.volume     : units = VolumeUnits     .all; break
-	case ConverterType.temperature: units = TemperatureUnits.all; break
-	case ConverterType.time       : units = TimeUnits       .all; break
-	case ConverterType.weight     : units = WeightUnits     .all; break
-	case ConverterType.frequency  : units = FrequencyUnits  .all; break
-	case ConverterType.pressure   : units = PressureUnits   .all; break
-	case ConverterType.angle      : units = AngleUnits      .all; break
+	case ConverterType.Length     : units = LengthUnits     .all; break
+	case ConverterType.Area       : units = AreaUnits       .all; break
+	case ConverterType.Volume     : units = VolumeUnits     .all; break
+	case ConverterType.Temperature: units = TemperatureUnits.all; break
+	case ConverterType.Time       : units = TimeUnits       .all; break
+	case ConverterType.Weight     : units = WeightUnits     .all; break
+	case ConverterType.Frequency  : units = FrequencyUnits  .all; break
+	case ConverterType.Pressure   : units = PressureUnits   .all; break
+	case ConverterType.Angle      : units = AngleUnits      .all; break
 	}
 
 	const refs_inputOption: CComboBox.COption.CElement[] = []
 	const refs_outputOption: CComboBox.COption.CElement[] = []
 	for (const i in units) {
 		const ref_inputSpan = document.createElement('span')
-		ref_inputSpan.style.setProperty('color', `rgb(${AppCSSColors.accent})`)
+		ref_inputSpan.style.setProperty('color', `rgb(${AppCSSColors.Accent})`)
 		ref_inputSpan.textContent = units[i].symbol
 		const ref_inputOption = CComboBox.COption.create({
 			Option: {children: [`${units[i].name} [\xa0`, ref_inputSpan, '\xa0]']}
@@ -107,7 +107,7 @@ function _subsConverterChanges(value: ConverterStoreType, old: ConverterStoreTyp
 		refs_inputOption.push(ref_inputOption)
 
 		const ref_outputSpan = document.createElement('span')
-		ref_outputSpan.style.setProperty('color', `rgb(${AppCSSColors.accent})`)
+		ref_outputSpan.style.setProperty('color', `rgb(${AppCSSColors.Accent})`)
 		ref_outputSpan.textContent = units[i].symbol
 		const ref_outputOption = CComboBox.COption.create({
 			Option: {children: [`${units[i].name} [\xa0`, ref_outputSpan, '\xa0]']}

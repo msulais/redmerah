@@ -12,7 +12,7 @@ export namespace CDivider {
 	}
 
 	export enum Classes {
-		divider = 'c-divider'
+		Divider = 'c-divider'
 	}
 
 	export function create(options?: UpdateOptions): CElement {

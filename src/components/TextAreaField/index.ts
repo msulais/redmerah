@@ -12,7 +12,7 @@ export namespace CTextAreaField {
 	}
 
 	export enum Classes {
-		textareafield = 'c-textareafield'
+		Textareafield = 'c-textareafield'
 	}
 
 	export function create(options?: UpdateOption): CElement {
@@ -22,7 +22,7 @@ export namespace CTextAreaField {
 
 	export function update(ref_textareafield: CElement, options?: UpdateOption): CElement {
 		const opt = options?.TextAreaField
-		$classlist(ref_textareafield, Classes.textareafield)
+		$classlist(ref_textareafield, Classes.Textareafield)
 
 		const opt_value = opt?.value
 		if (typeof opt_value === 'string') {

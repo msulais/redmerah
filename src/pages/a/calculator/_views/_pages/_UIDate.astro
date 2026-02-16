@@ -20,7 +20,7 @@ import { pxToRem } from '@/utils/css'
 	id={ElementIds.pg_date}
 	role="tabpanel"
 	class={CSSClasses.bdPage_date}
-	hidden={DEFAULT_PAGE !== Pages.date}>
+	hidden={DEFAULT_PAGE !== Pages.Date}>
 	<label for={ElementIds.pgDate_operation}>Operation</label>
 	<ComboBox
 		id={ElementIds.pgDate_operation}
@@ -30,14 +30,14 @@ import { pxToRem } from '@/utils/css'
 			'margin-bottom': pxToRem(16) + 'rem',
 		}}>
 		<ComboBoxOption
-			selected={DEFAULT_DATE_OPERATION === DateOperation.add}
-			value={DateOperation.add}>Add</ComboBoxOption>
+			selected={DEFAULT_DATE_OPERATION === DateOperation.Add}
+			value={DateOperation.Add}>Add</ComboBoxOption>
 		<ComboBoxOption
-			selected={DEFAULT_DATE_OPERATION === DateOperation.subtract}
-			value={DateOperation.subtract}>Subtract</ComboBoxOption>
+			selected={DEFAULT_DATE_OPERATION === DateOperation.Subtract}
+			value={DateOperation.Subtract}>Subtract</ComboBoxOption>
 		<ComboBoxOption
-			selected={DEFAULT_DATE_OPERATION === DateOperation.difference}
-			value={DateOperation.difference}>Difference</ComboBoxOption>
+			selected={DEFAULT_DATE_OPERATION === DateOperation.Difference}
+			value={DateOperation.Difference}>Difference</ComboBoxOption>
 	</ComboBox>
 	<label for={ElementIds.pgDate_fromBtn}>From</label>
 	<Button
@@ -46,16 +46,16 @@ import { pxToRem } from '@/utils/css'
 			width: pxToRem(256) + 'rem'
 		}}
 		id={ElementIds.pgDate_fromBtn}
-		ButtonVariant={CButton.Variant.tonal}
+		ButtonVariant={CButton.Variant.Tonal}
 		popovertarget={ElementIds.pgDate_fromPicker}>
 		<span style="display:block">{DEFAULT_DATE_INPUT_FROM.toLocaleDateString('en', {day:'numeric', month: 'long', year: 'numeric'})}</span>
 		<div style="flex:1"/>
-		<Icon IconCode={IconCodes.calendar}/>
+		<Icon IconCode={IconCodes.Calendar}/>
 	</Button>
 	<DatePicker
 		id={ElementIds.pgDate_fromPicker}
 		PopoverAnchorBy={ElementIds.pgDate_fromBtn}
-		PopoverPosition={FlyoutPosition.centerBottomToRight}
+		PopoverPosition={FlyoutPosition.CenterBottomToRight}
 		PopoverGap={pxToRem(8)}
 		PopoverPadding={pxToRem(13)}
 	/>
@@ -68,16 +68,16 @@ import { pxToRem } from '@/utils/css'
 				width: pxToRem(256) + 'rem'
 			}}
 			id={ElementIds.pgDate_toBtn}
-			ButtonVariant={CButton.Variant.tonal}
+			ButtonVariant={CButton.Variant.Tonal}
 			popovertarget={ElementIds.pgDate_toPicker}>
 			<span style="display:block">{DEFAULT_DATE_INPUT_TO.toLocaleDateString('en', {day:'numeric', month: 'long', year: 'numeric'})}</span>
 			<div style="flex:1"/>
-			<Icon IconCode={IconCodes.calendar}/>
+			<Icon IconCode={IconCodes.Calendar}/>
 		</Button>
 		<DatePicker
 			id={ElementIds.pgDate_toPicker}
 			PopoverAnchorBy={ElementIds.pgDate_toBtn}
-			PopoverPosition={FlyoutPosition.centerBottomToRight}
+			PopoverPosition={FlyoutPosition.CenterBottomToRight}
 			PopoverGap={pxToRem(8)}
 			PopoverPadding={pxToRem(13)}
 		/>

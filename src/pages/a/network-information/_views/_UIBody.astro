@@ -14,22 +14,22 @@ import { pxToRem } from '@/utils/css'
 <main class={CSSClasses.body}>
 	<ul>
 		<li>
-			<Icon IconCode={IconCodes.arrowCircleDown}/>
+			<Icon IconCode={IconCodes.ArrowCircleDown}/>
 			<div>Downlink:<br/><span id={ElementIds.bd_downlink}>N/A</span></div></li>
 		<li>
-			<Icon IconCode={IconCodes.arrowCircleDownDouble}/>
+			<Icon IconCode={IconCodes.ArrowCircleDownDouble}/>
 			<div>Downlink max:<br/><span id={ElementIds.bd_downlinkMax}>N/A</span></div></li>
 		<li>
-			<Icon IconCode={IconCodes.networkCheck}/>
+			<Icon IconCode={IconCodes.NetworkCheck}/>
 			<div>Effective type:<br/><span id={ElementIds.bd_effectiveType}>N/A</span></div></li>
 		<li>
-			<Icon IconCode={IconCodes.arrowCircleDownUp}/>
+			<Icon IconCode={IconCodes.ArrowCircleDownUp}/>
 			<div>Round trip time:<br/><span id={ElementIds.bd_rtt}>N/A</span></div></li>
 		<li>
-			<Icon IconCode={IconCodes.wifi1}/>
+			<Icon IconCode={IconCodes.Wifi1}/>
 			<div>Type:<br/><span id={ElementIds.bd_type}>N/A</span></div></li>
 		<li>
-			<Icon IconCode={IconCodes.leaf2}/>
+			<Icon IconCode={IconCodes.Leaf2}/>
 			<div>Data saver:<br/><span id={ElementIds.bd_saveData}>N/A</span></div></li>
 	</ul>
 </main>
@@ -38,11 +38,11 @@ import { pxToRem } from '@/utils/css'
 	<Fragment slot="header">Browser Not Supported</Fragment>
 	<p>NetworkInformation API not fully supported in your browser. Some features may not function correctly.</p>
 	<form method="dialog" slot="footer" style="display:contents">
-		<Button ButtonVariant={CButton.Variant.tonal}>Close</Button>
+		<Button ButtonVariant={CButton.Variant.Tonal}>Close</Button>
 		<LinkButton
-			href={Links.compatibility}
+			href={Links.Compatibility}
 			LinkButtonNewTab
-			LinkButtonVariant={CButton.Variant.filled}>
+			LinkButtonVariant={CButton.Variant.Filled}>
 			Check browser
 		</LinkButton>
 	</form>

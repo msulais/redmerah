@@ -21,7 +21,7 @@ import { pxToRem } from '@/utils/css'
 	class={CSSClasses.bd_page}
 	role="tabpanel"
 	id={ElementIds.pg_converter}
-	hidden={DEFAULT_PAGE !== Pages.converter}>
+	hidden={DEFAULT_PAGE !== Pages.Converter}>
 	<div class={CSSClasses.bdPage_input}>
 		<input
 			id={ElementIds.pgConv_input}
@@ -39,10 +39,10 @@ import { pxToRem } from '@/utils/css'
 	</div>
 	<div class={CSSClasses.bdPage_options} id={ElementIds.pgConv_options}>
 		<div class={CSSClasses.bdPage_optionGroup}>
-			<Button data-command={Commands.memo_clear} data-tooltip="Memory clear (Ctrl+Shift+C)">MC</Button>
-			<Button data-command={Commands.memo_add} data-tooltip="Memory add (Ctrl+Shift+&quot;+&quot;)">M+</Button>
-			<Button data-command={Commands.memo_sub} data-tooltip="Memory subtract (Ctrl+Shift+&quot;-&quot;)">M-</Button>
-			<Button class={CSSClasses.bdPage_memoPreview} data-command={Commands.memo_recall} data-tooltip="Memory recall (Ctrl+Shift+R)">MR: 0</Button>
+			<Button data-command={Commands.MemoClear} data-tooltip="Memory clear (Ctrl+Shift+C)">MC</Button>
+			<Button data-command={Commands.MemoAdd} data-tooltip="Memory add (Ctrl+Shift+&quot;+&quot;)">M+</Button>
+			<Button data-command={Commands.MemoSub} data-tooltip="Memory subtract (Ctrl+Shift+&quot;-&quot;)">M-</Button>
+			<Button class={CSSClasses.bdPage_memoPreview} data-command={Commands.MemoRecall} data-tooltip="Memory recall (Ctrl+Shift+R)">MR: 0</Button>
 		</div>
 		<div class={CSSClasses.bdPage_optionGroup}>
 			<label
@@ -56,7 +56,7 @@ import { pxToRem } from '@/utils/css'
 				style={{
 					width: pxToRem(186) + 'rem'
 				}}
-				ComboBoxVariant={CComboBox.Variant.outlined}>
+				ComboBoxVariant={CComboBox.Variant.Outlined}>
 				{CONVERTER_TYPES.map(c =>
 					<ComboBoxOption value={c.type}
 						selected={c.type === DEFAULT_CONVERTER_TYPE}>
@@ -75,39 +75,39 @@ import { pxToRem } from '@/utils/css'
 			<ComboBox id={ElementIds.pgConv_inputUnit} aria-label="Unit from">
 				{LengthUnits.all.map(c =>
 					<ComboBoxOption value={c.id} style="gap:0" selected={c.equals(DEFAULT_CONVERTER_INPUT_UNIT)}>
-						{c.name} [&nbsp;<span style={`color:rgb(${AppCSSColors.accent})`}>{c.symbol}</span>&nbsp;]
+						{c.name} [&nbsp;<span style={`color:rgb(${AppCSSColors.Accent})`}>{c.symbol}</span>&nbsp;]
 					</ComboBoxOption>
 				)}
 			</ComboBox>
-			<IconButton data-command={Commands.key_unitSwap} id={ElementIds.pgConv_swap} aria-label="Swap unit" IconButtonCode={IconCodes.arrowRight}/>
+			<IconButton data-command={Commands.KeyUnitSwap} id={ElementIds.pgConv_swap} aria-label="Swap unit" IconButtonCode={IconCodes.ArrowRight}/>
 			<ComboBox id={ElementIds.pgConv_outputUnit} aria-label="Unit To">
 				{LengthUnits.all.map(c =>
 					<ComboBoxOption value={c.id} style="gap:0" selected={c.equals(DEFAULT_CONVERTER_OUTPUT_UNIT)}>
-						{c.name} [&nbsp;<span style={`color:rgb(${AppCSSColors.accent})`}>{c.symbol}</span>&nbsp;]
+						{c.name} [&nbsp;<span style={`color:rgb(${AppCSSColors.Accent})`}>{c.symbol}</span>&nbsp;]
 					</ComboBoxOption>
 				)}
 			</ComboBox>
 		</div>
 	</div>
 	<div class={CSSClasses.bdPage_buttons} style="grid-template-columns: repeat(3, 1fr);">
-		<Button data-command={Commands.key_plusMin} ButtonVariant={CButton.Variant.tonal}>±</Button>
-		<Button data-command={Commands.key_clear} ButtonVariant={CButton.Variant.tonal} style={`color:rgb(${AppCSSColors.accent})`}>C</Button>
-		<Button data-command={Commands.key_backspace} ButtonVariant={CButton.Variant.tonal} style={`color:rgb(${AppCSSColors.accent})`}><Icon IconCode={IconCodes.backspace}/></Button>
+		<Button data-command={Commands.KeyPlusMin} ButtonVariant={CButton.Variant.Tonal}>±</Button>
+		<Button data-command={Commands.KeyClear} ButtonVariant={CButton.Variant.Tonal} style={`color:rgb(${AppCSSColors.Accent})`}>C</Button>
+		<Button data-command={Commands.KeyBackspace} ButtonVariant={CButton.Variant.Tonal} style={`color:rgb(${AppCSSColors.Accent})`}><Icon IconCode={IconCodes.Backspace}/></Button>
 
-		<Button data-command={Commands.key_char} data-char="7" data-type="number" ButtonVariant={CButton.Variant.tonal}>7</Button>
-		<Button data-command={Commands.key_char} data-char="8" data-type="number" ButtonVariant={CButton.Variant.tonal}>8</Button>
-		<Button data-command={Commands.key_char} data-char="9" data-type="number" ButtonVariant={CButton.Variant.tonal}>9</Button>
+		<Button data-command={Commands.KeyChar} data-char="7" data-type="number" ButtonVariant={CButton.Variant.Tonal}>7</Button>
+		<Button data-command={Commands.KeyChar} data-char="8" data-type="number" ButtonVariant={CButton.Variant.Tonal}>8</Button>
+		<Button data-command={Commands.KeyChar} data-char="9" data-type="number" ButtonVariant={CButton.Variant.Tonal}>9</Button>
 
-		<Button data-command={Commands.key_char} data-char="4" data-type="number" ButtonVariant={CButton.Variant.tonal}>4</Button>
-		<Button data-command={Commands.key_char} data-char="5" data-type="number" ButtonVariant={CButton.Variant.tonal}>5</Button>
-		<Button data-command={Commands.key_char} data-char="6" data-type="number" ButtonVariant={CButton.Variant.tonal}>6</Button>
+		<Button data-command={Commands.KeyChar} data-char="4" data-type="number" ButtonVariant={CButton.Variant.Tonal}>4</Button>
+		<Button data-command={Commands.KeyChar} data-char="5" data-type="number" ButtonVariant={CButton.Variant.Tonal}>5</Button>
+		<Button data-command={Commands.KeyChar} data-char="6" data-type="number" ButtonVariant={CButton.Variant.Tonal}>6</Button>
 
-		<Button data-command={Commands.key_char} data-char="1" data-type="number" ButtonVariant={CButton.Variant.tonal}>1</Button>
-		<Button data-command={Commands.key_char} data-char="2" data-type="number" ButtonVariant={CButton.Variant.tonal}>2</Button>
-		<Button data-command={Commands.key_char} data-char="3" data-type="number" ButtonVariant={CButton.Variant.tonal}>3</Button>
+		<Button data-command={Commands.KeyChar} data-char="1" data-type="number" ButtonVariant={CButton.Variant.Tonal}>1</Button>
+		<Button data-command={Commands.KeyChar} data-char="2" data-type="number" ButtonVariant={CButton.Variant.Tonal}>2</Button>
+		<Button data-command={Commands.KeyChar} data-char="3" data-type="number" ButtonVariant={CButton.Variant.Tonal}>3</Button>
 
-		<Button data-command={Commands.key_char} data-char="0" data-type="number" ButtonVariant={CButton.Variant.tonal}>0</Button>
-		<Button data-command={Commands.key_dec} ButtonVariant={CButton.Variant.tonal}>.</Button>
-		<Button data-command={Commands.key_equal} ButtonVariant={CButton.Variant.filled} style="font-weight:bold">=</Button>
+		<Button data-command={Commands.KeyChar} data-char="0" data-type="number" ButtonVariant={CButton.Variant.Tonal}>0</Button>
+		<Button data-command={Commands.KeyDec} ButtonVariant={CButton.Variant.Tonal}>.</Button>
+		<Button data-command={Commands.KeyEqual} ButtonVariant={CButton.Variant.Filled} style="font-weight:bold">=</Button>
 	</div>
 </div>

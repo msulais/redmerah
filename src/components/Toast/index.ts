@@ -22,23 +22,23 @@ export namespace CToast {
 	}
 
 	export enum Attributes {
-		position   = 'data-c-toast-position',
-		closeDelay = 'data-c-toast-close-delay',
-		autoclose  = 'data-c-toast-autoclose'
+		Position   = 'data-c-toast-position',
+		CloseDelay = 'data-c-toast-close-delay',
+		Autoclose  = 'data-c-toast-autoclose'
 	}
 
 	export enum Position {
-		topLeft      = 'top-left',
-		topCenter    = 'top-center',
-		topRight     = 'top-right',
-		bottomLeft   = 'bottom-left',
-		bottomCenter = 'bottom-center',
-		bottomRight  = 'bottom-right',
+		TopLeft      = 'top-left',
+		TopCenter    = 'top-center',
+		TopRight     = 'top-right',
+		BottomLeft   = 'bottom-left',
+		BottomCenter = 'bottom-center',
+		BottomRight  = 'bottom-right',
 	}
 
 	export enum Classes {
-		toast   = 'c-toast',
-		content = toast + '-content'
+		Toast   = 'c-toast',
+		Content = Toast + '-content'
 	}
 
 	const REGISTERED_TOAST: Set<CElement> = new Set<CElement>()
@@ -46,10 +46,10 @@ export namespace CToast {
 	function initToast(ref_toast: CElement): void {
 		const attributes = {
 			get autofocus(): boolean {
-				return $has_attr(ref_toast, Attributes.autoclose)
+				return $has_attr(ref_toast, Attributes.Autoclose)
 			},
 			get closeDelay(): number {
-				const num = $get_attr(ref_toast, Attributes.closeDelay) ?? '5000'
+				const num = $get_attr(ref_toast, Attributes.CloseDelay) ?? '5000'
 				return safeNumber($parse_int(num), 5000)
 			}
 		}
@@ -96,34 +96,34 @@ export namespace CToast {
 
 	export function update(ref_toast: CElement, options?: UpdateOptions): CElement {
 		const opt = options?.Toast
-		$classlist(ref_toast, Classes.toast)
+		$classlist(ref_toast, Classes.Toast)
 		ref_toast.popover = 'auto'
 
 		// CSS need this attribute
-		if (!$has_attr(ref_toast, Attributes.position)) {
-			$set_attr(ref_toast, Attributes.position, Position.topCenter)
+		if (!$has_attr(ref_toast, Attributes.Position)) {
+			$set_attr(ref_toast, Attributes.Position, Position.TopCenter)
 		}
 
 		const opt_closeDelay = opt?.closeDelay
 		if ($is_number(opt_closeDelay)) {
-			$set_attr(ref_toast, Attributes.closeDelay, opt_closeDelay + '')
+			$set_attr(ref_toast, Attributes.CloseDelay, opt_closeDelay + '')
 		}
 
 		const opt_autoclose = opt?.autoclose
 		if ($is_bool(opt_autoclose)) {
-			$toggle_attr(ref_toast, Attributes.autoclose, opt_autoclose)
+			$toggle_attr(ref_toast, Attributes.Autoclose, opt_autoclose)
 		}
 
 		const opt_position = opt?.position
 		if (opt_position && isValidEnumValue(opt_position, Position)) {
-			$set_attr(ref_toast, Attributes.position, opt_position)
+			$set_attr(ref_toast, Attributes.Position, opt_position)
 		}
 
 		// content
-		let ref_content = $query<GCList.CElement>(`.${Classes.content}`, ref_toast)
+		let ref_content = $query<GCList.CElement>(`.${Classes.Content}`, ref_toast)
 		if (!ref_content) {
 			ref_content = GCList.create<GCList.CElement>()
-			$classlist(ref_content, Classes.content)
+			$classlist(ref_content, Classes.Content)
 		}
 
 		GCList.update(ref_content, {List: {
@@ -142,7 +142,7 @@ export namespace CToast {
 
 	export function register(...refs_toast: CElement[]): void {
 		if (refs_toast.length === 0) {
-			refs_toast = [...$query_all<CElement>('.' + Classes.toast)]
+			refs_toast = [...$query_all<CElement>('.' + Classes.Toast)]
 		}
 
 		for (const ref of refs_toast){

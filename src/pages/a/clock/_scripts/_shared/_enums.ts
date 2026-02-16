@@ -1,5 +1,5 @@
 export enum Pages {
-	clock = 'clock',
-	stopwatch = 'stopwatch',
-	timer = 'timer'
+	Clock = 'clock',
+	Stopwatch = 'stopwatch',
+	Timer = 'timer'
 }

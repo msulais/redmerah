@@ -34,26 +34,26 @@ function _subscribeAnimationChanges(v: SettingsStoreType, o: SettingsStoreType):
 	const animation = v.animation
 	if (animation === o.animation) return
 
-	localStorage.setItem(LocalStorageKeys.platformAnimation, animation)
+	localStorage.setItem(LocalStorageKeys.PlatformAnimation, animation)
 }
 
 function _subscribeThemeChanges(v: SettingsStoreType, o: SettingsStoreType): void {
 	const theme = v.theme
 	if (theme === o.theme) return
 
-	localStorage.setItem(LocalStorageKeys.platformTheme, theme)
+	localStorage.setItem(LocalStorageKeys.PlatformTheme, theme)
 }
 
 function _subscribeAnimationRefView(v: SettingsStoreType, o: SettingsStoreType): void {
 	const animation = v.animation
 	if (animation === o.animation) return
 
-	_ref_root.setAttribute(RootAttributes.animation, animation)
+	_ref_root.setAttribute(RootAttributes.Animation, animation)
 	const ref_previous = $$(
-		`input[name="${CSS.escape(RadioNames.animation)}"]:checked`
+		`input[name="${CSS.escape(RadioNames.Animation)}"]:checked`
 	) as HTMLInputElement
 	const ref_target = $$(
-		`input[name="${CSS.escape(RadioNames.animation)}"][value="${CSS.escape(animation)}"]`
+		`input[name="${CSS.escape(RadioNames.Animation)}"][value="${CSS.escape(animation)}"]`
 	) as HTMLInputElement
 
 	if (ref_previous === ref_target) {return}
@@ -65,12 +65,12 @@ function _subscribeThemeRefView(v: SettingsStoreType, o: SettingsStoreType): voi
 	const theme = v.theme
 	if (theme === o.theme) return
 
-	_ref_root.setAttribute(RootAttributes.theme, theme)
+	_ref_root.setAttribute(RootAttributes.Theme, theme)
 	const ref_previous = $$(
-		`input[name="${CSS.escape(RadioNames.theme)}"]:checked`
+		`input[name="${CSS.escape(RadioNames.Theme)}"]:checked`
 	) as HTMLInputElement
 	const ref_target = $$(
-		`input[name="${CSS.escape(RadioNames.theme)}"][value="${CSS.escape(theme)}"]`
+		`input[name="${CSS.escape(RadioNames.Theme)}"][value="${CSS.escape(theme)}"]`
 	) as HTMLInputElement
 
 	if (ref_previous === ref_target) {return}
@@ -93,7 +93,7 @@ function _subscribePickerModeRefView(v: SettingsStoreType, o: SettingsStoreType)
 				ref.animate({
 					scale: [.9, 1],
 					opacity: [0, 1]
-				}, {duration: 250, delay: 250, easing: AnimationEasing.spring}).finished.then(() => {
+				}, {duration: 250, delay: 250, easing: AnimationEasing.Spring}).finished.then(() => {
 					ref.style.removeProperty('opacity')
 				})
 			}
@@ -148,14 +148,14 @@ function _initEvents(): void {
 }
 
 function _initTheme(): void {
-	const theme = localStorage.getItem(LocalStorageKeys.platformTheme) as PlatformThemeMode
+	const theme = localStorage.getItem(LocalStorageKeys.PlatformTheme) as PlatformThemeMode
 	if (!theme || !isValidEnumValue(theme, PlatformThemeMode) || theme === DEFAULT_THEME) return
 
 	SettingsStore.update(v => v.theme = theme)
 }
 
 function _initAnimation(): void {
-	const animation = localStorage.getItem(LocalStorageKeys.platformAnimation) as PlatformAnimationMode
+	const animation = localStorage.getItem(LocalStorageKeys.PlatformAnimation) as PlatformAnimationMode
 	if (!animation || !isValidEnumValue(animation, PlatformAnimationMode)) return
 
 	SettingsStore.update(v => v.animation = animation)

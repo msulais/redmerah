@@ -29,7 +29,7 @@ export const SavedGradients = new ObservableStore<SavedGradientsType>({
 const _ref_toastCopied = $(ElementIds.toa_copied) as CToast.CElement
 const _ref_savedGradientList = $$<HTMLUListElement>('.' + CSSClasses.bodySavedGradient)
 const _ref_actionMenu = $(ElementIds.bdSv_menu) as CMenu.CElement
-const _refs_gradientItem = () => $$$<CButton.CElement>(`[data-command="${CSS.escape(Commands.grad_use)}"]`)
+const _refs_gradientItem = () => $$$<CButton.CElement>(`[data-command="${CSS.escape(Commands.GradientUse)}"]`)
 const _ref_actionView = $(ElementIds.bdSv_view) as CMenu.CItem.CElement
 const _ref_actionCopy = $(ElementIds.bdSv_copy) as CMenu.CItem.CElement
 const _ref_actionDelete = $(ElementIds.bdSv_delete) as CMenu.CItem.CElement
@@ -59,12 +59,12 @@ function _subscribeGradientsRefView(v: SavedGradientsType): void {
 			const span = document.createElement('span')
 			const g: string[] = []
 			for (const layer of gradient.gradients) {
-				g.push(gradientToCSSText(layer, ColorSpace.hex, false))
+				g.push(gradientToCSSText(layer, ColorSpace.HEX, false))
 			}
 			span.style.setProperty('background', g.join(','))
 			return span
 		})()]}})
-		ref_button.setAttribute('data-command', Commands.grad_use)
+		ref_button.setAttribute('data-command', Commands.GradientUse)
 		ref_button.setAttribute('popovertarget', ElementIds.bdSv_menu)
 		ref_button.setAttribute('popovertargetaction', 'show')
 		ref_li.append(ref_button)
@@ -111,7 +111,7 @@ function _initEvents(): void {
 
 		const command = ref_btn.dataset.command as Commands
 		switch (command) {
-		case Commands.grad_use: {
+		case Commands.GradientUse: {
 			if (!hasGradientIndex()) {
 				return ev.preventDefault()
 			}

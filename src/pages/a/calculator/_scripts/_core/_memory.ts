@@ -25,46 +25,46 @@ export function recallMemory(): void {
 	const memory = MemoryStore.value.value
 	let value = formatOutput(memory)
 	switch (NavigationStore.value.page) {
-	case Pages.basic     : return BasicStore     .update(v => v.input = v.input + value)
-	case Pages.scientific: return ScientificStore.update(v => v.input = v.input + value)
-	case Pages.converter : return ConverterStore .update(v => v.input = v.input + value)
-	case Pages.programmer:
+	case Pages.Basic     : return BasicStore     .update(v => v.input = v.input + value)
+	case Pages.Scientific: return ScientificStore.update(v => v.input = v.input + value)
+	case Pages.Converter : return ConverterStore .update(v => v.input = v.input + value)
+	case Pages.Orogrammer:
 		const bin = numberToBinary(memory)
 		const parsedBin = Number.parseInt(bin, 2)
 		switch (ProgrammerStore.value.numberType) {
-		case NumberType.decimal: break
-		case NumberType.hexadecimal:
+		case NumberType.Decimal: break
+		case NumberType.Hexadecimal:
 			value = parsedBin.toString(16).toUpperCase()
 			break
-		case NumberType.octal:
+		case NumberType.Octal:
 			value = parsedBin.toString(8)
 			break
-		case NumberType.binary:
+		case NumberType.Binary:
 			value = bin
 			break
 		}
 		ProgrammerStore.update(v => v.input = v.input + value)
 		break
-	case Pages.date:
+	case Pages.Date:
 	}
 }
 
 export function updateMemory(type: 'add' | 'min'): void {
 	let output: number | null = null
 	switch (NavigationStore.value.page) {
-	case Pages.basic:
+	case Pages.Basic:
 		output = BasicStore.value.output
 		break
-	case Pages.scientific:
+	case Pages.Scientific:
 		output = ScientificStore.value.output
 		break
-	case Pages.converter:
+	case Pages.Converter:
 		output = ConverterStore.value.output
 		break
-	case Pages.programmer:
+	case Pages.Orogrammer:
 		output = ProgrammerStore.value.output
 		break
-	case Pages.date:
+	case Pages.Date:
 	}
 
 	if (output !== null) {

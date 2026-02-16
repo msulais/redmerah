@@ -57,7 +57,7 @@ import { GlobalElementIds } from '@/enums/ids'
 </style>
 <div
 	class="splash"
-	id={GlobalElementIds.splash}>
+	id={GlobalElementIds.Splash}>
 	<slot />
 	<span class="loading-indicator"/>
 </div>
@@ -65,7 +65,7 @@ import { GlobalElementIds } from '@/enums/ids'
 	import { GlobalElementIds } from "@/enums/ids"
 
 	window.addEventListener('load', () => {
-		const splashRef = document.getElementById(GlobalElementIds.splash)
+		const splashRef = document.getElementById(GlobalElementIds.Splash)
 		if (!splashRef) {return}
 
 		const imgRef = splashRef.querySelector('svg')

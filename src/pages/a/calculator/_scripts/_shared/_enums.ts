@@ -5,47 +5,47 @@ export enum ScientificAngleType {
 }
 
 export enum ConverterType {
-	length      = 'length',
-	area        = 'area',
-	volume      = 'volume',
-	temperature = 'temperature',
-	time        = 'time',
-	weight      = 'weight',
-	frequency   = 'frequency',
-	pressure    = 'pressure',
-	angle       = 'angle',
+	Length      = 'length',
+	Area        = 'area',
+	Volume      = 'volume',
+	Temperature = 'temperature',
+	Time        = 'time',
+	Weight      = 'weight',
+	Frequency   = 'frequency',
+	Pressure    = 'pressure',
+	Angle       = 'angle',
 }
 
 export enum NumberType {
-	decimal = 'decimal',
-	hexadecimal = 'hexadecimal',
-	octal = 'octal',
-	binary = 'binary',
+	Decimal = 'decimal',
+	Hexadecimal = 'hexadecimal',
+	Octal = 'octal',
+	Binary = 'binary',
 }
 
 export enum DateOperation {
-	add = 'add',
-	subtract = 'subtract',
-	difference = 'difference'
+	Add = 'add',
+	Subtract = 'subtract',
+	Difference = 'difference'
 }
 
 export enum Pages {
-	basic = 'basic',
-	scientific = 'scientific',
-	converter = 'converter',
-	programmer = 'programmer',
-	date = 'date'
+	Basic = 'basic',
+	Scientific = 'scientific',
+	Converter = 'converter',
+	Orogrammer = 'programmer',
+	Date = 'date'
 }
 
 export enum GroupingNumberFormat {
-	point      = '.',
-	comma      = ',',
-	none       = '',
-	space      = ' ',
-	underscore = '_'
+	Point      = '.',
+	Comma      = ',',
+	None       = '',
+	Space      = ' ',
+	Underscore = '_'
 }
 
 export enum DecimalNumberFormat {
-	point = '.',
-	comma = ','
+	Point = '.',
+	Comma = ','
 }

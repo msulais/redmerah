@@ -28,27 +28,27 @@ const AppDynamic = AppTagName as 'div'
 ---
 
 <AppDynamic
-	class={joinClassList(cls.app, className)}
+	class={joinClassList(cls.App, className)}
 	{...other}>
 	<div
-		class={joinClassList(cls.leftSideBar, leftSideBarClass)}
+		class={joinClassList(cls.LeftSideBar, leftSideBarClass)}
 		{...leftSideBarOther}><slot name='left-sidebar'/></div>
 	<div
-		class={joinClassList(cls.container, containerClass)}
+		class={joinClassList(cls.Container, containerClass)}
 		{...containerOther}>
 		<div
-			class={joinClassList(cls.appBar, appBarClass)}
+			class={joinClassList(cls.AppBar, appBarClass)}
 			{...appBarOther}><slot name='appbar'/></div>
 		<div
-			class={joinClassList(cls.body)}
+			class={joinClassList(cls.Body)}
 			{...bodyOther}>
 			<slot/>
 		</div>
 		<div
-			class={joinClassList(cls.bottomBar, bottomBarClass)}
+			class={joinClassList(cls.BottomBar, bottomBarClass)}
 			{...bottomBarOther}><slot name='bottombar'/></div>
 	</div>
 	<div
-		class={joinClassList(cls.rightSideBar, rightSideBarClass)}
+		class={joinClassList(cls.RightSideBar, rightSideBarClass)}
 		{...rightSideBarOther}><slot name='right-sidebar'/></div>
 </AppDynamic>

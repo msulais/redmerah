@@ -20,15 +20,15 @@ const items: {
 	controls: string
 }[] = [
 	{
-		icon: IconCodes.qrCode,
+		icon: IconCodes.QrCode,
 		name: 'Generate',
-		page: Pages.generate,
+		page: Pages.Generate,
 		controls: ElementIds.pg_generate,
 	},
 	{
-		icon: IconCodes.scanText,
+		icon: IconCodes.ScanText,
 		name: 'Scan',
-		page: Pages.scan,
+		page: Pages.Scan,
 		controls: ElementIds.pg_scan,
 	},
 ]
@@ -41,7 +41,7 @@ const items: {
 	aria-label="Navigation">
 	<IconButton
 		style={{width: 'fit-content'}}
-		IconButtonCode={IconCodes.lineHorizontal3}
+		IconButtonCode={IconCodes.LineHorizontal3}
 		data-tooltip="Minimize side bar"
 		id={ElementIds.nav_minimizeBtn}
 	/>
@@ -51,7 +51,7 @@ const items: {
 		aria-selected={DEFAULT_PAGE === v.page}
 		aria-controls={v.controls}
 		SideBarButtonSelected={DEFAULT_PAGE === v.page}
-		ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.tonal : undefined}>
+		ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.Tonal : undefined}>
 		<Icon
 			slot="leading"
 			IconCode={v.icon}
@@ -68,14 +68,14 @@ const items: {
 		style="width:min-content"
 		popovertarget={ElementIds.nav_drawer}
 		popovertargetaction="hide">
-		<Icon IconCode={IconCodes.lineHorizontal3}/>
+		<Icon IconCode={IconCodes.LineHorizontal3}/>
 	</Button>
 	{items.map(v => <DrawerButton
 		aria-selected={DEFAULT_PAGE === v.page}
 		aria-controls={v.controls}
 		data-page={v.page}
 		DrawerButtonSelected={DEFAULT_PAGE === v.page}
-		ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.tonal : undefined}>
+		ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.Tonal : undefined}>
 		<Icon
 			IconCode={v.icon}
 		/>

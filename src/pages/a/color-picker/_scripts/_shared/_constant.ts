@@ -5,9 +5,9 @@ import { hexToRgb, rgbToCmyk, rgbToHsl, rgbToHsv, rgbToHwb } from "@/utils/color
 import type { AppItem } from "@/types/apps"
 
 export const APP: AppItem = APP_COLOR_PICKER
-export const DEFAULT_THEME = PlatformThemeMode.auto
-export const DEFAULT_ANIMATION = PlatformAnimationMode.auto
-export const DEFAULT_PICKER_MODE: ColorPickerMode = ColorPickerMode.rectangle
+export const DEFAULT_THEME = PlatformThemeMode.Auto
+export const DEFAULT_ANIMATION = PlatformAnimationMode.Auto
+export const DEFAULT_PICKER_MODE: ColorPickerMode = ColorPickerMode.Rectangle
 export const DEFAULT_COLOR = APP_COLOR_PICKER.color
 export const DEFAULT_COLOR_IN_VALUE = Number.parseInt(DEFAULT_COLOR.replace(/[^A-Fa-f0-9]/g, ''), 16)
 export const DEFAULT_COLOR_IN_RGB = hexToRgb(DEFAULT_COLOR)

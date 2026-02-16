@@ -30,7 +30,7 @@ let _time_input: NodeJS.Timeout | number | null = null
 function _renderQRCode(): void {
 	const data = GenerateStore.value.data
 	const settings = SettingsStore.value
-	dataToQRCanvas(_ref_output, settings.encodingMode === EncodingMode.auto
+	dataToQRCanvas(_ref_output, settings.encodingMode === EncodingMode.Auto
 		? data
 		: [{data: data, mode: settings.encodingMode as any}],
 	{
@@ -41,7 +41,7 @@ function _renderQRCode(): void {
 		scale: 16,
 		errorCorrectionLevel: settings.errorCorrectionLevel,
 		margin: settings.margin,
-		version: settings.version === QRVersion.auto? undefined : Number.parseInt(settings.version),
+		version: settings.version === QRVersion.Auto? undefined : Number.parseInt(settings.version),
 	}, (error) => {
 		_ref_downloadPng.disabled = (
 			_ref_downloadJpg.disabled =
@@ -102,7 +102,7 @@ function _initEvents(): void {
 	_ref_downloadSvg.addEventListener('click', () => {
 		const data = GenerateStore.value.data
 		const settings = SettingsStore.value
-		dataToQRString(settings.encodingMode === EncodingMode.auto
+		dataToQRString(settings.encodingMode === EncodingMode.Auto
 			? data
 			: [{data: data, mode: settings.encodingMode as any}],
 		{
@@ -114,7 +114,7 @@ function _initEvents(): void {
 			type: 'svg',
 			errorCorrectionLevel: settings.errorCorrectionLevel,
 			margin: settings.margin,
-			version: settings.version === QRVersion.auto? undefined : Number.parseInt(settings.version),
+			version: settings.version === QRVersion.Auto? undefined : Number.parseInt(settings.version),
 		}, (error, svg) => {
 			if (error) {return}
 

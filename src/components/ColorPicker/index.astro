@@ -41,7 +41,7 @@ const {'class': rectClass, draggable: rectDraggable = 'false', tabindex: rectTab
 const {'class': contentClass, ...contentOther} = ColorPickerContentAttr ?? {}
 const {'class': optionsClass, ...optionsOther} = ColorPickerOptionsAttr ?? {}
 const {'class': previewClass, ...previewOther} = ColorPickerPreviewAttr ?? {}
-const {'class': eyeDropperClass, ButtonVariant: eyeDropperVariant = CButton.Variant.tonal, IconButtonCode: eyeDropperIcon = IconCodes.eyedropper, ...eyeDropperOther} = ColorPickerEyeDropperAttr ?? {}
+const {'class': eyeDropperClass, ButtonVariant: eyeDropperVariant = CButton.Variant.Tonal, IconButtonCode: eyeDropperIcon = IconCodes.Eyedropper, ...eyeDropperOther} = ColorPickerEyeDropperAttr ?? {}
 const {'class': sliderClass, ...sliderOther} = ColorPickerSliderAttr ?? {}
 const {'class': sliderHueClass, min: sliderHueMin = 0, max: sliderHueMax = 360, type: sliderHueType = 'range', name: sliderHueName = 'Hue', ...sliderHueOther} = ColorPickerSliderHueAttr ?? {}
 const {'class': sliderOpacityClass, min: sliderOpacityMin = 0, max: sliderOpacityMax = 100, type: sliderOpacityType = 'range', name: sliderOpacityName = 'Opacity', ...sliderOpacityOther} = ColorPickerSliderOpacityAttr ?? {}
@@ -53,42 +53,42 @@ const {'class': textfieldClass, ...textfieldOther} = ColorPickerTextFieldAttr ??
 const {'class': textfieldColorClass, ...textfieldColorOther} = ColorPickerTextFieldColorAttr ?? {}
 const {'class': textfieldOpacityClass, ...textfieldOpacityOther} = ColorPickerTextFieldOpacityAttr ?? {}
 const {'class': swapClass, ...swapOther} = ColorPickerSwapAttr ?? {}
-const {'class': swapIconClass, IconCode: swapIconCode = IconCodes.chevronUpDown, ...swapIconOther} = ColorPickerSwapIconAttr ?? {}
+const {'class': swapIconClass, IconCode: swapIconCode = IconCodes.ChevronUpDown, ...swapIconOther} = ColorPickerSwapIconAttr ?? {}
 
 const cls = CColorPicker.Classes
 ---
 
 <Popover
-	class={joinClassList(cls.colorpicker)}
+	class={joinClassList(cls.Colorpicker)}
 	data-c-colorpicker-value={ColorPickerValue}
 	data-c-colorpicker-colorspace={ColorPickerColorSpace}
 	data-c-colorpicker-disabled-opacity={ColorPickerDisabledOpacity? '' : undefined}
 	data-c-colorpicker-hueonly={ColorPickerHueOnly? '' : undefined}
 	{...other}>
 	<div
-		class={joinClassList(cls.rect, rectClass)}
+		class={joinClassList(cls.Rect, rectClass)}
 		tabindex={rectTabindex}
 		draggable={rectDraggable}
 		{...rectOther}
 	/>
 	<div
-		class={joinClassList(cls.options, optionsClass)}
+		class={joinClassList(cls.Options, optionsClass)}
 		{...optionsOther}>
 		<div
-			class={joinClassList(cls.preview, previewClass)}
+			class={joinClassList(cls.Preview, previewClass)}
 			{...previewOther}
 		/>
 		<IconButton
-			class={joinClassList(cls.eyedropper, eyeDropperClass)}
+			class={joinClassList(cls.Eyedropper, eyeDropperClass)}
 			IconButtonCode={eyeDropperIcon}
 			ButtonVariant={eyeDropperVariant}
 			{...eyeDropperOther}
 		/>
 		<div
-			class={joinClassList(cls.slider, sliderClass)}
+			class={joinClassList(cls.Slider, sliderClass)}
 			{...sliderOther}>
 			<input
-				class={joinClassList(cls.sliderHue, sliderHueClass)}
+				class={joinClassList(cls.SliderHue, sliderHueClass)}
 				name={sliderHueName}
 				type={sliderHueType}
 				min={sliderHueMin}
@@ -96,7 +96,7 @@ const cls = CColorPicker.Classes
 				{...sliderHueOther}
 			/>
 			<input
-				class={joinClassList(cls.sliderOpacity, sliderOpacityClass)}
+				class={joinClassList(cls.SliderOpacity, sliderOpacityClass)}
 				name={sliderOpacityName}
 				type={sliderOpacityType}
 				min={sliderOpacityMin}
@@ -106,43 +106,43 @@ const cls = CColorPicker.Classes
 		</div>
 	</div>
 	<div
-		class={joinClassList(cls.input, inputClass)}
+		class={joinClassList(cls.Input, inputClass)}
 		{...inputOther}>
 		<div
-			class={joinClassList(cls.label, labelClass)}
+			class={joinClassList(cls.Label, labelClass)}
 			{...labelOther}>
 			<label
-				class={joinClassList(cls.labelColor, labelColorClass)}
+				class={joinClassList(cls.LabelColor, labelColorClass)}
 				{...labelColorOther}>HEX:</label>
 			<label
-				class={joinClassList(cls.labelOpacity, labelOpacityClass)}
+				class={joinClassList(cls.LabelOpacity, labelOpacityClass)}
 				{...labelOpacityOther}>Opacity:</label>
 		</div>
 		<div
-			class={joinClassList(cls.textfield, textfieldClass)}
+			class={joinClassList(cls.Textfield, textfieldClass)}
 			{...textfieldOther}>
 			<TextField
-				class={joinClassList(cls.textfieldColor, textfieldColorClass)}
+				class={joinClassList(cls.TextfieldColor, textfieldColorClass)}
 				{...textfieldColorOther}>
 				<TextFieldButton
 					slot="trailing"
-					class={joinClassList(cls.swap, swapClass)}
+					class={joinClassList(cls.Swap, swapClass)}
 					{...swapOther}>
 					<Icon
 						IconCode={swapIconCode}
-						class={joinClassList(cls.swapIcon, swapIconClass)}
+						class={joinClassList(cls.SwapIcon, swapIconClass)}
 						{...swapIconOther}
 					/>
 				</TextFieldButton>
 			</TextField>
 			<TextField
-				class={joinClassList(cls.textfieldOpacity, textfieldOpacityClass)}
+				class={joinClassList(cls.TextfieldOpacity, textfieldOpacityClass)}
 				{...textfieldOpacityOther}
 			/>
 		</div>
 	</div>
 	<div
-		class={joinClassList(cls.content, contentClass)}
+		class={joinClassList(cls.Content, contentClass)}
 		{...contentOther}><slot/></div>
 </Popover>
 <script>

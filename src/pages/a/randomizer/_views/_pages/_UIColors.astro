@@ -13,9 +13,9 @@ const colorSpaces: {
 	text: string
 	value: ColorsRandomizerSpace
 }[] = [
-	{value: ColorsRandomizerSpace.hex, text: 'Hex'},
-	{value: ColorsRandomizerSpace.rgb, text: 'RGB'},
-	{value: ColorsRandomizerSpace.hsl, text: 'HSL'},
+	{value: ColorsRandomizerSpace.HEX, text: 'Hex'},
+	{value: ColorsRandomizerSpace.RGB, text: 'RGB'},
+	{value: ColorsRandomizerSpace.HSL, text: 'HSL'},
 ]
 ---
 <style lang="scss">
@@ -41,7 +41,7 @@ const colorSpaces: {
 	class={CSSClasses.bodyPage}
 	id={ElementIds.pg_colors}
 	role="tabpanel"
-	hidden={DEFAULT_PAGE !== Pages.colors}>
+	hidden={DEFAULT_PAGE !== Pages.Colors}>
 	<output
 		class={[CSSClasses.bodyResult, CSSClasses.resultColors].join(' ')}
 		for={[
@@ -104,7 +104,7 @@ const colorSpaces: {
 			)}
 		</ComboBox>
 		<div id={ElementIds.pgCol_hex} style={{
-			display: DEFAULT_COLORS_SPACE === ColorsRandomizerSpace.hex? 'contents' : 'none'
+			display: DEFAULT_COLORS_SPACE === ColorsRandomizerSpace.HEX? 'contents' : 'none'
 		}}>
 			<p>Hex:</p>
 			<div class:list={["minmax"]}>
@@ -137,7 +137,7 @@ const colorSpaces: {
 			</div>
 		</div>
 		<div id={ElementIds.pgCol_rgb} style={{
-			display: DEFAULT_COLORS_SPACE === ColorsRandomizerSpace.rgb? 'contents' : 'none'
+			display: DEFAULT_COLORS_SPACE === ColorsRandomizerSpace.RGB? 'contents' : 'none'
 		}}>
 			<p>Red:</p>
 			<div class:list={["minmax"]}>
@@ -228,7 +228,7 @@ const colorSpaces: {
 			</div>
 		</div>
 		<div id={ElementIds.pgCol_hsl} style={{
-			display: DEFAULT_COLORS_SPACE === ColorsRandomizerSpace.hsl? 'contents' : 'none'
+			display: DEFAULT_COLORS_SPACE === ColorsRandomizerSpace.HSL? 'contents' : 'none'
 		}}>
 			<p>Hue:</p>
 			<div class:list={["minmax"]}>

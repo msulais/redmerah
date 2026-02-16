@@ -20,8 +20,8 @@ import { ElementIds } from '../_scripts/_shared/_ids'
 		<IconButton
 			id={ElementIds.bd_edit}
 			aria-label="Edit"
-			ButtonVariant={CButton.Variant.tonal}
-			IconButtonCode={IconCodes.edit}
+			ButtonVariant={CButton.Variant.Tonal}
+			IconButtonCode={IconCodes.Edit}
 		/>
 		<div style={{
 			'display': 'grid',
@@ -30,14 +30,14 @@ import { ElementIds } from '../_scripts/_shared/_ids'
 		}}>
 			<Button
 				id={ElementIds.bd_vibrate}
-				ButtonVariant={CButton.Variant.filled}>
-				<Icon IconCode={IconCodes.play} IconFilled/>
+				ButtonVariant={CButton.Variant.Filled}>
+				<Icon IconCode={IconCodes.Play} IconFilled/>
 				Vibrate
 			</Button>
 			<Button
 				id={ElementIds.bd_stop}
-				ButtonVariant={CButton.Variant.filled}>
-				<Icon IconCode={IconCodes.pause} IconFilled/>
+				ButtonVariant={CButton.Variant.Filled}>
+				<Icon IconCode={IconCodes.Pause} IconFilled/>
 				Stop
 			</Button>
 		</div>
@@ -50,9 +50,9 @@ import { ElementIds } from '../_scripts/_shared/_ids'
 		placeholder: DEFAULT_VIBRATION_PATTERN.join(', ')
 	}}/>
 	<form method="dialog" slot="footer" style="display:contents">
-		<Button ButtonVariant={CButton.Variant.tonal}>Cancel</Button>
+		<Button ButtonVariant={CButton.Variant.Tonal}>Cancel</Button>
 		<Button
-			ButtonVariant={CButton.Variant.filled}
+			ButtonVariant={CButton.Variant.Filled}
 			id={ElementIds.bd_save}>Save</Button>
 	</form>
 </Dialog>
