@@ -1,7 +1,6 @@
 ---
 import AppBar from '@/components/AppBar/index.astro'
 import IconButton from '@/components/Button/IconButton.astro'
-import Tooltip from '@/components/Tooltip/index.astro'
 import Dialog from '@/components/Dialog/index.astro'
 import CheckBox from '@/components/CheckBox/index.astro'
 import TextField from '@/components/TextField/index.astro'
@@ -98,7 +97,7 @@ const themes: {
 		/>
 		{APP.name}
 	</Fragment>
-	<Tooltip slot="trailing">
+	<Fragment slot="trailing">
 		<div
 			id={ElementIds.ap_generatorLocation}
 			style={{display: 'contents'}}>
@@ -229,11 +228,11 @@ const themes: {
 			aria-label="Copy result"
 			data-tooltip="Copy result"
 		/>
-	</Tooltip>
+	</Fragment>
 </AppBar>
 <Dialog id={ElementIds.apSett_listDialog} style={{width: pxToRem(512) + 'rem'}}>
 	<Fragment slot="header">Lists</Fragment>
-	<Tooltip>
+	<Fragment>
 		<ul
 			id={ElementIds.apSett_list}
 			style={{
@@ -278,7 +277,7 @@ const themes: {
 				</List>
 			)}
 		</ul>
-	</Tooltip>
+	</Fragment>
 	<form slot="footer" method="dialog" style="display:contents">
 		<Button ButtonVariant={CButton.Variant.tonal}>Close</Button>
 		<Button

@@ -4,7 +4,6 @@ import { CSSClasses } from './_styles/_css'
 import Html from '@/layouts/Html/index.astro'
 import Appbar from '@/layouts/Appbar/index.astro'
 import BottomBar from '@/layouts/BottomBar/index.astro'
-import Tooltip from '@/components/Tooltip/index.astro'
 import TextField from '@/components/TextField/index.astro'
 import Icon from '@/components/Icon/index.astro'
 import LinkButton from '@/components/Button/LinkButton.astro'
@@ -49,23 +48,21 @@ export const prerender = true
 			}}>
 			<Icon IconCode={IconCodes.search} slot="leading"/>
 		</TextField>
-		<Tooltip>
-			<ul class={CSSClasses.content} id={ElementIds.appList}>
-				{[...APPS].sort((a,b) => a.name.localeCompare(b.name)).map(app =>
-					<li data-tooltip={app.name}>
-						<LinkButton style={`--color: ${app.color}`} href={app.link} LinkButtonVariant={CButton.Variant.tonal}>
-							<img
-								loading="eager"
-								src={app.logoUrl}
-								style={{width: pxToRem(48) + 'rem'}}
-								alt={app.name + ' logo'}
-							/>
-							<span>{app.name}</span>
-						</LinkButton>
-					</li>
-				)}
-			</ul>
-		</Tooltip>
+		<ul class={CSSClasses.content} id={ElementIds.appList}>
+			{[...APPS].sort((a,b) => a.name.localeCompare(b.name)).map(app =>
+				<li data-tooltip={app.name}>
+					<LinkButton style={`--color: ${app.color}`} href={app.link} LinkButtonVariant={CButton.Variant.tonal}>
+						<img
+							loading="eager"
+							src={app.logoUrl}
+							style={{width: pxToRem(48) + 'rem'}}
+							alt={app.name + ' logo'}
+						/>
+						<span>{app.name}</span>
+					</LinkButton>
+				</li>
+			)}
+		</ul>
 	</main>
 	<BottomBar/>
 	<script src="./_scripts/_index.ts"/>

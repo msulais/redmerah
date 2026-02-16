@@ -1,6 +1,5 @@
 ---
 import SideBar from '@/components/SideBar/index.astro'
-import Tooltip from '@/components/Tooltip/index.astro'
 import Icon from '@/components/Icon/index.astro'
 import Drawer from '@/components/Drawer/index.astro'
 import DrawerButton from '@/components/Drawer/DrawerButton.astro'
@@ -40,28 +39,26 @@ const items: {
 	class={CSSClasses.navigationSideBar}
 	id={ElementIds.nav_sideBar}
 	aria-label="Navigation">
-	<Tooltip>
-		<IconButton
-			style={{width: 'fit-content'}}
-			IconButtonCode={IconCodes.lineHorizontal3}
-			data-tooltip="Minimize side bar"
-			id={ElementIds.nav_minimizeBtn}
+	<IconButton
+		style={{width: 'fit-content'}}
+		IconButtonCode={IconCodes.lineHorizontal3}
+		data-tooltip="Minimize side bar"
+		id={ElementIds.nav_minimizeBtn}
+	/>
+	{items.map(v => <SideBarButton
+		role="tab"
+		data-page={v.page}
+		aria-selected={DEFAULT_PAGE === v.page}
+		aria-controls={v.controls}
+		SideBarButtonSelected={DEFAULT_PAGE === v.page}
+		ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.tonal : undefined}>
+		<Icon
+			slot="leading"
+			IconCode={v.icon}
+			data-tooltip={v.name}
 		/>
-		{items.map(v => <SideBarButton
-			role="tab"
-			data-page={v.page}
-			aria-selected={DEFAULT_PAGE === v.page}
-			aria-controls={v.controls}
-			SideBarButtonSelected={DEFAULT_PAGE === v.page}
-			ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.tonal : undefined}>
-			<Icon
-				slot="leading"
-				IconCode={v.icon}
-				data-tooltip={v.name}
-			/>
-			{v.name}
-		</SideBarButton>)}
-	</Tooltip>
+		{v.name}
+	</SideBarButton>)}
 </SideBar>
 <Drawer
 	id={ElementIds.nav_drawer}

@@ -1,7 +1,6 @@
 ---
 import Button from '@/components/Button/index.astro'
 import IconButton from '@/components/Button/IconButton.astro'
-import Tooltip from '@/components/Tooltip/index.astro'
 import Icon from '@/components/Icon/index.astro'
 import ComboBox from '@/components/ComboBox/index.astro'
 import ComboBoxOption from '@/components/ComboBox/ComboBoxOption.astro'
@@ -40,12 +39,10 @@ import { pxToRem } from '@/utils/css'
 	</div>
 	<div class={CSSClasses.bdPage_options} id={ElementIds.pgConv_options}>
 		<div class={CSSClasses.bdPage_optionGroup}>
-			<Tooltip>
-				<Button data-command={Commands.memo_clear} data-tooltip="Memory clear (Ctrl+Shift+C)">MC</Button>
-				<Button data-command={Commands.memo_add} data-tooltip="Memory add (Ctrl+Shift+&quot;+&quot;)">M+</Button>
-				<Button data-command={Commands.memo_sub} data-tooltip="Memory subtract (Ctrl+Shift+&quot;-&quot;)">M-</Button>
-				<Button class={CSSClasses.bdPage_memoPreview} data-command={Commands.memo_recall} data-tooltip="Memory recall (Ctrl+Shift+R)">MR: 0</Button>
-			</Tooltip>
+			<Button data-command={Commands.memo_clear} data-tooltip="Memory clear (Ctrl+Shift+C)">MC</Button>
+			<Button data-command={Commands.memo_add} data-tooltip="Memory add (Ctrl+Shift+&quot;+&quot;)">M+</Button>
+			<Button data-command={Commands.memo_sub} data-tooltip="Memory subtract (Ctrl+Shift+&quot;-&quot;)">M-</Button>
+			<Button class={CSSClasses.bdPage_memoPreview} data-command={Commands.memo_recall} data-tooltip="Memory recall (Ctrl+Shift+R)">MR: 0</Button>
 		</div>
 		<div class={CSSClasses.bdPage_optionGroup}>
 			<label

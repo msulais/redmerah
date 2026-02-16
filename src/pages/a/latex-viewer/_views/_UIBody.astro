@@ -5,7 +5,6 @@ import TextAreaField from '@/components/TextAreaField/index.astro'
 import IconButton from '@/components/Button/IconButton.astro'
 import Toast from '@/components/Toast/index.astro'
 import Dialog from '@/components/Dialog/index.astro'
-import Tooltip from '@/components/Tooltip/index.astro'
 import { CSSClasses } from '../_styles/_css'
 import { IconCodes } from '@/enums/icons'
 import { ElementIds } from '../_scripts/_shared/_ids'
@@ -32,33 +31,31 @@ import { pxToRem } from '@/utils/css'
 					</semantics>
 				</math>
 			</output>
-			<Tooltip>
-				<Button
-					data-command={Commands.eq_new}
-					ButtonVariant={CButton.Variant.outlined}>
-					<Icon IconCode={IconCodes.add}/>
-					New equation
-				</Button>
-				<IconButton
-					data-command={Commands.eq_copy}
-					IconButtonCode={IconCodes.copy}
-					aria-label="Copy"
-					data-tooltip="Copy"
-				/>
-				<IconButton
-					data-command={Commands.eq_copyMathML}
-					IconButtonCode={IconCodes.code}
-					aria-label="MathML"
-					data-tooltip="MathML"
-				/>
-				<IconButton
-					data-command={Commands.eq_delete}
-					IconButtonCode={IconCodes.delete}
-					aria-label="Delete"
-					data-tooltip="Delete"
-					disabled
-				/>
-			</Tooltip>
+			<Button
+				data-command={Commands.eq_new}
+				ButtonVariant={CButton.Variant.outlined}>
+				<Icon IconCode={IconCodes.add}/>
+				New equation
+			</Button>
+			<IconButton
+				data-command={Commands.eq_copy}
+				IconButtonCode={IconCodes.copy}
+				aria-label="Copy"
+				data-tooltip="Copy"
+			/>
+			<IconButton
+				data-command={Commands.eq_copyMathML}
+				IconButtonCode={IconCodes.code}
+				aria-label="MathML"
+				data-tooltip="MathML"
+			/>
+			<IconButton
+				data-command={Commands.eq_delete}
+				IconButtonCode={IconCodes.delete}
+				aria-label="Delete"
+				data-tooltip="Delete"
+				disabled
+			/>
 		</li>
 	</ul>
 </main>

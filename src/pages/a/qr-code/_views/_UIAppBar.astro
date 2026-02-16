@@ -1,7 +1,6 @@
 ---
 import AppBar from '@/components/AppBar/index.astro'
 import IconButton from '@/components/Button/IconButton.astro'
-import Tooltip from '@/components/Tooltip/index.astro'
 import Menu from '@/components/Menu/index.astro'
 import Button from '@/components/Button/index.astro'
 import TextField from '@/components/TextField/index.astro'
@@ -94,7 +93,7 @@ const themes: {
 		/>
 		{APP.name}
 	</Fragment>
-	<Tooltip slot="trailing">
+	<Fragment slot="trailing">
 		<IconButton
 			id={ElementIds.apInf_btn}
 			data-tooltip="Info"
@@ -329,7 +328,7 @@ const themes: {
 				<MenuIndent />
 			</MenuItem>
 		</Menu>
-	</Tooltip>
+	</Fragment>
 </AppBar>
 <Dialog id={ElementIds.apSett_colorDialog} style={{width: pxToRem(360) + 'rem'}}>
 	<Fragment slot="header">Color</Fragment>

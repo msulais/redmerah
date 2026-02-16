@@ -2,7 +2,6 @@ import { ObservableStore } from "@/utils/store"
 import { DEFAULT_LATEX_TEXT } from "../_shared/_constant"
 import { ElementIds } from "../_shared/_ids"
 import { $, $$ } from "./_dom-utils"
-import { CTooltip } from "@/components/Tooltip"
 import { CButton } from "@/components/Button"
 import { Commands } from "../_shared/_commands"
 import { CIcon } from "@/components/Icon"
@@ -62,7 +61,14 @@ function _updateLatexList(index: number): void {
 				ref.setAttribute('data-command', Commands.eq_delete)
 			}}
 		}})
-		const ref_actions = CTooltip.create({Tooltip: {children: [
+
+		const textareaId = createElementId()
+		ref_textarea = document.createElement('textarea')
+		ref_output = document.createElement('output')
+		ref_li = document.createElement('li')
+		ref_textarea.id = textareaId
+		ref_output.setAttribute('for', textareaId)
+		ref_li.replaceChildren(ref_textarea, ref_output,
 			CButton.create({Button: {
 				children: [
 					CIcon.create({Icon: {code: IconCodes.add}}),
@@ -89,16 +95,8 @@ function _updateLatexList(index: number): void {
 					ref.setAttribute('data-command', Commands.eq_copyMathML)
 				}}
 			}}),
-			ref_delete,
-		]}})
-
-		const textareaId = createElementId()
-		ref_textarea = document.createElement('textarea')
-		ref_output = document.createElement('output')
-		ref_li = document.createElement('li')
-		ref_textarea.id = textareaId
-		ref_output.setAttribute('for', textareaId)
-		ref_li.replaceChildren(ref_textarea, ref_output, ref_actions)
+			ref_delete
+		)
 		refs_children.splice(index, 0, ref_li)
 		_ref_latexList.replaceChildren(...refs_children)
 	}

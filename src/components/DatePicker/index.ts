@@ -6,56 +6,9 @@ import { AnimationEasing } from "@/enums/animation"
 import { IconCodes } from "@/enums/icons"
 import { CPopover as GCPopover, type PopoverProps } from "../Popover"
 import { CButton as GCButton, type ButtonProps, type IconButtonProps } from "../Button"
-import { CTooltip as GCTooltip, type TooltipProps } from "../Tooltip"
 import { CDivider as GCDivider, type DividerProps } from "../Divider"
 import { $add_event, $children, $classlist, $create, $get_attr, $has_attr, $is_array, $is_false, $parse_date, $query, $query_all, $rm_event, $rm_style, $set_attr, $set_style } from "../utils"
-
-// type Nullable<T> = T | null
-// const $is_array = (e: any) => Array.isArray(e)
-// const $is_false = (e: any) => e === false
-// const $get_attr = (ref?: Element, name?: string) => name && ref?.getAttribute(name)
-// const $has_attr = (ref?: Element, name?: string) => Boolean(name && ref?.hasAttribute(name))
-// const $set_attr = (
-// 	(ref?: Nullable<Element>, name?: string, value?: string) =>
-// 	name && value && ref?.setAttribute(name, value)
-// )
-// const $query = (
-// 	<T extends HTMLElement>(selector: string, from?: Element) =>
-// 	(from ?? document).querySelector<T>(selector)
-// )
-// const $query_all = (
-// 	<T extends HTMLElement>(selector: string, from?: Element) =>
-// 	(from ?? document).querySelectorAll<T>(selector)
-// )
-// const $create = (
-// 	<T extends keyof HTMLElementTagNameMap>(tagName: T) =>
-// 	document.createElement(tagName)
-// )
-// const $children = (
-// 	(ref?: Nullable<Element>, ...children: (Node | string)[]) =>
-// 	ref?.replaceChildren(...children)
-// )
-// const $classlist = (
-// 	(ref?: Nullable<Element>, ...classes: string[]) =>
-// 	ref?.classList.add(...classes)
-// )
-// const $add_event = (
-// 	<T extends Event = Event>(ref?: any, type?: string, callback?: (e: T) => unknown) =>
-// 	ref.addEventListener(type, callback)
-// )
-// const $rm_event = (
-// 	<T extends Event = Event>(ref?: any, type?: string, callback?: (e: T) => unknown) =>
-// 	ref.removeEventListener(type, callback)
-// )
-// const $set_style = (
-// 	(ref?: Nullable<HTMLElement>, name?: string, value?: string) =>
-// 	name && value && ref?.style.setProperty(name, value)
-// )
-// const $rm_style = (
-// 	(ref?: Nullable<HTMLElement>, name?: string) =>
-// 	name && ref?.style.removeProperty(name)
-// )
-
+import { TooltipAttributes } from "@/layouts/Tooltip/_scripts/enums"
 
 export namespace CDatePicker {
 	export type CElement = GCPopover.CElement
@@ -70,7 +23,7 @@ export namespace CDatePicker {
 				title      ?(ref : GCButton.CElement      ): unknown
 				previous   ?(ref : GCButton.CIcon.CElement): unknown
 				next       ?(ref : GCButton.CIcon.CElement): unknown
-				days       ?(ref : GCTooltip.CElement     ): unknown
+				days       ?(ref : HTMLDivElement         ): unknown
 				day        ?(refs: HTMLSpanElement[]      ): unknown
 				divider    ?(ref : GCDivider.CElement     ): unknown
 				year       ?(ref : HTMLDivElement         ): unknown
@@ -519,11 +472,10 @@ export namespace CDatePicker {
 		}
 
 		// days
-		let ref_days = $query<GCTooltip.CElement>('.' + Classes.days, ref_datepicker)
+		let ref_days = $query<HTMLDivElement>('.' + Classes.days, ref_datepicker)
 		if (!ref_days) {
-			ref_days = GCTooltip.create()
+			ref_days = $create('div')
 			$classlist(ref_days, Classes.days)
-			GCTooltip.register(ref_days)
 		}
 
 		// days -> day[]
@@ -533,7 +485,7 @@ export namespace CDatePicker {
 			for (const day of ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']) {
 				const ref_span = $create('span')
 				ref_span.textContent = day.substring(0, 3)
-				$set_attr(ref_span, GCTooltip.TargetAttributes.tooltip, day)
+				$set_attr(ref_span, TooltipAttributes.Tooltip, day)
 				$classlist(ref_span, Classes.day)
 				refs_day.push(ref_span)
 			}
@@ -683,7 +635,7 @@ export type DatePickerProps = PopoverProps & {
 	DatePickerTitleAttr      ?: ButtonProps
 	DatePickerPreviousAttr   ?: Omit<IconButtonProps, 'IconButtonCode'> & { IconButtonCode?: number }
 	DatePickerNextAttr       ?: Omit<IconButtonProps, 'IconButtonCode'> & { IconButtonCode?: number }
-	DatePickerDaysAttr       ?: TooltipProps
+	DatePickerDaysAttr       ?: astroHTML.JSX.HTMLAttributes
 	DatePickerDayAttr        ?: astroHTML.JSX.HTMLAttributes[]
 	DatePickerDividerAttr    ?: DividerProps
 	DatePickerYearAttr       ?: astroHTML.JSX.HTMLAttributes

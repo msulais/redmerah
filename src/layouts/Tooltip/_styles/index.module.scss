@@ -1,0 +1,21 @@
+@use '../../../styles/units.scss' as u;
+
+.tooltip {
+	top: 0px;
+	left: 0px;
+	pointer-events: none;
+	position: fixed;
+	opacity: 0;
+	background-color: rgb(var(--g-color-on-surface));
+	color: rgb(var(--g-color-surface));
+	font-size: var(--g-font-size-s);
+	font-weight: 500;
+	padding: u.Rem(4px) u.Rem(8px);
+	white-space: pre-line;
+	max-width: calc(100% - u.Rem(8px));
+	max-height: calc(100dvh - u.Rem(8px));
+	overflow: hidden;
+	border-radius: u.Rem(4px);
+	box-shadow: var(--g-elevation2);
+	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity2));
+}

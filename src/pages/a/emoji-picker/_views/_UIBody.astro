@@ -1,6 +1,5 @@
 ---
 import Button from '@/components/Button/index.astro'
-import Tooltip from '@/components/Tooltip/index.astro'
 import TextField from '@/components/TextField/index.astro'
 import Icon from '@/components/Icon/index.astro'
 import TextFieldButton from '@/components/TextField/TextFieldButton.astro'
@@ -92,7 +91,7 @@ const skinTones: {
 					},
 					id: ElementIds.bd_input
 				}}>
-				<Tooltip
+				<div
 					slot='trailing'
 					style={{
 						display: 'flex',
@@ -112,9 +111,9 @@ const skinTones: {
 						style={{'margin-right': pxToRem(4) + 'rem'}}>
 						<Icon IconCode={IconCodes.copy}/>
 					</TextFieldButton>
-				</Tooltip>
+				</div>
 			</TextField>
-			<Tooltip
+			<div
 				id={ElementIds.bd_skinTone}
 				class={CSSClasses.bodySkinTone}
 				style={{
@@ -140,19 +139,17 @@ const skinTones: {
 						}} IconCode={IconCodes.circle} IconFilled/>
 					</label>
 				)}
-			</Tooltip>
+			</div>
 		</div>
-		<Tooltip>
-			<ul id={ElementIds.bd_emojiList}>
-				{new Array(maxEmojiList).fill(0).map((_, i) => {
-					const v = EMOJIS_SMILEY_AND_EMOTION[i]
-					return (<li style={v ? undefined : 'display:none'}><Button
-						ButtonVariant={CButton.Variant.tonal}
-						data-tooltip={v?.[1] ?? ''}
-						data-emoji={v?.[0] ?? ''}>{v?.[0] ?? ''}</Button></li>)
-				})}
-			</ul>
-		</Tooltip>
+		<ul id={ElementIds.bd_emojiList}>
+			{new Array(maxEmojiList).fill(0).map((_, i) => {
+				const v = EMOJIS_SMILEY_AND_EMOTION[i]
+				return (<li style={v ? undefined : 'display:none'}><Button
+					ButtonVariant={CButton.Variant.tonal}
+					data-tooltip={v?.[1] ?? ''}
+					data-emoji={v?.[0] ?? ''}>{v?.[0] ?? ''}</Button></li>)
+			})}
+		</ul>
 	</section>
 </main>
 <Toast id={ElementIds.toa_copied} ToastCloseDelay={1500}>

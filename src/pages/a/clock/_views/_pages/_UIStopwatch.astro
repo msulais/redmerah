@@ -1,5 +1,4 @@
 ---
-import Tooltip from '@/components/Tooltip/index.astro'
 import Button from '@/components/Button/index.astro'
 import IconButton from '@/components/Button/IconButton.astro'
 import Icon from '@/components/Icon/index.astro'
@@ -96,7 +95,7 @@ function msText(ms: number): string {
 			id={ElementIds.pgSw_hhmmss}>{textHHMMSS(DEFAULT_STOPWATCH_MS)}</span
 		>,<small id={ElementIds.pgSw_ms}>{textMS(DEFAULT_STOPWATCH_MS)}</small>
 	</h2>
-	<Tooltip
+	<div
 		style={{
 			display: 'flex',
 			'justify-content': 'center',
@@ -172,7 +171,7 @@ function msText(ms: number): string {
 				</MenuItem>
 			</SubMenu>
 		</Menu>
-	</Tooltip>
+	</div>
 	<div
 		class={CSSClasses.bodyPageStopwatchLaps}
 		id={ElementIds.pgSw_laps}

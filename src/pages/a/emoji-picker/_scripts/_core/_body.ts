@@ -7,7 +7,6 @@ import { CButton } from "@/components/Button"
 import { EMOJIS_SMILEY_AND_EMOTION, EMOJIS_PERSON_AND_BODY, EMOJIS_ANIMAL_AND_NATURE, EMOJIS_FOOD_AND_DRINK, EMOJIS_TRAVEL_AND_PLACES, EMOJIS_ACTIVITIES, EMOJIS_OBJECT, EMOJIS_SYMBOLS, EMOJIS_FLAGS, EMOJIS_PERSON_AND_BODY_LIGHT_SKIN_TONE, EMOJIS_PERSON_AND_BODY_MEDIUM_LIGHT_SKIN_TONE, EMOJIS_PERSON_AND_BODY_MEDIUM_SKIN_TONE, EMOJIS_PERSON_AND_BODY_MEDIUM_DARK_SKIN_TONE, EMOJIS_PERSON_AND_BODY_DARK_SKIN_TONE } from "@/constants/emoji"
 import { CDrawer } from "@/components/Drawer"
 import { CSideBar } from "@/components/SideBar"
-import { CTooltip } from "@/components/Tooltip"
 import { Pages, SkinToneEmoji } from "../_shared/_enums"
 import { SettingsStore } from "./_settings"
 import { NavigationStore } from "./_navigation"
@@ -24,7 +23,7 @@ const _animationOptions = {
 const _ref_body = $(ElementIds.body) as HTMLElement
 const _ref_emojiList = $(ElementIds.bd_emojiList) as HTMLUListElement
 const _refs_emojiButton = $$$<CButton.CElement>(`#${CSS.escape(ElementIds.body)} [data-emoji]`)
-const _ref_skinToneOption = $(ElementIds.bd_skinTone) as CTooltip.CElement
+const _ref_skinToneOption = $(ElementIds.bd_skinTone) as HTMLDivElement
 const _ref_title = $(ElementIds.bd_title) as HTMLHeadingElement
 const _ref_toastCopied = $(ElementIds.toa_copied) as CToast.CElement
 const _ref_textField = $(ElementIds.bd_input) as HTMLInputElement

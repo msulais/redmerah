@@ -1,7 +1,6 @@
 ---
 import AppBar from '@/components/AppBar/index.astro'
 import IconButton from '@/components/Button/IconButton.astro'
-import Tooltip from '@/components/Tooltip/index.astro'
 import Menu from '@/components/Menu/index.astro'
 import SubMenu from '@/components/Menu/SubMenu.astro'
 import CheckMenuItem from '@/components/Menu/CheckMenuItem.astro'
@@ -81,7 +80,7 @@ const themes: {
 		/>
 		{APP.name}
 	</Fragment>
-	<Tooltip slot="trailing">
+	<Fragment slot="trailing">
 		<IconButton
 			id={ElementIds.apInf_btn}
 			data-tooltip="Info"
@@ -259,5 +258,5 @@ const themes: {
 				<MenuIndent />
 			</MenuItem>
 		</Menu>
-	</Tooltip>
+	</Fragment>
 </AppBar>

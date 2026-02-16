@@ -2,7 +2,6 @@ import { CMenu } from "@/components/Menu"
 import { $, $$, $$$ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
 import { CSSClasses, CSSGroup } from "../../_styles/_css"
-import { CTooltip } from "@/components/Tooltip"
 import { isTargetValidElement } from "@/utils/element"
 import { isValidEnumValue } from "@/utils/object"
 import { Commands } from "../_shared/_commands"
@@ -160,7 +159,7 @@ const _ref_previewBox = $(ElementIds.bd_preview) as HTMLDivElement
 const _ref_gradients = $(ElementIds.bd_gradients) as HTMLUListElement
 const _ref_actionsMenu = $(ElementIds.bdGrad_actionsMenu) as CMenu.CElement
 const _ref_controlPopover = $(ElementIds.bdGrad_controlPopover) as CMenu.CElement
-const _ref_gradientBody = $$<CTooltip.CElement>(`.${CSSClasses.bodyGradients}`)!
+const _ref_gradientBody = $$<HTMLDivElement>(`.${CSSClasses.bodyGradients}`)!
 const _refs_actionButton = () => $$$<CButton.CElement>(
 	`.${CSSClasses.bodyGradients} [data-command="${Commands.grad_openActions}"]`
 )

@@ -4,6 +4,7 @@ import { generateColorPalette, hexToRgb } from '@/utils/color'
 import { GlobalElementIds } from '@/enums/ids'
 import { PlatformAnimationMode, PlatformThemeMode } from '@/enums/platforms'
 import Dialog from '@/components/Dialog/index.astro'
+import Tooltip from '@/layouts/Tooltip/index.astro'
 import Icon from '@/components/Icon/index.astro'
 import Button from '@/components/Button/index.astro'
 import LinkButton from '@/components/Button/LinkButton.astro'
@@ -62,7 +63,9 @@ const colorToCSS = (hex: HEXColor) => {
 		<slot name="open-graph-protocol" />
 	</head>
 	<body>
-		<slot />
+		<Tooltip>
+			<slot />
+		</Tooltip>
 		<Dialog
 			id={GlobalElementIds.popoverWarningNotice}
 			style={`width:${pxToRem(512)}rem`}

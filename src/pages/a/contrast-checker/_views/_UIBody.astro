@@ -1,6 +1,5 @@
 ---
 import ColorPicker from '@/components/ColorPicker/index.astro'
-import Tooltip from '@/components/Tooltip/index.astro'
 import { colorContrastPercentage, colorContrastRatio, hexToRgb } from '@/utils/color'
 import { DEFAULT_BACKGROUND_COLOR, DEFAULT_FOREGROUND_COLOR } from '../_scripts/_shared/_constant'
 import { ElementIds } from '../_scripts/_shared/_ids'
@@ -56,7 +55,7 @@ const ratio = adjustDecimalNumber(colorContrastRatio(hexToRgb(DEFAULT_BACKGROUND
 			PopoverAnchorBy={ElementIds.bd_foreground}
 		/>
 	</div>
-	<Tooltip class={CSSClasses.wcag}>
+	<div class={CSSClasses.wcag}>
 		<p
 			data-tooltip="Pass: (AA) ≥ 4.5, (AAA) ≥ 7"
 			aria-label="Pass: (AA) ≥ 4.5, (AAA) ≥ 7"
@@ -85,7 +84,7 @@ const ratio = adjustDecimalNumber(colorContrastRatio(hexToRgb(DEFAULT_BACKGROUND
 				<span data-fail>Fail</span>
 			</span>
 		</p>
-	</Tooltip>
+	</div>
 	<ul
 		aria-label="Preview text"
 		class={CSSClasses.preview}

@@ -6,7 +6,6 @@ import IconButton from '@/components/Button/IconButton.astro'
 import Icon from '@/components/Icon/index.astro'
 import Toast from '@/components/Toast/index.astro'
 import ColorPicker from '@/components/ColorPicker/index.astro'
-import Tooltip from '@/components/Tooltip/index.astro'
 import { CSSClasses } from '../_styles/_css'
 import { DEFAULT_COLOR, DEFAULT_PALETTE } from '../_scripts/_shared/_constant'
 import { ElementIds } from '../_scripts/_shared/_ids'
@@ -16,7 +15,7 @@ import { pxToRem } from '@/utils/css'
 ---
 <main class={CSSClasses.body}>
 	<div class={CSSClasses.bodyControl}>
-		<Tooltip style={{
+		<div style={{
 			display: 'flex',
 			gap: pxToRem(4) + 'rem'
 		}}>
@@ -35,7 +34,7 @@ import { pxToRem } from '@/utils/css'
 				aria-label="Save palette"
 				data-tooltip="Save palette"
 			/>
-		</Tooltip>
+		</div>
 		<p>Light mode:</p>
 		<div
 			data-css-color
@@ -69,52 +68,50 @@ import { pxToRem } from '@/utils/css'
 			</span>
 		</div>
 	</div>
-	<Tooltip>
-		<ul class={CSSClasses.bodyList}>
-			{DEFAULT_PALETTE.map(seed => {
-				const pal = generateColorPalette(seed)
-				return (<li data-seed-color={seed}>
-					<p>
-						<Icon
-							IconFilled
-							IconCode={IconCodes.circle}
-							style={`color:${seed}`}
-						/>
-						{seed}
-						<span style="display:block;flex:1"></span>
-						<IconButton
-							aria-label="Copy"
-							data-tooltip="Copy"
-							data-command={Commands.pal_copy}
-							IconButtonCode={IconCodes.copy}
-						/>
-						<IconButton
-							aria-label="Delete"
-							data-tooltip="Delete"
-							data-command={Commands.pal_delete}
-							IconButtonCode={IconCodes.delete}
-						/>
-					</p>
-					<div style={`background-color:${pal.color};color:${pal.onColor}`}>
-						<span data-tooltip="Accent Light">{pal.color.toUpperCase()}</span>
-						<span
-							data-tooltip="On Accent Light"
-							style={`background-color:${pal.onColor};color:${pal.color}`}>{
-							pal.onColor.toUpperCase()
-						}</span>
-					</div>
-					<div style={`background-color:${pal.colorDark};color:${pal.onColorDark}`}>
-						<span data-tooltip="Accent Dark">{pal.colorDark.toUpperCase()}</span>
-						<span
-							data-tooltip="On Accent Dark"
-							style={`background-color:${pal.onColorDark};color:${pal.colorDark}`}>{
-							pal.onColorDark.toUpperCase()
-						}</span>
-					</div>
-				</li>)
-			})}
-		</ul>
-	</Tooltip>
+	<ul class={CSSClasses.bodyList}>
+		{DEFAULT_PALETTE.map(seed => {
+			const pal = generateColorPalette(seed)
+			return (<li data-seed-color={seed}>
+				<p>
+					<Icon
+						IconFilled
+						IconCode={IconCodes.circle}
+						style={`color:${seed}`}
+					/>
+					{seed}
+					<span style="display:block;flex:1"></span>
+					<IconButton
+						aria-label="Copy"
+						data-tooltip="Copy"
+						data-command={Commands.pal_copy}
+						IconButtonCode={IconCodes.copy}
+					/>
+					<IconButton
+						aria-label="Delete"
+						data-tooltip="Delete"
+						data-command={Commands.pal_delete}
+						IconButtonCode={IconCodes.delete}
+					/>
+				</p>
+				<div style={`background-color:${pal.color};color:${pal.onColor}`}>
+					<span data-tooltip="Accent Light">{pal.color.toUpperCase()}</span>
+					<span
+						data-tooltip="On Accent Light"
+						style={`background-color:${pal.onColor};color:${pal.color}`}>{
+						pal.onColor.toUpperCase()
+					}</span>
+				</div>
+				<div style={`background-color:${pal.colorDark};color:${pal.onColorDark}`}>
+					<span data-tooltip="Accent Dark">{pal.colorDark.toUpperCase()}</span>
+					<span
+						data-tooltip="On Accent Dark"
+						style={`background-color:${pal.onColorDark};color:${pal.colorDark}`}>{
+						pal.onColorDark.toUpperCase()
+					}</span>
+				</div>
+			</li>)
+		})}
+	</ul>
 </main>
 <ColorPicker
 	ColorPickerValue={DEFAULT_COLOR}

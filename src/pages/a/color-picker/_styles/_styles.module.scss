@@ -65,7 +65,7 @@ $DEVICE_SMALL_SCREEN: u.Rem(800px);
 
 .bodyInputs {
 	width: u.Rem(280px);
-	display: flex !important; // override 'contents' in <Tooltip>
+	display: flex !important;
 	flex-direction: column;
 	gap: u.Rem(8px);
 	position: sticky;

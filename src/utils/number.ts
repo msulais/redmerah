@@ -97,6 +97,10 @@ export function binaryToFloat(input: string, bit: 32 | 64 = 64): number {
 }
 
 export function numberToBinary(input: number, bit: 32 | 64 = 64): string {
+	if (!input.toString().includes('.')) {
+		return input.toString(2)
+	}
+
     const buffer = new ArrayBuffer(8)
     const view = new DataView(buffer)
 	if (bit !== 32 && bit !== 64) {

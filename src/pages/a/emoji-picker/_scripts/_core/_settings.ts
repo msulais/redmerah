@@ -8,7 +8,6 @@ import { RootAttributes } from "@/enums/attributes"
 import { RadioNames } from "../_shared/_input-names"
 import { DEFAULT_ANIMATION, DEFAULT_SKIN_TONE, DEFAULT_THEME } from "../_shared/_constant"
 import { Pages, SkinToneEmoji } from "../_shared/_enums"
-import type { CTooltip } from "@/components/Tooltip"
 import { NavigationStore } from "./_navigation"
 import { updateEmojiList } from "./_body"
 import { saveStorageItem } from "./_database"
@@ -25,7 +24,7 @@ export const SettingsStore = new ObservableStore<SettingsStoreType>({
 	skinTone : DEFAULT_SKIN_TONE
 })
 const _ref_root = document.documentElement
-const _skinToneOptionsRef = $(ElementIds.bd_skinTone) as CTooltip.CElement
+const _skinToneOptionsRef = $(ElementIds.bd_skinTone) as HTMLDivElement
 const _ref_theme = $(ElementIds.apSett_themeMenu) as HTMLDivElement
 const _ref_animation = $(ElementIds.apSett_animationMenu) as HTMLDivElement
 const _ref_settingsMenu = $(ElementIds.apSett_menu) as HTMLDivElement

@@ -1,6 +1,5 @@
 ---
 import SideBar from '@/components/SideBar/index.astro'
-import Tooltip from '@/components/Tooltip/index.astro'
 import Drawer from '@/components/Drawer/index.astro'
 import DrawerButton from '@/components/Drawer/DrawerButton.astro'
 import IconButton from '@/components/Button/IconButton.astro'
@@ -71,33 +70,31 @@ const items: {
 	class={CSSClasses.navigationSideBar}
 	id={ElementIds.navigationSideBar}
 	aria-label="Navigation">
-	<Tooltip>
-		<IconButton
-			style={{width: 'fit-content'}}
-			IconButtonCode={IconCodes.lineHorizontal3}
-			data-tooltip="Minimize side bar"
-			id={ElementIds.nav_minimizeBtn}
-		/>
-		{items.map(v => <SideBarButton
-			role="tab"
-			style={{
-				'padding-left': pxToRem(6) + 'rem',
-				'white-space': 'nowrap'
-			}}
-			data-page={v.page}
-			aria-selected={DEFAULT_PAGE === v.page}
-			aria-controls={ElementIds.body}
-			data-tooltip={v.name}
-			SideBarButtonSelected={DEFAULT_PAGE === v.page}
-			SideBarButtonLeadingAttr={{style: {
-				'font-size': pxToRem(20) + 'rem',
-				'line-height': pxToRem(20) + 'rem'
-			}}}
-			ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.tonal : undefined}>
-			<Fragment slot="leading">{v.emoji}</Fragment>
-			{v.name}
-		</SideBarButton>)}
-	</Tooltip>
+	<IconButton
+		style={{width: 'fit-content'}}
+		IconButtonCode={IconCodes.lineHorizontal3}
+		data-tooltip="Minimize side bar"
+		id={ElementIds.nav_minimizeBtn}
+	/>
+	{items.map(v => <SideBarButton
+		role="tab"
+		style={{
+			'padding-left': pxToRem(6) + 'rem',
+			'white-space': 'nowrap'
+		}}
+		data-page={v.page}
+		aria-selected={DEFAULT_PAGE === v.page}
+		aria-controls={ElementIds.body}
+		data-tooltip={v.name}
+		SideBarButtonSelected={DEFAULT_PAGE === v.page}
+		SideBarButtonLeadingAttr={{style: {
+			'font-size': pxToRem(20) + 'rem',
+			'line-height': pxToRem(20) + 'rem'
+		}}}
+		ButtonVariant={DEFAULT_PAGE === v.page ? CButton.Variant.tonal : undefined}>
+		<Fragment slot="leading">{v.emoji}</Fragment>
+		{v.name}
+	</SideBarButton>)}
 </SideBar>
 <Drawer
 	id={ElementIds.navigationDrawer}

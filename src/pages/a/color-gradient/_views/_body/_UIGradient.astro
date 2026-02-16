@@ -1,6 +1,5 @@
 ---
 import Button from '@/components/Button/index.astro'
-import Tooltip from '@/components/Tooltip/index.astro'
 import Menu from '@/components/Menu/index.astro'
 import Popover from '@/components/Popover/index.astro'
 import Slider from '@/components/Slider/index.astro'
@@ -62,7 +61,7 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 	[RadialGradientShape.ellipse, 'Ellipse', false],
 ]
 ---
-<Tooltip
+<div
 	style={{
 		margin: `${pxToRem(4)}rem ${pxToRem(12)}rem`,
 		display: 'flex',
@@ -87,27 +86,25 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 		data-tooltip="Save"
 		aria-label="Save"
 	/>
-</Tooltip>
-<Tooltip>
-	<ul id={ElementIds.bd_gradients}>
-		<li>
-			<Button
-				data-command={Commands.grad_edit}
-				popovertargetaction='show'
-				popovertarget={ElementIds.bdGrad_controlPopover}>
-				<div style={`background: linear-gradient(to right, ${DEFAULT_STOP_COLOR_1}, ${DEFAULT_STOP_COLOR_2})`}></div>
-			</Button>
-			<IconButton
-				data-command={Commands.grad_openActions}
-				popovertarget={ElementIds.bdGrad_actionsMenu}
-				popovertargetaction={'show'}
-				data-tooltip="Actions"
-				aria-label="Actions"
-				IconButtonCode={IconCodes.moreHorizontal}
-			/>
-		</li>
-	</ul>
-</Tooltip>
+</div>
+<ul id={ElementIds.bd_gradients}>
+	<li>
+		<Button
+			data-command={Commands.grad_edit}
+			popovertargetaction='show'
+			popovertarget={ElementIds.bdGrad_controlPopover}>
+			<div style={`background: linear-gradient(to right, ${DEFAULT_STOP_COLOR_1}, ${DEFAULT_STOP_COLOR_2})`}></div>
+		</Button>
+		<IconButton
+			data-command={Commands.grad_openActions}
+			popovertarget={ElementIds.bdGrad_actionsMenu}
+			popovertargetaction={'show'}
+			data-tooltip="Actions"
+			aria-label="Actions"
+			IconButtonCode={IconCodes.moreHorizontal}
+		/>
+	</li>
+</ul>
 <Popover
 	id={ElementIds.bdGrad_controlPopover}
 	PopoverGap={pxToRem(8)}
@@ -120,224 +117,222 @@ const radialShape: [s: RadialGradientShape, t: string, s: boolean][] = [
 		class: CSSClasses.bodyGradientControl
 	}}
 	PopoverPosition={FlyoutPosition.leftCenterToBottom}>
-	<Tooltip>
-		<details>
-			<summary
-				class={CButton.Classes.button}
-				data-c-button-variant={CButton.Variant.tonal}>
-				Properties
-				<Icon IconCode={IconCodes.chevronDown}/>
-			</summary>
-			<div data-css-properties>
-				<div style={{
-					display: 'grid',
-					gridTemplateColumns: '1fr 1fr',
-					gap: pxToRem(8) + 'rem',
-					marginTop: pxToRem(8) + 'rem'
-				}}>
-					<div>
-						<label for={ElementIds.bdGradCtrl_type}>Type:</label>
-						<ComboBox
-							id={ElementIds.bdGradCtrl_type}
-							style={{
-								width: '100%',
-								'margin-top': pxToRem(2) + 'rem'
-							}}>
-							{gradientTypes.map(v =>
-								<ComboBoxOption value={v[0]} selected={v[2]}>{v[1]}</ComboBoxOption>
-							)}
-						</ComboBox>
-					</div>
-					<div>
-						<label for={ElementIds.bdGradCtrl_colorSpace}>Color space:</label>
-						<ComboBox
-							id={ElementIds.bdGradCtrl_colorSpace}
-							style={{
-								width: '100%',
-								'margin-top': pxToRem(2) + 'rem'
-							}}>
-							{colorSpaces.map(v =>
-								<ComboBoxOption value={v[0]} selected={v[2]}>{v[1]}</ComboBoxOption>
-							)}
-						</ComboBox>
-					</div>
+	<details>
+		<summary
+			class={CButton.Classes.button}
+			data-c-button-variant={CButton.Variant.tonal}>
+			Properties
+			<Icon IconCode={IconCodes.chevronDown}/>
+		</summary>
+		<div data-css-properties>
+			<div style={{
+				display: 'grid',
+				gridTemplateColumns: '1fr 1fr',
+				gap: pxToRem(8) + 'rem',
+				marginTop: pxToRem(8) + 'rem'
+			}}>
+				<div>
+					<label for={ElementIds.bdGradCtrl_type}>Type:</label>
+					<ComboBox
+						id={ElementIds.bdGradCtrl_type}
+						style={{
+							width: '100%',
+							'margin-top': pxToRem(2) + 'rem'
+						}}>
+						{gradientTypes.map(v =>
+							<ComboBoxOption value={v[0]} selected={v[2]}>{v[1]}</ComboBoxOption>
+						)}
+					</ComboBox>
 				</div>
-				<label for={ElementIds.bdGradCtrl_hueInterpolation}>Hue interpolation:</label>
-				<ComboBox id={ElementIds.bdGradCtrl_hueInterpolation} style="width:100%">
-					{hueInterpolation.map(v =>
-						<ComboBoxOption value={v[0]} selected={v[2]}>{v[1]}</ComboBoxOption>
-					)}
-				</ComboBox>
-				<label for={ElementIds.bdGradCtrl_radialShape}>Shape:</label>
-				<ComboBox id={ElementIds.bdGradCtrl_radialShape} style="width:100%">
-					{radialShape.map(v =>
-						<ComboBoxOption value={v[0]} selected={v[2]}>{v[1]}</ComboBoxOption>
-					)}
-				</ComboBox>
-				<div style={{
-					display: 'grid',
-					gridTemplateColumns: '1fr 1fr',
-					gap: pxToRem(8) + 'rem',
-					marginTop: pxToRem(8) + 'rem'
-				}} id={ElementIds.bdGradCtrl_positionXY}>
-					<div>
-						<label for={ElementIds.bdGradCtrl_positionX}>Position X (%):</label>
-						<TextField
-							style={{
-								'margin-top': pxToRem(2) + 'rem'
-							}}
-							TextFieldInputAttr={{
-								id: ElementIds.bdGradCtrl_positionX,
-								type: 'number',
-								value: '0',
-							}}
-						/>
-					</div>
-					<div>
-						<label for={ElementIds.bdGradCtrl_positionY}>Position Y (%):</label>
-						<TextField
-							style={{
-								'margin-top': pxToRem(2) + 'rem'
-							}}
-							TextFieldInputAttr={{
-								id: ElementIds.bdGradCtrl_positionY,
-								type: 'number',
-								value: '0',
-							}}
-						/>
-					</div>
+				<div>
+					<label for={ElementIds.bdGradCtrl_colorSpace}>Color space:</label>
+					<ComboBox
+						id={ElementIds.bdGradCtrl_colorSpace}
+						style={{
+							width: '100%',
+							'margin-top': pxToRem(2) + 'rem'
+						}}>
+						{colorSpaces.map(v =>
+							<ComboBoxOption value={v[0]} selected={v[2]}>{v[1]}</ComboBoxOption>
+						)}
+					</ComboBox>
 				</div>
-				<div style={{
-					display: 'grid',
-					gridTemplateColumns: '1fr 1fr',
-					gap: pxToRem(8) + 'rem',
-					marginTop: pxToRem(8) + 'rem'
-				}} id={ElementIds.bdGradCtrl_widthHeight}>
-					<div>
-						<label for={ElementIds.bdGradCtrl_width}>Width (%):</label>
-						<TextField
-							style={{
-								'margin-top': pxToRem(2) + 'rem'
-							}}
-							TextFieldInputAttr={{
-								id: ElementIds.bdGradCtrl_width,
-								type: 'number',
-								value: '0',
-								min: '0'
-							}}
-						/>
-					</div>
-					<div>
-						<label for={ElementIds.bdGradCtrl_height}>Height (%):</label>
-						<TextField
-							style={{
-								'margin-top': pxToRem(2) + 'rem'
-							}}
-							TextFieldInputAttr={{
-								id: ElementIds.bdGradCtrl_height,
-								type: 'number',
-								value: '0',
-								min: '0'
-							}}
-						/>
-					</div>
-				</div>
-				<label for={ElementIds.bdGradCtrl_size}>Size (px):</label>
-				<TextField TextFieldInputAttr={{
-					id: ElementIds.bdGradCtrl_size,
-					type: 'number',
-					value: '0',
-					min: '0'
-				}}/>
-				<label for={ElementIds.bdGradCtrl_angle}>Angle (deg):</label>
-				<TextField TextFieldInputAttr={{
-					id: ElementIds.bdGradCtrl_angle,
-					type: 'number',
-					value: '0',
-					min: '0'
-				}}/>
-				<CheckBox style="width:fit-content" CheckBoxInputAttr={{id: ElementIds.bdGradCtrl_repeat}}>Repeat</CheckBox>
 			</div>
-		</details>
-		<Divider/>
-		<details open>
-			<summary
-				class={CButton.Classes.button}
-				data-c-button-variant={CButton.Variant.filled}>
-				Stops
-				<Icon IconCode={IconCodes.chevronDown}/>
-			</summary>
-			<div data-css-stops>
-				<div style={{
-					display: 'flex',
-					gap: pxToRem(8) + 'rem',
-					marginTop: pxToRem(8) + 'rem'
-				}}>
-					<Button id={ElementIds.bdGradStop_add} ButtonVariant={CButton.Variant.outlined}>
-						<Icon IconCode={IconCodes.add}/>
-						Add color stop
-					</Button>
-					<IconButton
-						data-tooltip="Sort"
-						id={ElementIds.bdGradStop_sort}
-						IconButtonCode={IconCodes.arrowSort}
+			<label for={ElementIds.bdGradCtrl_hueInterpolation}>Hue interpolation:</label>
+			<ComboBox id={ElementIds.bdGradCtrl_hueInterpolation} style="width:100%">
+				{hueInterpolation.map(v =>
+					<ComboBoxOption value={v[0]} selected={v[2]}>{v[1]}</ComboBoxOption>
+				)}
+			</ComboBox>
+			<label for={ElementIds.bdGradCtrl_radialShape}>Shape:</label>
+			<ComboBox id={ElementIds.bdGradCtrl_radialShape} style="width:100%">
+				{radialShape.map(v =>
+					<ComboBoxOption value={v[0]} selected={v[2]}>{v[1]}</ComboBoxOption>
+				)}
+			</ComboBox>
+			<div style={{
+				display: 'grid',
+				gridTemplateColumns: '1fr 1fr',
+				gap: pxToRem(8) + 'rem',
+				marginTop: pxToRem(8) + 'rem'
+			}} id={ElementIds.bdGradCtrl_positionXY}>
+				<div>
+					<label for={ElementIds.bdGradCtrl_positionX}>Position X (%):</label>
+					<TextField
+						style={{
+							'margin-top': pxToRem(2) + 'rem'
+						}}
+						TextFieldInputAttr={{
+							id: ElementIds.bdGradCtrl_positionX,
+							type: 'number',
+							value: '0',
+						}}
 					/>
 				</div>
-				<ul id={ElementIds.bdGradCtrl_colorStops}>
-					<li>
-						<div>
-							<TextField TextFieldInputAttr={{value: '0%', class: CSSGroup.stopSizeInput}}/>
-							<TextField
-								TextFieldInputAttr={{value: DEFAULT_STOP_COLOR_1, class: CSSGroup.stopColorInput}}>
-								<Fragment slot="trailing">
-									<TextFieldButton
-										popovertarget={ElementIds.bdGradStop_colorPicker}
-										popovertargetaction={'show'}
-										data-command={Commands.gradStop_pickColor}
-										data-tooltip="Pick color">
-										<Icon IconCode={IconCodes.circle} IconFilled/>
-									</TextFieldButton>
-									<TextFieldButton
-										popovertarget={ElementIds.bdGradStop_actions}
-										popovertargetaction={'show'}
-										data-command={Commands.gradStop_actions}
-										data-tooltip="More">
-										<Icon IconCode={IconCodes.moreHorizontal}/>
-									</TextFieldButton>
-								</Fragment>
-							</TextField>
-						</div>
-						<Slider/>
-					</li>
-					<li>
-						<div>
-							<TextField TextFieldInputAttr={{value: '100%', class: CSSGroup.stopSizeInput}}/>
-							<TextField
-								TextFieldInputAttr={{value: DEFAULT_STOP_COLOR_2, class: CSSGroup.stopColorInput}}>
-								<Fragment slot="trailing">
-									<TextFieldButton
-										popovertarget={ElementIds.bdGradStop_colorPicker}
-										popovertargetaction={'show'}
-										data-command={Commands.gradStop_pickColor}
-										data-tooltip="Pick color">
-										<Icon IconCode={IconCodes.circle} IconFilled/>
-									</TextFieldButton>
-									<TextFieldButton
-										popovertarget={ElementIds.bdGradStop_actions}
-										popovertargetaction={'show'}
-										data-command={Commands.gradStop_actions}
-										data-tooltip="More">
-										<Icon IconCode={IconCodes.moreHorizontal}/>
-									</TextFieldButton>
-								</Fragment>
-							</TextField>
-						</div>
-						<Slider value="100"/>
-					</li>
-				</ul>
+				<div>
+					<label for={ElementIds.bdGradCtrl_positionY}>Position Y (%):</label>
+					<TextField
+						style={{
+							'margin-top': pxToRem(2) + 'rem'
+						}}
+						TextFieldInputAttr={{
+							id: ElementIds.bdGradCtrl_positionY,
+							type: 'number',
+							value: '0',
+						}}
+					/>
+				</div>
 			</div>
-		</details>
-	</Tooltip>
+			<div style={{
+				display: 'grid',
+				gridTemplateColumns: '1fr 1fr',
+				gap: pxToRem(8) + 'rem',
+				marginTop: pxToRem(8) + 'rem'
+			}} id={ElementIds.bdGradCtrl_widthHeight}>
+				<div>
+					<label for={ElementIds.bdGradCtrl_width}>Width (%):</label>
+					<TextField
+						style={{
+							'margin-top': pxToRem(2) + 'rem'
+						}}
+						TextFieldInputAttr={{
+							id: ElementIds.bdGradCtrl_width,
+							type: 'number',
+							value: '0',
+							min: '0'
+						}}
+					/>
+				</div>
+				<div>
+					<label for={ElementIds.bdGradCtrl_height}>Height (%):</label>
+					<TextField
+						style={{
+							'margin-top': pxToRem(2) + 'rem'
+						}}
+						TextFieldInputAttr={{
+							id: ElementIds.bdGradCtrl_height,
+							type: 'number',
+							value: '0',
+							min: '0'
+						}}
+					/>
+				</div>
+			</div>
+			<label for={ElementIds.bdGradCtrl_size}>Size (px):</label>
+			<TextField TextFieldInputAttr={{
+				id: ElementIds.bdGradCtrl_size,
+				type: 'number',
+				value: '0',
+				min: '0'
+			}}/>
+			<label for={ElementIds.bdGradCtrl_angle}>Angle (deg):</label>
+			<TextField TextFieldInputAttr={{
+				id: ElementIds.bdGradCtrl_angle,
+				type: 'number',
+				value: '0',
+				min: '0'
+			}}/>
+			<CheckBox style="width:fit-content" CheckBoxInputAttr={{id: ElementIds.bdGradCtrl_repeat}}>Repeat</CheckBox>
+		</div>
+	</details>
+	<Divider/>
+	<details open>
+		<summary
+			class={CButton.Classes.button}
+			data-c-button-variant={CButton.Variant.filled}>
+			Stops
+			<Icon IconCode={IconCodes.chevronDown}/>
+		</summary>
+		<div data-css-stops>
+			<div style={{
+				display: 'flex',
+				gap: pxToRem(8) + 'rem',
+				marginTop: pxToRem(8) + 'rem'
+			}}>
+				<Button id={ElementIds.bdGradStop_add} ButtonVariant={CButton.Variant.outlined}>
+					<Icon IconCode={IconCodes.add}/>
+					Add color stop
+				</Button>
+				<IconButton
+					data-tooltip="Sort"
+					id={ElementIds.bdGradStop_sort}
+					IconButtonCode={IconCodes.arrowSort}
+				/>
+			</div>
+			<ul id={ElementIds.bdGradCtrl_colorStops}>
+				<li>
+					<div>
+						<TextField TextFieldInputAttr={{value: '0%', class: CSSGroup.stopSizeInput}}/>
+						<TextField
+							TextFieldInputAttr={{value: DEFAULT_STOP_COLOR_1, class: CSSGroup.stopColorInput}}>
+							<Fragment slot="trailing">
+								<TextFieldButton
+									popovertarget={ElementIds.bdGradStop_colorPicker}
+									popovertargetaction={'show'}
+									data-command={Commands.gradStop_pickColor}
+									data-tooltip="Pick color">
+									<Icon IconCode={IconCodes.circle} IconFilled/>
+								</TextFieldButton>
+								<TextFieldButton
+									popovertarget={ElementIds.bdGradStop_actions}
+									popovertargetaction={'show'}
+									data-command={Commands.gradStop_actions}
+									data-tooltip="More">
+									<Icon IconCode={IconCodes.moreHorizontal}/>
+								</TextFieldButton>
+							</Fragment>
+						</TextField>
+					</div>
+					<Slider/>
+				</li>
+				<li>
+					<div>
+						<TextField TextFieldInputAttr={{value: '100%', class: CSSGroup.stopSizeInput}}/>
+						<TextField
+							TextFieldInputAttr={{value: DEFAULT_STOP_COLOR_2, class: CSSGroup.stopColorInput}}>
+							<Fragment slot="trailing">
+								<TextFieldButton
+									popovertarget={ElementIds.bdGradStop_colorPicker}
+									popovertargetaction={'show'}
+									data-command={Commands.gradStop_pickColor}
+									data-tooltip="Pick color">
+									<Icon IconCode={IconCodes.circle} IconFilled/>
+								</TextFieldButton>
+								<TextFieldButton
+									popovertarget={ElementIds.bdGradStop_actions}
+									popovertargetaction={'show'}
+									data-command={Commands.gradStop_actions}
+									data-tooltip="More">
+									<Icon IconCode={IconCodes.moreHorizontal}/>
+								</TextFieldButton>
+							</Fragment>
+						</TextField>
+					</div>
+					<Slider value="100"/>
+				</li>
+			</ul>
+		</div>
+	</details>
 </Popover>
 <Menu
 	id={ElementIds.bdGrad_actionsMenu}

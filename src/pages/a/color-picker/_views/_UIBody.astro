@@ -6,7 +6,6 @@ import TextField from '@/components/TextField/index.astro'
 import TextFieldButton from '@/components/TextField/TextFieldButton.astro'
 import ComboBoxOption from '@/components/ComboBox/ComboBoxOption.astro'
 import Toast from '@/components/Toast/index.astro'
-import Tooltip from '@/components/Tooltip/index.astro'
 import { CSSClasses } from '../_styles/_css'
 import { IconCodes } from '@/enums/icons'
 import { ElementIds } from '../_scripts/_shared/_ids'
@@ -43,7 +42,7 @@ const modes: {text: string, mode: ColorPickerMode}[] = [
 		</ComboBox>
 		<UIPickers/>
 	</div>
-	<Tooltip class={CSSClasses.bodyInputs}>
+	<div class={CSSClasses.bodyInputs}>
 		<output
 			for={ElementIds.bdInp_hex}
 			data-css-preview
@@ -183,7 +182,7 @@ const modes: {text: string, mode: ColorPickerMode}[] = [
 			</TextField>
 			<label for={ElementIds.bdInp_cmyk}>CMYK</label>
 		</div>
-	</Tooltip>
+	</div>
 </main>
 <Toast id={ElementIds.toa_copied} ToastCloseDelay={1500}>
 	<Icon IconCode={IconCodes.copy} slot="leading"/>

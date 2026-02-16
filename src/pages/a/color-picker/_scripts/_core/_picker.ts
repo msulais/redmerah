@@ -4,7 +4,6 @@ import { ObservableStore } from "@/utils/store"
 import { DEFAULT_COLOR, DEFAULT_COLOR_IN_CMYK, DEFAULT_COLOR_IN_HSL, DEFAULT_COLOR_IN_HSV, DEFAULT_COLOR_IN_HWB, DEFAULT_COLOR_IN_RGB } from "../_shared/_constant"
 import { cmykToRgb, colorContrastPercentage, colorToRgb, hslToHsv, hslToRgb, hsvToHex, hsvToHsl, hsvToHwb, hsvToRgb, hwbToHsv, hwbToRgb, rgbToCmyk, rgbToColor, rgbToHex, rgbToHsl, rgbToHsv } from "@/utils/color"
 import { safeNumber } from "@/utils/number"
-import { CTooltip } from "@/components/Tooltip"
 import { CSSClasses } from "../../_styles/_css"
 import { Math_clamp } from "@/utils/math"
 import type { CMYKColor, HEXColor, HSLColor, HSVColor, HWBColor, RGBColor } from "@/types/color"
@@ -36,7 +35,7 @@ export const PickerStore = new ObservableStore<PickerStoreType>({
 })
 
 const _ref_preview = $(ElementIds.bd_preview) as HTMLOutputElement
-const _ref_inputs = $$<CTooltip.CElement>('.' + CSSClasses.bodyInputs)
+const _ref_inputs = $$<HTMLDivElement>('.' + CSSClasses.bodyInputs)
 const _ref_toastCopied = $(ElementIds.toa_copied) as CToast.CElement
 
 // inp = input
