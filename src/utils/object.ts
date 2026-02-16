@@ -48,7 +48,7 @@ export function deepCopy<T>(obj: T): T {
 		const copy = {}
 		for (const key of keys) {
 			// @ts-ignore
-			copy[key] = deepCopy(copy[key])
+			copy[key] = deepCopy(obj[key])
 		}
 
 		return copy as T
