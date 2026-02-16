@@ -15,19 +15,12 @@ export function isObjectHasValue(data: unknown): boolean {
 }
 
 export function isInstanceOfClass(obj: any): boolean {
-	const isCtorClass = (
-		obj.constructor
-		&& obj.constructor.toString().startsWith('class')
-	)
+	const isCtorClass = obj?.constructor?.toString()?.startsWith('class')
 	if(obj.prototype === undefined) {
 		return isCtorClass
 	}
 
-	const isPrototypeCtorClass = (
-		obj.prototype.constructor
-		&& obj.prototype.constructor.toString
-		&& obj.prototype.constructor.toString().startsWith('class')
-	)
+	const isPrototypeCtorClass = obj?.prototype?.constructor?.toString()?.startsWith('class')
 	return isCtorClass || isPrototypeCtorClass
 }
 
