@@ -97,7 +97,7 @@ export function binaryToFloat(input: string, bit: 32 | 64 = 64): number {
 }
 
 export function numberToBinary(input: number, bit: 32 | 64 = 64): string {
-	if (!input.toString().includes('.')) {
+	if (input % 1 === 0) {
 		return input.toString(2)
 	}
 
