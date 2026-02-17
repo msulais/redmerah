@@ -1,0 +1,125 @@
+@use '../../../../styles/units.scss' as u;
+
+.appbar {
+	--border: max(5vmin, #{u.Rem(20px)});
+	position: absolute;
+	left: var(--border);
+	top: var(--border);
+	width: calc(100% - var(--border) * 2);
+	height: calc(100% - var(--border) * 2);
+	display: flex;
+	justify-content: space-between;
+	height: fit-content;
+	align-items: center;
+
+	> * {
+		display: flex;
+		align-items: center;
+	}
+
+	> [data-css=headline] {
+		gap: u.Rem(16px);
+		font-size: var(--g-font-size-m);
+		font-weight: 500;
+
+		> img {
+			width: u.Rem(32px)
+		}
+	}
+}
+
+.content {
+	--percentage: 70%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	position: relative;
+	background-color: transparent !important;
+
+	&::before {
+		content: '';
+		box-sizing: border-box;
+		display: block;
+		background: conic-gradient(
+			from 270deg at center,
+			rgb(var(--g-color-accent)) 0% var(--percentage),
+			rgb(var(--g-color-surface)) var(--percentage) 100%
+		);
+		background-color: rgb(var(--g-color-surface));
+		position: absolute;
+		z-index: -2;
+		width: 100%;
+		height: 100%;
+		border-radius: max(8vmin, u.Rem(32px));
+	}
+
+	&::after {
+		--border: max(2vmin, #{u.Rem(8px)});
+		content: '';
+		box-sizing: border-box;
+		display: block;
+		background-color: rgb(var(--g-color-surface));
+		z-index: -1;
+		position: absolute;
+		width: calc(100% - var(--border) * 2);
+		height: calc(100% - var(--border) * 2);
+		border-radius: max(6vmin, u.Rem(24px));
+	}
+
+	> h1 {
+		font-size: 20vmin;
+		line-height: 1;
+		font-weight: 900;
+	}
+
+	> [data-css=status] {
+		color: #000;
+		font-weight: bold;
+		border-radius: u.Rem(9999px);
+		margin-top: max(4vmin, u.Rem(16px));
+		padding: max(1.5vmin, u.Rem(8px)) max(3vmin, u.Rem(16px));
+		font-size: max(3vmin, var(--g-font-size-xs));
+		background: linear-gradient(
+			to right,
+			#FFFF00 0%,
+			#00FFFF 50%,
+			#FFFF00 100%
+		);
+		background-size: 500% auto;
+
+		:root[data-animation=on] & {
+			animation: textShine 2.5s ease-in-out infinite alternate;
+		}
+
+		@media (prefers-reduced-motion: no-preference) {
+			:root[data-animation=auto] & {
+				animation: textShine 2.5s ease-in-out infinite alternate;
+			}
+		}
+	}
+}
+
+@keyframes textShine {
+	0% {
+		background-position: 0% 50%;
+	}
+	100% {
+		background-position: 100% 50%;
+	}
+}
+
+.main {
+	width: 100%;
+	display: grid;
+	grid-template-columns: 1fr min(75dvw, calc(100% - u.Rem(64px))) 1fr;
+	grid-template-rows: 1fr min(75dvh, calc(100% - u.Rem(64px))) 1fr;
+	gap: max(1vmin, u.Rem(8px));
+	height: 100dvh;
+
+	> div {
+		background-color: rgba(var(--g-color-on-surface), var(--g-opacity3));
+		height: 100%;
+		border-radius: max(8vmin, u.Rem(32px));
+	}
+}

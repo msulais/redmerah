@@ -1,5 +1,4 @@
 ---
-import AppBar from '@/components/AppBar/index.astro'
 import IconButton from '@/components/Button/IconButton.astro'
 import Menu from '@/components/Menu/index.astro'
 import SubMenu from '@/components/Menu/SubMenu.astro'
@@ -15,10 +14,11 @@ import { PlatformAnimationMode, PlatformThemeMode } from '@/enums/platforms'
 import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
 import { RoutesLinks, ExternalLinks } from '@/enums/links'
 import { IconCodes } from '@/enums/icons'
-import { ElementIds } from '../_scripts/_shared/_ids'
-import { RadioNames } from '../_scripts/_shared/_input-names'
-import { DEFAULT_THEME, DEFAULT_ANIMATION, APP } from '../_scripts/_shared/_constant'
+import { ElementIds } from '../_scripts/shared/ids'
+import { RadioNames } from '../_scripts/shared/input-names'
+import { DEFAULT_THEME, DEFAULT_ANIMATION, APP } from '../_scripts/shared/constant'
 import { pxToRem } from '@/utils/css'
+import { CSSClasses } from '../_styles/classes'
 
 const animations: {
 	value: PlatformAnimationMode
@@ -64,19 +64,15 @@ const themes: {
 ]
 ---
 
-<AppBar id={ElementIds.appbar}>
-	<Fragment slot="headline">
+<div id={ElementIds.appbar} class={CSSClasses.appbar}>
+	<div data-css="headline">
 		<img
 			src={APP.logoUrl}
 			alt={APP.name + ' logo'}
-			style={{
-				width: pxToRem(24) + 'rem',
-				marginLeft: pxToRem(4) + 'rem'
-			}}
 		/>
 		{APP.name}
-	</Fragment>
-	<Fragment slot="trailing">
+	</div>
+	<div data-css="trailing">
 		<IconButton
 			id={ElementIds.apInf_btn}
 			data-tooltip="Info"
@@ -169,5 +165,5 @@ const themes: {
 				)}
 			</SubMenu>
 		</Menu>
-	</Fragment>
-</AppBar>
+	</div>
+</div>

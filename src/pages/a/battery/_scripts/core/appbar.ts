@@ -1,7 +1,7 @@
 import { CButton } from "@/components/Button"
-import { ElementIds } from "../_shared/_ids"
-import { $ } from "./_dom-utils"
-import { APP } from "../_shared/_constant"
+import { ElementIds } from "../shared/ids"
+import { $ } from "./utils"
+import { APP } from "../shared/constant"
 
 // inf = info
 const _ref_inf_menu = $(ElementIds.apInf_menu) as HTMLDivElement
