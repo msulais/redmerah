@@ -69,8 +69,7 @@ const { route } = Astro.props
 			LinkButtonVariant={route == RoutesLinks.Apps? CButton.Variant.Filled : undefined}
 			href={RoutesLinks.Apps}>
 			<Icon
-				IconCode={IconCodes.Apps}
-				IconFilled={route == RoutesLinks.Apps}
+				IconCode={route == RoutesLinks.Apps? IconCodes.AppsFilled : IconCodes.Apps}
 			/>
 			Apps
 		</LinkButton>
@@ -79,8 +78,7 @@ const { route } = Astro.props
 			LinkButtonVariant={route == RoutesLinks.About? CButton.Variant.Filled : undefined}
 			href={RoutesLinks.About}>
 			<Icon
-				IconCode={IconCodes.Info}
-				IconFilled={route == RoutesLinks.About}
+				IconCode={route == RoutesLinks.About? IconCodes.InfoFilled : IconCodes.Info}
 			/>
 			About
 		</LinkButton>

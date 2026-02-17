@@ -5,7 +5,6 @@ export namespace CIcon {
 
 	type T1 = 'icon-needed' | null
 	type T2<U extends T1 = null> = (U extends 'icon-needed'? {code: number} : {code?: number}) & {
-		filled?: boolean
 		inline?: boolean
 		refs?: {
 			icon?(ref: CElement): unknown
@@ -16,7 +15,7 @@ export namespace CIcon {
 	}
 
 	export enum Attributes {
-		Inline = 'data-c-icon-inline'
+		Inline = 'data-c-icon-inline',
 	}
 
 	export enum Classes {
@@ -40,16 +39,9 @@ export namespace CIcon {
 			$toggle_attr(ref_icon, Attributes.Inline, opt_inline)
 		}
 
-		const opt_filled = opt?.filled
-		const iconText = ref_icon.textContent!.trim()
-		if ($is_bool(opt_filled) && iconText && iconText.length > 0) {
-			const code = iconText.charCodeAt(0)
-			ref_icon.textContent = String.fromCharCode(code + (opt_filled? -1 : 1))
-		}
-
 		const opt_code = opt?.code
 		if (opt_code !== undefined) {
-			ref_icon.textContent = String.fromCharCode(opt_code - (opt_filled? 1 : 0))
+			ref_icon.textContent = String.fromCodePoint(opt_code)
 		}
 
 		opt?.refs?.icon?.(ref_icon)
@@ -59,6 +51,5 @@ export namespace CIcon {
 
 export type IconProps = astroHTML.JSX.HTMLAttributes & {
 	IconCode   : number
-	IconFilled?: boolean
 	IconInline?: boolean
 }

@@ -447,8 +447,7 @@ export namespace CMenu {
 			let ref_icon = $query<GCIcon.CElement>(`.${Classes.RadioItemIcon}`, ref_radiomenuitem)
 			if (!ref_icon) {
 				ref_icon = GCIcon.create({Icon: {
-					code: IconCodes.CircleSmall,
-					filled: true
+					code: IconCodes.CircleSmallFilled,
 				}})
 				$classlist(ref_icon, Classes.RadioItemIcon)
 			}

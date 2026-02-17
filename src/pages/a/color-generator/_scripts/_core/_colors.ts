@@ -64,8 +64,7 @@ function _subscribePaletteRefView(v: ColorsStoreType, o: ColorsStoreType): void 
 
 			const icon = CIcon.create({
 				Icon: {
-					code: IconCodes.Circle,
-					filled: true
+					code: IconCodes.CircleFilled,
 				}
 			})
 			icon.style.setProperty('color', seed)

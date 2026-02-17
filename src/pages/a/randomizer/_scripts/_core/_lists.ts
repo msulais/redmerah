@@ -208,8 +208,7 @@ function _subsListView(v: ListsStoreType, o: ListsStoreType): void {
 			children: [list.name],
 			subtitle: [[itemLength, 'item' + (itemLength > 1? 's' : '')].join(' ')],
 			leading: [CIcon.create({Icon: {
-				code: IconCodes.TextBulletListLtr,
-				filled: true,
+				code: IconCodes.TextBulletListLtrFilled,
 				refs: {icon(ref) {
 					ref.style.setProperty('color', `rgb(${AppCSSColors.Accent})`)
 				}}

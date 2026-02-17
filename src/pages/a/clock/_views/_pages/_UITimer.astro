@@ -40,7 +40,7 @@ const seconds = Math.floor(Math.floor(DEFAULT_TIMER_SECONDS % 3600) % 60)
 			}}
 			ButtonVariant={CButton.Variant.Filled}
 			id={ElementIds.pgTm_playPause}>
-			<Icon IconCode={DEFAULT_TIMER_RUNNING? IconCodes.Pause : IconCodes.Play} IconFilled/>
+			<Icon IconCode={DEFAULT_TIMER_RUNNING? IconCodes.PauseFilled : IconCodes.PlayFilled}/>
 			<span>{DEFAULT_TIMER_RUNNING? 'Pause' : 'Start'}</span>
 		</Button>
 		<IconButton

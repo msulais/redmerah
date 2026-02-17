@@ -96,8 +96,7 @@ function _subscribeRunningRefView(v: _StopwatchStoreType, o: _StopwatchStoreType
 	_ref_playOrPauseSpan.textContent = running? 'Pause' : 'Start'
 	CIcon.update(_ref_playOrPauseIcon, {
 		Icon: {
-			code: running? IconCodes.Pause : IconCodes.Play,
-			filled: true
+			code: running? IconCodes.PauseFilled : IconCodes.PlayFilled,
 		}
 	})
 	CButton.CIcon.update(_ref_resetOrLapButton, {

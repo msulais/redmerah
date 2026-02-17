@@ -7,7 +7,6 @@ type Props = IconProps
 
 const {
 	'class': className,
-	IconFilled,
 	IconInline,
 	IconCode,
 	translate,
@@ -19,4 +18,4 @@ const cls = CIcon.Classes
 	class={joinClassList(cls.Icon, className)}
 	data-c-icon-inline={IconInline? '' : undefined}
 	translate={translate ?? 'no'}
-	{...other}>{String.fromCharCode(IconCode - (IconFilled? 1 : 0))}</i>
+	{...other}>{String.fromCodePoint(IconCode)}</i>

@@ -462,8 +462,7 @@ function _updateGradientControlView(updateStops = true): void {
 							updateControlEvents(index, null, null, null, ref)
 						}},
 						children: [CIcon.create({Icon: {
-							code: IconCodes.Circle,
-							filled: true
+							code: IconCodes.CircleFilled,
 						}})]
 					}}),
 					CTextField.CButton.create({Button: {

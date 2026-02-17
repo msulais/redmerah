@@ -91,8 +91,7 @@ function _subscribeRunningRefView(v: TimerStoreType, o: TimerStoreType): void {
 	_playPauseTextRef.textContent = running? 'Pause' : 'Start'
 	CIcon.update(_playPauseIconRef, {
 		Icon: {
-			code: running? IconCodes.Pause : IconCodes.Play,
-			filled: true
+			code: running? IconCodes.PauseFilled : IconCodes.PlayFilled,
 		}
 	})
 

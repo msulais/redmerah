@@ -49,5 +49,5 @@ export const CONVERTER_TYPES = [
 	{ icon: IconCodes.Temperature, type: ConverterType.Temperature, text: 'Temperature' },
 	{ icon: IconCodes.Timer, type: ConverterType.Time, text: 'Time' },
 	{ icon: IconCodes.Cube, type: ConverterType.Volume, text: 'Volume' },
-	{ icon: IconCodes.Dumbell, type: ConverterType.Weight, text: 'Weight & Mass' },
+	{ icon: IconCodes.Dumbbell, type: ConverterType.Weight, text: 'Weight & Mass' },
 ].sort((a,b) => a.text.localeCompare(b.text))

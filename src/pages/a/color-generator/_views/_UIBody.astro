@@ -24,7 +24,7 @@ import { pxToRem } from '@/utils/css'
 				id={ElementIds.bd_pickerBtn}
 				popovertarget={ElementIds.bd_picker}
 				data-tooltip="Pick color">
-				<Icon IconCode={IconCodes.Eyedropper} IconFilled/>
+				<Icon IconCode={IconCodes.EyedropperFilled}/>
 				<span style="font-weight:bold" id={ElementIds.bd_pickerBtnSpan}>{DEFAULT_COLOR}</span>
 			</Button>
 			<IconButton
@@ -74,8 +74,7 @@ import { pxToRem } from '@/utils/css'
 			return (<li data-seed-color={seed}>
 				<p>
 					<Icon
-						IconFilled
-						IconCode={IconCodes.Circle}
+						IconCode={IconCodes.CircleFilled}
 						style={`color:${seed}`}
 					/>
 					{seed}

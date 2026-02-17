@@ -16,7 +16,6 @@ const {
 	...other
 } = Astro.props
 const {
-	IconFilled,
 	IconCode,
 	...iconOther
 } = LinkIconButtonIconAttr
@@ -28,7 +27,6 @@ const cls = CButton.Classes
 	{...other}>
 	<Icon
 		IconCode={IconCode ?? LinkIconButtonCode}
-		IconFilled={IconFilled ?? LinkIconButtonFilled}
 		{...iconOther}
 	/>
 </LinkButton>
