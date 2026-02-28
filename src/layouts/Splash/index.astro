@@ -62,14 +62,25 @@ import { GlobalElementIds } from '@/enums/ids'
 	<span class="loading-indicator"/>
 </div>
 <script>
+	import { AnimationEasing } from "@/enums/animation"
 	import { GlobalElementIds } from "@/enums/ids"
+	import { isAnimationAllowed } from "@/utils/animation"
 
 	window.addEventListener('load', () => {
 		const splashRef = document.getElementById(GlobalElementIds.Splash)
-		if (!splashRef) {return}
+		if (!splashRef) {
+			return
+		}
 
-		const imgRef = splashRef.querySelector('svg')
-		imgRef?.remove()
-		splashRef.remove()
+		if (!isAnimationAllowed()) {
+			splashRef.remove()
+			return
+		}
+
+		splashRef.animate({
+			opacity: [1, 0],
+		}, {duration: 800, easing: AnimationEasing.Spring}).finished.then(() => {
+			splashRef.remove()
+		})
 	})
 </script>
