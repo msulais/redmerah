@@ -7,6 +7,7 @@ import Splash from '@/layouts/Splash/index.astro'
 import Article from '@/layouts/Article/index.astro'
 import { RoutesLinks } from '@/enums/links'
 import coverPicture from '@/assets/images/terms_page.jpg'
+import redmerahPicture from '@/assets/images/logos/redmerah-logo.svg'
 ---
 
 <Html title="Terms & Conditions • Redmerah" description="Understand the terms and conditions governing your use of Redmerah's services. This page outlines important legal information.">
@@ -30,9 +31,11 @@ import coverPicture from '@/assets/images/terms_page.jpg'
 	<Appbar route={RoutesLinks.Terms}/>
 	<Main>
 		<Article
-			disabledAuthor
 			title="Terms & Conditions"
 			subtitle="What you can expect and what we expect from you."
+			datetime={new Date(2026, 2, 1)}
+			author="Redmerah"
+			authorPictureUrl={redmerahPicture.src}
 			coverPictureUrl={coverPicture.src}>
 			<p>Welcome to Redmerah!</p>
 			<p>These terms and conditions outline the rules and regulations for the use of Redmerah's Website, located at <a href="https://redmerah.com">https://redmerah.com</a>.</p>

@@ -7,6 +7,7 @@ import Splash from '@/layouts/Splash/index.astro'
 import Article from '@/layouts/Article/index.astro'
 import { RoutesLinks } from '@/enums/links'
 import coverPicture from '@/assets/images/privacy_page.jpg'
+import redmerahPicture from '@/assets/images/logos/redmerah-logo.svg'
 ---
 
 <Html title="Privacy Policy • Redmerah" description="Putting you in control. Redmerah respects your privacy with no data collection. Discover your control options in our detailed privacy policy.">
@@ -30,9 +31,11 @@ import coverPicture from '@/assets/images/privacy_page.jpg'
 	<Appbar route={RoutesLinks.Privacy}/>
 	<Main>
 		<Article
-			disabledAuthor
 			title="Privacy Policy"
 			subtitle="How we collect, use, and protect your information."
+			datetime={new Date(2026, 2, 1)}
+			author="Redmerah"
+			authorPictureUrl={redmerahPicture.src}
 			coverPictureUrl={coverPicture.src}>
 			<p>At Redmerah, accessible from <a href="https://redmerah.com">https://redmerah.com</a>, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by Redmerah and how we use it.</p>
 			<p>If you have additional questions or require more information about our Privacy Policy, do not hesitate to contact us.</p>

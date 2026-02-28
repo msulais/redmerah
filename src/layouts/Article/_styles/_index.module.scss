@@ -115,19 +115,17 @@
 	> div {
 		display: flex;
 		align-items: center;
-		gap: u.Rem(8px);
+		gap: u.Rem(16px);
 		border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
 		border-radius: u.Rem(8px);
-		padding: u.Rem(8px);
+		padding: u.Rem(8px) u.Rem(16px);
 		width: 100%;
 
 		> img {
-			min-width: u.Rem(40px);
-			max-width: u.Rem(40px);
-			min-height: u.Rem(40px);
-			max-height: u.Rem(40px);
-			border-radius: u.Rem(20px);
-			box-shadow: var(--g-elevation2);
+			min-width: u.Rem(24px);
+			max-width: u.Rem(24px);
+			min-height: u.Rem(24px);
+			max-height: u.Rem(24px);
 		}
 
 		> p {

@@ -15,6 +15,10 @@
 	z-index: 100;
 	top: 0;
 
+	@media print {
+		display: none !important;
+	}
+
 	> div {
 		display: flex !important;
 		gap: u.Rem(8px);
