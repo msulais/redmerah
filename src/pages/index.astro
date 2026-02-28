@@ -10,12 +10,11 @@ import LinkButton from '@/components/Button/LinkButton.astro'
 import { CButton } from '@/components/Button'
 import Appbar from '@/layouts/Appbar/index.astro'
 import BottomBar from '@/layouts/BottomBar/index.astro'
-import CSS from './_index.module.scss'
+import SCSS from './_index.module.scss'
 import { IconCodes } from '@/enums/icons'
 import feature_uiUx from '@/assets/images/feature_ui_ux.svg'
 import feature_offlineWork from '@/assets/images/feature_offline_work.svg'
 import feature_localDB from '@/assets/images/feature_local_db.svg'
-import { shuffleArray } from '@/utils/array'
 
 const features = [
 	{
@@ -71,135 +70,160 @@ function appColorCustom(color: HEXColor): string {
 		</svg>
 	</Splash>
 	<Appbar route={RoutesLinks.Home}/>
-	<div class={CSS.body}>
-		<section class={CSS.header}>
-			<div>
-				<h1 class={CSS.fadeOnView}><span>Apps</span><br/><span>Tasks</span><br/><span>Productivity</span></h1>
-				<div class={CSS.fadeOnView}>
-					<ul>
-						{shuffleArray([...APPS]).map((v, i) => <>{i < 5 && <li>
-							<img tabindex="0" data-tooltip={v.name} src={v.logoUrl} alt={v.name}/>
-						</li>}</>)}
-						{APPS.length > 5 && <li
-							data-css-more>
-							{APPS.length - 5}+ more apps
-						</li>}
-					</ul>
-					<p>Discover a suite of powerful apps designed to simplify your tasks and enhance your productivity</p>
-					<LinkButton
-						LinkButtonVariant={CButton.Variant.Filled}
-						href={RoutesLinks.Apps}
-						style={{width: 'fit-content'}}>
-						Browse apps
-						<Icon IconCode={IconCodes.ArrowRight}/>
-					</LinkButton>
-				</div>
-			</div>
+	<div class={SCSS.body}>
+		<section class={SCSS.hero}>
+			<h1>Apps, Tasks,<br/>Productivity</h1>
+			<p>Discover a suite of powerful <span>apps</span> designed to simplify your <span>tasks</span> and enhance your <span>productivity</span></p>
+			<LinkButton
+				LinkButtonVariant={CButton.Variant.Filled}
+				href={RoutesLinks.Apps}
+				style={{width: 'fit-content'}}>
+				<Icon IconCode={IconCodes.Search}/>
+				Browse apps
+			</LinkButton>
+			<img src='#'/>
+			<img src='#'/>
+			<img src='#'/>
+			<img src='#'/>
+			<img src='#'/>
+			<img src='#'/>
 		</section>
-		<section class={CSS.apps}>
-			<h2 class={CSS.heading}><div><span>Apps</span></div></h2>
-			<div>
-				<ul>
-					{APPS.map((v, i) => <>{i < 3 && <li
-						class={CSS.fadeOnView}
-						style={appColorCustom(v.color)}>
-						<img src={v.logoUrl} alt={v.name} />
+		<section class={SCSS.apps}>
+			<h2>// Latest Apps</h2>
+			<ul>
+				{APPS.slice(0, 6).map(v => <li
+					style={appColorCustom(v.color)}>
+					<img src={v.logoUrl} alt={v.name} />
+					<div data-css="group">
 						<h3>{v.name}</h3>
 						<p style="flex:1">{v.description}</p>
 						<LinkButton
 							LinkButtonVariant={CButton.Variant.Filled}
-							href={v.link}><Icon IconCode={IconCodes.OpenFolder}/> Open</LinkButton>
-					</li>}</>)}
-				</ul>
+							href={v.link}>
+							<Icon IconCode={IconCodes.ArrowRight}/>
+							Open
+						</LinkButton>
+					</div>
+				</li>)}
+			</ul>
+			<div data-css="more">
 				<LinkButton
-					class={CSS.fadeOnView}
 					LinkButtonVariant={CButton.Variant.Filled}
-					href={RoutesLinks.Apps}>
-					See {APPS.length-3} more apps
-					<Icon IconCode={IconCodes.ArrowRight}/>
+					href={RoutesLinks.Apps}
+					style={{width: 'fit-content'}}>
+					<Icon IconCode={IconCodes.Search}/>
+					See more {APPS.length - 6} apps
 				</LinkButton>
 			</div>
 		</section>
-		<section class={CSS.features}>
-			<h2 class={CSS.heading}><div><span>Features</span></div></h2>
-			<div>
-				<ul>
-					{features.map(v => <li class={CSS.fadeOnView}>
-						<img src={v.icon.src} alt={v.title}/>
+		<section class={SCSS.features}>
+			<h2>// Features</h2>
+			<ul>
+				{features.map(v => <li>
+					<img src={v.icon.src} alt={v.title}/>
+					<div>
 						<h3>{v.title}</h3>
 						<p>{v.description}</p>
-					</li>)}
-				</ul>
-			</div>
+					</div>
+				</li>)}
+			</ul>
 		</section>
 	</div>
 	<BottomBar>
-		<p id="quote" class={[CSS.quote, CSS.fadeOnView].join(' ')}><q>
+		<p id="quote" class={[SCSS.quote, SCSS.fadeOnView].join(' ')}><q>
 			{ 'We are also users. What’s good for you, good for us too.'.split(' ').map(v => <><span>{v}</span> </>) }
 		</q></p>
 	</BottomBar>
 </Html>
 
 <script>
-	import { isAnimationAllowed } from "@/utils/animation"
-	import CSS from './_index.module.scss'
-	import { pxToRem } from "@/utils/css"
 	import { AnimationEasing } from "@/enums/animation"
+	import { isAnimationAllowed } from "@/utils/animation"
+	import { APPS } from "@/constants/apps"
+	import SCSS from './_index.module.scss'
+import { shuffleArray } from "@/utils/array"
 
-	const quote = document.getElementById('quote') as HTMLParagraphElement
-	const spans = document.querySelectorAll<HTMLSpanElement>('#quote span')
-	const refs = document.querySelectorAll(`.${CSS.fadeOnView}`)
-	const observer1 = new IntersectionObserver((entries) => {
-		if (!isAnimationAllowed()) return
+	function initHeroImagesAnimation(): void {
+		const refs_image = document.querySelectorAll<HTMLImageElement>(`.${SCSS.hero} img`)
+		const set_images = new Set<string>()
 
-		for (const entry of entries) {
-			if (!entry.isIntersecting) continue;
-			for (let i = 0; i < (spans as unknown as any[]).length; i++) {
-				spans[i].animate([{
-					transform: 'translateY(-0.4em)',
-					offset: 0.5
-				}], {
-					duration: 1000,
-					delay: i * 200,
-					easing: 'cubic-bezier(.15, 0, 0, 1)',
-					iterations: 1,
-				})
-			}
-		}
-	}, {
-		root: null,
-		threshold: 1.0
-	})
-	const targets = new Set<HTMLElement>()
-	const observer2 = new IntersectionObserver((entries) => {
-		for (const entry of entries) {
-			if (entry.isIntersecting) {
-				const ref_target = entry.target as HTMLElement
-				if (targets.has(ref_target)) {
+		function initImageAnimation(ref: HTMLImageElement): void {
+			let url = '#'
+			for (const app of shuffleArray(([] as typeof APPS).concat(APPS))) {
+				const logoUrl = app.logoUrl
+				if (set_images.has(logoUrl)) {
 					continue
 				}
 
-				ref_target.style.setProperty('opacity', '1')
-				if (isAnimationAllowed()){
-					ref_target.animate({
-						opacity: [0, 1],
-						translate: [`0 ${pxToRem(64)}rem`, '0 0']
-					}, {
-						duration: 1000,
-						easing: AnimationEasing.Spring
-					})
-				}
-				targets.add(ref_target)
+				url = logoUrl
+				ref.alt = app.name
+				set_images.add(logoUrl)
+				break
 			}
-		}
-	}, {
-		root: null,
-		threshold: 0
-	})
 
-	for (const ref of refs) {
-		observer2.observe(ref)
+			const imageWidth = 64
+			const viewport = 1080
+			const maxWidth = window.innerWidth
+			const minLeft = maxWidth >= viewport? ((maxWidth - viewport) / 2) : 0
+			const left = ((maxWidth >= viewport? viewport : maxWidth) - imageWidth) * Math.random()
+			ref.style.setProperty('left', minLeft + left + 'px')
+			ref.src = url
+			ref.animate({
+				bottom: ['0%', '100%'],
+				translate: ['0 100%', '0 0']
+			}, {
+				duration: Math.max(1000, 10000 * Math.random()),
+				easing: 'ease-in-out'
+			}).finished.then(() => {
+				set_images.delete(url)
+				initImageAnimation(ref)
+			})
+		}
+
+		for (let i = 0; i < refs_image.length; i++) {
+			const ref = refs_image[i]
+			if (i > 0) {
+				setTimeout(() => initImageAnimation(ref), 500 * Math.random())
+				continue
+			}
+
+			initImageAnimation(ref)
+		}
 	}
 
-	observer1.observe(quote)
+	function initQuoteAnimation(): void {
+		const ref_quote = document.getElementById('quote') as HTMLParagraphElement
+		const refs_span = document.querySelectorAll<HTMLSpanElement>('#quote span')
+		const observer = new IntersectionObserver((entries) => {
+			if (!isAnimationAllowed()) {
+				return
+			}
+
+			for (const entry of entries) {
+				if (!entry.isIntersecting) {
+					continue
+				}
+
+				for (let i = 0; i < refs_span.length; i++) {
+					refs_span[i].animate([{
+						transform: 'translateY(-0.4em)',
+						offset: 0.5
+					}], {
+						duration: 1000,
+						delay: i * 200,
+						easing: AnimationEasing.Spring,
+						iterations: 1,
+					})
+				}
+			}
+		}, {
+			root: null,
+			threshold: 1.0
+		})
+
+		observer.observe(ref_quote)
+	}
+
+	initQuoteAnimation()
+	initHeroImagesAnimation()
 </script>

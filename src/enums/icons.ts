@@ -33,6 +33,7 @@ export enum IconCodes {
 	ArrowSort = 0xE149,
 	ArrowSync = 0xE16B,
 	ArrowUp = 0xE1A1,
+	ArrowUpRight = 0xE1A7,
 	Attach = 0xE1B5,
 	Backspace = 0xE1C7,
 	Battery5 = 0xE1E1,
