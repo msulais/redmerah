@@ -1,17 +1,17 @@
 import { DatabaseNames } from "@/enums/storage"
 import { IDB } from "@/utils/indexeddb"
-import { NavigationStore } from "./_navigation"
-import { ConverterType, DateOperation, DecimalNumberFormat, GroupingNumberFormat, NumberType, Pages, ScientificAngleType } from "../_shared/_enums"
+import { NavigationStore } from "./navigation"
+import { ConverterType, DateOperation, DecimalNumberFormat, GroupingNumberFormat, NumberType, Pages, ScientificAngleType } from "../shared/enums"
 import { isValidEnumValue } from "@/utils/object"
-import { SettingsStore } from "./_settings"
-import { MemoryStore, type MemoryStoreType } from "./_memory"
-import { BasicStore, type BasicStoreType } from "../_features/_basic"
-import { ScientificStore, type ScientificStoreType } from "../_features/_scientific"
-import { ConverterStore, type ConverterStoreType } from "../_features/_converter"
-import { ProgrammerStore, type ProgrammerStoreType } from "../_features/_programmer"
-import { DateStore, type DateStoreType } from "../_features/_date"
+import { SettingsStore } from "./settings"
+import { MemoryStore, type MemoryStoreType } from "./memory"
+import { BasicStore, type BasicStoreType } from "../features/basic"
+import { ScientificStore, type ScientificStoreType } from "../features/scientific"
+import { ConverterStore, type ConverterStoreType } from "../features/converter"
+import { ProgrammerStore, type ProgrammerStoreType } from "../features/programmer"
+import { DateStore, type DateStoreType } from "../features/date"
 import { isNumberDefined } from "@/utils/number"
-import { AllUnits } from "../_shared/_units"
+import { AllUnits } from "../shared/units"
 
 type _IDBStoreStorage<T = unknown> = {
 	key: string
@@ -63,9 +63,9 @@ function _readStorageAll(store: IDBObjectStore): void {
 		const isNumber = typeof value === 'number'
 		const isString = typeof value === 'string'
 		switch (key as _StorageKeys) {
-		case "calc:converter/type":
 		case "calc:converter/input-unit":
 		case "calc:converter/output-unit":
+		case "calc:converter/type":
 		case "calc:programmer/input":
 		case "calc:programmer/number-type":
 			break

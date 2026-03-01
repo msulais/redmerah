@@ -1,13 +1,13 @@
 import { KeyboardCode, KeyboardValue } from "@/enums/keyboard"
-import { NumberType, Pages } from "../_shared/_enums"
-import { NavigationStore } from "./_navigation"
-import { BasicStore } from "../_features/_basic"
-import { ProgrammerStore } from "../_features/_programmer"
-import { ConverterStore } from "../_features/_converter"
-import { ScientificStore } from "../_features/_scientific"
-import { formatOutput } from "./_string-utils"
+import { NumberType, Pages } from "../shared/enums"
+import { NavigationStore } from "./navigation"
+import { BasicStore } from "../features/basic"
+import { ProgrammerStore } from "../features/programmer"
+import { ConverterStore } from "../features/converter"
+import { ScientificStore } from "../features/scientific"
+import { formatOutput } from "./string-utils"
 import { numberToBinary } from "@/utils/number"
-import { clearMemory, recallMemory, updateMemory } from "./_memory"
+import { clearMemory, recallMemory, updateMemory } from "./memory"
 
 export function insertKeyBackspace(): void {
 	const backspace = (input: string) => input.substring(0, input.length-1)

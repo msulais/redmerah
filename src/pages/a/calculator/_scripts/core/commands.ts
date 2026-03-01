@@ -1,7 +1,7 @@
-import { Commands } from "../_shared/_commands"
-import { insertKeyBackspace, insertKeyChar, insertKeyClear, insertKeyEqual, insertKeyPlusMinus, insertKeySwap } from "./_key-input"
-import { clearMemory, recallMemory, updateMemory } from "./_memory"
-import { SettingsStore } from "./_settings"
+import { Commands } from "../shared/commands"
+import { insertKeyBackspace, insertKeyChar, insertKeyClear, insertKeyEqual, insertKeyPlusMinus, insertKeySwap } from "./key-input"
+import { clearMemory, recallMemory, updateMemory } from "./memory"
+import { SettingsStore } from "./settings"
 
 function _initCommandsEvents(): void {
 	document.body.addEventListener('click', ev => {

@@ -1,12 +1,12 @@
 import { countString, reverseString } from "@/utils/string"
-import { DIVISION_CHAR, FUNCTION_REGEX, MULTIPLY_CHAR, NUMBER_REGEX } from "../_shared/_constant"
-import { SettingsStore } from "./_settings"
+import { DIVISION_CHAR, FUNCTION_REGEX, MULTIPLY_CHAR, NUMBER_REGEX } from "../shared/constant"
+import { SettingsStore } from "./settings"
 import { Math_acot, Math_acoth, Math_acsc, Math_acsch, Math_asec, Math_asech, Math_cot, Math_coth, Math_csc, Math_csch, Math_sec, Math_sech } from "@/utils/math"
 import { numberToRealDigits } from "@/utils/number"
-import { AngleUnits, ConverterUnit, TemperatureUnits } from "../_shared/_units"
-import { NavigationStore } from "./_navigation"
-import { ScientificStore } from "../_features/_scientific"
-import { ConverterType, Pages, ScientificAngleType } from "../_shared/_enums"
+import { AngleUnits, ConverterUnit, TemperatureUnits } from "../shared/units"
+import { NavigationStore } from "./navigation"
+import { ScientificStore } from "../features/scientific"
+import { ConverterType, Pages, ScientificAngleType } from "../shared/enums"
 
 export function repairInput(input: string): string {
 	const settings = SettingsStore.value

@@ -1,15 +1,15 @@
 import { ObservableStore } from "@/utils/store"
-import { ConverterType } from "../_shared/_enums"
-import { AngleUnits, AreaUnits, FrequencyUnits, LengthUnits, PressureUnits, TemperatureUnits, TimeUnits, VolumeUnits, WeightUnits, type ConverterUnit } from "../_shared/_units"
-import { DEFAULT_CONVERTER_INPUT, DEFAULT_CONVERTER_INPUT_UNIT, DEFAULT_CONVERTER_OUTPUT, DEFAULT_CONVERTER_OUTPUT_UNIT, DEFAULT_CONVERTER_TYPE } from "../_shared/_constant"
-import { calculate, convertUnit } from "../_core/_calculator"
-import { $, scrollInputToEnd } from "../_core/_dom-utils"
+import { ConverterType } from "../shared/enums"
+import { AngleUnits, AreaUnits, FrequencyUnits, LengthUnits, PressureUnits, TemperatureUnits, TimeUnits, VolumeUnits, WeightUnits, type ConverterUnit } from "../shared/units"
+import { DEFAULT_CONVERTER_INPUT, DEFAULT_CONVERTER_INPUT_UNIT, DEFAULT_CONVERTER_OUTPUT, DEFAULT_CONVERTER_OUTPUT_UNIT, DEFAULT_CONVERTER_TYPE } from "../shared/constant"
+import { calculate, convertUnit } from "../core/calculator"
+import { $, scrollInputToEnd } from "../core/dom-utils"
 import { isNumberDefined } from "@/utils/number"
-import { formatOutput } from "../_core/_string-utils"
-import { ElementIds } from "../_shared/_ids"
+import { formatOutput } from "../core/string-utils"
+import { ElementIds } from "../shared/ids"
 import { isValidEnumValue } from "@/utils/object"
 import { AppCSSColors } from "@/enums/app-data"
-import { saveStorageItem } from "../_core/_database"
+import { saveStorageItem } from "../core/database"
 import { CComboBox } from "@/components/ComboBox"
 
 export type ConverterStoreType = Readonly<{
@@ -79,7 +79,7 @@ function _subsConverterChanges(value: ConverterStoreType, old: ConverterStoreTyp
 	if (type === old.converter) return;
 
 	let units = LengthUnits.all
-	saveStorageItem('calc:converter/type', type)
+	console.log(type)
 	switch (type) {
 	case ConverterType.Length     : units = LengthUnits     .all; break
 	case ConverterType.Area       : units = AreaUnits       .all; break
@@ -138,6 +138,7 @@ function _subsUnitChanges(value: ConverterStoreType, old: ConverterStoreType): v
 	) return;
 
 	_calculate(value)
+	saveStorageItem('calc:converter/type', value.converter)
 	saveStorageItem('calc:converter/input-unit', value.inputUnit.id)
 	saveStorageItem('calc:converter/output-unit', value.outputUnit.id)
 }

@@ -1,11 +1,11 @@
 import { ObservableStore } from "@/utils/store"
-import { $, scrollInputToEnd } from "../_core/_dom-utils"
-import { ElementIds } from "../_shared/_ids"
-import { calculate } from "../_core/_calculator"
+import { $, scrollInputToEnd } from "../core/dom-utils"
+import { ElementIds } from "../shared/ids"
+import { calculate } from "../core/calculator"
 import { isNumberDefined } from "@/utils/number"
-import { formatOutput } from "../_core/_string-utils"
-import { saveStorageItem } from "../_core/_database"
-import { DEFAULT_BASIC_INPUT, DEFAULT_BASIC_OUTPUT } from "../_shared/_constant"
+import { formatOutput } from "../core/string-utils"
+import { saveStorageItem } from "../core/database"
+import { DEFAULT_BASIC_INPUT, DEFAULT_BASIC_OUTPUT } from "../shared/constant"
 
 export type BasicStoreType = Readonly<{
 	input: string

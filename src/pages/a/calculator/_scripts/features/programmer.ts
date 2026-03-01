@@ -1,15 +1,15 @@
 import { ObservableStore } from "@/utils/store"
-import { NumberType } from "../_shared/_enums"
-import { DEFAULT_PROGRAMMER_INPUT, DEFAULT_PROGRAMMER_NUMBER_TYPE, DEFAULT_PROGRAMMER_OUTPUT } from "../_shared/_constant"
-import { ElementIds } from "../_shared/_ids"
-import { $, $$, $$$, scrollInputToEnd } from "../_core/_dom-utils"
+import { NumberType } from "../shared/enums"
+import { DEFAULT_PROGRAMMER_INPUT, DEFAULT_PROGRAMMER_NUMBER_TYPE, DEFAULT_PROGRAMMER_OUTPUT } from "../shared/constant"
+import { ElementIds } from "../shared/ids"
+import { $, $$, $$$, scrollInputToEnd } from "../core/dom-utils"
 import { isTargetValidElement } from "@/utils/element"
-import { CSSClasses } from "../../_styles/_css"
+import { CSSClasses } from "../../_styles/classes"
 import { CButton } from "@/components/Button"
-import { calculate } from "../_core/_calculator"
+import { calculate } from "../core/calculator"
 import { isNumberDefined, numberToBinary } from "@/utils/number"
-import { formatOutput } from "../_core/_string-utils"
-import { saveStorageItem } from "../_core/_database"
+import { formatOutput } from "../core/string-utils"
+import { saveStorageItem } from "../core/database"
 
 export type ProgrammerStoreType = Readonly<{
 	input: string

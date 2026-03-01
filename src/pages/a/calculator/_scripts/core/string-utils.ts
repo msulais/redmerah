@@ -1,5 +1,5 @@
 import { formatNumber } from "@/utils/number"
-import { SettingsStore } from "./_settings"
+import { SettingsStore } from "./settings"
 
 export function formatOutput(num: number) {
 	const decimal = SettingsStore.value.decimalFormat
