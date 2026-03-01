@@ -1,8 +1,8 @@
 import { CButton } from "@/components/Button"
-import { CSSClasses } from "../../_styles/_css"
-import { $, $$, $$$ } from "./_dom-utils"
+import { CSSClasses } from "../../_styles/classes"
+import { $, $$, $$$ } from "./dom-utils"
 import { CPopover } from "@/components/Popover"
-import { ElementIds } from "../_shared/_ids"
+import { ElementIds } from "../shared/ids"
 
 const _ref_gradControlPopover = $(ElementIds.bdGrad_controlPopover) as CPopover.CElement
 const _ref_editor = $$<HTMLDivElement>(`.${CSSClasses.bodyEditor}`)

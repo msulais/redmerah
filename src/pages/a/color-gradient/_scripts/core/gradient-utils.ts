@@ -1,7 +1,7 @@
 import type { HEXColor } from "@/types/color"
 import { hexToHsl, hexToRgb } from "@/utils/color"
-import { ColorSpace, GradientType, HueInterpolationMethod, PolarColorSpace, RadialGradientShape, RectangularColorSpace } from "../_shared/_enums"
-import type { GradientItem } from "./_gradients"
+import { ColorSpace, GradientType, HueInterpolationMethod, PolarColorSpace, RadialGradientShape, RectangularColorSpace } from "../shared/enums"
+import type { GradientItem } from "./gradients"
 import { pxToRem } from "@/utils/css"
 
 export function convertColorByColorSpace(

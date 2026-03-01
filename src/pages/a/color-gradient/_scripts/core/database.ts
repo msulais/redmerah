@@ -1,11 +1,11 @@
 import { DatabaseNames } from "@/enums/storage"
 import { IDB } from "@/utils/indexeddb"
 import { isValidEnumValue } from "@/utils/object"
-import { SettingsStore, type SettingsStoreType } from "./_settings"
-import { ColorSpace, GradientType, HueInterpolationMethod, PolarColorSpace, RadialGradientShape, RectangularColorSpace } from "../_shared/_enums"
-import { PreviewStore, type PreviewStoreType } from "./_preview"
-import { SavedGradients, type SavedGradientsType } from "./_saved-gradients"
-import type { ColorStopGradient, GradientItem } from "./_gradients"
+import { SettingsStore, type SettingsStoreType } from "./settings"
+import { ColorSpace, GradientType, HueInterpolationMethod, PolarColorSpace, RadialGradientShape, RectangularColorSpace } from "../shared/enums"
+import { PreviewStore, type PreviewStoreType } from "./preview"
+import { SavedGradients, type SavedGradientsType } from "./saved-gradients"
+import type { ColorStopGradient, GradientItem } from "./gradients"
 import { isColorValidWithAlpha } from "@/utils/color"
 
 type _IDBStoreStorage<T = unknown> = {

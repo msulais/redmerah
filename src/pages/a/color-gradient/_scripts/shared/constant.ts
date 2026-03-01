@@ -1,5 +1,5 @@
 import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
-import { ColorSpace } from "./_enums"
+import { ColorSpace } from "./enums"
 import type { AppItem } from "@/types/apps"
 import { APP_COLOR_GRADIENT } from "@/constants/apps"
 

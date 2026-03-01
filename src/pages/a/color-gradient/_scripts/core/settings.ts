@@ -1,15 +1,15 @@
 import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
 import { ObservableStore } from "@/utils/store"
-import { ElementIds } from "../_shared/_ids"
+import { ElementIds } from "../shared/ids"
 import { LocalStorageKeys } from "@/enums/storage"
 import { isValidEnumValue } from "@/utils/object"
 import { RootAttributes } from "@/enums/attributes"
-import { RadioNames } from "../_shared/_input-names"
-import { DEFAULT_ANIMATION, DEFAULT_COLOR_SPACE, DEFAULT_THEME } from "../_shared/_constant"
-import { $, $$ } from "./_dom-utils"
+import { RadioNames } from "../shared/input-names"
+import { DEFAULT_ANIMATION, DEFAULT_COLOR_SPACE, DEFAULT_THEME } from "../shared/constant"
+import { $, $$ } from "./dom-utils"
 import { CMenu } from "@/components/Menu"
-import { ColorSpace } from "../_shared/_enums"
-import { saveStorageItem } from "./_database"
+import { ColorSpace } from "../shared/enums"
+import { saveStorageItem } from "./database"
 
 export type SettingsStoreType = Readonly<{
 	colorSpace: ColorSpace

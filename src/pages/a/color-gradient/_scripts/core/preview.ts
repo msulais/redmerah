@@ -1,9 +1,9 @@
 import { ObservableStore } from "@/utils/store"
-import { DEFAULT_PREVIEW_BORDER_RADIUS, DEFAULT_PREVIEW_HEIGHT, DEFAULT_PREVIEW_WIDTH } from "../_shared/_constant"
-import { $ } from "./_dom-utils"
-import { ElementIds } from "../_shared/_ids"
+import { DEFAULT_PREVIEW_BORDER_RADIUS, DEFAULT_PREVIEW_HEIGHT, DEFAULT_PREVIEW_WIDTH } from "../shared/constant"
+import { $ } from "./dom-utils"
+import { ElementIds } from "../shared/ids"
 import { safeNumber } from "@/utils/number"
-import { saveStorageItem } from "./_database"
+import { saveStorageItem } from "./database"
 import { pxToRem } from "@/utils/css"
 
 export type PreviewStoreType = Readonly<{

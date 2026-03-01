@@ -1,5 +1,5 @@
 import { stringToHash } from "@/utils/string"
-import { APP } from "./_constant"
+import { APP } from "./constant"
 
 let _ID_INDEX = 0
 
