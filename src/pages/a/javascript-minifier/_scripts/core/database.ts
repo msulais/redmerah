@@ -1,7 +1,7 @@
 import { DatabaseNames } from "@/enums/storage"
 import { IDB } from "@/utils/indexeddb"
-import { SettingsStore, type SettingsStoreType } from "./_settings"
-import { MinifyStore, type MinifyStoreType } from "./_minify"
+import { SettingsStore, type SettingsStoreType } from "./settings"
+import { MinifyStore, type MinifyStoreType } from "./minify"
 
 type _IDBStoreStorage<T = unknown> = {
 	key: string

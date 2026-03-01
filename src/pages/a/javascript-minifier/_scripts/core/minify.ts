@@ -1,17 +1,17 @@
 import { ObservableStore } from "@/utils/store"
-import { ElementIds } from "../_shared/_ids"
+import { ElementIds } from "../shared/ids"
 import beautify from 'js-beautify'
-import { $ } from "./_dom-utils"
-import { DEFAULT_JAVASCRIPT_INPUT_TEXT } from "../_shared/_constant"
+import { $ } from "./dom-utils"
+import { DEFAULT_JAVASCRIPT_INPUT_TEXT } from "../shared/constant"
 import { minify } from "terser"
-import { SettingsStore } from "./_settings"
+import { SettingsStore } from "./settings"
 import { AppCSSColors } from "@/enums/app-data"
 import { CMenu } from "@/components/Menu"
 import { isTargetValidElement } from "@/utils/element"
 import { downloadFile, pickFile, readFileAsText } from "@/utils/file"
 import { CToast } from "@/components/Toast"
 import { Math_clamp } from "@/utils/math"
-import { saveStorageItem } from "./_database"
+import { saveStorageItem } from "./database"
 import { pxToRem } from "@/utils/css"
 
 export type MinifyStoreType = Readonly<{

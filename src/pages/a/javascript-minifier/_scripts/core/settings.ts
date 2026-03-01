@@ -1,14 +1,14 @@
 import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
 import { ObservableStore } from "@/utils/store"
-import { ElementIds } from "../_shared/_ids"
+import { ElementIds } from "../shared/ids"
 import { LocalStorageKeys } from "@/enums/storage"
 import { isValidEnumValue } from "@/utils/object"
 import { RootAttributes } from "@/enums/attributes"
-import { RadioNames } from "../_shared/_input-names"
-import { DEFAULT_ANIMATION, DEFAULT_BEAUTIFY, DEFAULT_KEEP_CLASS_NAMES, DEFAULT_KEEP_FUNC_NAMES, DEFAULT_MODULE, DEFAULT_TEXT_WRAP, DEFAULT_THEME, DEFAULT_TOP_LEVEL } from "../_shared/_constant"
-import { $, $$ } from "./_dom-utils"
-import { MinifyStore } from "./_minify"
-import { saveStorageItem } from "./_database"
+import { RadioNames } from "../shared/input-names"
+import { DEFAULT_ANIMATION, DEFAULT_BEAUTIFY, DEFAULT_KEEP_CLASS_NAMES, DEFAULT_KEEP_FUNC_NAMES, DEFAULT_MODULE, DEFAULT_TEXT_WRAP, DEFAULT_THEME, DEFAULT_TOP_LEVEL } from "../shared/constant"
+import { $, $$ } from "./dom-utils"
+import { MinifyStore } from "./minify"
+import { saveStorageItem } from "./database"
 
 export type SettingsStoreType = Readonly<{
 	theme: PlatformThemeMode
