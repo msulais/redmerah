@@ -5,14 +5,13 @@ import Icon from '@/components/Icon/index.astro'
 import TextFieldButton from '@/components/TextField/TextFieldButton.astro'
 import Toast from '@/components/Toast/index.astro'
 import { EMOJIS_ACTIVITIES, EMOJIS_ANIMAL_AND_NATURE, EMOJIS_FLAGS, EMOJIS_FOOD_AND_DRINK, EMOJIS_OBJECT, EMOJIS_PERSON_AND_BODY, EMOJIS_PERSON_AND_BODY_DARK_SKIN_TONE, EMOJIS_PERSON_AND_BODY_LIGHT_SKIN_TONE, EMOJIS_PERSON_AND_BODY_MEDIUM_DARK_SKIN_TONE, EMOJIS_PERSON_AND_BODY_MEDIUM_LIGHT_SKIN_TONE, EMOJIS_PERSON_AND_BODY_MEDIUM_SKIN_TONE, EMOJIS_SMILEY_AND_EMOTION, EMOJIS_SYMBOLS, EMOJIS_TRAVEL_AND_PLACES } from "@/constants/emoji"
-import { CSSClasses } from '../_styles/_css'
+import { CSSClasses } from '../_styles/classes'
 import { CButton } from '@/components/Button'
 import { IconCodes } from '@/enums/icons'
-import { AppCSSColors, AppCSSOpacity, AppCSSBlur } from '@/enums/app-data'
-import { ElementIds } from '../_scripts/_shared/_ids'
-import { SkinToneEmoji } from '../_scripts/_shared/_enums'
-import { RadioNames } from '../_scripts/_shared/_input-names'
-import { DEFAULT_SKIN_TONE } from '../_scripts/_shared/_constant'
+import { ElementIds } from '../_scripts/shared/ids'
+import { SkinToneEmoji } from '../_scripts/shared/enums'
+import { RadioNames } from '../_scripts/shared/input-names'
+import { DEFAULT_SKIN_TONE } from '../_scripts/shared/constant'
 import { pxToRem } from '@/utils/css'
 
 const maxEmojiList = Math.max(
@@ -70,77 +69,70 @@ const skinTones: {
 ]
 ---
 <main class={CSSClasses.body} id={ElementIds.body}>
-	<section>
-		<div style={{
-			padding: `${pxToRem(4)}rem 0 ${pxToRem(16)}rem 0`,
-			position: 'sticky',
-			borderRadius: `0 0 ${pxToRem(1)}rem ${pxToRem(1)}rem`,
-			top: pxToRem(58) + 'rem',
-			backdropFilter: `blur(${AppCSSBlur.Glass})`,
-			backgroundColor: `rgba(${AppCSSColors.Background},${AppCSSOpacity.Glass})`
-		}}>
-			<h1 id={ElementIds.bd_title}>Smiley & Emotion</h1>
-			<TextField
-				TextFieldInputAttr={{
-					placeholder: '😃😗😪💤',
-					style: {
-						'padding-left': pxToRem(6) + 'rem',
-						'padding-right': pxToRem(4) + 'rem',
-						'font-size': 'var(--g-font-size-xm)',
-						'min-height': pxToRem(36) + 'rem'
-					},
-					id: ElementIds.bd_input
-				}}>
-				<div
-					slot='trailing'
-					style={{
-						display: 'flex',
-						'align-items': 'center',
-						gap: pxToRem(4) + 'rem'
-					}}>
-					<TextFieldButton
-						id={ElementIds.bd_dismissInput}
-						data-tooltip="Clear"
-						aria-label="Clear text">
-						<Icon IconCode={IconCodes.Dismiss}/>
-					</TextFieldButton>
-					<TextFieldButton
-						id={ElementIds.bd_copyInput}
-						data-tooltip="Copy"
-						aria-label="Copy text"
-						style={{'margin-right': pxToRem(4) + 'rem'}}>
-						<Icon IconCode={IconCodes.Copy}/>
-					</TextFieldButton>
-				</div>
-			</TextField>
+	<div class={CSSClasses.bodyInputCopy}>
+		<h1 id={ElementIds.bd_title}>Smiley & Emotion</h1>
+		<TextField
+			TextFieldInputAttr={{
+				placeholder: '😃😗😪💤',
+				style: {
+					'padding-left': pxToRem(6) + 'rem',
+					'padding-right': pxToRem(4) + 'rem',
+					'font-size': 'var(--g-font-size-xm)',
+					'min-height': pxToRem(36) + 'rem'
+				},
+				id: ElementIds.bd_input
+			}}>
 			<div
-				id={ElementIds.bd_skinTone}
-				class={CSSClasses.bodySkinTone}
+				slot='trailing'
 				style={{
-					display: 'none',
-					alignItems: 'center',
-					gap: pxToRem(4) + 'rem',
-					marginTop: pxToRem(4) + 'rem'
+					display: 'flex',
+					'align-items': 'center',
+					gap: pxToRem(4) + 'rem'
 				}}>
-				{skinTones.map(v =>
-					<label
-						class={[CButton.Classes.Button, CButton.Classes.Icon].join(' ')}
-						aria-label={v.name}
-						data-tooltip={v.name}>
-						<input
-							name={RadioNames.SkinTone}
-							type="radio"
-							checked={DEFAULT_SKIN_TONE === v.skinTone}
-							autocomplete="off"
-							value={v.skinTone}
-						/>
-						<Icon style={{
-							color: v.color
-						}} IconCode={IconCodes.CircleFilled}/>
-					</label>
-				)}
+				<TextFieldButton
+					id={ElementIds.bd_dismissInput}
+					data-tooltip="Clear"
+					aria-label="Clear text">
+					<Icon IconCode={IconCodes.Dismiss}/>
+				</TextFieldButton>
+				<TextFieldButton
+					id={ElementIds.bd_copyInput}
+					data-tooltip="Copy"
+					aria-label="Copy text"
+					style={{'margin-right': pxToRem(4) + 'rem'}}>
+					<Icon IconCode={IconCodes.Copy}/>
+				</TextFieldButton>
 			</div>
+		</TextField>
+		<div
+			id={ElementIds.bd_skinTone}
+			class={CSSClasses.bodySkinTone}
+			style={{
+				display: 'none',
+				alignItems: 'center',
+				gap: pxToRem(4) + 'rem',
+				marginTop: pxToRem(4) + 'rem'
+			}}>
+			{skinTones.map(v =>
+				<label
+					class={[CButton.Classes.Button, CButton.Classes.Icon].join(' ')}
+					aria-label={v.name}
+					data-tooltip={v.name}>
+					<input
+						name={RadioNames.SkinTone}
+						type="radio"
+						checked={DEFAULT_SKIN_TONE === v.skinTone}
+						autocomplete="off"
+						value={v.skinTone}
+					/>
+					<Icon style={{
+						color: v.color
+					}} IconCode={IconCodes.CircleFilled}/>
+				</label>
+			)}
 		</div>
+	</div>
+	<section>
 		<ul id={ElementIds.bd_emojiList}>
 			{new Array(maxEmojiList).fill(0).map((_, i) => {
 				const v = EMOJIS_SMILEY_AND_EMOTION[i]

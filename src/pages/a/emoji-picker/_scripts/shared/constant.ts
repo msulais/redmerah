@@ -1,5 +1,5 @@
 import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
-import { Pages, SkinToneEmoji } from "./_enums"
+import { Pages, SkinToneEmoji } from "./enums"
 import { pxToRem } from "@/utils/css"
 import { APP_EMOJI_PICKER } from "@/constants/apps"
 import type { AppItem } from "@/types/apps"

@@ -1,7 +1,7 @@
 import { ObservableStore } from "@/utils/store"
-import { updateEmojiList } from "./_body"
-import { $ } from "./_dom-utils"
-import { ElementIds } from "../_shared/_ids"
+import { updateEmojiList } from "./body"
+import { $ } from "./dom-utils"
+import { ElementIds } from "../shared/ids"
 import { CPopover } from "@/components/Popover"
 
 export type SearchStoreType = Readonly<{

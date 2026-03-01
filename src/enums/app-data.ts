@@ -38,6 +38,7 @@ export enum AppCSSOpacity {
 	OInv5 = 'var(--g-opacity-inv5)',
 	Border = 'var(--g-opacity-border)',
 	Glass = 'var(--g-opacity-glass)',
+	Half = 'var(--g-opacity-half)'
 }
 
 export enum AppCSSTransition {

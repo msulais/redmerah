@@ -1,19 +1,19 @@
 import { CTextField } from "@/components/TextField"
-import { ElementIds } from "../_shared/_ids"
-import { $, $$$ } from "./_dom-utils"
+import { ElementIds } from "../shared/ids"
+import { $, $$$ } from "./dom-utils"
 import { isTargetValidElement } from "@/utils/element"
 import { CToast } from "@/components/Toast"
 import { CButton } from "@/components/Button"
 import { EMOJIS_SMILEY_AND_EMOTION, EMOJIS_PERSON_AND_BODY, EMOJIS_ANIMAL_AND_NATURE, EMOJIS_FOOD_AND_DRINK, EMOJIS_TRAVEL_AND_PLACES, EMOJIS_ACTIVITIES, EMOJIS_OBJECT, EMOJIS_SYMBOLS, EMOJIS_FLAGS, EMOJIS_PERSON_AND_BODY_LIGHT_SKIN_TONE, EMOJIS_PERSON_AND_BODY_MEDIUM_LIGHT_SKIN_TONE, EMOJIS_PERSON_AND_BODY_MEDIUM_SKIN_TONE, EMOJIS_PERSON_AND_BODY_MEDIUM_DARK_SKIN_TONE, EMOJIS_PERSON_AND_BODY_DARK_SKIN_TONE } from "@/constants/emoji"
 import { CDrawer } from "@/components/Drawer"
 import { CSideBar } from "@/components/SideBar"
-import { Pages, SkinToneEmoji } from "../_shared/_enums"
-import { SettingsStore } from "./_settings"
-import { NavigationStore } from "./_navigation"
-import { SearchStore } from "./_search"
+import { Pages, SkinToneEmoji } from "../shared/enums"
+import { SettingsStore } from "./settings"
+import { NavigationStore } from "./navigation"
+import { SearchStore } from "./search"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEasing } from "@/enums/animation"
-import { saveStorageItem } from "./_database"
+import { saveStorageItem } from "./database"
 import { pxToRem } from "@/utils/css"
 
 const _animationOptions = {
@@ -217,8 +217,7 @@ export function updateEmojiList(page: Pages = NavigationStore.value.page): void 
 
 		_ref_emojiList.animate({
 			opacity: [0, 1],
-			scale: [.9, 1]
-		}, {..._animationOptions, duration: 500})
+		}, {..._animationOptions, duration: 800})
 	}
 }
 

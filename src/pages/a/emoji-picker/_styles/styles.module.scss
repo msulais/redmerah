@@ -6,9 +6,9 @@ $SCREEN_WIDTH_SMALL: u.Rem(650px);
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	padding: 0 u.Rem(16px) u.Rem(16px) u.Rem(16px);
 
 	& section {
+		padding: u.Rem(16px);
 		max-width: u.Rem(1440px);
 		width: 100%;
 	}
@@ -34,6 +34,18 @@ $SCREEN_WIDTH_SMALL: u.Rem(650px);
 		}
 	}
 
+}
+
+.bodyInputCopy {
+	padding: u.Rem(8px);
+	position: sticky;
+	width: calc(100% - u.Rem(16px));
+	border-radius: u.Rem(8px);
+	top: u.Rem(58px);
+	box-shadow: var(--g-elevation2);
+	background-color: rgba(var(--g-color-surface), var(--g-opacity-half));
+	backdrop-filter: blur(var(--g-blur-glass));
+	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity2));
 }
 
 .bodySkinTone {

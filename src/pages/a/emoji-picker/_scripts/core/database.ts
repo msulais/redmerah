@@ -1,11 +1,11 @@
 import { DatabaseNames } from "@/enums/storage"
 import { IDB } from "@/utils/indexeddb"
-import { $ } from "./_dom-utils"
-import { ElementIds } from "../_shared/_ids"
-import { Pages, SkinToneEmoji } from "../_shared/_enums"
+import { $ } from "./dom-utils"
+import { ElementIds } from "../shared/ids"
+import { Pages, SkinToneEmoji } from "../shared/enums"
 import { isValidEnumValue } from "@/utils/object"
-import { NavigationStore, type NavigationStoreType } from "./_navigation"
-import { SettingsStore, type SettingsStoreType } from "./_settings"
+import { NavigationStore, type NavigationStoreType } from "./navigation"
+import { SettingsStore, type SettingsStoreType } from "./settings"
 
 type _IDBStoreStorage<T = unknown> = {
 	key: string
