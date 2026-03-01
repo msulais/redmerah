@@ -28,7 +28,7 @@ import logoCSSUnitConverter from '@/assets/images/apps/css-unit-converter.svg'
 export const APP_CSS_UNIT_CONVERTER: AppItem = {
 	logoUrl: logoCSSUnitConverter.src,
 	name: 'CSS Unit Converter',
-	description: "Instantly convert px, rem, em, %, vw/vh, numbers and color formats. Fast, accurate, and copy-ready.",
+	description: "Instantly convert px, rem, em, %, vw/vh, angle and time formats. Fast, accurate, and copy-ready.",
 	link: RoutesLinks.CSSUnitConverter,
 	color: '#F81B1B',
 	buildNumber: 1,

@@ -2,7 +2,7 @@
 	"name": "CSS Unit Converter",
 	"short_name": "CSS Unit Converter",
 	"id": "/css-unit-converter",
-	"description": "Instantly convert px, rem, em, %, vw/vh, numbers and color formats. Fast, accurate, and copy-ready.",
+	"description": "Instantly convert px, rem, em, %, vw/vh, angle and time formats. Fast, accurate, and copy-ready",
 	"start_url": "/css-unit-converter",
 	"icons": [
 		{
