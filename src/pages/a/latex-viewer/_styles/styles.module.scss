@@ -2,12 +2,25 @@
 
 .body {
 	padding: u.Rem(8px) 0 0 0;
+	max-width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	> div {
+		width: u.Rem(1080px);
+		max-width: 100%;
+		padding-top: u.Rem(16px);
+	}
 }
 
 .bodyList {
 	list-style: none;
 	display: grid;
 	grid-template-columns: 1fr;
+	width: u.Rem(1080px);
+	max-width: 100%;
+	padding: u.Rem(16px);
 
 	&:not([data-text-wrap]) textarea {
 		white-space: pre;
@@ -18,9 +31,37 @@
 	> li {
 		overflow: auto;
 		padding: u.Rem(16px);
+		border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity2));
+		border-radius: u.Rem(8px);
+		background-color: rgb(var(--g-color-surface));
+		position: relative;
+		transition-duration: var(--g-duration-transition);
 
 		&:not(:first-child) {
-			border-top: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
+			margin-top: u.Rem(8px);
+		}
+
+		&::after {
+			content: '';
+			position: absolute;
+			left: u.Rem(4px);
+			top: 50%;
+			opacity: 0;
+			translate: 0 -50%;
+			width: u.Rem(4px);
+			height: calc(100% - u.Rem(16px * 2));
+			border-radius: 999px;
+			background-color: rgb(var(--g-color-accent));
+			transition-duration: var(--g-duration-transition);
+		}
+
+		&:focus-within {
+			padding-left: u.Rem(24px);
+
+			&::after {
+				left: u.Rem(4px);
+				opacity: 1;
+			}
 		}
 
 		> textarea {

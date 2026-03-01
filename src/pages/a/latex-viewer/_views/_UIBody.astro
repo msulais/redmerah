@@ -5,24 +5,26 @@ import TextAreaField from '@/components/TextAreaField/index.astro'
 import IconButton from '@/components/Button/IconButton.astro'
 import Toast from '@/components/Toast/index.astro'
 import Dialog from '@/components/Dialog/index.astro'
-import { CSSClasses } from '../_styles/_css'
+import { CSSClasses } from '../_styles/classes'
 import { IconCodes } from '@/enums/icons'
-import { ElementIds } from '../_scripts/_shared/_ids'
+import { ElementIds } from '../_scripts/shared/ids'
 import { CButton } from '@/components/Button'
-import { DEFAULT_LATEX_TEXT } from '../_scripts/_shared/_constant'
-import { Commands } from '../_scripts/_shared/_commands'
+import { DEFAULT_LATEX_TEXT } from '../_scripts/shared/constant'
+import { Commands } from '../_scripts/shared/commands'
 import { pxToRem } from '@/utils/css'
 ---
 
 <main class={CSSClasses.body}>
-	<Button id={ElementIds.bd_add}
-		style={{'margin-left': pxToRem(16) + 'rem'}}
-		ButtonVariant={CButton.Variant.Filled}>
-		<Icon IconCode={IconCodes.Add}/>
-		New equation
-	</Button>
+	<div>
+		<Button id={ElementIds.bd_add}
+			style={{'margin-left': pxToRem(16) + 'rem'}}
+			ButtonVariant={CButton.Variant.Filled}>
+			<Icon IconCode={IconCodes.Add}/>
+			New equation
+		</Button>
+	</div>
 	<ul class={CSSClasses.bodyList} data-text-wrap id={ElementIds.bd_list}>
-		<li>
+		<li tabindex="0">
 			<textarea id={ElementIds.bdLat_textarea}>{DEFAULT_LATEX_TEXT}</textarea>
 			<output for={ElementIds.bdLat_textarea}>
 				<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
@@ -31,31 +33,33 @@ import { pxToRem } from '@/utils/css'
 					</semantics>
 				</math>
 			</output>
-			<Button
-				data-command={Commands.EquationNew}
-				ButtonVariant={CButton.Variant.Outlined}>
-				<Icon IconCode={IconCodes.Add}/>
-				New equation
-			</Button>
-			<IconButton
-				data-command={Commands.EquationCopy}
-				IconButtonCode={IconCodes.Copy}
-				aria-label="Copy"
-				data-tooltip="Copy"
-			/>
-			<IconButton
-				data-command={Commands.EquationMathML}
-				IconButtonCode={IconCodes.Code}
-				aria-label="MathML"
-				data-tooltip="MathML"
-			/>
-			<IconButton
-				data-command={Commands.EquationDelete}
-				IconButtonCode={IconCodes.Delete}
-				aria-label="Delete"
-				data-tooltip="Delete"
-				disabled
-			/>
+			<div>
+				<Button
+					data-command={Commands.EquationNew}
+					ButtonVariant={CButton.Variant.Outlined}>
+					<Icon IconCode={IconCodes.Add}/>
+					New equation
+				</Button>
+				<IconButton
+					data-command={Commands.EquationCopy}
+					IconButtonCode={IconCodes.Copy}
+					aria-label="Copy"
+					data-tooltip="Copy"
+				/>
+				<IconButton
+					data-command={Commands.EquationMathML}
+					IconButtonCode={IconCodes.Code}
+					aria-label="MathML"
+					data-tooltip="MathML"
+				/>
+				<IconButton
+					data-command={Commands.EquationDelete}
+					IconButtonCode={IconCodes.Delete}
+					aria-label="Delete"
+					data-tooltip="Delete"
+					disabled
+				/>
+			</div>
 		</li>
 	</ul>
 </main>

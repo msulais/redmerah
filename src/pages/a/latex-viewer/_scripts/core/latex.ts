@@ -1,9 +1,9 @@
 import { ObservableStore } from "@/utils/store"
-import { DEFAULT_LATEX_TEXT } from "../_shared/_constant"
-import { ElementIds } from "../_shared/_ids"
-import { $, $$ } from "./_dom-utils"
+import { DEFAULT_LATEX_TEXT } from "../shared/constant"
+import { ElementIds } from "../shared/ids"
+import { $, $$ } from "./dom-utils"
 import { CButton } from "@/components/Button"
-import { Commands } from "../_shared/_commands"
+import { Commands } from "../shared/commands"
 import { CIcon } from "@/components/Icon"
 import { IconCodes } from "@/enums/icons"
 import katex from "katex"
@@ -16,8 +16,8 @@ import { CTextAreaField } from "@/components/TextAreaField"
 import { html_beautify } from "js-beautify"
 import { CToast } from "@/components/Toast"
 import { CMenu } from "@/components/Menu"
-import { SettingsStore } from "./_settings"
-import { saveStorageItem } from "./_database"
+import { SettingsStore } from "./settings"
+import { saveStorageItem } from "./database"
 
 export type LatexStoreType = Readonly<{
 	latex: string[]
@@ -63,12 +63,14 @@ function _updateLatexList(index: number): void {
 		}})
 
 		const textareaId = createElementId()
+		const ref_div = document.createElement('div')
 		ref_textarea = document.createElement('textarea')
 		ref_output = document.createElement('output')
 		ref_li = document.createElement('li')
+		ref_li.tabIndex = 0
 		ref_textarea.id = textareaId
 		ref_output.setAttribute('for', textareaId)
-		ref_li.replaceChildren(ref_textarea, ref_output,
+		ref_div.replaceChildren(
 			CButton.create({Button: {
 				children: [
 					CIcon.create({Icon: {code: IconCodes.Add}}),
@@ -97,6 +99,7 @@ function _updateLatexList(index: number): void {
 			}}),
 			ref_delete
 		)
+		ref_li.replaceChildren(ref_textarea, ref_output, ref_div)
 		refs_children.splice(index, 0, ref_li)
 		_ref_latexList.replaceChildren(...refs_children)
 	}

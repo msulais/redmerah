@@ -1,7 +1,7 @@
 import { DatabaseNames } from "@/enums/storage"
 import { IDB } from "@/utils/indexeddb"
-import { SettingsStore, type SettingsStoreType } from "./_settings"
-import { LatexStore, type LatexStoreType } from "./_latex"
+import { SettingsStore, type SettingsStoreType } from "./settings"
+import { LatexStore, type LatexStoreType } from "./latex"
 
 type _IDBStoreStorage<T = unknown> = {
 	key: string
