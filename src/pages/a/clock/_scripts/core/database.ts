@@ -1,10 +1,10 @@
 import { DatabaseNames } from "@/enums/storage"
 import { IDB } from "@/utils/indexeddb"
-import { NavigationStore } from "./_navigation"
+import { NavigationStore } from "./navigation"
 import { isValidEnumValue } from "@/utils/object"
-import { SettingsStore, type SettingsStoreType } from "./_settings"
-import { Pages } from "../_shared/_enums"
-import { TimerStore, type TimerStoreType } from "../_features/_timer"
+import { SettingsStore, type SettingsStoreType } from "./settings"
+import { Pages } from "../shared/enums"
+import { TimerStore, type TimerStoreType } from "../features/timer"
 
 type _IDBStoreStorage<T = unknown> = {
 	key: string
@@ -14,7 +14,8 @@ type _IDBStoreStorage<T = unknown> = {
 type _StorageItems = {
 	page: Pages
 	'settings/keep-awake': SettingsStoreType['keepAwake']
-	'timer/seconds': TimerStoreType['timerInSeconds']
+	'settings/language-code': SettingsStoreType['languageCode']
+	'timer/seconds': TimerStoreType['timerInSeconds'],
 }
 
 type _StorageKeys = keyof _StorageItems
@@ -39,6 +40,7 @@ function _readStorageAll(store: IDBObjectStore): void {
 
 		const isNumber = typeof value === 'number'
 		const isBoolean = typeof value === 'boolean'
+		const isString = typeof value === 'string'
 		switch (key as _StorageKeys) {
 		case "page":
 			isValidEnumValue(value, Pages)
@@ -52,6 +54,9 @@ function _readStorageAll(store: IDBObjectStore): void {
 			isNumber
 			&& TimerStore.update(v => v.currentSeconds = v.timerInSeconds = value)
 			break
+		case "settings/language-code":
+			isString
+			&& SettingsStore.update(v => v.languageCode = value)
 		}
 
 		return true

@@ -16,11 +16,76 @@ import { PlatformAnimationMode, PlatformThemeMode } from '@/enums/platforms'
 import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
 import { RoutesLinks, ExternalLinks } from '@/enums/links'
 import { IconCodes } from '@/enums/icons'
-import { ElementIds } from '../_scripts/_shared/_ids'
-import { RadioNames } from '../_scripts/_shared/_input-names'
-import { DEFAULT_ANIMATION, DEFAULT_KEEP_AWAKE, DEFAULT_THEME, APP } from '../_scripts/_shared/_constant'
+import { ElementIds } from '../_scripts/shared/ids'
+import { RadioNames } from '../_scripts/shared/input-names'
+import { DEFAULT_ANIMATION, DEFAULT_KEEP_AWAKE, DEFAULT_THEME, APP, DEFAULT_LANGUAGE_CODE } from '../_scripts/shared/constant'
 import { pxToRem } from '@/utils/css'
-import { CSSClasses } from '../_styles/_css'
+import { CSSClasses } from '../_styles/classes'
+
+const languages = [
+	["Afrikaans", "af"],
+	["Akan", "ak"],
+	["Amharic", "am"],
+	["Arabic", "ar"],
+	["Azerbaijani", "az"],
+	["Bengali", "bn"],
+	["Bosnian", "bs"],
+	["Bulgarian", "bg"],
+	["Castilian", "es"],
+	["Catalan", "ca"],
+	["Chinese", "zh"],
+	["Croatian", "hr"],
+	["Czech", "cs"],
+	["Danish", "da"],
+	["Dutch", "nl"],
+	["Flemish", "nl"],
+	["English", "en"],
+	["Estonian", "et"],
+	["Finnish", "fi"],
+	["French", "fr"],
+	["German", "de"],
+	["Greek", "el"],
+	["Gujarati", "gu"],
+	["Hebrew", "he"],
+	["Hindi", "hi"],
+	["Hungarian", "hu"],
+	["Indonesian", "id"],
+	["Italian", "it"],
+	["Japanese", "jp"],
+	["Kannada", "kn"],
+	["Korean", "ko"],
+	["Latvian", "lv"],
+	["Lithuanian", "lt"],
+	["Malay", "ms"],
+	["Malayalam", "ml"],
+	["Marathi", "mr"],
+	["Moldavian", "ro"],
+	["Norwegian", "no"],
+	["Persian", "fa"],
+	["Polish", "pl"],
+	["Portuguese", "pt"],
+	["Panjabi", "pa"],
+	["Punjabi", "pa"],
+	["Romanian", "ro"],
+	["Russian", "ru"],
+	["Serbian", "sr"],
+	["Sindhi", "sd"],
+	["Slovak", "sk"],
+	["Slovenian", "sl"],
+	["Spanish", "es"],
+	["Swahili", "sw"],
+	["Swedish", "sv"],
+	["Tagalog", "tl"],
+	["Tamil", "ta"],
+	["Telugu", "te"],
+	["Thai", "th"],
+	["Turkish", "tr"],
+	["Ukranian", "uk"],
+	["Urdu", "ur"],
+	["Uzbek", "uz"],
+	["Valencian", "ca"],
+	["Vietnamese", "vi"],
+]
 
 const animations: {
 	value: PlatformAnimationMode
@@ -184,6 +249,28 @@ const themes: {
 						RadioMenuItemValue={v.value}>
 						<Icon IconCode={v.icon}/>
 						{v.text}
+					</RadioMenuItem>
+				)}
+			</SubMenu>
+
+			<SubMenuItem
+				popovertarget={ElementIds.apSett_languageMenu}>
+				<Icon IconCode={IconCodes.Translate}/>
+				Datetime language
+				<div style="flex:1"/>
+				<Icon IconCode={IconCodes.ChevronRight}/>
+			</SubMenuItem>
+			<SubMenu
+				style={{
+					width: pxToRem(192) + 'rem',
+				}}
+				id={ElementIds.apSett_languageMenu}>
+				{languages.map(v =>
+					<RadioMenuItem
+						RadioMenuItemName={RadioNames.Language}
+						RadioMenuItemChecked={DEFAULT_LANGUAGE_CODE === v[1]}
+						RadioMenuItemValue={v[1]}>
+						{v[0]}
 					</RadioMenuItem>
 				)}
 			</SubMenu>

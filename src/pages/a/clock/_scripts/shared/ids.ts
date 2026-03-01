@@ -1,5 +1,5 @@
 import { stringToHash } from "@/utils/string"
-import { APP } from "./_constant"
+import { APP } from "./constant"
 
 let _ID_INDEX = 0
 
@@ -25,6 +25,7 @@ export class ElementIds {
 	static readonly apSett_animationMenu = _createId()
 	static readonly apSett_themeMenu = _createId()
 	static readonly apSett_keepAwake = _createId()
+	static readonly apSett_languageMenu = _createId()
 
 	// bdDlg = body dialog
 	static readonly bdDlg_wakeLockError = _createId()

@@ -27,11 +27,12 @@ $SCREEN_WIDTH_SMALL: u.Rem(650px);
 
 	> h2 {
 		text-align: center;
-		font-size: 12dvw;
-		font-weight: normal;
+		font-size: 10dvw;
+		font-weight: bold;
+		font-family: var(--g-font-family-monospace);
 
 		@media (max-width: $SCREEN_WIDTH_SMALL) {
-			font-size: 22dvw;
+			font-size: 16dvw;
 		}
 	}
 
@@ -39,6 +40,7 @@ $SCREEN_WIDTH_SMALL: u.Rem(650px);
 		text-align: center;
 		font-size: max(u.Rem(16px), 2dvw);
 		color: rgb(var(--g-color-accent));
+		font-weight: bold;
 	}
 }
 
@@ -52,10 +54,11 @@ $SCREEN_WIDTH_SMALL: u.Rem(650px);
 		padding: u.Rem(16px) u.Rem(16px) 0 u.Rem(16px);
 		text-align: center;
 		font-size: 10dvw;
-		font-weight: normal;
+		font-family: var(--g-font-family-monospace);
+		font-weight: bold;
 
 		@media (max-width: $SCREEN_WIDTH_SMALL) {
-			font-size: 18dvw;
+			font-size: 14dvw;
 		}
 	}
 }
@@ -124,10 +127,11 @@ $SCREEN_WIDTH_SMALL: u.Rem(650px);
 	> h2 {
 		text-align: center;
 		font-size: 12dvw;
-		font-weight: normal;
+		font-family: var(--g-font-family-monospace);
+		font-weight: bold;
 
 		@media (max-width: $SCREEN_WIDTH_SMALL) {
-			font-size: 22dvw;
+			font-size: 16dvw;
 		}
 	}
 }

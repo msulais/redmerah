@@ -1,7 +1,7 @@
 ---
 import { CButton } from '@/components/Button'
-import { ElementIds } from '../../_scripts/_shared/_ids'
-import { CSSClasses } from '../../_styles/_css'
+import { ElementIds } from '../../_scripts/shared/ids'
+import { CSSClasses } from '../../_styles/classes'
 import Button from '@/components/Button/index.astro'
 import IconButton from '@/components/Button/IconButton.astro'
 import Icon from '@/components/Icon/index.astro'
@@ -9,9 +9,9 @@ import Dialog from '@/components/Dialog/index.astro'
 import TextField from '@/components/TextField/index.astro'
 import { IconCodes } from '@/enums/icons'
 import ringtone from '@/assets/audio/simple-ringtone-84595.mp3'
-import { Pages } from '../../_scripts/_shared/_enums'
+import { Pages } from '../../_scripts/shared/enums'
 import { pxToRem } from '@/utils/css'
-import { DEFAULT_PAGE, DEFAULT_TIMER_RUNNING, DEFAULT_TIMER_SECONDS } from '../../_scripts/_shared/_constant'
+import { DEFAULT_PAGE, DEFAULT_TIMER_RUNNING, DEFAULT_TIMER_SECONDS } from '../../_scripts/shared/constant'
 
 const hours = Math.floor(DEFAULT_TIMER_SECONDS / 3600)
 const minutes = Math.floor(Math.floor(DEFAULT_TIMER_SECONDS % 3600) / 60)

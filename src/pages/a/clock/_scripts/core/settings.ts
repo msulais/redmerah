@@ -1,31 +1,34 @@
 import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
 import { ObservableStore } from "@/utils/store"
-import { $, $$ } from "./_dom-utils"
-import { ElementIds } from "../_shared/_ids"
+import { $, $$ } from "./dom-utils"
+import { ElementIds } from "../shared/ids"
 import { LocalStorageKeys } from "@/enums/storage"
 import { isValidEnumValue } from "@/utils/object"
 import { RootAttributes } from "@/enums/attributes"
-import { RadioNames } from "../_shared/_input-names"
-import { DEFAULT_ANIMATION, DEFAULT_KEEP_AWAKE, DEFAULT_THEME } from "../_shared/_constant"
+import { RadioNames } from "../shared/input-names"
+import { DEFAULT_ANIMATION, DEFAULT_KEEP_AWAKE, DEFAULT_LANGUAGE_CODE, DEFAULT_THEME } from "../shared/constant"
 import { CDialog } from "@/components/Dialog"
-import { saveStorageItem } from "./_database"
+import { saveStorageItem } from "./database"
 
 export type SettingsStoreType = Readonly<{
 	theme    : PlatformThemeMode
 	animation: PlatformAnimationMode
 	keepAwake: boolean
+	languageCode: string
 }>
 
 export const SettingsStore = new ObservableStore<SettingsStoreType>({
 	theme    : DEFAULT_THEME,
 	animation: DEFAULT_ANIMATION,
-	keepAwake: DEFAULT_KEEP_AWAKE
+	keepAwake: DEFAULT_KEEP_AWAKE,
+	languageCode: DEFAULT_LANGUAGE_CODE
 })
 const _ref_root = document.documentElement
 const _ref_keepAwakeError = $(ElementIds.bdDlg_wakeLockError) as CDialog.CElement
 const _ref_keepAwakeBtn = $(ElementIds.apSett_keepAwake) as HTMLInputElement
 const _ref_theme = $(ElementIds.apSett_themeMenu) as HTMLDivElement
 const _ref_animation = $(ElementIds.apSett_animationMenu) as HTMLDivElement
+const _ref_language = $(ElementIds.apSett_languageMenu) as HTMLDivElement
 const _ref_settingsMenu = $(ElementIds.apSett_menu) as HTMLDivElement
 let _wakeLock: WakeLockSentinel | null = null
 
@@ -72,6 +75,13 @@ function _subscribeThemeChanges(v: SettingsStoreType, o: SettingsStoreType): voi
 	localStorage.setItem(LocalStorageKeys.PlatformTheme, theme)
 }
 
+function _subscribeDatetimeLanguageChanges(v: SettingsStoreType, o: SettingsStoreType): void {
+	const language = v.languageCode
+	if (language === o.animation) return
+
+	saveStorageItem('settings/language-code', language)
+}
+
 function _subscribeAnimationRefView(v: SettingsStoreType, o: SettingsStoreType): void {
 	const animation = v.animation
 	if (animation === o.animation) return
@@ -82,6 +92,22 @@ function _subscribeAnimationRefView(v: SettingsStoreType, o: SettingsStoreType):
 	) as HTMLInputElement
 	const ref_target = $$(
 		`input[name="${CSS.escape(RadioNames.Animation)}"][value="${CSS.escape(animation)}"]`
+	) as HTMLInputElement
+
+	if (ref_previous === ref_target) {return}
+	if (ref_previous) ref_previous.checked = false
+	if (ref_target) ref_target.checked = true
+}
+
+function _subscribeDatetimeLanguageRefView(v: SettingsStoreType, o: SettingsStoreType): void {
+	const language = v.languageCode
+	if (language === o.animation) return
+
+	const ref_previous = $$(
+		`input[name="${CSS.escape(RadioNames.Language)}"]:checked`
+	) as HTMLInputElement
+	const ref_target = $$(
+		`input[name="${CSS.escape(RadioNames.Language)}"][value="${CSS.escape(language)}"]`
 	) as HTMLInputElement
 
 	if (ref_previous === ref_target) {return}
@@ -114,12 +140,16 @@ function _subscribeKeepAwakeRefView(v: SettingsStoreType): void {
 }
 
 function _initSubscriber(): void {
-	SettingsStore.subscribe(_subscribeAnimationChanges)
-	SettingsStore.subscribe(_subscribeThemeChanges)
-	SettingsStore.subscribe(_subscribeAnimationRefView)
-	SettingsStore.subscribe(_subscribeThemeRefView)
-	SettingsStore.subscribe(_subscribeKeepAwakeRefView)
-	SettingsStore.subscribe(_subscribeKeepAwakeChanges)
+	SettingsStore.subscribeAll([
+		_subscribeAnimationChanges,
+		_subscribeThemeChanges,
+		_subscribeAnimationRefView,
+		_subscribeThemeRefView,
+		_subscribeKeepAwakeRefView,
+		_subscribeKeepAwakeChanges,
+		_subscribeDatetimeLanguageRefView,
+		_subscribeDatetimeLanguageChanges
+	])
 }
 
 function _initEvents(): void {
@@ -135,6 +165,17 @@ function _initEvents(): void {
 
 		_ref_settingsMenu.hidePopover()
 		SettingsStore.update(v => v.theme = value as PlatformThemeMode)
+	})
+
+	_ref_language.addEventListener('change', ev => {
+		_ref_settingsMenu.hidePopover()
+		const target = ev.target as HTMLInputElement
+		const value = target?.value
+		if (!value) {
+			return
+		}
+
+		SettingsStore.update(v => v.languageCode = value)
 	})
 
 	_ref_animation.addEventListener('change', ev => {

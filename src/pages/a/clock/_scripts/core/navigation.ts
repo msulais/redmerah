@@ -1,16 +1,16 @@
 import { ObservableStore } from "@/utils/store"
-import { Pages } from "../_shared/_enums"
-import { ElementIds } from "../_shared/_ids"
-import { $, $$, $$$ } from "./_dom-utils"
+import { Pages } from "../shared/enums"
+import { ElementIds } from "../shared/ids"
+import { $, $$, $$$ } from "./dom-utils"
 import { isValidEnumValue } from "@/utils/object"
 import { CDrawer } from "@/components/Drawer"
 import { CSideBar } from "@/components/SideBar"
-import { CSSClasses } from "../../_styles/_css"
+import { CSSClasses } from "../../_styles/classes"
 import { CButton } from "@/components/Button"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEasing } from "@/enums/animation"
-import { saveStorageItem } from "./_database"
-import { DEFAULT_PAGE } from "../_shared/_constant"
+import { saveStorageItem } from "./database"
+import { DEFAULT_PAGE } from "../shared/constant"
 
 export type NavigationStoreType = Readonly<{
 	page: Pages
