@@ -1,6 +1,6 @@
 import { DatabaseNames } from "@/enums/storage"
 import { IDB } from "@/utils/indexeddb"
-import { ColorsStore, type ColorsStoreType } from "./_colors"
+import { ColorsStore, type ColorsStoreType } from "./colors"
 import { isColorValid } from "@/utils/color"
 import type { HEXColor } from "@/types/color"
 

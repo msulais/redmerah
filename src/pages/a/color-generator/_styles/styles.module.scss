@@ -2,22 +2,58 @@
 
 .body {
 	padding: u.Rem(8px) u.Rem(16px) u.Rem(16px) u.Rem(16px);
-	display: flex;
 	gap: u.Rem(32px);
-	flex-wrap: wrap;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+
+	&:has( .bodyList:empty) {
+		justify-content: center;
+		height: calc(100dvh - u.Rem(58px));
+	}
 }
 
 .bodyControl {
-	width: u.Rem(512px);
+	width: u.Rem(1080px);
+	max-width: 100%;
+
+	&:has( + .bodyList:empty){
+		width: u.Rem(700px);
+
+		> [data-css=preview] {
+			grid-template-columns: 1fr;
+		}
+
+		& [data-css=color] {
+			height: max(30dvh, u.Rem(128px));
+		}
+	}
+
+	> [data-css=actions] {
+		display: flex;
+		gap: u.Rem(4px);
+		justify-content: center;
+	}
+
+	> [data-css=preview] {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: u.Rem(8px);
+
+		@media (max-width: u.Rem(700px)) {
+			grid-template-columns: 1fr;
+		}
+	}
+
 	> p {
 		font-size: var(--g-font-size-xs);
 		margin-top: u.Rem(16px);
 	}
 
-	> [data-css-color] {
+	& [data-css=color] {
 		padding: u.Rem(12px);
-		width: min(100%, u.Rem(512px));
-		border-radius: u.Rem(4px);
+		width: 100%;
+		border-radius: u.Rem(8px);
 		height: u.Rem(128px);
 		margin-top: u.Rem(8px);
 		display: grid;
@@ -42,7 +78,8 @@
 }
 
 .bodyList {
-	flex: 1;
+	width: u.Rem(1080px);
+	max-width: 100%;
 	height: fit-content;
 	display: grid;
 	gap: u.Rem(16px);

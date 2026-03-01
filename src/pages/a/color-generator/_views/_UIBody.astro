@@ -6,19 +6,16 @@ import IconButton from '@/components/Button/IconButton.astro'
 import Icon from '@/components/Icon/index.astro'
 import Toast from '@/components/Toast/index.astro'
 import ColorPicker from '@/components/ColorPicker/index.astro'
-import { CSSClasses } from '../_styles/_css'
-import { DEFAULT_COLOR, DEFAULT_PALETTE } from '../_scripts/_shared/_constant'
-import { ElementIds } from '../_scripts/_shared/_ids'
+import { CSSClasses } from '../_styles/classes'
+import { DEFAULT_COLOR, DEFAULT_PALETTE } from '../_scripts/shared/constant'
+import { ElementIds } from '../_scripts/shared/ids'
 import { generateColorPalette } from '@/utils/color'
-import { Commands } from '../_scripts/_shared/_commands'
+import { Commands } from '../_scripts/shared/commands'
 import { pxToRem } from '@/utils/css'
 ---
 <main class={CSSClasses.body}>
 	<div class={CSSClasses.bodyControl}>
-		<div style={{
-			display: 'flex',
-			gap: pxToRem(4) + 'rem'
-		}}>
+		<div data-css="actions">
 			<Button
 				ButtonVariant={CButton.Variant.Filled}
 				id={ElementIds.bd_pickerBtn}
@@ -35,82 +32,80 @@ import { pxToRem } from '@/utils/css'
 				data-tooltip="Save palette"
 			/>
 		</div>
-		<p>Light mode:</p>
-		<div
-			data-css-color
-			style={{
-				backgroundColor: 'rgb(var(--g-color-accent-light))'
-			}}>
-			<span style={{color: 'rgb(var(--g-color-on-accent-light))'}}>
-				Accent Light<br/><span id={ElementIds.bd_accentLight}>#00658F</span>
-			</span>
-			<span style={{
-				backgroundColor: 'rgb(var(--g-color-on-accent-light))',
-				color: 'rgb(var(--g-color-accent-light))',
-			}}>
-				On Accent Light<br/><span id={ElementIds.bd_onAccentLight}>#FFFFFF</span>
-			</span>
-		</div>
-		<p>Dark mode:</p>
-		<div
-			data-css-color
-			style={{
-				backgroundColor: 'rgb(var(--g-color-accent-dark))'
-			}}>
-			<span style={{color: 'rgb(var(--g-color-on-accent-dark))'}}>
-				Accent Dark<br/><span id={ElementIds.bd_accentDark}>#86CEFF</span>
-			</span>
-			<span style={{
-				backgroundColor: 'rgb(var(--g-color-on-accent-dark))',
-				color: 'rgb(var(--g-color-accent-dark))',
-			}}>
-				On Accent Dark<br/><span id={ElementIds.bd_onAccentDark}>#00344C</span>
-			</span>
+		<div data-css="preview">
+			<div
+				data-css="color"
+				style={{
+					backgroundColor: 'rgb(var(--g-color-accent-light))'
+				}}>
+				<span style={{color: 'rgb(var(--g-color-on-accent-light))'}}>
+					Accent Light<br/><span id={ElementIds.bd_accentLight}>#00658F</span>
+				</span>
+				<span style={{
+					backgroundColor: 'rgb(var(--g-color-on-accent-light))',
+					color: 'rgb(var(--g-color-accent-light))',
+				}}>
+					On Accent Light<br/><span id={ElementIds.bd_onAccentLight}>#FFFFFF</span>
+				</span>
+			</div>
+			<div
+				data-css="color"
+				style={{
+					backgroundColor: 'rgb(var(--g-color-accent-dark))'
+				}}>
+				<span style={{color: 'rgb(var(--g-color-on-accent-dark))'}}>
+					Accent Dark<br/><span id={ElementIds.bd_accentDark}>#86CEFF</span>
+				</span>
+				<span style={{
+					backgroundColor: 'rgb(var(--g-color-on-accent-dark))',
+					color: 'rgb(var(--g-color-accent-dark))',
+				}}>
+					On Accent Dark<br/><span id={ElementIds.bd_onAccentDark}>#00344C</span>
+				</span>
+			</div>
 		</div>
 	</div>
-	<ul class={CSSClasses.bodyList}>
-		{DEFAULT_PALETTE.map(seed => {
-			const pal = generateColorPalette(seed)
-			return (<li data-seed-color={seed}>
-				<p>
-					<Icon
-						IconCode={IconCodes.CircleFilled}
-						style={`color:${seed}`}
-					/>
-					{seed}
-					<span style="display:block;flex:1"></span>
-					<IconButton
-						aria-label="Copy"
-						data-tooltip="Copy"
-						data-command={Commands.PaletteCopy}
-						IconButtonCode={IconCodes.Copy}
-					/>
-					<IconButton
-						aria-label="Delete"
-						data-tooltip="Delete"
-						data-command={Commands.PaletteDelete}
-						IconButtonCode={IconCodes.Delete}
-					/>
-				</p>
-				<div style={`background-color:${pal.color};color:${pal.onColor}`}>
-					<span data-tooltip="Accent Light">{pal.color.toUpperCase()}</span>
-					<span
-						data-tooltip="On Accent Light"
-						style={`background-color:${pal.onColor};color:${pal.color}`}>{
-						pal.onColor.toUpperCase()
-					}</span>
-				</div>
-				<div style={`background-color:${pal.colorDark};color:${pal.onColorDark}`}>
-					<span data-tooltip="Accent Dark">{pal.colorDark.toUpperCase()}</span>
-					<span
-						data-tooltip="On Accent Dark"
-						style={`background-color:${pal.onColorDark};color:${pal.colorDark}`}>{
-						pal.onColorDark.toUpperCase()
-					}</span>
-				</div>
-			</li>)
-		})}
-	</ul>
+	<ul class={CSSClasses.bodyList}>{DEFAULT_PALETTE.map(seed => {
+		const pal = generateColorPalette(seed)
+		return (<li data-seed-color={seed}>
+			<p>
+				<Icon
+					IconCode={IconCodes.CircleFilled}
+					style={`color:${seed}`}
+				/>
+				{seed}
+				<span style="display:block;flex:1"></span>
+				<IconButton
+					aria-label="Copy"
+					data-tooltip="Copy"
+					data-command={Commands.PaletteCopy}
+					IconButtonCode={IconCodes.Copy}
+				/>
+				<IconButton
+					aria-label="Delete"
+					data-tooltip="Delete"
+					data-command={Commands.PaletteDelete}
+					IconButtonCode={IconCodes.Delete}
+				/>
+			</p>
+			<div style={`background-color:${pal.color};color:${pal.onColor}`}>
+				<span data-tooltip="Accent Light">{pal.color.toUpperCase()}</span>
+				<span
+					data-tooltip="On Accent Light"
+					style={`background-color:${pal.onColor};color:${pal.color}`}>{
+					pal.onColor.toUpperCase()
+				}</span>
+			</div>
+			<div style={`background-color:${pal.colorDark};color:${pal.onColorDark}`}>
+				<span data-tooltip="Accent Dark">{pal.colorDark.toUpperCase()}</span>
+				<span
+					data-tooltip="On Accent Dark"
+					style={`background-color:${pal.onColorDark};color:${pal.colorDark}`}>{
+					pal.onColorDark.toUpperCase()
+				}</span>
+			</div>
+		</li>)
+	})}</ul>
 </main>
 <ColorPicker
 	ColorPickerValue={DEFAULT_COLOR}

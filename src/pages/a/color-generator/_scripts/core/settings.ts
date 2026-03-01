@@ -1,12 +1,12 @@
 import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
 import { ObservableStore } from "@/utils/store"
-import { $, $$ } from "./_dom-utils"
-import { ElementIds } from "../_shared/_ids"
+import { $, $$ } from "./dom-utils"
+import { ElementIds } from "../shared/ids"
 import { LocalStorageKeys } from "@/enums/storage"
 import { isValidEnumValue } from "@/utils/object"
 import { RootAttributes } from "@/enums/attributes"
-import { RadioNames } from "../_shared/_input-names"
-import { DEFAULT_ANIMATION, DEFAULT_THEME } from "../_shared/_constant"
+import { RadioNames } from "../shared/input-names"
+import { DEFAULT_ANIMATION, DEFAULT_THEME } from "../shared/constant"
 
 export type SettingsStoreType = Readonly<{
 	theme    : PlatformThemeMode

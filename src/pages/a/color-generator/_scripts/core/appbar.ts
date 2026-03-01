@@ -1,8 +1,8 @@
 import { CButton } from "@/components/Button"
-import { ElementIds } from "../_shared/_ids"
-import { $ } from "./_dom-utils"
-import { copyColorPalette } from "./_colors"
-import { APP } from "../_shared/_constant"
+import { ElementIds } from "../shared/ids"
+import { $ } from "./dom-utils"
+import { copyColorPalette } from "./colors"
+import { APP } from "../shared/constant"
 
 const _ref_infoMenu = $(ElementIds.apInf_menu) as HTMLDivElement
 const _ref_infoBtn = $(ElementIds.apInf_btn) as CButton.CElement

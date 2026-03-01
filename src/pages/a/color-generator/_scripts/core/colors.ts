@@ -1,21 +1,21 @@
 import type { HEXColor, RGBColor } from "@/types/color"
 import { ObservableStore } from "@/utils/store"
-import { DEFAULT_COLOR, DEFAULT_PALETTE } from "../_shared/_constant"
-import { $, $$, $$$ } from "./_dom-utils"
-import { ElementIds } from "../_shared/_ids"
+import { DEFAULT_COLOR, DEFAULT_PALETTE } from "../shared/constant"
+import { $, $$, $$$ } from "./dom-utils"
+import { ElementIds } from "../shared/ids"
 import { CColorPicker } from "@/components/ColorPicker"
 import { GlobalElementIds } from "@/enums/ids"
 import { generateColorPalette, hexToRgb, isColorValid } from "@/utils/color"
 import { CToast } from "@/components/Toast"
-import { CSSClasses } from "../../_styles/_css"
+import { CSSClasses } from "../../_styles/classes"
 import { isTargetValidElement } from "@/utils/element"
-import { Commands } from "../_shared/_commands"
+import { Commands } from "../shared/commands"
 import { CButton } from "@/components/Button"
 import { CIcon } from "@/components/Icon"
 import { IconCodes } from "@/enums/icons"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEasing } from "@/enums/animation"
-import { saveStorageItem } from "./_database"
+import { saveStorageItem } from "./database"
 import { pxToRem } from "@/utils/css"
 
 export type ColorsStoreType = {
@@ -33,6 +33,8 @@ const _ref_toastCopied = $(ElementIds.toa_copied) as CToast.CElement
 const _ref_paletteList = $$(`.${CSSClasses.bodyList}`) as HTMLDivElement
 const _ref_colorAccent = $(GlobalElementIds.ColorAccent) as HTMLStyleElement
 const _ref_colorPicker = $(ElementIds.bd_picker) as CColorPicker.CElement
+const _refs_actions = $$$(`.${CSSClasses.bodyControl}>[data-css=actions]>*`)
+const _refs_colors = $$$(`.${CSSClasses.bodyControl} [data-css=color]`)
 const _ref_colorPickerButtonSpan = $(ElementIds.bd_pickerBtnSpan) as HTMLSpanElement
 const _ref_paletteAccentLight = $(ElementIds.bd_accentLight) as HTMLSpanElement
 const _ref_paletteOnAccentLight = $(ElementIds.bd_onAccentLight) as HTMLSpanElement
@@ -57,6 +59,8 @@ function _subscribePaletteRefView(v: ColorsStoreType, o: ColorsStoreType): void 
 	if (length > oldLength) {
 		const children = [..._ref_paletteList.children]
 		const childrenRects = children.map(v => v.getBoundingClientRect())
+		const actionsRects = [..._refs_actions.values().map(v => v.getBoundingClientRect())]
+		const colorsRects = [..._refs_colors.values().map(v => v.getBoundingClientRect())]
 		for (let i = 0; i < length - oldLength; i++) {
 			const children = [..._ref_paletteList.children]
 			const seed = palette[i]
@@ -114,6 +118,24 @@ function _subscribePaletteRefView(v: ColorsStoreType, o: ColorsStoreType): void 
 
 		if (allowAnimation) {
 			const childrenRects2 = children.map(v => v.getBoundingClientRect())
+			const actionsRects2 = [..._refs_actions.values().map(v => v.getBoundingClientRect())]
+			const colorsRects2 = [..._refs_colors.values().map(v => v.getBoundingClientRect())]
+			_refs_colors.forEach((ref, i) => {
+				const r1 = colorsRects[i]
+				const r2 = colorsRects2[i]
+				ref.animate({
+					width: [r1.width + 'px', r2.width + 'px'],
+					height: [r1.height + 'px', r2.height + 'px'],
+					translate: [`${pxToRem(r1.x - r2.x)}rem ${pxToRem(r1.y - r2.y)}rem`, '0 0'],
+				}, _animationOption)
+			})
+			_refs_actions.forEach((ref, i) => {
+				const r1 = actionsRects[i]
+				const r2 = actionsRects2[i]
+				ref.animate({
+					translate: [`${pxToRem(r1.x - r2.x)}rem ${pxToRem(r1.y - r2.y)}rem`, '0 0'],
+				}, _animationOption)
+			})
 			for (let i = 0; i < children.length; i++) {
 				const r1 = childrenRects[i]
 				const r2 = childrenRects2[i]
@@ -140,7 +162,9 @@ function _subscribePaletteRefView(v: ColorsStoreType, o: ColorsStoreType): void 
 			}
 		}
 
+		const actionsRects = [..._refs_actions.values().map(v => v.getBoundingClientRect())]
 		const keepedRects = [...keepedRefs.values().map(v => v.getBoundingClientRect())]
+		const colorsRects = [..._refs_colors.values().map(v => v.getBoundingClientRect())]
 		deletedRefs.values().forEach(v => {
 			const isLast = v === children.item(children.length - 1)
 			if (isLast && allowAnimation) {
@@ -149,12 +173,33 @@ function _subscribePaletteRefView(v: ColorsStoreType, o: ColorsStoreType): void 
 					opacity: [1, 0]
 				}, _animationOption)
 				.finished
-				.then(() => v.remove())
+				.then(() => {
+					v.remove()
+					const colorsRects2 = [..._refs_colors.values().map(v => v.getBoundingClientRect())]
+					const actionsRects2 = [..._refs_actions.values().map(v => v.getBoundingClientRect())]
+					_refs_actions.forEach((ref, i) => {
+						const r1 = actionsRects[i]
+						const r2 = actionsRects2[i]
+						ref.animate({
+							translate: [`${pxToRem(r1.x - r2.x)}rem ${pxToRem(r1.y - r2.y)}rem`, '0 0'],
+						}, _animationOption)
+					})
+					_refs_colors.forEach((ref, i) => {
+						const r1 = colorsRects[i]
+						const r2 = colorsRects2[i]
+						ref.animate({
+							width: [r1.width + 'px', r2.width + 'px'],
+							height: [r1.height + 'px', r2.height + 'px'],
+							translate: [`${pxToRem(r1.x - r2.x)}rem ${pxToRem(r1.y - r2.y)}rem`, '0 0'],
+						}, _animationOption)
+					})
+				})
 			}
 			v.remove()
 		})
 		if (allowAnimation) {
 			const keepedRects2 = [...keepedRefs.values().map(v => v.getBoundingClientRect())]
+
 			keepedRefs.values().forEach((ref, i) => {
 				const r1 = keepedRects[i]
 				const r2 = keepedRects2[i]
