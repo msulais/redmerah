@@ -5,7 +5,7 @@
 	background-color: rgba(var(--g-color-surface), var(--g-opacity-glass));
 	backdrop-filter: blur(var(--g-blur-glass));
 	border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity3));
-	border-radius: u.Rem(8px);
+	border-radius: var(--g-border-radius8);
 	inset: u.Rem(8px) auto auto u.Rem(8px);
 	max-height: calc(100dvh - u.Rem(16px));
 	max-width: calc(100% - u.Rem(16px));

@@ -19,7 +19,7 @@
 	}
 
 	& li {
-		border-radius: u.Rem(4px);
+		border-radius: var(--g-border-radius4);
 		box-shadow: var(--g-elevation2);
 		height: u.Rem(128px);
 		width: u.Rem(128px);

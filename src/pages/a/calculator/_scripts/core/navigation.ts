@@ -91,7 +91,7 @@ function _subsPageView(v: NavigationStoreType, o: NavigationStoreType): void {
 	const borderColor = `rgba(${AppCSSColors.OnSurface},${AppCSSOpacity.O3})`
 	ref_targetPanel.animate({
 		transform: ['scale(.9)', 'scale(1)'],
-		borderRadius: [pxToRem(8) + 'rem', pxToRem(8) + 'rem'],
+		borderRadius: ['var(--g-border-radius8)', 'var(--g-border-radius8)'],
 		borderRightColor: page === Pages.Date
 			? [borderColor, borderColor]
 			: [],

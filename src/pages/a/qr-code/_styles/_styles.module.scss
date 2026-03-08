@@ -65,7 +65,7 @@ $SCREEN_WIDTH_SMALL: u.Rem(700px);
 		min-height: u.Rem(280px);
 		max-width: u.Rem(280px);
 		max-height: u.Rem(280px);
-		border-radius: u.Rem(4px);
+		border-radius: var(--g-border-radius4);
 		box-shadow: var(--g-elevation2);
 	}
 }
@@ -79,7 +79,7 @@ $SCREEN_WIDTH_SMALL: u.Rem(700px);
 
 	& img {
 		width: min(u.Rem(280px), 100%);
-		border-radius: u.Rem(4px);
+		border-radius: var(--g-border-radius4);
 		margin-top: u.Rem(16px);
 	}
 

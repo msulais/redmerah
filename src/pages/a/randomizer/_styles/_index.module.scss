@@ -61,7 +61,7 @@ $SCREEN_WIDTH_SMALL: u.Rem(650px);
 	border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity3));
 	border-right: none;
 	border-bottom: none;
-	border-radius: u.Rem(8px) 0 0 0;
+	border-radius: var(--g-border-radius8) 0 0 0;
 	padding: u.Rem(16px);
 	min-width: u.Rem(280px);
 	max-width: u.Rem(280px);
@@ -93,7 +93,7 @@ $SCREEN_WIDTH_SMALL: u.Rem(650px);
 		min-height: u.Rem(48px);
 		padding-left: u.Rem(16px);
 		padding-right: u.Rem(16px);
-		border-radius: u.Rem(8px);
+		border-radius: var(--g-border-radius8);
 		z-index: 10;
 	}
 }
@@ -144,7 +144,7 @@ $SCREEN_WIDTH_SMALL: u.Rem(650px);
 
 	& li {
 		padding: u.Rem(16px);
-		border-radius: u.Rem(4px);
+		border-radius: var(--g-border-radius4);
 		font-size: var(--g-font-size-xs);
 		font-family: var(--g-font-family-monospace);
 		transition-property: background-color, color;
@@ -192,7 +192,7 @@ $SCREEN_WIDTH_SMALL: u.Rem(650px);
 			border: u.Rem(2px) solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
 			padding: u.Rem(8px) u.Rem(10px);
 			font-size: var(--g-font-size-xxs);
-			border-radius: u.Rem(4px);
+			border-radius: var(--g-border-radius4);
 			color: rgb(var(--g-color-accent));
 			font-weight: bold;
 

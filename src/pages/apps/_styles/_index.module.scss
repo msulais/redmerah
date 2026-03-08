@@ -23,6 +23,7 @@
 		position: relative;
 		width: 100%;
 		transition-property: scale;
+		transition-duration: var(--g-duration-transition);
 
 		&::after {
 			display: block;
@@ -34,8 +35,9 @@
 			border: u.Rem(2px) solid var(--color);
 			left: u.Rem(-6px);
 			top: u.Rem(-6px);
-			border-radius: u.Rem(8px);
+			border-radius: var(--g-border-radius8);
 			pointer-events: none;
+			corner-shape: squircle;
 		}
 
 		&:focus-visible {

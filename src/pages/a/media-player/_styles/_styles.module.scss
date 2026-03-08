@@ -7,7 +7,7 @@ $SMALL_SIZE: u.Rem(450px);
 
 	> :is(img, video, audio) {
 		border: u.Rem(2px) solid rgb(var(--g-color-accent));
-		border-radius: u.Rem(8px);
+		border-radius: var(--g-border-radius8);
 		width: 100%;
 	}
 
@@ -57,7 +57,7 @@ $SMALL_SIZE: u.Rem(450px);
 		min-height: u.Rem(48px);
 		padding-left: u.Rem(16px);
 		padding-right: u.Rem(16px);
-		border-radius: u.Rem(8px);
+		border-radius: var(--g-border-radius8);
 		z-index: 10;
 	}
 }

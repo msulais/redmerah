@@ -40,7 +40,7 @@ $SCREEN_WIDTH_SMALL: u.Rem(650px);
 	padding: u.Rem(8px);
 	position: sticky;
 	width: calc(100% - u.Rem(16px));
-	border-radius: u.Rem(8px);
+	border-radius: var(--g-border-radius8);
 	top: u.Rem(58px);
 	box-shadow: var(--g-elevation2);
 	background-color: rgba(var(--g-color-surface), var(--g-opacity-half));

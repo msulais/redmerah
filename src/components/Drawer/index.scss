@@ -10,7 +10,7 @@
 	background-color: rgba(var(--g-color-surface), var(--g-opacity-glass));
 	backdrop-filter: blur(var(--g-blur-glass));
 	border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity3));
-	border-radius: u.Rem(8px);
+	border-radius: var(--g-border-radius8);
 	left: u.Rem(8px);
 	box-shadow: var(--g-elevation3);
 	width: max-content;

@@ -72,7 +72,7 @@
 		var(--c-colorpicker-hue-color);
 	width: 100%;
 	aspect-ratio: 3 / 2;
-	border-radius: u.Rem(4px);
+	border-radius: var(--g-border-radius4);
 	margin-bottom: u.Rem(16px);
 	position: relative;
 	cursor: crosshair;

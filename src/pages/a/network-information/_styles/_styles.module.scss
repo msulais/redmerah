@@ -26,7 +26,7 @@
 			background-color: rgb(var(--g-color-surface));
 			border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity3));
 			padding: u.Rem(8px);
-			border-radius: u.Rem(4px);
+			border-radius: var(--g-border-radius4);
 			display: flex;
 			gap: u.Rem(8px);
 

@@ -81,7 +81,7 @@ $SCREEN_WIDTH_SMALL: u.Rem(650px);
 		position: sticky;
 		top: u.Rem(0px);
 		grid-template-columns: u.Rem(64px) 1fr 1fr;
-		border-radius: u.Rem(4px);
+		border-radius: var(--g-border-radius4);
 		border: u.Rem(1px) solid rgb(var(--g-color-on-surface), var(--g-opacity2));
 		background-color: rgb(var(--g-color-on-surface), var(--g-opacity2));
 		backdrop-filter: blur(var(--g-blur-glass));
@@ -100,7 +100,7 @@ $SCREEN_WIDTH_SMALL: u.Rem(650px);
 		> div {
 			display: grid;
 			grid-template-columns: u.Rem(64px) 1fr 1fr;
-			border-radius: u.Rem(4px);
+			border-radius: var(--g-border-radius4);
 
 			&:first-child {
 				margin-top: u.Rem(8px);

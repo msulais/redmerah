@@ -32,7 +32,7 @@
 		overflow: auto;
 		padding: u.Rem(16px);
 		border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity2));
-		border-radius: u.Rem(8px);
+		border-radius: var(--g-border-radius8);
 		background-color: rgb(var(--g-color-surface));
 		position: relative;
 		transition-duration: var(--g-duration-transition);
@@ -72,7 +72,7 @@
 			resize: none;
 			field-sizing: content;
 			padding: u.Rem(6px) u.Rem(10px);
-			border-radius: u.Rem(4px);
+			border-radius: var(--g-border-radius4);
 			background-color: rgba(var(--g-color-on-surface), var(--g-opacity2));
 			border: u.Rem(2px) solid transparent;
 			border-bottom-color: rgb(var(--g-color-accent));

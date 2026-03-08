@@ -15,7 +15,7 @@
 	display: flex;
 	background-color: transparent;
 	align-items: center;
-	border-radius: u.Rem(4px);
+	border-radius: var(--g-border-radius4);
 	color: rgb(var(--g-color-on-surface));
 	display: flex;
 	gap: u.Rem(8px);
@@ -26,8 +26,6 @@
 	scrollbar-width: none;
 	user-select: none;
 	-ms-overflow-style: none;
-	transition-property: background-color;
-	transition-duration: var(--g-duration-transition);
 
 	& * {
 		user-select: none;

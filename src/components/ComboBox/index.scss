@@ -8,7 +8,7 @@
 	display: flex;
 	background-color: transparent;
 	align-items: center;
-	border-radius: u.Rem(4px);
+	border-radius: var(--g-border-radius4);
 	display: flex;
 	gap: u.Rem(8px);
 	font-size: var(--g-font-size-xs);
@@ -18,7 +18,7 @@
 	scrollbar-width: none;
 	user-select: none;
 	-ms-overflow-style: none;
-	transition-property: background-color, border-color;
+	transition-property: border-color;
 	transition-duration: var(--g-duration-transition);
 
 	&[multiple] {
@@ -122,7 +122,7 @@
 	backdrop-filter: blur(var(--g-blur-glass));
 	border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity3));
 	box-shadow: var(--g-elevation3);
-	border-radius: u.Rem(8px);
+	border-radius: var(--g-border-radius8);
 	padding: u.Rem(4px) u.Rem(0px);
 	opacity: 0;
 	translate: u.Rem(0px) u.Rem(-12px);

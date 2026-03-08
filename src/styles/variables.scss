@@ -46,6 +46,17 @@
 	--g-opacity-glass: .88;
 	--g-opacity-half: .5;
 
+	// border radius
+	--g-border-radius1: #{u.Rem(2px)};
+	--g-border-radius4: #{u.Rem(4px)};
+	--g-border-radius8: #{u.Rem(8px)};
+	--g-border-radius12: #{u.Rem(12px)};
+	--g-border-radius16: #{u.Rem(16px)};
+	--g-border-radius20: #{u.Rem(20px)};
+	--g-border-radius24: #{u.Rem(24px)};
+	--g-border-radius32: #{u.Rem(32px)};
+	--g-border-radius36: #{u.Rem(36px)};
+
 	// blur
 	--g-blur-glass: #{u.Rem(16px)};
 
@@ -110,6 +121,18 @@
 		&:root[data-animation=auto] {
 			--g-duration-transition: 0s;
 		}
+	}
+
+	@supports (corner-shape: squircle) {
+		--g-border-radius1: #{u.Rem(2px + 4px)};
+		--g-border-radius4: #{u.Rem(4px + 4px)};
+		--g-border-radius8: #{u.Rem(8px + 4px)};
+		--g-border-radius12: #{u.Rem(12px + 4px)};
+		--g-border-radius16: #{u.Rem(16px + 4px)};
+		--g-border-radius20: #{u.Rem(20px + 4px)};
+		--g-border-radius24: #{u.Rem(24px + 4px)};
+		--g-border-radius32: #{u.Rem(32px + 4px)};
+		--g-border-radius36: #{u.Rem(36px + 4px)};
 	}
 
 	& * {

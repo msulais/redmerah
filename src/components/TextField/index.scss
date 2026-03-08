@@ -5,11 +5,11 @@
 	align-items: center;
 	gap: u.Rem(8px);
 	min-height: u.Rem(32px);
-	border-radius: u.Rem(4px);
+	border-radius: var(--g-border-radius4);
 	background-color: rgba(var(--g-color-on-surface), var(--g-opacity2));
 	border: u.Rem(2px) solid transparent;
 	border-bottom-color: rgb(var(--g-color-accent));
-	transition-property: background-color, border-color;
+	transition-property: border-color;
 	transition-duration: var(--g-duration-transition);
 
 	&:has( > .c-textfield-input:focus:read-write) {

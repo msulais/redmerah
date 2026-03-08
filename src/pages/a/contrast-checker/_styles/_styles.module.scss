@@ -45,7 +45,7 @@
 		border: none;
 		outline: u.Rem(2px) solid transparent;
 		outline-offset: u.Rem(4px);
-		border-radius: u.Rem(4px);
+		border-radius: var(--g-border-radius4);
 		box-shadow: var(--g-elevation2);
 		transition-duration: var(--g-duration-transition);
 
@@ -76,7 +76,7 @@
 
 	& li {
 		padding: .4em .8em;
-		border-radius: u.Rem(4px);
+		border-radius: var(--g-border-radius4);
 		color: var(--color);
 		background-color: var(--background-color);
 		transition-duration: var(--g-duration-transition);
@@ -102,12 +102,12 @@
 	> p {
 		border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
 		padding: u.Rem(16px) u.Rem(16px) u.Rem(8px) u.Rem(16px);
-		border-radius: u.Rem(4px);
+		border-radius: var(--g-border-radius4);
 		position: relative;
 
 		&::after {
 			content: 'WCAG';
-			border-radius: u.Rem(4px);
+			border-radius: var(--g-border-radius4);
 			position: absolute;
 			left: calc(u.Rem(8px) + 0.2em);
 			top: 0;

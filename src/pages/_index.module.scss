@@ -32,7 +32,7 @@
 		--color-on-accent-dark: var(--g-color-on-accent-dark);
 		--g-color-accent: var(--color-accent-light);
 		--g-color-on-accent: var(--color-on-accent-light);
-		border-radius: u.Rem(8px);
+		border-radius: var(--g-border-radius8);
 		padding: u.Rem(20px);
 		padding-left: u.Rem(24px);
 		display: flex;
@@ -230,7 +230,8 @@
 	}
 
 	> a {
-		transition-property: scale, background-color;
+		transition-property: scale;
+		transition-duration: var(--g-duration-transition);
 		backdrop-filter: blur(var(--g-blur-glass));
 
 		&:hover {
@@ -269,7 +270,7 @@
 	& span {
 		display: inline-block;
 		position: relative;
-		border-radius: u.Rem(4px);
+		border-radius: var(--g-border-radius4);
 		padding-bottom: max(u.Rem(2px), .1em);
 	}
 }

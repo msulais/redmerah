@@ -15,7 +15,7 @@
 	max-width: calc(100% - u.Rem(8px));
 	max-height: calc(100dvh - u.Rem(8px));
 	overflow: hidden;
-	border-radius: u.Rem(4px);
+	border-radius: var(--g-border-radius4);
 	box-shadow: var(--g-elevation2);
 	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity2));
 }

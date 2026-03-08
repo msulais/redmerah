@@ -7,7 +7,7 @@
 	background-color: rgba(var(--g-color-surface), var(--g-opacity-glass));
 	backdrop-filter: blur(var(--g-blur-glass));
 	border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity3));
-	border-radius: u.Rem(8px);
+	border-radius: var(--g-border-radius8);
 	left: var(--c-popover-left);
 	max-height: calc(100dvh - u.Rem(16px));
 	max-width: calc(100% - u.Rem(16px));
@@ -69,7 +69,7 @@
 }
 
 .c-popover-draghandle {
-	--c-popover-draghandle-border-radius: #{u.Rem(16px)};
+	--c-popover-draghandle-border-radius: var(--g-border-radius16);
 	--c-popover-draghandle-width-base: calc(100% - (var(--c-popover-draghandle-border-radius) * 2));
 	--c-popover-draghandle-width: calc(var(--c-popover-draghandle-width-base) + #{u.Rem(32px)});
 	--c-popover-draghandle-width-hover: calc(var(--c-popover-draghandle-width-base) + #{u.Rem(8px)});

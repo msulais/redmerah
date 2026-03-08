@@ -14,7 +14,7 @@ $SMALL_SCREEN: u.Rem(600px);
 .bodyEditor {
 	width: u.Rem(280px);
 	border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity3));
-	border-radius: u.Rem(8px) 0 0 0;
+	border-radius: var(--g-border-radius8) 0 0 0;
 	background-color: rgb(var(--g-color-surface));
 	border-right: none;
 	border-bottom: none;
@@ -202,7 +202,7 @@ $SMALL_SCREEN: u.Rem(600px);
 		> div {
 			width: 100%;
 			height: u.Rem(20px);
-			border-radius: u.Rem(4px);
+			border-radius: var(--g-border-radius4);
 			outline: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity-border));
 		}
 	}

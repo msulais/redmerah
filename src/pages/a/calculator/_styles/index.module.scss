@@ -49,7 +49,7 @@ $SCREEN_WIDTH_SMALL: u.Rem(650px);
 	gap: u.Rem(4px);
 	width: 100%;
 	padding: u.Rem(4px) u.Rem(8px) u.Rem(8px) u.Rem(8px);
-	border-radius: u.Rem(16px);
+	border-radius: var(--g-border-radius16);
 
 	@media (max-width: $SCREEN_WIDTH_SMALL) {
 		padding: u.Rem(8px);

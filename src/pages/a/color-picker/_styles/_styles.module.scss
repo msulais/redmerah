@@ -24,7 +24,7 @@ $DEVICE_SMALL_SCREEN: u.Rem(800px);
 	touch-action: none;
 	margin-top: u.Rem(8px);
 	outline: u.Rem(1px) solid rgba(var(--g-color-on-surface),var(--g-opacity-border));
-	border-radius: u.Rem(4px);
+	border-radius: var(--g-border-radius4);
 	box-shadow: var(--g-elevation2);
 	position: relative;
 
@@ -59,7 +59,7 @@ $DEVICE_SMALL_SCREEN: u.Rem(800px);
 	}
 
 	> canvas {
-		border-radius: u.Rem(4px);
+		border-radius: var(--g-border-radius4);
 	}
 }
 
@@ -77,7 +77,7 @@ $DEVICE_SMALL_SCREEN: u.Rem(800px);
 
 	> [data-css-preview] {
 		width: calc(100% - u.Rem(44px) - u.Rem(8px));
-		border-radius: u.Rem(4px);
+		border-radius: var(--g-border-radius4);
 		height: u.Rem(32px);
 		margin-top: u.Rem(21px);
 		transition-property: background-color;
@@ -131,7 +131,7 @@ $DEVICE_SMALL_SCREEN: u.Rem(800px);
 	width: 100%;
 	height: u.Rem(280px);
 	margin-top: u.Rem(8px);
-	border-radius: u.Rem(4px);
+	border-radius: var(--g-border-radius4);
 	box-shadow: var(--g-elevation2);
 	position: relative;
 	cursor: crosshair;

@@ -4,7 +4,7 @@
 	position: fixed;
 	background-color: rgb(var(--g-color-surface));
 	border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity3));
-	border-radius: u.Rem(8px);
+	border-radius: var(--g-border-radius8);
 	max-height: calc(100dvh - u.Rem(16px));
 	max-width: calc(100% - u.Rem(16px));
 	width: max-content;

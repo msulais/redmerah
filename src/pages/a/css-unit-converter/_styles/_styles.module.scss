@@ -27,7 +27,7 @@ $SCREEN_WIDTH_SMALL: u.Rem(700px);
 		background-color: transparent;
 		width: 100%;
 		outline-offset: u.Rem(4px);
-		border-radius: u.Rem(2px);
+		border-radius: var(--g-border-radius2);
 		margin-bottom: u.Rem(8px);
 
 		&:hover {

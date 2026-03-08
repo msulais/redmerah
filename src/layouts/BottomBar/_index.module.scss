@@ -55,7 +55,7 @@
 		backdrop-filter: blur(var(--g-blur-glass));
 		padding: u.Rem(4px);
 		border: u.Rem(1px) solid rgba(var(--g-color-on-surface), var(--g-opacity2));
-		border-radius: 8px;
+		border-radius: var(--g-border-radius8);
 		box-shadow: var(--g-elevation2);
 	}
 }

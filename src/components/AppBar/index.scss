@@ -17,7 +17,7 @@
 	backdrop-filter: blur(var(--g-blur-glass));
 	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity2));
 	padding: u.Rem(4px);
-	border-radius: u.Rem(8px);
+	border-radius: var(--g-border-radius8);
 	box-shadow: var(--g-elevation2);
 	min-height: u.Rem(42px);
 }
@@ -46,7 +46,7 @@
 	backdrop-filter: blur(var(--g-blur-glass));
 	border: 1px solid rgba(var(--g-color-on-surface), var(--g-opacity2));
 	padding: u.Rem(4px);
-	border-radius: u.Rem(8px);
+	border-radius: var(--g-border-radius8);
 	box-shadow: var(--g-elevation2);
 }
 
