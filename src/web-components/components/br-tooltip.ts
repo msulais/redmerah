@@ -12,6 +12,8 @@ export class BiruTooltipElement extends HTMLElement {
 	private _isOpen: boolean
 	private _timeClose: ReturnType<typeof setTimeout> | undefined
 	private _timeOpen: ReturnType<typeof setTimeout> | undefined
+	private _pointerX = 0
+	private _pointerY = 0
 
 	constructor() {
 		super()
@@ -23,13 +25,20 @@ export class BiruTooltipElement extends HTMLElement {
 		this._isOpen = false
 		this.addEventListener('pointerover', this)
 		this.addEventListener('pointerout', this)
+		this.addEventListener('pointermove', this)
 	}
 
 	handleEvent(ev: Event): void {
 		switch (ev.type) {
-		case 'pointerover': return this._pointerover(ev)
-		case 'pointerout': return this._pointerout(ev)
+		case 'pointerover': return this._pointerover(ev as PointerEvent)
+		case 'pointerout' : return this._pointerout (ev as PointerEvent)
+		case 'pointermove': return this._pointermove(ev as PointerEvent)
 		}
+	}
+
+	private _pointermove(ev: PointerEvent): void {
+		this._pointerX = ev.clientX
+		this._pointerY = ev.clientY
 	}
 
 	private _pointerover(ev: Event): void {
@@ -80,18 +89,16 @@ export class BiruTooltipElement extends HTMLElement {
 		this._tooltip.style.setProperty('left', '0px') // to help calculate better. This will -at least- avoid text wrap
 		this._isOpen = true
 
-		const rect_anchor = this._anchor.getBoundingClientRect()
 		const rect_tooltip = this._tooltip.getBoundingClientRect()
 		const viewportHeight = window.innerHeight
 		const viewportWidth = window.innerWidth
-		const gap = 10, margin = 8
+		const gap = _isTouchScreen? 48 : 24, margin = 8
 		let x = 0
 		let y = 0
 
 		position_x: {
-			const width_anchor = rect_anchor.width
 			const width_tooltip = rect_tooltip.width
-			x = rect_anchor.x + (width_anchor / 2) - (width_tooltip / 2)
+			x = this._pointerX - (width_tooltip / 2)
 			if (x < margin) {
 				x = margin
 			}
@@ -102,11 +109,10 @@ export class BiruTooltipElement extends HTMLElement {
 		}
 
 		position_y: {
-			const height_anchor = rect_anchor.height
 			const height_tooltip = rect_tooltip.height
-			y = rect_anchor.y - height_tooltip - gap
+			y = this._pointerY - height_tooltip - gap
 			if (y < margin) {
-				y = rect_anchor.y + height_anchor + gap
+				y = this._pointerY + gap
 			}
 
 			if (y < margin) {
@@ -144,6 +150,10 @@ function _initListeners(): void {
 
 function _initDefaultStyle(): void {
 	STYLES.replaceSync(`
+:host {
+	display: contents;
+}
+
 div {
 	top: 0px;
 	left: 0px;
@@ -162,6 +172,8 @@ div {
 	border-radius: .25rem;
 	border: 1px solid rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .08);
 	z-index: 99999999;
+	transition-duration: var(${BrTheme.CSSVars.DurationTransition});
+	transition-property: opacity;
 }`)
 }
 

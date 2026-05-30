@@ -90,6 +90,7 @@ export class BiruPopoverElement extends HTMLElement {
 		'id'
 	]
 
+	private _theme: BrTheme.BiruThemeElement | undefined
 	private _lastFocusElement: HTMLElement | null
 	private _lastPointer: {x: number, y: number} | undefined
 	private _lastAnchorElement: HTMLElement | undefined
@@ -178,6 +179,7 @@ export class BiruPopoverElement extends HTMLElement {
 	connectedCallback(): void {
 		this.tabIndex = 0
 		this.role = 'dialog'
+		this._theme = this.closest(BrTheme.TAGNAME) ?? undefined
 		ELEMENTS.add(this)
 		if (this.id) {
 			ELEMENT_BY_IDS.set(this.id, this)
@@ -186,6 +188,7 @@ export class BiruPopoverElement extends HTMLElement {
 
 	disconnectedCallback(): void {
 		this.$close()
+		this._theme = undefined
 		this._lastFocusElement = null
 		this._lastAnchorElement = undefined
 		ELEMENT_BY_IDS.delete(this.id)
@@ -242,15 +245,21 @@ export class BiruPopoverElement extends HTMLElement {
 		this.dispatchEvent(new CustomEvent(EventTypes.Toggle))
 		this._lastFocusElement = document.activeElement as HTMLElement | null
 		this.tabIndex = 0
-		setTimeout(() => {
-			this.focus()
-			if (originalOpacity) {
-				this.style.setProperty('opacity', originalOpacity)
-			}
-			else {
-				this.style.removeProperty('opacity')
-			}
-		})
+		this.focus()
+		if (originalOpacity) {
+			this.style.setProperty('opacity', originalOpacity)
+		}
+		else {
+			this.style.removeProperty('opacity')
+		}
+
+		const max = Math.max(this.offsetWidth, this.offsetHeight)
+		const startScale = (max / (max + 16) * 100) + '%'
+		this.getAnimations().forEach(v => v.cancel())
+		this.animate({
+			opacity: [0, 1],
+			scale: [startScale, '1']
+		}, {easing: 'cubic-bezier(.25,0,0,1)', duration: this._theme?.$transitionDuration ?? 0})
 	}
 
 	$reposition(delayDurationMS = 0): void {
@@ -276,16 +285,24 @@ export class BiruPopoverElement extends HTMLElement {
 	}
 
 	$close() {
-		this.style.removeProperty('z-index')
-		this.style.removeProperty('display')
-		this._isOpen = false
-		this._lastFocusElement?.focus()
-		this._lastFocusElement = null
-		this._lastAnchorElement = undefined
-		this._lastPointer = undefined
-		unregisterZIndex(this)
-		OPENED_POPOVER.delete(this)
-		this.dispatchEvent(new CustomEvent(EventTypes.Toggle))
+		const max = Math.max(this.offsetWidth, this.offsetHeight)
+		const startScale = (max / (max + 16) * 100) + '%'
+		this.getAnimations().forEach(v => v.cancel())
+		this.animate({
+			opacity: [1, 0],
+			scale: ['1', startScale]
+		}, {easing: 'cubic-bezier(.25,0,0,1)', duration: this._theme?.$transitionDuration ?? 0}).finished.then(() => {
+			this.style.removeProperty('z-index')
+			this.style.removeProperty('display')
+			this._isOpen = false
+			this._lastFocusElement?.focus()
+			this._lastFocusElement = null
+			this._lastAnchorElement = undefined
+			this._lastPointer = undefined
+			unregisterZIndex(this)
+			OPENED_POPOVER.delete(this)
+			this.dispatchEvent(new CustomEvent(EventTypes.Toggle))
+		})
 	}
 }
 

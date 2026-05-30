@@ -77,7 +77,7 @@ const DEFAULT_COLOR_ON_SURFACE_LIGHT = 0x000000
 const DEFAULT_COLOR_ON_SURFACE_DARK  = 0xFFFFFF
 const DEFAULT_COLOR_BACKGROUND_LIGHT = 0xF2F2F2
 const DEFAULT_COLOR_BACKGROUND_DARK  = 0x1F1F1F
-const DEFAULT_DURATION_TRANSITION    = 250
+const DEFAULT_DURATION_TRANSITION    = 200
 const ELEMENTS = new Set<BiruThemeElement>()
 let _isSystemAnimationAllowed = true
 
@@ -93,7 +93,7 @@ export class BiruThemeElement extends HTMLElement {
 		super()
 	}
 
-	get transitionDuration(): number {
+	get $transitionDuration(): number {
 		switch (this.$animation) {
 		case Animation.On: break
 		case Animation.Off: return 0
@@ -301,9 +301,9 @@ function _updateAccentColor(oldValue: string | null, newValue: string | null): v
 
 function _initListeners(): void {
 	const prefersReduceMotionMedia = window.matchMedia('(prefers-reduced-motion: reduce)')
-	_isSystemAnimationAllowed = prefersReduceMotionMedia.matches
+	_isSystemAnimationAllowed = !prefersReduceMotionMedia.matches
 	prefersReduceMotionMedia.addEventListener('change', ev => {
-		_isSystemAnimationAllowed = ev.matches
+		_isSystemAnimationAllowed = !ev.matches
 	})
 }
 

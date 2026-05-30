@@ -39,6 +39,7 @@ export class BiruDialogElement extends HTMLElement {
 		'id'
 	]
 
+	private _theme: BrTheme.BiruThemeElement | undefined
 	private _emptySlotListenerDesctructor: (() => unknown) | undefined
 	private _lastFocusElement: HTMLElement | null
 	private _backdropElement: HTMLDivElement | undefined
@@ -74,6 +75,7 @@ export class BiruDialogElement extends HTMLElement {
 			[Slots.Footer, Parts.Footer],
 			[Slots.Title, Parts.Title],
 		)
+		this._theme = this.closest(BrTheme.TAGNAME) ?? undefined
 		this.tabIndex = 0
 		this.role = 'dialog'
 		this.ariaModal = 'true'
@@ -84,6 +86,7 @@ export class BiruDialogElement extends HTMLElement {
 
 	disconnectedCallback(): void {
 		this.$close()
+		this._theme = undefined
 		this._emptySlotListenerDesctructor?.()
 		ELEMENT_BY_IDS.delete(this.id)
 	}
@@ -118,6 +121,7 @@ export class BiruDialogElement extends HTMLElement {
 			backdrop.style.setProperty('height', '100%')
 			backdrop.style.setProperty('top', '0')
 			backdrop.style.setProperty('left', '0')
+			backdrop.style.setProperty('backdrop-filter', 'blur(4px)')
 			backdrop.style.setProperty('background-color', '#00000080')
 			backdrop.style.setProperty('z-index', registerZIndex(backdrop) + '')
 			backdrop.addEventListener('click', (ev) => {
@@ -141,13 +145,28 @@ export class BiruDialogElement extends HTMLElement {
 			lastOpenedDialog = this
 		}
 
+		this.style.setProperty('display', 'flex')
+		this.style.setProperty('z-index', registerZIndex(this, !this.$manual) + '')
 		this._lastFocusElement = document.activeElement as HTMLElement | null
 		this.tabIndex = 0
 		this._isOpen = true
 		this.focus()
-		this.style.setProperty('display', 'flex')
-		this.style.setProperty('z-index', registerZIndex(this, !this.$manual) + '')
 		this.dispatchEvent(new CustomEvent(EventTypes.Toggle))
+
+		const max = Math.max(this.offsetWidth, this.offsetHeight)
+		const startScale = (max / (max + 32) * 100) + '%'
+		const animationOptions = {
+			easing: 'cubic-bezier(.25,0,0,1)',
+			duration: this._theme?.$transitionDuration ?? 0
+		}
+		this.getAnimations().forEach(v => v.cancel())
+		this._backdropElement.animate({
+			opacity: [0, 1]
+		}, animationOptions)
+		this.animate({
+			opacity: [0, 1],
+			scale: [startScale, '1']
+		}, animationOptions)
 	}
 
 	$close(): void {
@@ -155,18 +174,33 @@ export class BiruDialogElement extends HTMLElement {
 			unregisterZIndex(this._backdropElement)
 		}
 
-		unregisterZIndex(this)
-		this._backdropElement?.remove()
-		this._backdropElement = undefined
-		this._lastFocusElement?.focus()
-		this._lastFocusElement = null
-		this._isOpen = false
-		this.style.removeProperty('display')
-		this.style.removeProperty('z-index')
-		this.dispatchEvent(new CustomEvent(EventTypes.Toggle))
-		if (lastOpenedDialog === this) {
-			lastOpenedDialog = undefined
+		const max = Math.max(this.offsetWidth, this.offsetHeight)
+		const startScale = (max / (max + 32) * 100) + '%'
+		const animationOptions = {
+			easing: 'cubic-bezier(.25,0,0,1)',
+			duration: this._theme?.$transitionDuration ?? 0
 		}
+		this.getAnimations().forEach(v => v.cancel())
+		this._backdropElement?.animate({
+			opacity: [1, 0]
+		}, animationOptions)
+		this.animate({
+			opacity: [1, 0],
+			scale: ['1', startScale]
+		}, animationOptions).finished.then(() => {
+			unregisterZIndex(this)
+			this._backdropElement?.remove()
+			this._backdropElement = undefined
+			this._lastFocusElement?.focus()
+			this._lastFocusElement = null
+			this._isOpen = false
+			this.style.removeProperty('display')
+			this.style.removeProperty('z-index')
+			this.dispatchEvent(new CustomEvent(EventTypes.Toggle))
+			if (lastOpenedDialog === this) {
+				lastOpenedDialog = undefined
+			}
+		})
 	}
 }
 
