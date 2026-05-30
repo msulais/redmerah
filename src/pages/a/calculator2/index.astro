@@ -38,10 +38,16 @@ import { APP } from './_scripts/shared/constant'
 				br:commandfor="dlg1"
 				br:command="open-dialog"
 				br:variant="tonal">Tonal palette</button>
-			<br-dialog id="dlg1" br:manual>
+			<br-dialog id="dlg1">
 				<span slot="title">This is headline</span>
 				This is dialog and this will be super long long text
 				<p>Laboris fugiat qui Lorem ut exercitation cillum do.</p>
+				<button
+					br:variant="filled"
+					br:commandfor="popover1"
+					br:command="toggle-popover">
+					Popover
+				</button>
 				<button
 					br:commandfor="dlg1"
 					br:command="close-dialog"
@@ -54,7 +60,7 @@ import { APP } from './_scripts/shared/constant'
 				br:command="toggle-popover">
 				Good work
 			</button>
-			<br-popover br:manual id="popover1" br:position="right-center-to-bottom">
+			<br-popover id="popover1" br:position="right-center-to-bottom">
 				<p>This is the prove of this popover is working fine</p>
 				<button
 					br:variant="tonal"
