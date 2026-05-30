@@ -1,20 +1,6 @@
 import type { HEXColor, HSLColor, RGBColor } from "@/types/color"
 import { colorContrastPercentage, colorContrastRatio, colorToHex, colorToRgb, hexToRgb, hslToRgb, isColorValid, rgbToHsl } from "@/utils/color"
 
-const DEFAULT_COLOR_ACCENT_LIGHT     = 0x0051DF
-const DEFAULT_COLOR_ACCENT_DARK      = 0xB5C4FF
-const DEFAULT_COLOR_ON_ACCENT_LIGHT  = 0xFFFFFF
-const DEFAULT_COLOR_ON_ACCENT_DARK   = 0x00297A
-const DEFAULT_COLOR_SURFACE_LIGHT    = 0xFAFAFA
-const DEFAULT_COLOR_SURFACE_DARK     = 0x2E2E2E
-const DEFAULT_COLOR_ON_SURFACE_LIGHT = 0x000000
-const DEFAULT_COLOR_ON_SURFACE_DARK  = 0xFFFFFF
-const DEFAULT_COLOR_BACKGROUND_LIGHT = 0xF2F2F2
-const DEFAULT_COLOR_BACKGROUND_DARK  = 0x1F1F1F
-const ELEMENTS = new Set<BiruThemeElement>()
-export const TAGNAME = 'br-theme'
-export const STYLES = new CSSStyleSheet()
-
 export const CSSVars = {
 
 	// Colors
@@ -37,7 +23,10 @@ export const CSSVars = {
 	// Font Family
 	FontFamilyIcon     : '--br-theme-font-family-icon',
 	FontFamilySansSerif: '--br-theme-font-family-sans-serif',
-	FontFamilyMonospace: '--br-theme-font-family-monospace'
+	FontFamilyMonospace: '--br-theme-font-family-monospace',
+
+	// Duration
+	DurationTransition: '--br-theme-duration-transition'
 } as const
 export type CSSVars = typeof CSSVars[keyof typeof CSSVars]
 
@@ -56,8 +45,18 @@ export const Attributes = {
 
 	/** `string` - List of font-family */
 	FontFamilySansSerif: 'br:font-family-sans-serif',
+
+	/** `'on' | 'off' | 'auto'` */
+	Animation: 'br:animation'
 } as const
 export type Attributes = typeof Attributes[keyof typeof Attributes]
+
+export const Animation = {
+	On: 'on',
+	Off: 'off',
+	Auto: 'auto'
+} as const
+export type Animation = typeof Animation[keyof typeof Animation]
 
 export const ThemeMode = {
 	Light: 'light',
@@ -65,6 +64,22 @@ export const ThemeMode = {
 	Auto: 'auto'
 } as const
 export type ThemeMode = typeof ThemeMode[keyof typeof ThemeMode]
+
+export const TAGNAME = 'br-theme'
+export const STYLES = new CSSStyleSheet()
+const DEFAULT_COLOR_ACCENT_LIGHT     = 0x0051DF
+const DEFAULT_COLOR_ACCENT_DARK      = 0xB5C4FF
+const DEFAULT_COLOR_ON_ACCENT_LIGHT  = 0xFFFFFF
+const DEFAULT_COLOR_ON_ACCENT_DARK   = 0x00297A
+const DEFAULT_COLOR_SURFACE_LIGHT    = 0xFAFAFA
+const DEFAULT_COLOR_SURFACE_DARK     = 0x2E2E2E
+const DEFAULT_COLOR_ON_SURFACE_LIGHT = 0x000000
+const DEFAULT_COLOR_ON_SURFACE_DARK  = 0xFFFFFF
+const DEFAULT_COLOR_BACKGROUND_LIGHT = 0xF2F2F2
+const DEFAULT_COLOR_BACKGROUND_DARK  = 0x1F1F1F
+const DEFAULT_DURATION_TRANSITION    = 250
+const ELEMENTS = new Set<BiruThemeElement>()
+let _isSystemAnimationAllowed = true
 
 export class BiruThemeElement extends HTMLElement {
 	static observedAttributes = [
@@ -76,6 +91,34 @@ export class BiruThemeElement extends HTMLElement {
 
 	constructor() {
 		super()
+	}
+
+	get transitionDuration(): number {
+		switch (this.$animation) {
+		case Animation.On: break
+		case Animation.Off: return 0
+		case Animation.Auto: return (_isSystemAnimationAllowed? DEFAULT_DURATION_TRANSITION : 0)
+		}
+
+		return DEFAULT_DURATION_TRANSITION
+	}
+
+	get $animation(): Animation {
+		let animation = (this.getAttribute(Attributes.Animation) || Animation.Auto) as Animation
+		switch (animation) {
+		case Animation.Auto:
+		case Animation.On:
+		case Animation.Off:
+			break
+		default:
+			animation = Animation.Auto
+		}
+
+		return animation
+	}
+
+	set $animation(value: Animation) {
+		this.setAttribute(Attributes.Animation, value)
 	}
 
 	get $themeMode(): ThemeMode {
@@ -256,6 +299,14 @@ function _updateAccentColor(oldValue: string | null, newValue: string | null): v
 	})
 }
 
+function _initListeners(): void {
+	const prefersReduceMotionMedia = window.matchMedia('(prefers-reduced-motion: reduce)')
+	_isSystemAnimationAllowed = prefersReduceMotionMedia.matches
+	prefersReduceMotionMedia.addEventListener('change', ev => {
+		_isSystemAnimationAllowed = ev.matches
+	})
+}
+
 function _initDefaultStyle(): void {
 	document.adoptedStyleSheets.push(STYLES)
 	STYLES.replaceSync(`
@@ -275,6 +326,7 @@ ${TAGNAME} {
 	${CSSVars.ColorOnAccent       }: var(${CSSVars.ColorOnAccentLight});
 	${CSSVars.ColorSurface        }: var(${CSSVars.ColorSurfaceLight});
 	${CSSVars.ColorOnSurface      }: var(${CSSVars.ColorOnSurfaceLight});
+	${CSSVars.DurationTransition  }: ${DEFAULT_DURATION_TRANSITION}ms;
 	${CSSVars.FontFamilySansSerif }: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 	${CSSVars.FontFamilyMonospace }: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
 	font-family: var(${CSSVars.FontFamilySansSerif});
@@ -283,7 +335,17 @@ ${TAGNAME} {
 	display: contents;
 }
 
-${TAGNAME}[br\\:theme-mode=dark] {
+${TAGNAME}[${CSS.escape(Attributes.Animation)}=${Animation.Off}] {
+	${CSSVars.DurationTransition}: 0ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	${TAGNAME}[${CSS.escape(Attributes.Animation)}=${Animation.Auto}] {
+		${CSSVars.DurationTransition}: 0ms;
+	}
+}
+
+${TAGNAME}[${CSS.escape(Attributes.ThemeMode)}=${ThemeMode.Dark}] {
 	color-scheme: dark;
 	${CSSVars.ColorBackground}: var(${CSSVars.ColorBackgroundDark});
 	${CSSVars.ColorAccent    }: var(${CSSVars.ColorAccentDark});
@@ -293,7 +355,7 @@ ${TAGNAME}[br\\:theme-mode=dark] {
 }
 
 @media (prefers-color-scheme: dark) {
-	${TAGNAME}[br\\:theme-mode=auto] {
+	${TAGNAME}[${CSS.escape(Attributes.ThemeMode)}=${ThemeMode.Auto}] {
 		color-scheme: dark;
 		${CSSVars.ColorBackground}: var(${CSSVars.ColorBackgroundDark});
 		${CSSVars.ColorAccent    }: var(${CSSVars.ColorAccentDark});
@@ -319,6 +381,7 @@ export function define(): void {
 	}
 
 	_initDefaultStyle()
+	_initListeners()
 	customElements.define(TAGNAME, BiruThemeElement)
 }
 
