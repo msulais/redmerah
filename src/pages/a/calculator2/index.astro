@@ -32,6 +32,11 @@ import { APP } from './_scripts/shared/constant'
 			<button slot="trailing" br:icon><br-icon set:html={Icons.MoreVertical}/></button>
 		</br-appbar>
 		<div style="display:flex;flex-wrap:wrap;gap:2px;margin:8px;border-radius:4px;border:1px solid rgba(var(--br-theme-color-on-surface),.16);background-color:rgb(var(--br-theme-color-surface));padding:16px">
+			<select>
+				<option>Option 1</option>
+				<option selected>Option 2</option>
+				<option>Option 3</option>
+			</select>
 			<button>Transparent</button>
 			<button br:variant="colored">Colored idea</button>
 			<button
@@ -45,6 +50,7 @@ import { APP } from './_scripts/shared/constant'
 				<button
 					br:variant="filled"
 					br:commandfor="popover1"
+					slot="footer"
 					br:command="toggle-popover">
 					Popover
 				</button>
@@ -53,6 +59,21 @@ import { APP } from './_scripts/shared/constant'
 					br:command="close-dialog"
 					br:variant="tonal outlined colored"
 					slot="footer" br:tooltip="Click me">Click me</button>
+				<br-popover id="popover1" br:position="right-center-to-bottom">
+					<p>This is the prove of this popover is working fine</p>
+					<button
+						br:variant="tonal"
+						br:command="close-popover"
+						br:commandfor="popover1"
+						style="margin-top:.5rem">
+						Outlined the sun
+					</button>
+					<button
+						br:commandfor="dlg1"
+						br:command="close-dialog"
+						br:variant="tonal outlined colored"
+						br:tooltip="Click me">Close dialog</button>
+				</br-popover>
 			</br-dialog>
 			<button
 				br:variant="filled"
@@ -60,22 +81,13 @@ import { APP } from './_scripts/shared/constant'
 				br:command="toggle-popover">
 				Good work
 			</button>
-			<br-popover id="popover1" br:position="right-center-to-bottom">
-				<p>This is the prove of this popover is working fine</p>
-				<button
-					br:variant="tonal"
-					br:command="close-popover"
-					br:commandfor="popover1"
-					style="margin-top:.5rem">
-					Outlined the sun
-				</button>
-			</br-popover>
 			<br-dialog></br-dialog>
 			<br-view br:target="sun">
 				<button br:variant="outlined">Outlined the sun</button>
 			</br-view>
 			<a br:as="button" href="#sun">get sun</a>
 		</div>
+		<dialog open>This is native dialog</dialog>
 	</br-scaffold>
 	</br-tooltip>
 	</br-theme>

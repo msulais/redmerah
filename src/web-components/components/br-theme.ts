@@ -366,12 +366,15 @@ ${TAGNAME}[${CSS.escape(Attributes.ThemeMode)}=${ThemeMode.Dark}] {
 }
 
 ${TAGNAME} * {
-	margin: 0px;
 	box-sizing: border-box;
 	color-scheme: inherit;
 	font-family: inherit;
 	color-accent: var(${CSSVars.ColorAccent});
 	transition-timing-function: cubic-bezier(.25, 0, 0, 1);
+}
+
+${TAGNAME} :not(br-dialog) {
+	margin: 0px;
 }`)
 }
 

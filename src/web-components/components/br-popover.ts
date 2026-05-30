@@ -1,4 +1,5 @@
 import * as BrTheme from './br-theme.js'
+import * as BrDialog from './br-dialog.js'
 import { registerZIndex, unregisterZIndex } from "../_flyout.js"
 import { GlobalAttributes, Commands } from "../global-attributes"
 
@@ -253,6 +254,7 @@ export class BiruPopoverElement extends HTMLElement {
 			this.style.removeProperty('opacity')
 		}
 
+		console.log(zIndex, this.style.display)
 		const max = Math.max(this.offsetWidth, this.offsetHeight)
 		const startScale = (max / (max + 16) * 100) + '%'
 		this.getAnimations().forEach(v => v.cancel())
@@ -284,14 +286,19 @@ export class BiruPopoverElement extends HTMLElement {
 		}, delayDurationMS)
 	}
 
-	$close() {
+	$close(recursive = true, animation = true) {
+		if (recursive) {
+			this.querySelectorAll(TAGNAME).forEach(v => (v as BiruPopoverElement).$close(false, false))
+			this.querySelectorAll(BrDialog.TAGNAME).forEach(v => (v as BrDialog.BiruDialogElement).$close(false, false))
+		}
+
 		const max = Math.max(this.offsetWidth, this.offsetHeight)
 		const startScale = (max / (max + 16) * 100) + '%'
 		this.getAnimations().forEach(v => v.cancel())
 		this.animate({
 			opacity: [1, 0],
 			scale: ['1', startScale]
-		}, {easing: 'cubic-bezier(.25,0,0,1)', duration: this._theme?.$transitionDuration ?? 0}).finished.then(() => {
+		}, {easing: 'cubic-bezier(.25,0,0,1)', duration: !animation? 0 : this._theme?.$transitionDuration ?? 0}).finished.then(() => {
 			this.style.removeProperty('z-index')
 			this.style.removeProperty('display')
 			this._isOpen = false

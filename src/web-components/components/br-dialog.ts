@@ -1,4 +1,5 @@
 import * as BrTheme from './br-theme.js'
+import * as BrPopover from './br-popover.js'
 import { registerZIndex, unregisterZIndex } from "../_flyout"
 import { Commands, GlobalAttributes } from "../global-attributes"
 import { slotEmptyListeners } from '../_utils.js'
@@ -169,7 +170,12 @@ export class BiruDialogElement extends HTMLElement {
 		}, animationOptions)
 	}
 
-	$close(): void {
+	$close(recursive = true, animation = true): void {
+		if (recursive) {
+			this.querySelectorAll(TAGNAME).forEach(v => (v as BiruDialogElement).$close(false, false))
+			this.querySelectorAll(BrPopover.TAGNAME).forEach(v => (v as BrPopover.BiruPopoverElement).$close(false, false))
+		}
+
 		if (this._backdropElement) {
 			unregisterZIndex(this._backdropElement)
 		}
@@ -178,7 +184,7 @@ export class BiruDialogElement extends HTMLElement {
 		const startScale = (max / (max + 32) * 100) + '%'
 		const animationOptions = {
 			easing: 'cubic-bezier(.25,0,0,1)',
-			duration: this._theme?.$transitionDuration ?? 0
+			duration: !animation? 0 : this._theme?.$transitionDuration ?? 0
 		}
 		this.getAnimations().forEach(v => v.cancel())
 		this._backdropElement?.animate({
@@ -265,10 +271,10 @@ function _initDefaultStyle(): void {
 	STYLES.replaceSync(`
 :host {
 	position: fixed;
-	left: 50%;
-	top: 50%;
+	margin: auto;
+	inset: 0;
 	width: max-content;
-	translate: -50% -50%;
+  	height: max-content;
 	display: none;
 	border-radius: .5rem;
 	background-color: rgb(var(${BrTheme.CSSVars.ColorBackground}));
@@ -278,7 +284,6 @@ function _initDefaultStyle(): void {
 	box-shadow: 0 .25rem 1rem rgba(0, 0, 0, .25);
 	flex-direction: column;
 	align-items: flex-start;
-	overflow: hidden;
 }
 
 [part="${Parts.Content}"] {
