@@ -1,5 +1,5 @@
 import type { HEXColor, HSLColor, RGBColor } from "@/types/color"
-import { colorContrastPercentage, colorContrastRatio, colorToHex, colorToRgb, hexToRgb, hslToRgb, isColorValid, rgbToHsl } from "@/utils/color"
+import { colorContrastPercentage, colorContrastRatio, colorToHex, colorToRgb, hexToRgb, hslToRgb, isColorValid, rgbToHsl } from "../_colors"
 
 export const CSSVars = {
 
