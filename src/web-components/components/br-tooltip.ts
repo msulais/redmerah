@@ -26,6 +26,8 @@ export class BiruTooltipElement extends HTMLElement {
 		this.addEventListener('pointerover', this)
 		this.addEventListener('pointerout', this)
 		this.addEventListener('pointermove', this)
+		this.addEventListener('focusin', this)
+		this.addEventListener('focusout', this)
 	}
 
 	handleEvent(ev: Event): void {
@@ -33,6 +35,8 @@ export class BiruTooltipElement extends HTMLElement {
 		case 'pointerover': return this._pointerover(ev as PointerEvent)
 		case 'pointerout' : return this._pointerout (ev as PointerEvent)
 		case 'pointermove': return this._pointermove(ev as PointerEvent)
+		case 'focusin'    : return this._focusin    (ev as FocusEvent)
+		case 'focusout'   : return this._focusout   (ev as FocusEvent)
 		}
 	}
 
@@ -41,95 +45,122 @@ export class BiruTooltipElement extends HTMLElement {
 		this._pointerY = ev.clientY
 	}
 
-	private _pointerover(ev: Event): void {
-		const ref_target = (ev.target as HTMLElement).closest(`[${CSS.escape(GlobalAttributes.Tooltip)}]`)
-		if (!ref_target) {
+	private _pointerover(ev: PointerEvent): void {
+		const ref_target = (ev.target as HTMLElement).closest<HTMLElement>(`[${CSS.escape(GlobalAttributes.Tooltip)}]`)
+		this._open(ref_target)
+	}
+
+	private _focusin(ev: FocusEvent): void {
+		const element = ev.target as HTMLElement | undefined
+		if (!element?.matches(`:focus-visible[${CSS.escape(GlobalAttributes.Tooltip)}]`)) {
+			return
+		}
+
+		this._open(element, false)
+	}
+
+	private _pointerout(ev: PointerEvent): void {
+		if (this._anchor && this._anchor.contains(ev.relatedTarget as Node)) {
+			return
+		}
+
+		this._close()
+	}
+
+	private _focusout(ev: FocusEvent): void {
+		if (this._anchor && this._anchor.contains(ev.relatedTarget as Node)) {
+			return
+		}
+
+		this._close()
+	}
+
+	private _open(target: HTMLElement | undefined | null, byPointer = true): void {
+		if (!target) {
 			clearTimeout(this._timeOpen)
 			this._close()
 			this._anchor = undefined
 			return
 		}
 
-		if (ref_target === this._anchor) {
+		if (target === this._anchor) {
 			return
 		}
 
-		this._anchor = ref_target as HTMLElement
+		this._anchor = target as HTMLElement
 		clearTimeout(this._timeOpen)
 		this._timeOpen = setTimeout(() => {
 			if (!this._anchor) {
 				return
 			}
 
-			const text = this._anchor.getAttribute(GlobalAttributes.Tooltip)
-			if (!text) {
+			const text = this._anchor.getAttribute(GlobalAttributes.Tooltip) ?? ''
+			if (text.length <= 0) {
 				return
 			}
 
-			this._open(text)
+			this._tooltip.textContent = text
+			this._tooltip.style.setProperty('left', '0px') // to help calculate better. This will -at least- avoid text wrap
+			this._isOpen = true
+
+			const rect_anchor = this._anchor.getBoundingClientRect()
+			const rect_tooltip = this._tooltip.getBoundingClientRect()
+			const viewportHeight = window.innerHeight
+			const viewportWidth = window.innerWidth
+			const gap = !byPointer? 16 : _isTouchScreen? 48 : 24, margin = 8
+			let x = 0
+			let y = 0
+
+			position_x: {
+				const width_anchor = rect_anchor.width
+				const width_tooltip = rect_tooltip.width
+				x = this._pointerX - (width_tooltip / 2)
+				if (!byPointer) {
+					x = rect_anchor.x + (width_anchor / 2) - (width_tooltip / 2)
+				}
+
+				if (x < margin) {
+					x = margin
+				}
+				else if (x + width_tooltip > viewportWidth - margin) {
+					x = viewportWidth - width_tooltip - margin
+				}
+				break position_x
+			}
+
+			position_y: {
+				const height_anchor = rect_anchor.height
+				const height_tooltip = rect_tooltip.height
+				y = this._pointerY - height_tooltip - gap
+				if (!byPointer) {
+					y = rect_anchor.y - height_tooltip - gap
+				}
+
+				if (y < margin) {
+					y = this._pointerY + gap
+					if (!byPointer) {
+						y = rect_anchor.y + height_anchor + gap
+					}
+				}
+
+				if (y < margin) {
+					y = margin
+				}
+				else if (y + height_tooltip > viewportHeight - margin) {
+					y = viewportHeight - height_tooltip - margin
+				}
+				break position_y
+			}
+
+			this._tooltip.style.setProperty('left', x + 'px')
+			this._tooltip.style.setProperty('top', y + 'px')
+			this._tooltip.style.setProperty('opacity', '1')
 		}, 500)
 	}
 
-	private _pointerout(ev: Event): void {
-		if (this._anchor && this._anchor.contains((ev as PointerEvent).relatedTarget as Node)) {
-			return
-		}
-
-		clearTimeout(this._timeOpen)
-		this._close()
-		this._anchor = undefined
-	}
-
-	private _open(text: string): void {
-		if (!this._anchor || text.length <= 0) {
-			return
-		}
-
-		this._tooltip.textContent = text
-		this._tooltip.style.setProperty('left', '0px') // to help calculate better. This will -at least- avoid text wrap
-		this._isOpen = true
-
-		const rect_tooltip = this._tooltip.getBoundingClientRect()
-		const viewportHeight = window.innerHeight
-		const viewportWidth = window.innerWidth
-		const gap = _isTouchScreen? 48 : 24, margin = 8
-		let x = 0
-		let y = 0
-
-		position_x: {
-			const width_tooltip = rect_tooltip.width
-			x = this._pointerX - (width_tooltip / 2)
-			if (x < margin) {
-				x = margin
-			}
-			else if (x + width_tooltip > viewportWidth - margin) {
-				x = viewportWidth - width_tooltip - margin
-			}
-			break position_x
-		}
-
-		position_y: {
-			const height_tooltip = rect_tooltip.height
-			y = this._pointerY - height_tooltip - gap
-			if (y < margin) {
-				y = this._pointerY + gap
-			}
-
-			if (y < margin) {
-				y = margin
-			}
-			else if (y + height_tooltip > viewportHeight - margin) {
-				y = viewportHeight - height_tooltip - margin
-			}
-			break position_y
-		}
-
-		this._tooltip.style.setProperty('left', x + 'px')
-		this._tooltip.style.setProperty('top', y + 'px')
-		this._tooltip.style.setProperty('opacity', '1')
-	}
-
 	private _close(): void {
+		clearTimeout(this._timeOpen)
+		this._anchor = undefined
 		if (!this._isOpen) {
 			return
 		}
