@@ -25,6 +25,14 @@ export function reverseString(text: string): string {
 	return [...text].reverse().join('')
 }
 
+export function stringHash(str: string): string {
+	let hash = 0
+	for (let i = 0; i < str.length; i++) {
+		hash = ((hash << 5) - hash + str.charCodeAt(i)) | 0
+	}
+	return (hash >>> 0).toString(36)
+}
+
 // TODO: remove
 export function stringToHash(input: string, length = 4): string {
 	length = Math.floor(length)

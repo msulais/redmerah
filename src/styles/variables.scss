@@ -61,8 +61,8 @@
 	--g-blur-glass: #{u.Rem(16px)};
 
 	// font family
-	--g-font-family-sans-serif: "Figtree", ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-	--g-font-family-monospace: "Google Sans Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+	--g-font-family-sans-serif: 'Figtree', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+	--g-font-family-monospace: 'Google Sans Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
 
 	// transitions
 	--g-transition-spring: cubic-bezier(.25, 0, 0, 1);

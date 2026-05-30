@@ -1,0 +1,83 @@
+---
+import * as Icons from '@/constants/icons.enum.js'
+import Html2 from '@/layouts/Html2/index.astro'
+import { APP } from './_scripts/shared/constant'
+---
+
+<Html2
+	title={APP.name + ' • Redmerah'}
+	description={APP.description}>
+	<Fragment slot="favicon">
+		<link rel="shortcut icon" type="image/ico" href={`/favicon${APP.link}/favicon.ico`} />
+		<link rel="apple-touch-icon" sizes="180x180" href={`/favicon${APP.link}/apple-touch-icon.png`}>
+		<link rel="icon" type="image/png" sizes="32x32" href={`/favicon${APP.link}/favicon-32x32.png`}>
+		<link rel="icon" type="image/png" sizes="16x16" href={`/favicon${APP.link}/favicon-16x16.png`}>
+		<link rel="manifest" href={`/favicon${APP.link}/site.webmanifest`}>
+	</Fragment>
+	<br-theme
+		br:color-accent="#00FC43"
+		br:theme-mode="auto"
+		br:font-family-icon="FluentSystemIcons-Resizable"
+		br:font-family-sans-serif="'Figtree', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
+		br:font-family-monospace="'Google Sans Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace"
+	>
+	<br-scaffold>
+		<br-appbar slot="appbar">
+			<button slot="leading" br:icon br:variant="filled">
+				<br-icon set:html={Icons.Person}/>
+			</button>
+			<span slot="headline">Calculator</span>
+			<button slot="trailing" br:icon><br-icon set:html={Icons.Alert}/></button>
+			<button slot="trailing" br:icon><br-icon set:html={Icons.MoreVertical}/></button>
+		</br-appbar>
+		<div style="display:flex;flex-wrap:wrap;gap:2px;margin:8px;border-radius:4px;border:1px solid rgba(var(--br-theme-color-on-surface),.16);background-color:rgb(var(--br-theme-color-surface));padding:16px">
+			<button>Transparent</button>
+			<button br:variant="colored">Colored idea</button>
+			<button
+				br:commandfor="dlg1"
+				br:command="open-dialog"
+				br:variant="tonal">Tonal palette</button>
+			<br-dialog id="dlg1" br:manual>
+				<span slot="title">This is headline</span>
+				This is dialog and this will be super long long text
+				<p>Laboris fugiat qui Lorem ut exercitation cillum do.</p>
+				<button
+					br:commandfor="dlg1"
+					br:command="close-dialog"
+					br:variant="tonal outlined colored"
+					slot="footer">Click me</button>
+			</br-dialog>
+			<button
+				br:variant="filled"
+				br:commandfor="popover1"
+				br:command="toggle-popover">
+				Good work
+			</button>
+			<br-popover br:manual id="popover1" br:position="right-center-to-bottom">
+				<p>This is the prove of this popover is working fine</p>
+				<button
+					br:variant="tonal"
+					br:command="close-popover"
+					br:commandfor="popover1"
+					style="margin-top:.5rem">
+					Outlined the sun
+				</button>
+			</br-popover>
+			<br-dialog></br-dialog>
+			<br-view br:target="sun">
+				<button br:variant="outlined">Outlined the sun</button>
+			</br-view>
+			<a br:as="button" href="#sun">get sun</a>
+		</div>
+	</br-scaffold>
+	</br-theme>
+	<script src="@/web-components/components/br-theme.ts"/>
+	<script src="@/web-components/components/br-scaffold.ts"/>
+	<script src="@/web-components/components/br-view.ts"/>
+	<script src="@/web-components/components/br-appbar.ts"/>
+	<script src="@/web-components/components/br-icon.ts"/>
+	<script src="@/web-components/components/br-popover.ts"/>
+	<script src="@/web-components/components/br-dialog.ts"/>
+	<script src="@/web-components/components/button.ts"/>
+	<script src="./_scripts/index.ts"/>
+</Html2>
