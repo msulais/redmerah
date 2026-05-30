@@ -21,9 +21,10 @@ import { APP } from './_scripts/shared/constant'
 		br:font-family-sans-serif="'Figtree', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
 		br:font-family-monospace="'Google Sans Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace"
 	>
+	<br-tooltip>
 	<br-scaffold>
 		<br-appbar slot="appbar">
-			<button slot="leading" br:icon br:variant="filled">
+			<button br:tooltip="Person" slot="leading" br:icon br:variant="filled">
 				<br-icon set:html={Icons.Person}/>
 			</button>
 			<span slot="headline">Calculator</span>
@@ -45,7 +46,7 @@ import { APP } from './_scripts/shared/constant'
 					br:commandfor="dlg1"
 					br:command="close-dialog"
 					br:variant="tonal outlined colored"
-					slot="footer">Click me</button>
+					slot="footer" br:tooltip="Click me">Click me</button>
 			</br-dialog>
 			<button
 				br:variant="filled"
@@ -70,6 +71,7 @@ import { APP } from './_scripts/shared/constant'
 			<a br:as="button" href="#sun">get sun</a>
 		</div>
 	</br-scaffold>
+	</br-tooltip>
 	</br-theme>
 	<script src="@/web-components/components/br-theme.ts"/>
 	<script src="@/web-components/components/br-scaffold.ts"/>
@@ -78,6 +80,7 @@ import { APP } from './_scripts/shared/constant'
 	<script src="@/web-components/components/br-icon.ts"/>
 	<script src="@/web-components/components/br-popover.ts"/>
 	<script src="@/web-components/components/br-dialog.ts"/>
+	<script src="@/web-components/components/br-tooltip.ts"/>
 	<script src="@/web-components/components/button.ts"/>
 	<script src="./_scripts/index.ts"/>
 </Html2>

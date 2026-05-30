@@ -1,7 +1,8 @@
 export const GlobalAttributes = {
 	As: 'br:as',
 	CommandFor: 'br:commandfor',
-	Command: 'br:command'
+	Command: 'br:command',
+	Tooltip: 'br:tooltip'
 } as const
 export type GlobalAttributes = typeof GlobalAttributes[keyof typeof GlobalAttributes]
 
