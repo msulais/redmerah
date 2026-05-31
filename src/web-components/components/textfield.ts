@@ -1,7 +1,7 @@
 import * as BrTheme from './br-theme.js'
 
 export const STYLES = new CSSStyleSheet()
-export const TAGNAME = '[br\\:as=textfield]'
+export const TAGNAME = ':where(input,textarea)[br\\:as=textfield]'
 const ELEMENT = `${BrTheme.TAGNAME} ${TAGNAME}`
 let isDefined = false
 
@@ -18,6 +18,12 @@ ${ELEMENT} {
 	min-height: 2rem;
 	outline: none;
 	border-bottom: 2px solid rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .32);
+}
+
+${ELEMENT}[type=color] {
+	padding: 0;
+	border: none;
+	background-color: transparent !important;
 }
 
 ${ELEMENT}:where(textarea) {
