@@ -75,4 +75,5 @@ export function define(): void {
 	isDefined = true
 }
 
+BrTheme.define()
 define()
