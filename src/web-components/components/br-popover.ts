@@ -1,5 +1,6 @@
 import * as BrTheme from './br-theme.js'
 import * as BrDialog from './br-dialog.js'
+import * as Button from './button.js'
 import { registerZIndex, unregisterZIndex } from "../_flyout.js"
 import { GlobalAttributes, Commands } from "../global-attributes"
 import { shadowElementsListener } from '../_utils.js'
@@ -9,6 +10,7 @@ export const Attributes = {
 	Gap     : 'br:gap',
 	Position: 'br:position',
 	Padding : 'br:padding',
+	SubMenu : 'br:submenu'
 } as const
 export type Attributes = typeof Attributes[keyof typeof Attributes]
 
@@ -116,6 +118,14 @@ export class BiruPopoverElement extends HTMLElement {
 
 	get $isOpen(): boolean {
 		return this._isOpen
+	}
+
+	get $submenu(): boolean {
+		return this.hasAttribute(Attributes.SubMenu)
+	}
+
+	set $submenu(value: boolean) {
+		this.toggleAttribute(Attributes.SubMenu, value)
 	}
 
 	get $manual(): boolean {
@@ -267,20 +277,25 @@ export class BiruPopoverElement extends HTMLElement {
 		this._lastFocusElement = document.activeElement as HTMLElement | null
 		this.tabIndex = 0
 		this.focus()
-		if (originalOpacity) {
-			this.style.setProperty('opacity', originalOpacity)
-		}
-		else {
-			this.style.removeProperty('opacity')
-		}
+		this._lastAnchorElement?.toggleAttribute(Button.Attributes.Focused, true)
 
-		const max = Math.max(this.offsetWidth, this.offsetHeight)
-		const startScale = (max / (max + 16) * 100) + '%'
-		this.getAnimations().forEach(v => v.cancel())
-		this.animate({
-			opacity: [0, 1],
-			scale: [startScale, '1']
-		}, {easing: 'cubic-bezier(.25,0,0,1)', duration: this._theme?.$transitionDuration ?? 0})
+		// since $reposition() wrapped inside setTimeout(), this block is necesarry to
+		// make the code order correct.
+		setTimeout(() => {
+			if (originalOpacity) {
+				this.style.setProperty('opacity', originalOpacity)
+			}
+			else {
+				this.style.removeProperty('opacity')
+			}
+			const max = Math.max(this.offsetWidth, this.offsetHeight)
+			const startScale = (max / (max + 16) * 100) + '%'
+			this.getAnimations().forEach(v => v.cancel())
+			this.animate({
+				opacity: [0, 1],
+				scale: [startScale, '1']
+			}, {easing: 'cubic-bezier(.25,0,0,1)', duration: this._theme?.$transitionDuration ?? 0})
+		})
 	}
 
 	$reposition(delayDurationMS = 0): void {
@@ -301,8 +316,8 @@ export class BiruPopoverElement extends HTMLElement {
 				this._lastAnchorElement?.getBoundingClientRect(),
 				this._lastPointer, {
 					padding: this.$padding,
-					gap: this.$gap,
-					position: this.$position
+					gap: this.$submenu? this.hasAttribute(Attributes.Gap)? this.$gap : 0 : this.$gap,
+					position: this.$submenu? this.hasAttribute(Attributes.Position)? this.$position : Position.RightCenterToBottom : this.$position
 				}
 			)
 
@@ -334,6 +349,7 @@ export class BiruPopoverElement extends HTMLElement {
 			this._isOpen = false
 			this._lastFocusElement?.focus()
 			this._lastFocusElement = null
+			this._lastAnchorElement?.toggleAttribute(Button.Attributes.Focused, false)
 			this._lastAnchorElement = undefined
 			this._lastPointer = undefined
 			unregisterZIndex(this)
@@ -612,7 +628,7 @@ function _initListeners(): void {
 				continue
 			}
 
-			p.$close(true, false)
+			p.$close(true)
 		}
 	})
 }
@@ -647,4 +663,7 @@ export function define(): void {
 	customElements.define(TAGNAME, BiruPopoverElement)
 }
 
+Button.define()
+BrTheme.define()
+BrDialog.define()
 define()

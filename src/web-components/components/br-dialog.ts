@@ -329,7 +329,7 @@ function _initDefaultStyle(): void {
 `)
 }
 
-function define(): void {
+export function define(): void {
 	if (customElements.get(TAGNAME)) {
 		return
 	}

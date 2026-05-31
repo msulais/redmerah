@@ -6,6 +6,7 @@ declare namespace astroHTML.JSX {
 		"br:variant"?: string
 		"br:icon"?: boolean
 		"br:focused"?: boolean
+		"br:preventdefault"?: boolean
 		"br:tooltip"?: string
 		"br:as"?: string
 		"br:command"?: string

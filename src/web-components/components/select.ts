@@ -1,7 +1,8 @@
 import * as BrTheme from './br-theme.js'
 
 export const STYLES = new CSSStyleSheet()
-const ELEMENT = `${BrTheme.TAGNAME} select`
+export const TAGNAME = 'select'
+const ELEMENT = `${BrTheme.TAGNAME} ${TAGNAME}`
 let isDefined = false
 
 function _initDefaultStyle(): void {

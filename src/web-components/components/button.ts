@@ -17,10 +17,11 @@ export const Variant = {
 export type Variant = typeof Variant[keyof typeof Variant]
 
 export const STYLES  = new CSSStyleSheet()
+export const TAGNAME = ':where(button,[br\\:as=button])'
 const ATTR_VARIANT = CSS.escape(Attributes.Variant)
 const ATTR_FOCUSED = CSS.escape(Attributes.Focused)
 const ATTR_ICON = CSS.escape(Attributes.Icon)
-const ELEMENT = `${BrTheme.TAGNAME} :where(button,[br\\:as=button])`
+const ELEMENT = `${BrTheme.TAGNAME} ${TAGNAME}`
 let isDefined = false
 
 function _initDefaultStyle(): void {
@@ -32,7 +33,6 @@ ${ELEMENT} {
 	font-size: .875rem;
 	user-select: none;
 	min-height: 2rem;
-	outline-offset: 4px;
 	cursor: pointer;
 	background-color: transparent;
 	padding: .25rem .75rem;
@@ -42,6 +42,10 @@ ${ELEMENT} {
 	gap: .5rem;
 	align-items: center;
 	width: fit-content;
+}
+
+${ELEMENT}:has( :focus-visible) {
+	outline: auto;
 }
 
 ${ELEMENT}[${ATTR_ICON}] {
