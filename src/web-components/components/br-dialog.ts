@@ -319,11 +319,11 @@ function _initDefaultStyle(): void {
 	gap: 8px;
 }
 
-[part="${Parts.Title}"]:not([data-empty]) ~ [part="${Parts.Content}"] {
+[part="${Parts.Title}"]:not(.empty) ~ [part="${Parts.Content}"] {
 	padding-top: 1rem !important;
 }
 
-:is([part="${Parts.Title}"], [part="${Parts.Footer}"])[data-empty] {
+:is([part="${Parts.Title}"], [part="${Parts.Footer}"]).empty {
 	display: none;
 }
 `)

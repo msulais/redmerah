@@ -20,7 +20,7 @@ export const STYLES  = new CSSStyleSheet()
 const ATTR_VARIANT = CSS.escape(Attributes.Variant)
 const ATTR_FOCUSED = CSS.escape(Attributes.Focused)
 const ATTR_ICON = CSS.escape(Attributes.Icon)
-const ELEMENT = `${BrTheme.TAGNAME} :is(button,[br\\:as=button])`
+const ELEMENT = `${BrTheme.TAGNAME} :where(button,[br\\:as=button])`
 let isDefined = false
 
 function _initDefaultStyle(): void {

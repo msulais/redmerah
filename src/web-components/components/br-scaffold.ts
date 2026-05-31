@@ -95,7 +95,7 @@ function _initDefaultStyle(): void {
 	[part="${Parts.LeftSideBar}"],
 	[part="${Parts.RightSideBar}"],
 	[part="${Parts.BottomBar}"]
-)[data-empty] {
+).empty {
 	display: none;
 }`)
 }

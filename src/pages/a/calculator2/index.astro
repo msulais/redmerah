@@ -29,8 +29,16 @@ import { APP } from './_scripts/shared/constant'
 			</button>
 			<span slot="headline">Calculator</span>
 			<button slot="trailing" br:icon><br-icon set:html={Icons.Alert}/></button>
-			<button slot="trailing" br:icon><br-icon set:html={Icons.MoreVertical}/></button>
+			<button slot="trailing" br:commandfor="text-action" br:icon><br-icon set:html={Icons.MoreVertical}/></button>
 		</br-appbar>
+		<br-popover id="text-action" style="padding:.25rem">
+			<menu>
+				<li><button>Copy</button></li>
+				<li><button>Paste</button></li>
+				<li><button>Cut</button></li>
+				<li><button>Select all</button></li>
+			</menu>
+		</br-popover>
 		<div style="display:flex;flex-wrap:wrap;gap:2px;margin:8px;border-radius:4px;border:1px solid rgba(var(--br-theme-color-on-surface),.16);background-color:rgb(var(--br-theme-color-surface));padding:16px">
 			<select br:tooltip="Select some">
 				<option>Option 1</option>
@@ -43,6 +51,9 @@ import { APP } from './_scripts/shared/constant'
 				br:commandfor="dlg1"
 				br:command="open-dialog"
 				br:variant="tonal">Tonal palette</button>
+			<label br:as="checkbox">
+				<input type="checkbox" name="" id="">
+			</label>
 			<br-dialog id="dlg1">
 				<span slot="title">This is headline</span>
 				This is dialog and this will be super long long text
@@ -100,5 +111,6 @@ import { APP } from './_scripts/shared/constant'
 	<script src="@/web-components/components/br-tooltip.ts"/>
 	<script src="@/web-components/components/button.ts"/>
 	<script src="@/web-components/components/select.ts"/>
+	<script src="@/web-components/components/menu.ts"/>
 	<script src="./_scripts/index.ts"/>
 </Html2>

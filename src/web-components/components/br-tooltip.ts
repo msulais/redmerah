@@ -14,11 +14,27 @@ export class BiruTooltipElement extends HTMLElement {
 	private _timeOpen: ReturnType<typeof setTimeout> | undefined
 	private _pointerX = 0
 	private _pointerY = 0
+	private _hiddenTooltip: HTMLDivElement
+
+	// To save previous [aria-describedby] value of anchor element
+	private _savedAriaDescribedBy: string | undefined
 
 	constructor() {
 		super()
 		const shadow = this.attachShadow({mode: 'open'})
+
+		// <hidden-tooltip>
+		// Since [aria-describedby] cannot access id of ShadowRoot inner element, We
+		// have to duplicate the tooltip content to element that visible by [aria-describedby].
+		this._hiddenTooltip = document.createElement('div')
+		this._hiddenTooltip.role = 'tooltip'
+		this._hiddenTooltip.id = crypto.randomUUID()
+		this._hiddenTooltip.style.setProperty('display', 'none')
+		document.body.append(this._hiddenTooltip)
+		// </hidden-tooltip>
+
 		this._tooltip = document.createElement('div')
+		this._tooltip.role = 'none'
 		shadow.adoptedStyleSheets = [STYLES]
 		shadow.append(this._tooltip, document.createElement('slot'))
 
@@ -99,6 +115,12 @@ export class BiruTooltipElement extends HTMLElement {
 				return
 			}
 
+			if (!this._savedAriaDescribedBy) {
+				this._savedAriaDescribedBy = this._anchor.getAttribute('aria-describedby') ?? undefined
+			}
+
+			this._anchor.setAttribute('aria-describedby', this._hiddenTooltip.id)
+			this._hiddenTooltip.textContent = text
 			this._tooltip.textContent = text
 			this._tooltip.style.setProperty('left', '0px') // to help calculate better. This will -at least- avoid text wrap
 			this._isOpen = true
@@ -160,6 +182,12 @@ export class BiruTooltipElement extends HTMLElement {
 
 	private _close(): void {
 		clearTimeout(this._timeOpen)
+		if (this._savedAriaDescribedBy) {
+			this._anchor?.setAttribute('aria-describedby', this._savedAriaDescribedBy)
+		}
+		else {
+			this._anchor?.removeAttribute('aria-describedby')
+		}
 		this._anchor = undefined
 		if (!this._isOpen) {
 			return
@@ -167,6 +195,7 @@ export class BiruTooltipElement extends HTMLElement {
 
 		clearTimeout(this._timeClose)
 		this._timeClose = setTimeout(() => {
+			this._savedAriaDescribedBy = undefined
 			this._tooltip.style.removeProperty('opacity')
 			this._isOpen = false
 		}, _isTouchScreen? 1500 : 0)

@@ -2,6 +2,7 @@ import * as BrTheme from './br-theme.js'
 import * as BrDialog from './br-dialog.js'
 import { registerZIndex, unregisterZIndex } from "../_flyout.js"
 import { GlobalAttributes, Commands } from "../global-attributes"
+import { shadowElementsListener } from '../_utils.js'
 
 export const Attributes = {
 	Manual  : 'br:manual',
@@ -17,6 +18,9 @@ export const CSSVars = {
 
 	/** Auto update by component. Don't use. If necesarry use `'top'` property instead. */
 	Y: '--br-popover-y',
+
+	/** Auto update by component. Don't use. If necesarry use `'padding'` property instead. */
+	Padding: '--br-popover-padding',
 } as const
 
 
@@ -77,7 +81,6 @@ const VALID_POSITION = new Set(Object.values(Position))
 const ELEMENTS = new Set<BiruPopoverElement>()
 const ELEMENT_BY_IDS = new Map<string, BiruPopoverElement>()
 const POPOVER_MARGIN = 8
-const DEFAULT_POPOVER_PADDING = 16
 const DEFAULT_POPOVER_GAP = 8
 const DEFAULT_POPOVER_POSITION = Position.CenterBottom
 const OPENED_POPOVER = new Set<BiruPopoverElement>()
@@ -91,18 +94,21 @@ export class BiruPopoverElement extends HTMLElement {
 		'id'
 	]
 
+	private _shadowElementsListenerDesctructor: (() => unknown) | undefined
 	private _theme: BrTheme.BiruThemeElement | undefined
 	private _lastFocusElement: HTMLElement | null
 	private _lastPointer: {x: number, y: number} | undefined
 	private _lastAnchorElement: HTMLElement | undefined
 	private _isOpen = false
 	private _timeReposition: ReturnType<typeof setTimeout> | undefined
+	private _slot: HTMLSlotElement
 
 	constructor() {
 		super()
 		const shadow = this.attachShadow({mode: 'open'})
+		const slot = this._slot = document.createElement('slot')
 		shadow.adoptedStyleSheets = [STYLES]
-		shadow.append(document.createElement('slot'))
+		shadow.append(slot)
 		this.tabIndex = 0
 		this.role = 'dialog'
 		this._lastFocusElement = null
@@ -130,13 +136,18 @@ export class BiruPopoverElement extends HTMLElement {
 
 	get $padding(): number {
 		const padding = this.getAttribute(Attributes.Padding)
+		let defaultPadding = Number.parseFloat(window.getComputedStyle(this).paddingTop)
+		if (Number.isNaN(defaultPadding) || !Number.isFinite(defaultPadding) || defaultPadding < 0) {
+			defaultPadding = 16
+		}
+
 		if (!padding) {
-			return DEFAULT_POPOVER_PADDING
+			return defaultPadding
 		}
 
 		const parsedPadding = Number.parseFloat(padding)
 		if (Number.isNaN(parsedPadding) || !Number.isFinite(parsedPadding) || parsedPadding < 0) {
-			return DEFAULT_POPOVER_PADDING
+			return defaultPadding
 		}
 
 		return parsedPadding
@@ -178,13 +189,21 @@ export class BiruPopoverElement extends HTMLElement {
 	}
 
 	connectedCallback(): void {
+		ELEMENTS.add(this)
+		ELEMENT_BY_IDS.set(this.id, this)
 		this.tabIndex = 0
 		this.role = 'dialog'
 		this._theme = this.closest(BrTheme.TAGNAME) ?? undefined
-		ELEMENTS.add(this)
-		if (this.id) {
-			ELEMENT_BY_IDS.set(this.id, this)
-		}
+		this._shadowElementsListenerDesctructor = shadowElementsListener(
+			[this._slot, 'slotchange', () => {
+				if (this.firstElementChild?.tagName === 'MENU') {
+					this.style.setProperty(CSSVars.Padding, '.25rem')
+				}
+				else {
+					this.style.removeProperty(CSSVars.Padding)
+				}
+			}]
+		)
 	}
 
 	disconnectedCallback(): void {
@@ -192,6 +211,7 @@ export class BiruPopoverElement extends HTMLElement {
 		this._theme = undefined
 		this._lastFocusElement = null
 		this._lastAnchorElement = undefined
+		this._shadowElementsListenerDesctructor?.()
 		ELEMENT_BY_IDS.delete(this.id)
 		ELEMENTS.delete(this)
 	}
@@ -239,8 +259,8 @@ export class BiruPopoverElement extends HTMLElement {
 		this._lastPointer = pointer
 		const originalOpacity = this.style.opacity
 		this.style.setProperty('opacity', '0') // To avoid ui jump movement
-		this.style.setProperty('z-index', zIndex + '')
 		this.style.setProperty('display', 'block')
+		this.style.setProperty('z-index', zIndex + '')
 		this.$reposition()
 		OPENED_POPOVER.add(this)
 		this.dispatchEvent(new CustomEvent(EventTypes.Toggle))
@@ -254,7 +274,6 @@ export class BiruPopoverElement extends HTMLElement {
 			this.style.removeProperty('opacity')
 		}
 
-		console.log(zIndex, this.style.display)
 		const max = Math.max(this.offsetWidth, this.offsetHeight)
 		const startScale = (max / (max + 16) * 100) + '%'
 		this.getAnimations().forEach(v => v.cancel())
@@ -271,6 +290,8 @@ export class BiruPopoverElement extends HTMLElement {
 
 		clearTimeout(this._timeReposition)
 		this._timeReposition = setTimeout(() => {
+			const prevPosition = this.getBoundingClientRect()
+
 			// to recalculate. Avoid calculate rect with text wrap
 			this.style.setProperty(CSSVars.X, '0px')
 			this.style.setProperty(CSSVars.Y, '0px')
@@ -287,6 +308,11 @@ export class BiruPopoverElement extends HTMLElement {
 
 			this.style.setProperty(CSSVars.X, x + 'px')
 			this.style.setProperty(CSSVars.Y, y + 'px')
+			if (delayDurationMS !== 0) {
+				this.animate({
+					translate: [`${prevPosition.x - x}px ${prevPosition.y - y}px`, '0 0'],
+				},{easing: 'cubic-bezier(.25,0,0,1)', duration: this._theme?.$transitionDuration ?? 0})
+			}
 		}, delayDurationMS)
 	}
 
@@ -354,7 +380,7 @@ function _calculatePosition(
 	const maxWidth = screenWidth - POPOVER_MARGIN * 2
 	const maxHeight = screenHeight - POPOVER_MARGIN * 2
 	const edgeOffsetTop = POPOVER_MARGIN
-	const edgePsitionLeft = POPOVER_MARGIN
+	const edgePositionLeft = POPOVER_MARGIN
 	const edgePositionBottom = screenHeight - POPOVER_MARGIN
 	const edgePositionRight = screenWidth - POPOVER_MARGIN
 	let top: number = 0
@@ -381,10 +407,10 @@ function _calculatePosition(
 	case Position.LeftCenterToTop:
 	case Position.LeftBottom:
 		left = anchorRect.left - popover.width - gap
-		if (left < edgePsitionLeft) {
+		if (left < edgePositionLeft) {
 			left = (midOffsetElementLeft < midOffsetScreenLeft
 				? anchorRect.right + gap
-				: edgePsitionLeft
+				: edgePositionLeft
 			)
 		}
 		break
@@ -416,10 +442,10 @@ function _calculatePosition(
 	case Position.CenterCenterRightBottom:
 	case Position.CenterBottomToLeft:
 		left = anchorRect.right - popover.width + padding
-		if (left < edgePsitionLeft) {
+		if (left < edgePositionLeft) {
 			left = (midOffsetElementLeft < midOffsetScreenLeft
 				? anchorRect.left - padding
-				: edgePsitionLeft
+				: edgePositionLeft
 			)
 		}
 		break
@@ -503,9 +529,8 @@ function _calculatePosition(
 	// final fallback
 	if (top < edgeOffsetTop) top = edgeOffsetTop
 	if (bottom() > edgePositionBottom) top = edgePositionBottom - popover.height
-	if (left < edgePsitionLeft) left = edgePsitionLeft
+	if (left < edgePositionLeft) left = edgePositionLeft
 	if (right() > edgePositionRight) left = edgePositionRight - popover.width
-
 	return [left, top]
 }
 
@@ -606,7 +631,7 @@ function _initDefaultStyle(): void {
 	max-height: calc(100dvh - ${POPOVER_MARGIN*2}px);
 	max-width: calc(100% - ${POPOVER_MARGIN*2}px);
 	overflow: auto;
-	padding: 1rem;
+	padding: var(${CSSVars.Padding}, 1rem);
 	box-shadow: 0 .25rem .5rem rgba(0, 0, 0, .25);
 	border-radius: .5rem;
 }
