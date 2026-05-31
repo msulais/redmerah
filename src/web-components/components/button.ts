@@ -20,13 +20,13 @@ export const STYLES  = new CSSStyleSheet()
 const ATTR_VARIANT = CSS.escape(Attributes.Variant)
 const ATTR_FOCUSED = CSS.escape(Attributes.Focused)
 const ATTR_ICON = CSS.escape(Attributes.Icon)
-const ELEMENT = ':is(button,[br\\:as=button])'
+const ELEMENT = `${BrTheme.TAGNAME} :is(button,[br\\:as=button])`
 let isDefined = false
 
 function _initDefaultStyle(): void {
 	document.adoptedStyleSheets.push(STYLES)
 	STYLES.replaceSync(`
-${BrTheme.TAGNAME} ${ELEMENT} {
+${ELEMENT} {
 	display: flex;
 	border-radius: .25rem;
 	font-size: .875rem;
@@ -44,62 +44,63 @@ ${BrTheme.TAGNAME} ${ELEMENT} {
 	width: fit-content;
 }
 
-${BrTheme.TAGNAME} ${ELEMENT}[${ATTR_ICON}] {
+${ELEMENT}[${ATTR_ICON}] {
 	padding: 0;
 	justify-content: center;
 	width: 2.5rem;
 }
 
-${BrTheme.TAGNAME} ${ELEMENT} * {
+${ELEMENT} * {
 	user-select: inherit;
+	cursor: inherit;
 }
 
-${BrTheme.TAGNAME} ${ELEMENT}:disabled {
+${ELEMENT}:disabled {
 	filter: grayscale(1) opacity(0.5);
 	cursor: not-allowed;
 }
 
-${BrTheme.TAGNAME} ${ELEMENT}:not(:disabled)[${ATTR_FOCUSED}],
-${BrTheme.TAGNAME} ${ELEMENT}:not(:disabled):hover {
+${ELEMENT}:not(:disabled)[${ATTR_FOCUSED}],
+${ELEMENT}:not(:disabled):hover {
 	background-color: rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .08);
 }
 
-${BrTheme.TAGNAME} ${ELEMENT}:not(:disabled):active {
+${ELEMENT}:not(:disabled):active {
 	background-color: rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .04);
 }
 
-${BrTheme.TAGNAME} ${ELEMENT}[${ATTR_VARIANT}~=${Variant.Colored}] {
+${ELEMENT}[${ATTR_VARIANT}~=${Variant.Colored}] {
 	color: rgb(var(${BrTheme.CSSVars.ColorAccent}));
 }
 
-${BrTheme.TAGNAME} ${ELEMENT}[${ATTR_VARIANT}~=${Variant.Outlined}] {
+${ELEMENT}[${ATTR_VARIANT}~=${Variant.Outlined}] {
 	border-color: rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .32);
 }
 
-${BrTheme.TAGNAME} ${ELEMENT}[${ATTR_VARIANT}~=${Variant.Filled}] {
+${ELEMENT}[${ATTR_VARIANT}~=${Variant.Filled}] {
 	background-color: rgb(var(${BrTheme.CSSVars.ColorAccent}));
 	color: rgb(var(${BrTheme.CSSVars.ColorOnAccent}));
 }
 
-${BrTheme.TAGNAME} ${ELEMENT}[${ATTR_VARIANT}~=${Variant.Filled}]:not(:disabled):hover,
-${BrTheme.TAGNAME} ${ELEMENT}[${ATTR_VARIANT}~=${Variant.Filled}]:not(:disabled)[${ATTR_FOCUSED}] {
+${ELEMENT}[${ATTR_VARIANT}~=${Variant.Filled}]:not(:disabled):hover,
+${ELEMENT}[${ATTR_VARIANT}~=${Variant.Filled}]:not(:disabled)[${ATTR_FOCUSED}] {
 	background-color: rgba(var(${BrTheme.CSSVars.ColorAccent}), .68);
 }
 
-${BrTheme.TAGNAME} ${ELEMENT}[${ATTR_VARIANT}~=${Variant.Filled}]:not(:disabled):active {
+${ELEMENT}[${ATTR_VARIANT}~=${Variant.Filled}]:not(:disabled):active {
 	background-color: rgba(var(${BrTheme.CSSVars.ColorAccent}), .52);
 }
 
-${BrTheme.TAGNAME} ${ELEMENT}[${ATTR_VARIANT}~=${Variant.Tonal}] {
+${ELEMENT}[${ATTR_VARIANT}~=${Variant.Tonal}] {
 	background-color: rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .08);
 }
 
-${BrTheme.TAGNAME} ${ELEMENT}[${ATTR_VARIANT}~=${Variant.Tonal}]:not(:disabled):hover,
-${BrTheme.TAGNAME} ${ELEMENT}[${ATTR_VARIANT}~=${Variant.Tonal}]:not(:disabled)[${ATTR_FOCUSED}] {
+${ELEMENT}[${ATTR_VARIANT}~=${Variant.Tonal}]:not(:disabled):hover,
+${ELEMENT}[${ATTR_VARIANT}~=${Variant.Tonal}]:not(:disabled)[${ATTR_FOCUSED}] {
 	background-color: rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .04);
 }
 
-${BrTheme.TAGNAME} ${ELEMENT}[${ATTR_VARIANT}~=${Variant.Tonal}]:not(:disabled):active {
+${ELEMENT}[${ATTR_VARIANT}~=${Variant.Tonal}]:not(:disabled):active {
 	background-color: rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .02);
 }
 `)}

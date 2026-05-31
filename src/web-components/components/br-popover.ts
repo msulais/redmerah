@@ -271,6 +271,10 @@ export class BiruPopoverElement extends HTMLElement {
 
 		clearTimeout(this._timeReposition)
 		this._timeReposition = setTimeout(() => {
+			// to recalculate. Avoid calculate rect with text wrap
+			this.style.setProperty(CSSVars.X, '0px')
+			this.style.setProperty(CSSVars.Y, '0px')
+
 			const [x, y] = _calculatePosition(
 				this.getBoundingClientRect(),
 				this._lastAnchorElement?.getBoundingClientRect(),
@@ -583,7 +587,7 @@ function _initListeners(): void {
 				continue
 			}
 
-			p.$close()
+			p.$close(true, false)
 		}
 	})
 }
