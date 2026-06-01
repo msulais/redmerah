@@ -45,6 +45,7 @@ ${INPUT} {
 	border: 1px solid;
 	border-radius: .25rem;
 	position: relative;
+	background-color: rgb(var(${BrTheme.CSSVars.ColorBackground}));
 }
 
 ${INPUT}::before {
