@@ -15,7 +15,7 @@ import { APP } from './_scripts/shared/constant'
 		<link rel="manifest" href={`/favicon${APP.link}/site.webmanifest`}>
 	</Fragment>
 	<br-theme
-		br:color-accent="#00FC43"
+		br:color-accent="#00FFFF"
 		br:theme-mode="auto"
 		br:font-family-icon="FluentSystemIcons-Resizable"
 		br:font-family-sans-serif="'Figtree', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
@@ -140,6 +140,18 @@ import { APP } from './_scripts/shared/constant'
 			switch
 		</label>
 		<input type="range" br:as="slider">
+		<label br:as="radiobutton">
+			<input type="radio" name="theme">
+			Theme light
+		</label>
+		<label br:as="radiobutton">
+			<input type="radio" name="theme">
+			Theme dark
+		</label>
+		<label br:as="checkbox">
+			<input type="checkbox">
+			Check in
+		</label>
 	</br-scaffold>
 	</br-tooltip>
 	</br-theme>
@@ -157,5 +169,7 @@ import { APP } from './_scripts/shared/constant'
 	<script src="@/web-components/components/textfield.ts"/>
 	<script src="@/web-components/components/switch.ts"/>
 	<script src="@/web-components/components/slider.ts"/>
+	<script src="@/web-components/components/radiobutton.ts"/>
+	<script src="@/web-components/components/checkbox.ts"/>
 	<script src="./_scripts/index.ts"/>
 </Html2>

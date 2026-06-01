@@ -12,7 +12,8 @@ ${ELEMENT} {
 	-webkit-appearance: none;
 	appearance: none;
 	position: relative;
-	width: 3rem;
+	width: 2.5rem;
+	border-radius: 9999px;
 	height: 1.25rem;
 	cursor: pointer;
 }
@@ -32,11 +33,13 @@ ${ELEMENT}:disabled {
 
 ${ELEMENT}::before {
 	content: "";
+	left: 0;
+	top: 0;
 	position: absolute;
-	border: 1px solid rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .32);
+	outline: 1px solid rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .32);
 	width: 2.5rem;
 	height: 1.25rem;
-	border-radius: 999px;
+	border-radius: 999999px;
 	cursor: inherit;
 	transition-duration: var(${BrTheme.CSSVars.DurationTransition});
 	background-color: rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .08);
@@ -44,24 +47,24 @@ ${ELEMENT}::before {
 
 ${ELEMENT}:checked::before {
 	background-color: rgb(var(${BrTheme.CSSVars.ColorAccent}));
-	border-color: rgb(var(${BrTheme.CSSVars.ColorAccent}));
+	outline-color: rgb(var(${BrTheme.CSSVars.ColorAccent}));
 }
 
 ${ELEMENT}::after {
 	content: "";
 	position: absolute;
-	top: 4.5px;
-	left: 4.5px;
-	width: 12px;
-	height: 12px;
-	border-radius: 999px;
+	top: .25rem;
+	left: .25rem;
+	width: .75rem;
+	height: .75rem;
+	border-radius: 999999px;
 	cursor: inherit;
 	transition-duration: var(${BrTheme.CSSVars.DurationTransition});
 	background-color: rgb(var(${BrTheme.CSSVars.ColorOnSurface}));
 }
 
 ${ELEMENT}:checked::after {
-	translate: 20.5px 0;
+	translate: 1.25rem 0;
 	background-color: rgb(var(${BrTheme.CSSVars.ColorOnAccent}));
 }
 `)
