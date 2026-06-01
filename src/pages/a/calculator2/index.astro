@@ -21,6 +21,8 @@ import { APP } from './_scripts/shared/constant'
 		br:font-family-sans-serif="'Figtree', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
 		br:font-family-monospace="'Google Sans Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace"
 	>
+	<br-navigation br:hidemedia="(max-width:16rem)">
+	</br-navigation>
 	<br-tooltip>
 	<br-scaffold>
 		<br-appbar slot="appbar">
@@ -46,7 +48,7 @@ import { APP } from './_scripts/shared/constant'
 						<div style="flex:1"></div>
 						<br-icon set:html={Icons.ChevronRight}/>
 					</button>
-					<br-popover id="submenu" br:submenu>
+					<br-popover id="submenu" br:submenu style="width:192px">
 						<menu>
 							<li>
 								<button>Option 1</button>
@@ -128,7 +130,7 @@ import { APP } from './_scripts/shared/constant'
 				Good work
 			</button>
 			<br-dialog></br-dialog>
-			<br-view br:target="sun">
+			<br-view br:media="(max-width:720px)">
 				<button br:variant="outlined">Outlined the sun</button>
 			</br-view>
 			<a br:as="button" href="#sun">get sun</a>

@@ -4,20 +4,23 @@ const EVENT_TYPE_ROUTE_CHANGED = "route-changed"
 const ELEMENTS = new Set<BiruViewElement>()
 
 export const Attributes = {
-	Paths: 'br:paths',
+	Path : 'br:path' ,
 	Query: 'br:query',
-	Target: 'br:target'
+	Hash : 'br:hash' ,
+	Media: 'br:media'
 } as const
 export type Attributes = typeof Attributes[keyof typeof Attributes]
 
 export class BiruViewElement extends HTMLElement {
 	private _shadowRoot: ShadowRoot
 	private _container: HTMLDivElement
+	private _media: MediaQueryList | undefined
 
 	static observedAttributes = [
-		Attributes.Paths,
+		Attributes.Path,
 		Attributes.Query,
-		Attributes.Target,
+		Attributes.Hash,
+		Attributes.Media
 	]
 
 	constructor() {
@@ -29,17 +32,96 @@ export class BiruViewElement extends HTMLElement {
 		this._shadowRoot.append(this._container)
 	}
 
-	connectedCallback(): void {
-		ELEMENTS.add(this)
-		_checkElementsState()
+	get $path(): string[] {
+		return this.getAttribute(Attributes.Path)?.split(/ +/) ?? []
 	}
 
-	attributeChangedCallback(): void {
-		_checkElementsState()
+	set $path(values: string[]) {
+		if (values.length === 0) {
+			this.removeAttribute(Attributes.Path)
+			return
+		}
+
+		this.setAttribute(Attributes.Path, values.join(' '))
+	}
+
+	get $query(): string[] {
+		return this.getAttribute(Attributes.Query)?.split(/ +/) ?? []
+	}
+
+	set $query(values: string[]) {
+		if (values.length === 0) {
+			this.removeAttribute(Attributes.Query)
+			return
+		}
+
+		this.setAttribute(Attributes.Query, values.join(' '))
+	}
+
+	get $hash(): string[] {
+		return (
+			this.getAttribute(Attributes.Hash)
+			?.split(/ +/)
+			.map(v => v.startsWith('#')? v : `#${v}`)
+			?? []
+		)
+	}
+
+	set $hash(values: string[]) {
+		if (values.length === 0) {
+			this.removeAttribute(Attributes.Hash)
+			return
+		}
+
+		this.setAttribute(Attributes.Hash, values.join(' '))
+	}
+
+	get $media(): MediaQueryList | undefined {
+		return this._media
+	}
+
+	set $media(value: string | null) {
+		if (value === null) {
+			this.removeAttribute(Attributes.Media)
+			return
+		}
+
+		this.setAttribute(Attributes.Media, value)
+	}
+
+	connectedCallback(): void {
+		this._media?.addEventListener('change', this)
+		ELEMENTS.add(this)
+		_checkElementsState(this)
 	}
 
 	disconnectedCallback(): void {
 		ELEMENTS.delete(this)
+		this._media?.removeEventListener('change', this)
+	}
+
+	attributeChangedCallback(name: string, _oldValue: string | null, newValue: string | null): void {
+		switch (name as Attributes) {
+		case Attributes.Path:
+		case Attributes.Query:
+		case Attributes.Hash:
+			_checkElementsState(this)
+			break
+		case Attributes.Media:
+			this._media?.removeEventListener('change', this)
+			this._media = undefined
+			if (newValue) {
+				this._media = window.matchMedia(newValue)
+				this._media?.addEventListener('change', this)
+			}
+		}
+	}
+
+	handleEvent(ev: Event) {
+		switch (ev.type) {
+		case 'change':
+			_checkElementsState(this)
+		}
 	}
 
 	$show() {
@@ -49,46 +131,37 @@ export class BiruViewElement extends HTMLElement {
 	$hide() {
 		this._container.style.setProperty('display', 'none')
 	}
-}
 
-function _checkElementsState(): void {
-	for (const el of ELEMENTS) {
+	$isVisible(): boolean {
+		const media = this.$media
+		const path  = this.$path
+		const query = this.$query
+		const hash  = this.$hash
 		if (
-			!el.hasAttribute(Attributes.Paths)
-			&& !el.hasAttribute(Attributes.Query)
-			&& !el.hasAttribute(Attributes.Target)
+			media === undefined
+			&& path.length === 0
+			&& query.length === 0
+			&& hash.length === 0
 		) {
-			el.$show()
-			continue
+			return true
 		}
 
-		let isMatch = true;
+		let isMatch = true
 
-		// 1. Check Paths (br:paths)
-		if (el.hasAttribute(Attributes.Paths)) {
-			const allowedPaths = el.getAttribute(Attributes.Paths)!.split(' ')
-			if (!allowedPaths.includes(window.location.pathname)) {
-				isMatch = false
-			}
+		// 1. Check Path (br:path)
+		if (path.length > 0 && !path.includes(location.pathname)) {
+			isMatch = false
 		}
 
-		// 2. Check Target/Hash (br:target)
-		if (isMatch && el.hasAttribute(Attributes.Target)) {
-			let expectedHash = el.getAttribute(Attributes.Target) || ""
-			if (!expectedHash.startsWith('#')) {
-				expectedHash = `#${expectedHash}`
-			}
-
-			if (window.location.hash !== expectedHash) {
-				isMatch = false
-			}
+		// 2. Check Hash (br:hash)
+		if (isMatch && hash.length > 0 && !hash.includes(location.hash)) {
+			isMatch = false
 		}
 
 		// 3. Check Queries (br:query)
-		if (isMatch && el.hasAttribute(Attributes.Query)) {
+		if (isMatch && query.length > 0) {
 			const currentSearchParams = new URLSearchParams(window.location.search)
-			const queryPairs = el.getAttribute(Attributes.Query)!.split(' ');
-			for (const pair of queryPairs) {
+			for (const pair of query) {
 				const [key, expectedValue] = pair.split('=')
 				if (currentSearchParams.get(key) !== expectedValue) {
 					isMatch = false
@@ -97,8 +170,18 @@ function _checkElementsState(): void {
 			}
 		}
 
-		// Toggle visibility based on the final results
-		if (isMatch) {
+		// 4. Check media query (br:media)
+		if (isMatch && media !== undefined && !media.matches) {
+			isMatch = false
+		}
+
+		return isMatch
+	}
+}
+
+function _checkElementsState(element?: BiruViewElement | undefined): void {
+	for (const el of (element? [element] : ELEMENTS)) {
+		if (el.$isVisible()) {
 			el.$show()
 		}
 		else {
@@ -108,12 +191,12 @@ function _checkElementsState(): void {
 }
 
 function _initListeners(): void {
-	window.addEventListener("hashchange", _checkElementsState)
-	window.addEventListener("popstate", _checkElementsState)
-	window.addEventListener(EVENT_TYPE_ROUTE_CHANGED, _checkElementsState)
+	window.addEventListener("hashchange", () => _checkElementsState())
+	window.addEventListener("popstate", () => _checkElementsState())
+	window.addEventListener(EVENT_TYPE_ROUTE_CHANGED, () => _checkElementsState())
 
 	// handle <a> element
-	document.body.addEventListener("click", (e) => {
+	document.addEventListener("click", (e) => {
 		const target = e.target as HTMLElement
 		const anchor = target.closest("a")
 
