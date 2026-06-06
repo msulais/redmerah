@@ -1,7 +1,7 @@
 import * as BrTheme from './br-theme.js'
 
 export const STYLES = new CSSStyleSheet()
-export const TAGNAME = ':where(input,textarea)[br\\:as=textfield]'
+export const TAGNAME = ':where(input,textarea)[br\\:as~=textfield]'
 const ELEMENT = `${BrTheme.TAGNAME} ${TAGNAME}`
 let isDefined = false
 

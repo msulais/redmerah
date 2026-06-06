@@ -36,7 +36,6 @@ let lastOpenedDialog: BiruDialogElement | undefined
 
 export class BiruDialogElement extends HTMLElement {
 	static observedAttributes = [
-		Attributes.Manual,
 		'id'
 	]
 
@@ -103,10 +102,6 @@ export class BiruDialogElement extends HTMLElement {
 				ELEMENT_BY_IDS.set(newValue, this)
 			}
 			break
-		case Attributes.Manual:
-			if (this._isOpen) {
-				registerZIndex(this, !this.hasAttribute(Attributes.Manual))
-			}
 		}
 	}
 
@@ -147,7 +142,13 @@ export class BiruDialogElement extends HTMLElement {
 		}
 
 		this.style.setProperty('display', 'flex')
-		this.style.setProperty('z-index', registerZIndex(this, !this.$manual) + '')
+		this.style.setProperty('z-index', registerZIndex(this, (ref) => {
+			if (ref.$manual) {
+				return
+			}
+
+			ref.$close()
+		}) + '')
 		this._lastFocusElement = document.activeElement as HTMLElement | null
 		this.tabIndex = 0
 		this._isOpen = true

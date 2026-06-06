@@ -1,7 +1,7 @@
 import * as BrTheme from './br-theme.js'
 
 export const STYLES = new CSSStyleSheet()
-export const TAGNAME = 'label[br\\:as=radiobutton]'
+export const TAGNAME = 'label[br\\:as~=radiobutton]'
 const ELEMENT = `${BrTheme.TAGNAME} ${TAGNAME}`
 const INPUT = `${ELEMENT} input[type=radio]`
 let isDefined = false

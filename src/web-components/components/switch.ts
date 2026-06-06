@@ -1,7 +1,7 @@
 import * as BrTheme from './br-theme.js'
 
 export const STYLES = new CSSStyleSheet()
-export const TAGNAME = 'input[type=checkbox][br\\:as=switch]'
+export const TAGNAME = 'input[type=checkbox][br\\:as~=switch]'
 const ELEMENT = `${BrTheme.TAGNAME} ${TAGNAME}`
 let isDefined = false
 

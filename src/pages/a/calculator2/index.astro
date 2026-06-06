@@ -21,8 +21,6 @@ import { APP } from './_scripts/shared/constant'
 		br:font-family-sans-serif="'Figtree', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
 		br:font-family-monospace="'Google Sans Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace"
 	>
-	<br-navigation br:hidemedia="(max-width:16rem)">
-	</br-navigation>
 	<br-tooltip>
 	<br-scaffold>
 		<br-appbar slot="appbar">
@@ -33,6 +31,17 @@ import { APP } from './_scripts/shared/constant'
 			<button slot="trailing" br:icon><br-icon set:html={Icons.Alert}/></button>
 			<button slot="trailing" br:commandfor="text-action" br:icon><br-icon set:html={Icons.MoreVertical}/></button>
 		</br-appbar>
+		<br-navigation slot="left-sidebar">
+			<a br:as="button navigationitem" br:hash="#sf" br:query="abc=8" br:path="/324">
+				<br-icon set:html={Icons.Home}/>
+				Home
+			</a>
+			<div style="flex:1"></div>
+			<a br:as="button navigationitem" br:hash="#sf" br:query="abc=8" br:path="/324">
+				<br-icon set:html={Icons.Settings}/>
+				Settings
+			</a>
+		</br-navigation>
 		<br-popover id="text-action" style="padding:.25rem">
 			<menu>
 				<li><button br:preventdefault><br-icon set:html={Icons.Copy}/>Copy</button></li>
@@ -133,7 +142,7 @@ import { APP } from './_scripts/shared/constant'
 			<br-view br:media="(max-width:720px)">
 				<button br:variant="outlined">Outlined the sun</button>
 			</br-view>
-			<a br:as="button" href="#sun">get sun</a>
+			<a br:as="button" br:variant="link">get sun</a>
 		</div>
 		<input br:as="textfield" placeholder="Email" type="time">
 		<textarea style="width:190px" br:as="textfield"></textarea>
@@ -165,6 +174,7 @@ import { APP } from './_scripts/shared/constant'
 	<script src="@/web-components/components/br-popover.ts"/>
 	<script src="@/web-components/components/br-dialog.ts"/>
 	<script src="@/web-components/components/br-tooltip.ts"/>
+	<script src="@/web-components/components/br-navigation.ts"/>
 	<script src="@/web-components/components/button.ts"/>
 	<script src="@/web-components/components/select.ts"/>
 	<script src="@/web-components/components/menu.ts"/>

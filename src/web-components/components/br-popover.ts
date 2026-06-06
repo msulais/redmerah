@@ -92,7 +92,6 @@ export class BiruPopoverElement extends HTMLElement {
 		Attributes.Gap,
 		Attributes.Position,
 		Attributes.Padding,
-		Attributes.Manual,
 		'id'
 	]
 
@@ -242,10 +241,6 @@ export class BiruPopoverElement extends HTMLElement {
 				ELEMENT_BY_IDS.set(newValue, this)
 			}
 			break
-		case Attributes.Manual:
-			if (this._isOpen) {
-				registerZIndex(this, !this.hasAttribute(Attributes.Manual))
-			}
 		}
 	}
 
@@ -263,7 +258,13 @@ export class BiruPopoverElement extends HTMLElement {
 			return
 		}
 
-		const zIndex = registerZIndex(this, !this.$manual)
+		const zIndex = registerZIndex(this, (ref) => {
+			if (ref.$manual) {
+				return
+			}
+
+			ref.$close()
+		})
 		this._isOpen = true
 		this._lastAnchorElement = anchorElement
 		this._lastPointer = pointer

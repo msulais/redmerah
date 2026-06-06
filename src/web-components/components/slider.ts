@@ -1,7 +1,7 @@
 import * as BrTheme from './br-theme'
 
 export const STYLES = new CSSStyleSheet()
-export const TAGNAME = 'input[type=range][br\\:as=slider]'
+export const TAGNAME = 'input[type=range][br\\:as~=slider]'
 const ELEMENT = `${BrTheme.TAGNAME} ${TAGNAME}`
 let isDefined = false
 

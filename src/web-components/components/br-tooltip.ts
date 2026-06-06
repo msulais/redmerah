@@ -29,7 +29,13 @@ export class BiruTooltipElement extends HTMLElement {
 		this._hiddenTooltip = document.createElement('div')
 		this._hiddenTooltip.role = 'tooltip'
 		this._hiddenTooltip.id = crypto.randomUUID()
-		this._hiddenTooltip.style.setProperty('display', 'none')
+		this._hiddenTooltip.style.setProperty('position', 'fixed')
+		this._hiddenTooltip.style.setProperty('top', '0')
+		this._hiddenTooltip.style.setProperty('max-width', '0px')
+		this._hiddenTooltip.style.setProperty('max-height', '0px')
+		this._hiddenTooltip.style.setProperty('overflow', 'hidden')
+		this._hiddenTooltip.style.setProperty('opacity', '0')
+		this._hiddenTooltip.style.setProperty('pointer-event', 'none')
 		document.body.append(this._hiddenTooltip)
 		// </hidden-tooltip>
 

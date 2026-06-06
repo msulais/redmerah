@@ -4,7 +4,7 @@ import * as BrTheme from './br-theme.js'
 import * as Button from './button.js'
 
 export const STYLES = new CSSStyleSheet()
-export const TAGNAME = ':where(menu,[br\\:as=menu])'
+export const TAGNAME = ':where(menu,[br\\:as~=menu])'
 const ELEMENT = `${BrTheme.TAGNAME} ${TAGNAME}`
 const ELEMENT_ITEM = `${ELEMENT} ${Button.TAGNAME}`
 let isDefined = false
@@ -110,12 +110,12 @@ ${ELEMENT_ITEM} input[type=checkbox]::before {
 	transition-duration: var(${BrTheme.CSSVars.DurationTransition});
 }
 
-${BrTheme.TAGNAME}[${CSS.escape(BrTheme.Attributes.ThemeMode)}=${BrTheme.ThemeMode.Dark}] :where(menu,[br\\:as=menu]) :is(button,[br\\:as=button]) input[type=checkbox]::before {
+${BrTheme.TAGNAME}[${CSS.escape(BrTheme.Attributes.ThemeMode)}=${BrTheme.ThemeMode.Dark}] :where(menu,[br\\:as~=menu]) :is(button,[br\\:as~=button]) input[type=checkbox]::before {
 	background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjBweCIgdmlld0JveD0iMCAtOTYwIDk2MCA5NjAiIHdpZHRoPSIyMHB4IiBmaWxsPSIjZmZmIj48cGF0aCBkPSJtNDAwLTQxNiAyMzYtMjM2cTExLTExIDI4LTExdDI4IDExcTExIDExIDExIDI4dC0xMSAyOEw0MjgtMzMycS0xMiAxMi0yOCAxMnQtMjgtMTJMMjY4LTQzNnEtMTEtMTEtMTEtMjh0MTEtMjhxMTEtMTEgMjgtMTF0MjggMTFsNzYgNzZaIi8+PC9zdmc+);
 }
 
 @media (prefers-color-scheme: dark) {
-	${BrTheme.TAGNAME}[${CSS.escape(BrTheme.Attributes.ThemeMode)}=${BrTheme.ThemeMode.Auto}] :where(menu,[br\\:as=menu]) :is(button,[br\\:as=button]) input[type=checkbox]::before {
+	${BrTheme.TAGNAME}[${CSS.escape(BrTheme.Attributes.ThemeMode)}=${BrTheme.ThemeMode.Auto}] :where(menu,[br\\:as~=menu]) :is(button,[br\\:as~=button]) input[type=checkbox]::before {
 		background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjBweCIgdmlld0JveD0iMCAtOTYwIDk2MCA5NjAiIHdpZHRoPSIyMHB4IiBmaWxsPSIjZmZmIj48cGF0aCBkPSJtNDAwLTQxNiAyMzYtMjM2cTExLTExIDI4LTExdDI4IDExcTExIDExIDExIDI4dC0xMSAyOEw0MjgtMzMycS0xMiAxMi0yOCAxMnQtMjgtMTJMMjY4LTQzNnEtMTEtMTEtMTEtMjh0MTEtMjhxMTEtMTEgMjgtMTF0MjggMTFsNzYgNzZaIi8+PC9zdmc+);
 	}
 }

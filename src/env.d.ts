@@ -3,13 +3,18 @@
 
 declare namespace astroHTML.JSX {
 	interface HTMLAttributes {
-		"br:variant"?: string
-		"br:icon"?: boolean
-		"br:focused"?: boolean
+		"br:icon"          ?: boolean
+		"br:focused"       ?: boolean
 		"br:preventdefault"?: boolean
-		"br:tooltip"?: string
-		"br:as"?: string
-		"br:command"?: string
-		"br:commandfor"?: string
+		"br:disabled"      ?: boolean
+		"br:variant"       ?: string
+		"br:tooltip"       ?: string
+		"br:as"            ?: string
+		"br:command"       ?: string
+		"br:commandfor"    ?: string
+		"br:hash"          ?: string
+		"br:query"         ?: string
+		"br:path"          ?: string
+		"br:selected"      ?: string
 	}
 }
