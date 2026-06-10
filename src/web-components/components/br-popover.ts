@@ -1,15 +1,18 @@
 import * as BrTheme from './br-theme.js'
 import * as BrDialog from './br-dialog.js'
 import * as Button from './button.js'
-import { registerZIndex, unregisterZIndex } from "../_flyout.js"
+import { registerZIndex, unregisterZIndex } from "../flyout.js"
 import { GlobalAttributes, Commands } from "../global-attributes"
-import { shadowElementsListener } from '../_utils.js'
+import { shadowElementsListener } from '../utils.js'
+import { listenDocumentEvent } from '../event-registry.js'
 
 export const Attributes = {
 	Manual  : 'br:manual',
 	Gap     : 'br:gap',
 	Position: 'br:position',
 	Padding : 'br:padding',
+
+	/** To override `padding`, `position`, and `gap` */
 	SubMenu : 'br:submenu'
 } as const
 export type Attributes = typeof Attributes[keyof typeof Attributes]
@@ -86,6 +89,8 @@ const POPOVER_MARGIN = 8
 const DEFAULT_POPOVER_GAP = 8
 const DEFAULT_POPOVER_POSITION = Position.CenterBottom
 const OPENED_POPOVER = new Set<BiruPopoverElement>()
+let _pointerX = 0
+let _pointerY = 0
 
 export class BiruPopoverElement extends HTMLElement {
 	static observedAttributes = [
@@ -115,88 +120,6 @@ export class BiruPopoverElement extends HTMLElement {
 		this._lastFocusElement = null
 	}
 
-	get $isOpen(): boolean {
-		return this._isOpen
-	}
-
-	get $submenu(): boolean {
-		return this.hasAttribute(Attributes.SubMenu)
-	}
-
-	set $submenu(value: boolean) {
-		this.toggleAttribute(Attributes.SubMenu, value)
-	}
-
-	get $manual(): boolean {
-		return this.hasAttribute(Attributes.Manual)
-	}
-
-	set $manual(value: boolean) {
-		this.toggleAttribute(Attributes.Manual, value)
-	}
-
-	set $padding(value: number) {
-		if (Number.isNaN(value) || !Number.isFinite(value) || value < 0) {
-			return
-		}
-
-		this.setAttribute(Attributes.Padding, value + '')
-	}
-
-	get $padding(): number {
-		const padding = this.getAttribute(Attributes.Padding)
-		let defaultPadding = Number.parseFloat(window.getComputedStyle(this).paddingTop)
-		if (Number.isNaN(defaultPadding) || !Number.isFinite(defaultPadding) || defaultPadding < 0) {
-			defaultPadding = 16
-		}
-
-		if (!padding) {
-			return defaultPadding
-		}
-
-		const parsedPadding = Number.parseFloat(padding)
-		if (Number.isNaN(parsedPadding) || !Number.isFinite(parsedPadding) || parsedPadding < 0) {
-			return defaultPadding
-		}
-
-		return parsedPadding
-	}
-
-	set $gap(value: number) {
-		if (Number.isNaN(value) || !Number.isFinite(value) || value < 0) {
-			return
-		}
-
-		this.setAttribute(Attributes.Gap, value + '')
-	}
-
-	get $gap(): number {
-		const gap = this.getAttribute(Attributes.Gap)
-		if (!gap) {
-			return DEFAULT_POPOVER_GAP
-		}
-
-		const parsedGap = Number.parseFloat(gap)
-		if (Number.isNaN(parsedGap) || !Number.isFinite(parsedGap) || parsedGap < 0) {
-			return DEFAULT_POPOVER_GAP
-		}
-
-		return parsedGap
-	}
-
-	set $position(value: Position) {
-		this.setAttribute(Attributes.Position, value)
-	}
-
-	get $position(): Position {
-		const position = this.getAttribute(Attributes.Position) as Position | undefined
-		if (!position || !VALID_POSITION.has(position)) {
-			return DEFAULT_POPOVER_POSITION
-		}
-
-		return position
-	}
-
 	connectedCallback(): void {
 		ELEMENTS.add(this)
 		ELEMENT_BY_IDS.set(this.id, this)
@@ -216,7 +139,7 @@ export class BiruPopoverElement extends HTMLElement {
 	}
 
 	disconnectedCallback(): void {
-		this.$close()
+		this.biru.close()
 		this._theme = undefined
 		this._lastFocusElement = null
 		this._lastAnchorElement = undefined
@@ -230,7 +153,7 @@ export class BiruPopoverElement extends HTMLElement {
 		case Attributes.Gap:
 		case Attributes.Position:
 		case Attributes.Padding:
-			this.$reposition(25)
+			this.biru.reposition(25)
 			break
 		case 'id':
 			if (oldValue) {
@@ -244,119 +167,246 @@ export class BiruPopoverElement extends HTMLElement {
 		}
 	}
 
-	$toggle(anchorElement?: HTMLElement, pointer?: {x: number, y: number}): void {
-		if (this._isOpen) {
-			this.$close()
-		}
-		else {
-			this.$open(anchorElement, pointer)
-		}
-	}
-
-	$open(anchorElement?: HTMLElement, pointer?: {x: number, y: number}): void {
-		if (!this.isConnected) {
-			return
-		}
-
-		const zIndex = registerZIndex(this, (ref) => {
-			if (ref.$manual) {
-				return
-			}
-
-			ref.$close()
-		})
-		this._isOpen = true
-		this._lastAnchorElement = anchorElement
-		this._lastPointer = pointer
-		const originalOpacity = this.style.opacity
-		this.style.setProperty('opacity', '0') // To avoid ui jump movement
-		this.style.setProperty('display', 'block')
-		this.style.setProperty('z-index', zIndex + '')
-		this.$reposition()
-		OPENED_POPOVER.add(this)
-		this.dispatchEvent(new CustomEvent(EventTypes.Toggle))
-		this._lastFocusElement = document.activeElement as HTMLElement | null
-		this.tabIndex = 0
-		this.focus()
-		this._lastAnchorElement?.toggleAttribute(Button.Attributes.Focused, true)
-
-		// since $reposition() wrapped inside setTimeout(), this block is necesarry to
-		// make the code order correct.
-		setTimeout(() => {
-			if (originalOpacity) {
-				this.style.setProperty('opacity', originalOpacity)
-			}
-			else {
-				this.style.removeProperty('opacity')
-			}
-			const max = Math.max(this.offsetWidth, this.offsetHeight)
-			const startScale = (max / (max + 16) * 100) + '%'
-			this.getAnimations().forEach(v => v.cancel())
-			this.animate({
-				opacity: [0, 1],
-				scale: [startScale, '1']
-			}, {easing: 'cubic-bezier(.25,0,0,1)', duration: this._theme?.$transitionDuration ?? 0})
-		})
-	}
-
-	$reposition(delayDurationMS = 0): void {
-		if (!this._isOpen || !this.isConnected) {
-			return
-		}
-
-		clearTimeout(this._timeReposition)
-		this._timeReposition = setTimeout(() => {
-			const prevPosition = this.getBoundingClientRect()
-
-			// to recalculate. Avoid calculate rect with text wrap
-			this.style.setProperty(CSSVars.X, '0px')
-			this.style.setProperty(CSSVars.Y, '0px')
-
-			const [x, y] = _calculatePosition(
-				this.getBoundingClientRect(),
-				this._lastAnchorElement?.getBoundingClientRect(),
-				this._lastPointer, {
-					padding: this.$padding,
-					gap: this.$submenu? this.hasAttribute(Attributes.Gap)? this.$gap : 0 : this.$gap,
-					position: this.$submenu? this.hasAttribute(Attributes.Position)? this.$position : Position.RightCenterToBottom : this.$position
+	get biru() {
+		const self = this
+		return {
+			get isOpen(): boolean {
+				return self._isOpen
+			},
+			get submenu(): boolean {
+				return self.hasAttribute(Attributes.SubMenu)
+			},
+			set submenu(value: boolean) {
+				self.toggleAttribute(Attributes.SubMenu, value)
+			},
+			get manual(): boolean {
+				return self.hasAttribute(Attributes.Manual)
+			},
+			set manual(value: boolean) {
+				self.toggleAttribute(Attributes.Manual, value)
+			},
+			set padding(value: number) {
+				if (Number.isNaN(value) || !Number.isFinite(value) || value < 0) {
+					return
 				}
-			)
 
-			this.style.setProperty(CSSVars.X, x + 'px')
-			this.style.setProperty(CSSVars.Y, y + 'px')
-			if (delayDurationMS !== 0) {
-				this.animate({
-					translate: [`${prevPosition.x - x}px ${prevPosition.y - y}px`, '0 0'],
-				},{easing: 'cubic-bezier(.25,0,0,1)', duration: this._theme?.$transitionDuration ?? 0})
+				self.setAttribute(Attributes.Padding, value + '')
+			},
+			get padding(): number {
+				const padding = self.getAttribute(Attributes.Padding)
+				let defaultPadding = Number.parseFloat(window.getComputedStyle(self).paddingTop)
+				if (Number.isNaN(defaultPadding) || !Number.isFinite(defaultPadding) || defaultPadding < 0) {
+					defaultPadding = 16
+				}
+
+				if (!padding) {
+					return defaultPadding
+				}
+
+				const parsedPadding = Number.parseFloat(padding)
+				if (Number.isNaN(parsedPadding) || !Number.isFinite(parsedPadding) || parsedPadding < 0) {
+					return defaultPadding
+				}
+
+				return parsedPadding
+			},
+			set gap(value: number) {
+				if (Number.isNaN(value) || !Number.isFinite(value) || value < 0) {
+					return
+				}
+
+				self.setAttribute(Attributes.Gap, value + '')
+			},
+			get gap(): number {
+				const gap = self.getAttribute(Attributes.Gap)
+				if (!gap) {
+					return DEFAULT_POPOVER_GAP
+				}
+
+				const parsedGap = Number.parseFloat(gap)
+				if (Number.isNaN(parsedGap) || !Number.isFinite(parsedGap) || parsedGap < 0) {
+					return DEFAULT_POPOVER_GAP
+				}
+
+				return parsedGap
+			},
+			set position(value: Position) {
+				self.setAttribute(Attributes.Position, value)
+			},
+			get position(): Position {
+				const position = self.getAttribute(Attributes.Position) as Position | undefined
+				if (!position || !VALID_POSITION.has(position)) {
+					return DEFAULT_POPOVER_POSITION
+				}
+
+				return position
+			},
+			toggle(anchorElement?: HTMLElement, pointer?: {x: number, y: number}): void {
+				if (self._isOpen) {
+					self.biru.close()
+				}
+				else {
+					this.open(anchorElement, pointer)
+				}
+			},
+			open(anchorElement?: HTMLElement, pointer?: {x: number, y: number}): void {
+				if (!self.isConnected) {
+					return
+				}
+
+				const zIndex = registerZIndex(self, (ref) => {
+					if (ref.biru.manual) {
+						return
+					}
+
+					ref.biru.close()
+				})
+				self._isOpen = true
+				self._lastAnchorElement = anchorElement
+				if (!self._lastAnchorElement) {
+					pointer = {
+						x: _pointerX,
+						y: _pointerY
+					}
+				}
+
+				self._lastPointer = pointer
+				const originalOpacity = self.style.opacity
+				self.style.setProperty('opacity', '0') // To avoid ui jump movement
+				self.style.setProperty('display', 'block')
+				self.style.setProperty('z-index', zIndex + '')
+				this.reposition()
+				OPENED_POPOVER.add(self)
+				self.dispatchEvent(new CustomEvent(EventTypes.Toggle))
+				self._lastFocusElement = document.activeElement as HTMLElement | null
+				self.tabIndex = 0
+				self.focus()
+				self._lastAnchorElement?.toggleAttribute(Button.Attributes.Focused, true)
+				if (originalOpacity) {
+					self.style.setProperty('opacity', originalOpacity)
+				}
+				else {
+					self.style.removeProperty('opacity')
+				}
+
+				const max = Math.max(self.offsetWidth, self.offsetHeight)
+				const startScale = (max / (max + 16) * 100) + '%'
+				self.getAnimations().forEach(v => v.cancel())
+				self.animate({
+					opacity: [0, 1],
+					scale: [startScale, '1']
+				}, {easing: 'cubic-bezier(.25,0,0,1)', duration: self._theme?.biru.transitionDuration ?? 0})
+			},
+			reposition(delayDurationMS = 0, recursive: boolean = true): void {
+				if (!self._isOpen || !self.isConnected) {
+					return
+				}
+
+				const fn_updatePosition = () => {
+					const prevPosition = self.getBoundingClientRect()
+
+					// to recalculate. Avoid calculate rect with text wrap
+					self.style.setProperty(CSSVars.X, '0px')
+					self.style.setProperty(CSSVars.Y, '0px')
+
+					const [x, y] = _calculatePosition(
+						self.getBoundingClientRect(),
+						self._lastAnchorElement?.getBoundingClientRect(),
+						self._lastPointer, {
+							padding: this.padding,
+							gap: this.submenu? self.hasAttribute(Attributes.Gap)? this.gap : 0 : this.gap,
+							position: this.submenu? self.hasAttribute(Attributes.Position)? this.position : Position.RightCenterToBottom : this.position
+						}
+					)
+
+					self.style.setProperty(CSSVars.X, x + 'px')
+					self.style.setProperty(CSSVars.Y, y + 'px')
+					const innerPopovers: BiruPopoverElement[] = []
+					if (recursive) {
+						innerPopovers.push(...[
+							...self.querySelectorAll<BiruPopoverElement>(TAGNAME)
+						].filter(v => {
+							if (v.parentElement?.closest(TAGNAME) !== self) {
+								return false
+							}
+
+							return OPENED_POPOVER.has(v)
+						}))
+					}
+
+					const fn_repositionInnerPopover = () => {
+						for (const popover of innerPopovers) {
+							popover.biru.reposition()
+							popover.animate({
+								opacity: [0, 1],
+							},{
+								easing: 'cubic-bezier(.25,0,0,1)',
+								duration: self._theme?.biru.transitionDuration ?? 0
+							})
+						}
+					}
+
+					if (delayDurationMS !== 0) {
+						self.animate({
+							translate: [`${prevPosition.x - x}px ${prevPosition.y - y}px`, '0 0'],
+						},{
+							easing: 'cubic-bezier(.25,0,0,1)',
+							duration: self._theme?.biru.transitionDuration ?? 0
+						})
+						.finished.then(() => fn_repositionInnerPopover())
+					}
+					else {
+						fn_repositionInnerPopover()
+					}
+				}
+
+				clearTimeout(self._timeReposition)
+				if (self._theme?.biru.transitionDuration === 0) {
+					delayDurationMS = 0
+				}
+
+				// avoid Promise
+				if (delayDurationMS === 0) {
+					fn_updatePosition()
+					return
+				}
+
+				self._timeReposition = setTimeout(() => fn_updatePosition(), delayDurationMS)
+			},
+			close(recursive = true, animation = true) {
+				if (recursive) {
+					self.querySelectorAll(TAGNAME).forEach(v => (v as BiruPopoverElement).biru.close(false, false))
+					self.querySelectorAll(BrDialog.TAGNAME).forEach(v => (v as BrDialog.BiruDialogElement).biru.close(false, false))
+				}
+
+				const max = Math.max(self.offsetWidth, self.offsetHeight)
+				const startScale = (max / (max + 16) * 100) + '%'
+				self.getAnimations().forEach(v => v.cancel())
+				self.animate({
+					opacity: [1, 0],
+					scale: ['1', startScale]
+				}, {easing: 'cubic-bezier(.25,0,0,1)', duration: !animation? 0 : self._theme?.biru.transitionDuration ?? 0}).finished.then(() => {
+					self.style.removeProperty('z-index')
+					self.style.removeProperty('display')
+					self._isOpen = false
+
+					const currentFocus = document.activeElement
+
+					// when focus not inside popover, keep focus
+					if (!currentFocus || self.contains(currentFocus)) {
+						self._lastFocusElement?.focus()
+					}
+
+					self._lastFocusElement = null
+					self._lastAnchorElement?.toggleAttribute(Button.Attributes.Focused, false)
+					self._lastAnchorElement = undefined
+					self._lastPointer = undefined
+					unregisterZIndex(self)
+					OPENED_POPOVER.delete(self)
+					self.dispatchEvent(new CustomEvent(EventTypes.Toggle))
+				})
 			}
-		}, delayDurationMS)
-	}
-
-	$close(recursive = true, animation = true) {
-		if (recursive) {
-			this.querySelectorAll(TAGNAME).forEach(v => (v as BiruPopoverElement).$close(false, false))
-			this.querySelectorAll(BrDialog.TAGNAME).forEach(v => (v as BrDialog.BiruDialogElement).$close(false, false))
 		}
-
-		const max = Math.max(this.offsetWidth, this.offsetHeight)
-		const startScale = (max / (max + 16) * 100) + '%'
-		this.getAnimations().forEach(v => v.cancel())
-		this.animate({
-			opacity: [1, 0],
-			scale: ['1', startScale]
-		}, {easing: 'cubic-bezier(.25,0,0,1)', duration: !animation? 0 : this._theme?.$transitionDuration ?? 0}).finished.then(() => {
-			this.style.removeProperty('z-index')
-			this.style.removeProperty('display')
-			this._isOpen = false
-			this._lastFocusElement?.focus()
-			this._lastFocusElement = null
-			this._lastAnchorElement?.toggleAttribute(Button.Attributes.Focused, false)
-			this._lastAnchorElement = undefined
-			this._lastPointer = undefined
-			unregisterZIndex(this)
-			OPENED_POPOVER.delete(this)
-			this.dispatchEvent(new CustomEvent(EventTypes.Toggle))
-		})
 	}
 }
 
@@ -556,11 +606,22 @@ function _initListeners(): void {
 
 	window.addEventListener('resize', () => {
 		for (const popover of OPENED_POPOVER) {
-			popover.$reposition(250)
+
+			// only the lowest popover get reposition. The inner popover will follow
+			if (popover.parentElement?.closest(TAGNAME)) {
+				continue
+			}
+
+			popover.biru.reposition(250)
 		}
 	})
 
-	document.addEventListener('click', (ev) => {
+	listenDocumentEvent<PointerEvent>('pointermove', (ev) => {
+		_pointerX = ev.clientX
+		_pointerY = ev.clientY
+	})
+
+	listenDocumentEvent('click', (ev) => {
 		const target = (ev.target as HTMLElement).closest<HTMLElement>(`[${CSS.escape(GlobalAttributes.CommandFor)}]`)
 		if (!target) {
 			return
@@ -574,13 +635,13 @@ function _initListeners(): void {
 		const popover = ELEMENT_BY_IDS.get(popoverId)!
 		const action = target.getAttribute(GlobalAttributes.Command) || Commands.TogglePopover
 		switch (action) {
-		case Commands.ClosePopover: return popover.$close()
-		case Commands.OpenPopover: return popover.$open(target)
-		case Commands.TogglePopover: return popover.$toggle(target)
+		case Commands.ClosePopover: return popover.biru.close()
+		case Commands.OpenPopover: return popover.biru.open(target)
+		case Commands.TogglePopover: return popover.biru.toggle(target)
 		}
 	})
 
-	document.addEventListener('pointerdown', (ev) => {
+	listenDocumentEvent('pointerdown', (ev) => {
 		const popover = (ev.target as HTMLElement).closest<BiruPopoverElement>(TAGNAME)
 		if (!popover) {
 			popoverToKeepAlive = undefined
@@ -590,7 +651,7 @@ function _initListeners(): void {
 		popoverToKeepAlive = popover
 	})
 
-	document.addEventListener('pointerup', (ev) => {
+	listenDocumentEvent('pointerup', (ev) => {
 		let popoverToKeepAlive2: BiruPopoverElement | undefined
 
 		// Avoid event order problem.
@@ -629,7 +690,7 @@ function _initListeners(): void {
 				continue
 			}
 
-			p.$close(true)
+			p.biru.close(true)
 		}
 	})
 }

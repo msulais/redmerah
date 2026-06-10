@@ -1,5 +1,5 @@
 import * as BrTheme from './br-theme.js'
-import { slotEmptyListeners } from "../_utils"
+import { slotEmptyListeners } from "../utils.js"
 
 export const TAGNAME = 'br-scaffold'
 export const STYLES = new CSSStyleSheet()
@@ -30,13 +30,13 @@ export class BiruScaffoldElement extends HTMLElement {
 		const shadow = this.attachShadow({mode: 'open'})
 		shadow.adoptedStyleSheets = [STYLES]
 		shadow.innerHTML = `<div part="${Parts.Scaffold}">
-			<div part="${Parts.LeftSideBar}"><slot name="${Slots.LeftSideBar}"></slot></div>
+			<div part="${Parts.AppBar}"><slot name="${Slots.AppBar}"></slot></div>
 			<div part="${Parts.Container}">
-				<div part="${Parts.AppBar}"><slot name="${Slots.AppBar}"></slot></div>
+				<div part="${Parts.LeftSideBar}"><slot name="${Slots.LeftSideBar}"></slot></div>
 				<div part="${Parts.Body}"><slot></slot></div>
-				<div part="${Parts.BottomBar}"><slot name="${Slots.BottomBar}"></slot></div>
+				<div part="${Parts.RightSideBar}"><slot name="${Slots.RightSideBar}"></slot></div>
 			</div>
-			<div part="${Parts.RightSideBar}"><slot name="${Slots.RightSideBar}"></slot></div>
+			<div part="${Parts.BottomBar}"><slot name="${Slots.BottomBar}"></slot></div>
 		</div>`
 	}
 
@@ -61,6 +61,7 @@ function _initDefaultStyle(): void {
 	width: 100%;
 	height: 100dvh;
 	display: flex;
+	flex-direction: column;
 	align-items: stretch;
 	justify-content: stretch;
 	overflow: hidden;
@@ -72,9 +73,8 @@ function _initDefaultStyle(): void {
 	flex: 1;
 	max-width: 100%;
 	max-height: 100dvh;
-	min-height: 100dvh;
 	display: flex;
-	flex-direction: column;
+	flex-direci
 	align-items: stretch;
 	justify-content: stretch;
 }

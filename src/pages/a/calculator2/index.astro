@@ -24,22 +24,49 @@ import { APP } from './_scripts/shared/constant'
 	<br-tooltip>
 	<br-scaffold>
 		<br-appbar slot="appbar">
-			<button br:tooltip="Person" slot="leading" br:icon br:variant="filled">
+			<button
+				slot="leading"
+				br:command="toggle-navigation"
+				br:tooltip="Toggle navigation"
+				br:commandfor="nav"
+				br:variant="icon">
 				<br-icon set:html={Icons.Person}/>
 			</button>
-			<span slot="headline">Calculator</span>
-			<button slot="trailing" br:icon><br-icon set:html={Icons.Alert}/></button>
-			<button slot="trailing" br:commandfor="text-action" br:icon><br-icon set:html={Icons.MoreVertical}/></button>
+			<span slot="headline">
+				Calculator (Scientific)
+			</span>
+			<button slot="trailing" br:keepfocusvisible br:variant="icon"><br-icon set:html={Icons.Alert}/></button>
+			<button slot="trailing" br:commandfor="text-action" br:variant="icon"><br-icon set:html={Icons.MoreVertical}/></button>
 		</br-appbar>
-		<br-navigation slot="left-sidebar">
-			<a br:as="button navigationitem" br:hash="#sf" br:query="abc=8" br:path="/324">
+		<br-navigation id="nav" slot="left-sidebar" br:expanded>
+			<button
+				br:command="toggle-navigation"
+				br:tooltip="Toggle navigation"
+				br:commandfor="nav"
+				br:variant="icon">
+				<br-icon set:html={Icons.LineHorizontal3}/>
+			</button>
+			<a
+				href="?page=home"
+				br:as="navigationitem"
+				br:label="Home"
+				br:query="page=home | none">
 				<br-icon set:html={Icons.Home}/>
-				Home
 			</a>
-			<div style="flex:1"></div>
-			<a br:as="button navigationitem" br:hash="#sf" br:query="abc=8" br:path="/324">
+			<a
+				href="?page=labels"
+				br:as="navigationitem"
+				br:label="Labels"
+				br:query="page=labels">
+				<br-icon set:html={Icons.Tag}/>
+			</a>
+			<a
+				href="?page=settings"
+				aria-label="Settings"
+				br:as="navigationitem"
+				br:label="Settings"
+				br:query="page=settings">
 				<br-icon set:html={Icons.Settings}/>
-				Settings
 			</a>
 		</br-navigation>
 		<br-popover id="text-action" style="padding:.25rem">
@@ -150,7 +177,7 @@ import { APP } from './_scripts/shared/constant'
 			<input br:as="switch" type="checkbox"/>
 			switch
 		</label>
-		<input type="range" br:as="slider">
+		<input type="range" style="width:192px" br:as="slider">
 		<label br:as="radiobutton">
 			<input type="radio" name="theme">
 			Theme light
@@ -175,6 +202,7 @@ import { APP } from './_scripts/shared/constant'
 	<script src="@/web-components/components/br-dialog.ts"/>
 	<script src="@/web-components/components/br-tooltip.ts"/>
 	<script src="@/web-components/components/br-navigation.ts"/>
+	<script src="@/web-components/components/navigationitem.ts"/>
 	<script src="@/web-components/components/button.ts"/>
 	<script src="@/web-components/components/select.ts"/>
 	<script src="@/web-components/components/menu.ts"/>

@@ -1,7 +1,7 @@
 import * as BrTheme from './br-theme.js'
 
 export const STYLES = new CSSStyleSheet()
-export const TAGNAME = 'select'
+export const TAGNAME = 'select:not([br\\:as~="!select"])'
 const ELEMENT = `${BrTheme.TAGNAME} ${TAGNAME}`
 let isDefined = false
 

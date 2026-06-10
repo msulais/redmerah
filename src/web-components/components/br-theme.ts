@@ -1,5 +1,4 @@
-import type { HEXColor, HSLColor, RGBColor } from "@/types/color"
-import { colorContrastPercentage, colorContrastRatio, colorToHex, colorToRgb, hexToRgb, hslToRgb, isColorValid, rgbToHsl } from "../_colors"
+import { colorContrastPercentage, colorContrastRatio, colorToHex, colorToRgb, hexToRgb, hslToRgb, isColorValid, rgbToHsl, type HEXColor, type HSLColor, type RGBColor } from "../colors"
 
 export const CSSVars = {
 
@@ -41,7 +40,7 @@ export const Attributes = {
 	FontFamilyIcon: 'br:font-family-icon',
 
 	/** `string` - List of font-family */
-	FontFamilyMonospace: 'br:font-family-monspace',
+	FontFamilyMonospace: 'br:font-family-monospace',
 
 	/** `string` - List of font-family */
 	FontFamilySansSerif: 'br:font-family-sans-serif',
@@ -93,65 +92,6 @@ export class BiruThemeElement extends HTMLElement {
 		super()
 	}
 
-	get $transitionDuration(): number {
-		switch (this.$animation) {
-		case Animation.On: break
-		case Animation.Off: return 0
-		case Animation.Auto: return (_isSystemAnimationAllowed? DEFAULT_DURATION_TRANSITION : 0)
-		}
-
-		return DEFAULT_DURATION_TRANSITION
-	}
-
-	get $animation(): Animation {
-		let animation = (this.getAttribute(Attributes.Animation) || Animation.Auto) as Animation
-		switch (animation) {
-		case Animation.Auto:
-		case Animation.On:
-		case Animation.Off:
-			break
-		default:
-			animation = Animation.Auto
-		}
-
-		return animation
-	}
-
-	set $animation(value: Animation) {
-		this.setAttribute(Attributes.Animation, value)
-	}
-
-	get $themeMode(): ThemeMode {
-		let mode = (this.getAttribute(Attributes.ThemeMode) || ThemeMode.Light) as ThemeMode
-		switch (mode) {
-		case ThemeMode.Auto:
-		case ThemeMode.Light:
-		case ThemeMode.Dark:
-			break
-		default:
-			mode = ThemeMode.Light
-		}
-
-		return mode
-	}
-
-	set $themeMode(value: ThemeMode) {
-		this.setAttribute(Attributes.ThemeMode, value)
-	}
-
-	get $colorAccent(): HEXColor {
-		const accent = this.getAttribute(Attributes.ColorAccent)!
-		if (accent && isColorValid(accent)) {
-			return (accent as HEXColor).toUpperCase() as HEXColor
-		}
-
-		return colorToHex(DEFAULT_COLOR_ACCENT_LIGHT)
-	}
-
-	set $colorAccent(value: HEXColor) {
-		this.setAttribute(Attributes.ColorAccent, value)
-	}
-
 	attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null): void {
 		switch (name) {
 		case Attributes.ColorAccent:
@@ -187,6 +127,64 @@ export class BiruThemeElement extends HTMLElement {
 		const currentColor = this.getAttribute(Attributes.ColorAccent)
 		if (currentColor) {
 			_updateAccentColor(currentColor, null)
+		}
+	}
+
+	get biru() {
+		const self = this
+		return {
+			get transitionDuration(): number {
+				switch (this.animation) {
+				case Animation.On: break
+				case Animation.Off: return 0
+				case Animation.Auto: return (_isSystemAnimationAllowed? DEFAULT_DURATION_TRANSITION : 0)
+				}
+
+				return DEFAULT_DURATION_TRANSITION
+			},
+			get animation(): Animation {
+				let animation = (self.getAttribute(Attributes.Animation) || Animation.Auto) as Animation
+				switch (animation) {
+				case Animation.Auto:
+				case Animation.On:
+				case Animation.Off:
+					break
+				default:
+					animation = Animation.Auto
+				}
+
+				return animation
+			},
+			set animation(value: Animation) {
+				self.setAttribute(Attributes.Animation, value)
+			},
+			get themeMode(): ThemeMode {
+				let mode = (self.getAttribute(Attributes.ThemeMode) || ThemeMode.Light) as ThemeMode
+				switch (mode) {
+				case ThemeMode.Auto:
+				case ThemeMode.Light:
+				case ThemeMode.Dark:
+					break
+				default:
+					mode = ThemeMode.Light
+				}
+
+				return mode
+			},
+			set themeMode(value: ThemeMode) {
+				self.setAttribute(Attributes.ThemeMode, value)
+			},
+			get colorAccent(): HEXColor {
+				const accent = self.getAttribute(Attributes.ColorAccent)!
+				if (accent && isColorValid(accent)) {
+					return (accent as HEXColor).toUpperCase() as HEXColor
+				}
+
+				return colorToHex(DEFAULT_COLOR_ACCENT_LIGHT)
+			},
+			set colorAccent(value: HEXColor) {
+				self.setAttribute(Attributes.ColorAccent, value)
+			}
 		}
 	}
 }
@@ -275,7 +273,7 @@ function _insertNewStyle(
 		return
 	}
 
-	const selector = `${TAGNAME}[${attrName}="${newValue}"]`
+	const selector = `${TAGNAME}[${attrName}="${newValue.replaceAll('"', '\\"')}"]`
 	const rules = Array.from(STYLES.cssRules) as CSSStyleRule[]
 	const ruleExists = rules.some(rule => rule.selectorText === selector)
 	if (ruleExists) {
@@ -371,6 +369,10 @@ ${TAGNAME} * {
 	font-family: inherit;
 	color-accent: var(${CSSVars.ColorAccent});
 	transition-timing-function: cubic-bezier(.25, 0, 0, 1);
+}
+
+${TAGNAME} code {
+	font-family: var(${CSSVars.FontFamilyMonospace});
 }
 
 ${TAGNAME} :not(br-dialog) {

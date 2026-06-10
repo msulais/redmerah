@@ -1,8 +1,9 @@
 import * as BrTheme from './br-theme.js'
 import * as BrPopover from './br-popover.js'
-import { registerZIndex, unregisterZIndex } from "../_flyout"
+import { registerZIndex, unregisterZIndex } from "../flyout.js"
 import { Commands, GlobalAttributes } from "../global-attributes"
-import { slotEmptyListeners } from '../_utils.js'
+import { slotEmptyListeners } from '../utils.js'
+import { listenDocumentEvent } from '../event-registry.js'
 
 export const Parts = {
 	Title: 'title',
@@ -85,7 +86,7 @@ export class BiruDialogElement extends HTMLElement {
 	}
 
 	disconnectedCallback(): void {
-		this.$close()
+		this.biru.close()
 		this._theme = undefined
 		this._emptySlotListenerDesctructor?.()
 		ELEMENT_BY_IDS.delete(this.id)
@@ -105,114 +106,118 @@ export class BiruDialogElement extends HTMLElement {
 		}
 	}
 
-	$open(): void {
-		if (!this.isConnected) {
-			return
-		}
-
-		backdrop: {
-			const backdrop = this._backdropElement = document.createElement('div')
-			backdrop.style.setProperty('position', 'fixed')
-			backdrop.style.setProperty('width', '100%')
-			backdrop.style.setProperty('height', '100%')
-			backdrop.style.setProperty('top', '0')
-			backdrop.style.setProperty('left', '0')
-			backdrop.style.setProperty('backdrop-filter', 'blur(4px)')
-			backdrop.style.setProperty('background-color', '#00000080')
-			backdrop.style.setProperty('z-index', registerZIndex(backdrop) + '')
-			backdrop.addEventListener('click', (ev) => {
-				ev.stopPropagation()
-				if (this.$manual) {
+	get biru() {
+		const self = this
+		return {
+			open() {
+				if (!self.isConnected) {
 					return
 				}
 
-				const dialog = (ev.target as HTMLElement).closest(TAGNAME)
-				if (dialog === this) {
-					return
+				backdrop: {
+					const backdrop = self._backdropElement = document.createElement('div')
+					backdrop.style.setProperty('position', 'fixed')
+					backdrop.style.setProperty('width', '100%')
+					backdrop.style.setProperty('height', '100%')
+					backdrop.style.setProperty('top', '0')
+					backdrop.style.setProperty('left', '0')
+					backdrop.style.setProperty('backdrop-filter', 'blur(4px)')
+					backdrop.style.setProperty('background-color', '#00000080')
+					backdrop.style.setProperty('z-index', registerZIndex(backdrop) + '')
+					backdrop.addEventListener('click', (ev) => {
+						ev.stopPropagation()
+						if (self.$manual) {
+							return
+						}
+
+						const dialog = (ev.target as HTMLElement).closest(TAGNAME)
+						if (dialog === self) {
+							return
+						}
+
+						this.close()
+					})
+					self.before(backdrop)
+					break backdrop
 				}
 
-				this.$close()
-			})
-			this.before(backdrop)
-			break backdrop
-		}
+				if (!self._isOpen) {
+					lastOpenedDialog = self
+				}
 
-		if (!this._isOpen) {
-			lastOpenedDialog = this
-		}
+				self.style.setProperty('display', 'flex')
+				self.style.setProperty('z-index', registerZIndex(self, (ref) => {
+					if (ref.$manual) {
+						return
+					}
 
-		this.style.setProperty('display', 'flex')
-		this.style.setProperty('z-index', registerZIndex(this, (ref) => {
-			if (ref.$manual) {
-				return
+					ref.biru.close()
+				}) + '')
+				self._lastFocusElement = document.activeElement as HTMLElement | null
+				self.tabIndex = 0
+				self._isOpen = true
+				self.focus()
+				self.dispatchEvent(new CustomEvent(EventTypes.Toggle))
+
+				const max = Math.max(self.offsetWidth, self.offsetHeight)
+				const startScale = (max / (max + 32) * 100) + '%'
+				const animationOptions = {
+					easing: 'cubic-bezier(.25,0,0,1)',
+					duration: self._theme?.biru.transitionDuration ?? 0
+				}
+				self.getAnimations().forEach(v => v.cancel())
+				self._backdropElement.animate({
+					opacity: [0, 1]
+				}, animationOptions)
+				self.animate({
+					opacity: [0, 1],
+					scale: [startScale, '1']
+				}, animationOptions)
+			},
+			close(recursive = true, animation = true) {
+				if (recursive) {
+					self.querySelectorAll(TAGNAME).forEach(v => (v as BiruDialogElement).biru.close(false, false))
+					self.querySelectorAll(BrPopover.TAGNAME).forEach(v => (v as BrPopover.BiruPopoverElement).biru.close(false, false))
+				}
+
+				if (self._backdropElement) {
+					unregisterZIndex(self._backdropElement)
+				}
+
+				const max = Math.max(self.offsetWidth, self.offsetHeight)
+				const startScale = (max / (max + 32) * 100) + '%'
+				const animationOptions = {
+					easing: 'cubic-bezier(.25,0,0,1)',
+					duration: !animation? 0 : self._theme?.biru.transitionDuration ?? 0
+				}
+				self.getAnimations().forEach(v => v.cancel())
+				self._backdropElement?.animate({
+					opacity: [1, 0]
+				}, animationOptions)
+				self.animate({
+					opacity: [1, 0],
+					scale: ['1', startScale]
+				}, animationOptions).finished.then(() => {
+					unregisterZIndex(self)
+					self._backdropElement?.remove()
+					self._backdropElement = undefined
+					self._lastFocusElement?.focus()
+					self._lastFocusElement = null
+					self._isOpen = false
+					self.style.removeProperty('display')
+					self.style.removeProperty('z-index')
+					self.dispatchEvent(new CustomEvent(EventTypes.Toggle))
+					if (lastOpenedDialog === self) {
+						lastOpenedDialog = undefined
+					}
+				})
 			}
-
-			ref.$close()
-		}) + '')
-		this._lastFocusElement = document.activeElement as HTMLElement | null
-		this.tabIndex = 0
-		this._isOpen = true
-		this.focus()
-		this.dispatchEvent(new CustomEvent(EventTypes.Toggle))
-
-		const max = Math.max(this.offsetWidth, this.offsetHeight)
-		const startScale = (max / (max + 32) * 100) + '%'
-		const animationOptions = {
-			easing: 'cubic-bezier(.25,0,0,1)',
-			duration: this._theme?.$transitionDuration ?? 0
 		}
-		this.getAnimations().forEach(v => v.cancel())
-		this._backdropElement.animate({
-			opacity: [0, 1]
-		}, animationOptions)
-		this.animate({
-			opacity: [0, 1],
-			scale: [startScale, '1']
-		}, animationOptions)
-	}
-
-	$close(recursive = true, animation = true): void {
-		if (recursive) {
-			this.querySelectorAll(TAGNAME).forEach(v => (v as BiruDialogElement).$close(false, false))
-			this.querySelectorAll(BrPopover.TAGNAME).forEach(v => (v as BrPopover.BiruPopoverElement).$close(false, false))
-		}
-
-		if (this._backdropElement) {
-			unregisterZIndex(this._backdropElement)
-		}
-
-		const max = Math.max(this.offsetWidth, this.offsetHeight)
-		const startScale = (max / (max + 32) * 100) + '%'
-		const animationOptions = {
-			easing: 'cubic-bezier(.25,0,0,1)',
-			duration: !animation? 0 : this._theme?.$transitionDuration ?? 0
-		}
-		this.getAnimations().forEach(v => v.cancel())
-		this._backdropElement?.animate({
-			opacity: [1, 0]
-		}, animationOptions)
-		this.animate({
-			opacity: [1, 0],
-			scale: ['1', startScale]
-		}, animationOptions).finished.then(() => {
-			unregisterZIndex(this)
-			this._backdropElement?.remove()
-			this._backdropElement = undefined
-			this._lastFocusElement?.focus()
-			this._lastFocusElement = null
-			this._isOpen = false
-			this.style.removeProperty('display')
-			this.style.removeProperty('z-index')
-			this.dispatchEvent(new CustomEvent(EventTypes.Toggle))
-			if (lastOpenedDialog === this) {
-				lastOpenedDialog = undefined
-			}
-		})
 	}
 }
 
 function _initListeners(): void {
-	document.addEventListener('click', (ev) => {
+	listenDocumentEvent('click', (ev) => {
 		const target = (ev.target as HTMLElement).closest<HTMLElement>(`[${CSS.escape(GlobalAttributes.CommandFor)}]`)
 		if (!target) {
 			return
@@ -226,12 +231,12 @@ function _initListeners(): void {
 		const popover = ELEMENT_BY_IDS.get(popoverId)!
 		const action = target.getAttribute(GlobalAttributes.Command) || Commands.TogglePopover
 		switch (action) {
-		case Commands.CloseDialog: return popover.$close()
-		case Commands.OpenDialog: return popover.$open()
+		case Commands.CloseDialog: return popover.biru.close()
+		case Commands.OpenDialog: return popover.biru.open()
 		}
 	})
 
-	document.addEventListener('keydown', (ev) => {
+	listenDocumentEvent<KeyboardEvent>('keydown', (ev) => {
 		if (!lastOpenedDialog || ev.key !== 'Tab') {
 			return
 		}

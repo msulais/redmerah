@@ -50,6 +50,7 @@ export class BiruTooltipElement extends HTMLElement {
 		this.addEventListener('pointermove', this)
 		this.addEventListener('focusin', this)
 		this.addEventListener('focusout', this)
+		this.addEventListener('click', this)
 	}
 
 	handleEvent(ev: Event): void {
@@ -57,9 +58,14 @@ export class BiruTooltipElement extends HTMLElement {
 		case 'pointerover': return this._pointerover(ev as PointerEvent)
 		case 'pointerout' : return this._pointerout (ev as PointerEvent)
 		case 'pointermove': return this._pointermove(ev as PointerEvent)
+		case 'click'      : return this._click      (ev as PointerEvent)
 		case 'focusin'    : return this._focusin    (ev as FocusEvent)
 		case 'focusout'   : return this._focusout   (ev as FocusEvent)
 		}
+	}
+
+	private _click(_ev: PointerEvent): void {
+		this._close()
 	}
 
 	private _pointermove(ev: PointerEvent): void {

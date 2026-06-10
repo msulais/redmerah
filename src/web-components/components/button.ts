@@ -1,10 +1,12 @@
 import * as BrTheme from './br-theme.js'
 
 export const Attributes = {
-	/** `"colored" | "tonal" | "outlined" | "filled" | "link"` */
+	/** `"colored" | "tonal" | "outlined" | "filled" | "link" | "icon"` */
 	Variant: 'br:variant',
 	Focused: 'br:focused',
-	Icon   : 'br:icon',
+
+	/** Keep focus ring visible */
+	KeepFocusVisible: 'br:keepfocusvisible',
 
 	/** For element that has no `:disabled` state selector */
 	Disabled: 'br:disabled'
@@ -16,15 +18,16 @@ export const Variant = {
 	Tonal   : 'tonal',
 	Outlined: 'outlined',
 	Filled  : 'filled',
-	Link    : 'link'
+	Link    : 'link',
+	Icon    : 'icon'
 } as const
 export type Variant = typeof Variant[keyof typeof Variant]
 
 export const STYLES  = new CSSStyleSheet()
-export const TAGNAME = ':where(button,[br\\:as~=button])'
+export const TAGNAME = ':where(button:not([br\\:as~="!button"]),[br\\:as~=button])'
 const ATTR_VARIANT = CSS.escape(Attributes.Variant)
 const ATTR_FOCUSED = CSS.escape(Attributes.Focused)
-const ATTR_ICON = CSS.escape(Attributes.Icon)
+const ATTR_KEEPFOCUSVISIBLE = CSS.escape(Attributes.KeepFocusVisible)
 const STATE_DISABLED = `:where(:disabled,[${CSS.escape(Attributes.Disabled)}])`
 const ELEMENT = `${BrTheme.TAGNAME} ${TAGNAME}`
 let isDefined = false
@@ -54,7 +57,7 @@ ${ELEMENT}:has( :focus-visible) {
 	outline: auto;
 }
 
-${ELEMENT}[${ATTR_ICON}] {
+${ELEMENT}[${ATTR_VARIANT}~=${Variant.Icon}] {
 	padding: 0;
 	justify-content: center;
 	width: 2.5rem;
@@ -73,6 +76,10 @@ ${ELEMENT}${STATE_DISABLED} {
 ${ELEMENT}:not(${STATE_DISABLED})[${ATTR_FOCUSED}],
 ${ELEMENT}:not(${STATE_DISABLED}):hover {
 	background-color: rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .08);
+}
+
+${ELEMENT}:not(${STATE_DISABLED})[${ATTR_KEEPFOCUSVISIBLE}]:focus {
+	outline: auto;
 }
 
 ${ELEMENT}:not(${STATE_DISABLED}):active {

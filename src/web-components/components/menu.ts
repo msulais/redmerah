@@ -1,10 +1,11 @@
+import { listenDocumentEvent } from '../event-registry.js'
 import { GlobalAttributes } from '../global-attributes.js'
 import * as BrPopover from './br-popover.js'
 import * as BrTheme from './br-theme.js'
 import * as Button from './button.js'
 
 export const STYLES = new CSSStyleSheet()
-export const TAGNAME = ':where(menu,[br\\:as~=menu])'
+export const TAGNAME = ':where(menu:not([br\\:as~="!menu"]),[br\\:as~=menu])'
 const ELEMENT = `${BrTheme.TAGNAME} ${TAGNAME}`
 const ELEMENT_ITEM = `${ELEMENT} ${Button.TAGNAME}`
 let isDefined = false
@@ -28,11 +29,11 @@ function _findAndClosePopover(target: HTMLElement): void {
 		popover = next
 	}
 
-	popover?.$close()
+	popover?.biru.close()
 }
 
 function _initListeners(): void {
-	document.addEventListener('click', (ev) => {
+	listenDocumentEvent('click', (ev) => {
 		const target = (ev.target as HTMLElement).closest<HTMLButtonElement>(Button.TAGNAME)
 		if (
 			!target
@@ -46,7 +47,7 @@ function _initListeners(): void {
 		_findAndClosePopover(target)
 	})
 
-	document.addEventListener('change', (ev) => {
+	listenDocumentEvent('change', (ev) => {
 		const target = ev.target as HTMLInputElement
 		if (
 			target.hasAttribute(GlobalAttributes.PreventDefault)
