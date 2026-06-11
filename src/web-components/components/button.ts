@@ -23,18 +23,18 @@ export const Variant = {
 } as const
 export type Variant = typeof Variant[keyof typeof Variant]
 
-export const STYLES  = new CSSStyleSheet()
 export const TAGNAME = ':where(button:not([br\\:as~="!button"]),[br\\:as~=button])'
-const ATTR_VARIANT = CSS.escape(Attributes.Variant)
-const ATTR_FOCUSED = CSS.escape(Attributes.Focused)
-const ATTR_KEEPFOCUSVISIBLE = CSS.escape(Attributes.KeepFocusVisible)
-const STATE_DISABLED = `:where(:disabled,[${CSS.escape(Attributes.Disabled)}])`
-const ELEMENT = `${BrTheme.TAGNAME} ${TAGNAME}`
-let isDefined = false
+let _isDefined = false
 
-function _initDefaultStyle(): void {
-	document.adoptedStyleSheets.push(STYLES)
-	STYLES.replaceSync(`
+function _initDefaultStyles(): void {
+	const ATTR_VARIANT = CSS.escape(Attributes.Variant)
+	const ATTR_FOCUSED = CSS.escape(Attributes.Focused)
+	const ATTR_KEEPFOCUSVISIBLE = CSS.escape(Attributes.KeepFocusVisible)
+	const STATE_DISABLED = `:where(:disabled,[${CSS.escape(Attributes.Disabled)}])`
+	const ELEMENT = `${BrTheme.TAGNAME} ${TAGNAME}`
+	const styles  = new CSSStyleSheet()
+	document.adoptedStyleSheets.push(styles)
+	styles.replaceSync(`
 ${ELEMENT} {
 	display: flex;
 	border-radius: .25rem;
@@ -45,7 +45,7 @@ ${ELEMENT} {
 	background-color: transparent;
 	padding: .25rem .75rem;
 	line-height: normal;
-	border: 1px solid transparent;
+	border: none;
 	filter: none;
 	gap: .5rem;
 	color: rgb(var(${BrTheme.CSSVars.ColorOnSurface}));
@@ -96,7 +96,7 @@ ${ELEMENT}[${ATTR_VARIANT}~=${Variant.Link}] {
 }
 
 ${ELEMENT}[${ATTR_VARIANT}~=${Variant.Outlined}] {
-	border-color: rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .32);
+	border: 1px solid rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .32);
 }
 
 ${ELEMENT}[${ATTR_VARIANT}~=${Variant.Filled}] {
@@ -128,12 +128,12 @@ ${ELEMENT}[${ATTR_VARIANT}~=${Variant.Tonal}]:not(${STATE_DISABLED}):active {
 `)}
 
 export function define(): void {
-	if (isDefined) {
+	if (!document || !window || _isDefined) {
 		return
 	}
 
-	_initDefaultStyle()
-	isDefined = true
+	_initDefaultStyles()
+	_isDefined = true
 }
 
 BrTheme.define()

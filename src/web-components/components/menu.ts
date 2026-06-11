@@ -4,11 +4,8 @@ import * as BrPopover from './br-popover.js'
 import * as BrTheme from './br-theme.js'
 import * as Button from './button.js'
 
-export const STYLES = new CSSStyleSheet()
 export const TAGNAME = ':where(menu:not([br\\:as~="!menu"]),[br\\:as~=menu])'
-const ELEMENT = `${BrTheme.TAGNAME} ${TAGNAME}`
-const ELEMENT_ITEM = `${ELEMENT} ${Button.TAGNAME}`
-let isDefined = false
+let _isDefined = false
 
 function _findAndClosePopover(target: HTMLElement): void {
 	let popover = target.closest<BrPopover.BiruPopoverElement>(BrPopover.TAGNAME)
@@ -60,9 +57,12 @@ function _initListeners(): void {
 	})
 }
 
-function _initDefaultStyle(): void {
-	document.adoptedStyleSheets.push(STYLES)
-	STYLES.replaceSync(`
+function _initDefaultStyles(): void {
+	const ELEMENT = `${BrTheme.TAGNAME} ${TAGNAME}`
+	const ELEMENT_ITEM = `${ELEMENT} ${Button.TAGNAME}`
+	const styles = new CSSStyleSheet()
+	document.adoptedStyleSheets.push(styles)
+	styles.replaceSync(`
 ${ELEMENT} {
 	display: flex;
 	flex-direction: column;
@@ -142,13 +142,13 @@ ${ELEMENT_ITEM} input[type=radio]:checked::before {
 }
 
 export function define(): void {
-	if (isDefined) {
+	if (!document || !window || _isDefined) {
 		return
 	}
 
 	_initListeners()
-	_initDefaultStyle()
-	isDefined = true
+	_initDefaultStyles()
+	_isDefined = true
 }
 
 BrPopover.define()

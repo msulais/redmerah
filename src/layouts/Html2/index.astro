@@ -1,15 +1,19 @@
 ---
+import type { HEXColor } from '@/types/color'
+
 
 type Props = {
 	title?: string
 	description?: string
 	lang?: string
+	accentColor?: HEXColor
 }
 
 const {
 	title = 'Redmerah • Increase your productivity with our apps',
 	description = 'Get things done faster with zero interruptions! Redmerah offers powerful, privacy-focused tools to boost your productivity. Free, secure & data stays local.',
 	lang = 'en-US',
+	accentColor = '#FFFF00'
 } = Astro.props
 ---
 
@@ -51,5 +55,18 @@ const {
 			}
 		</style>
 	</head>
-	<body><slot /></body>
+	<body>
+		<br-theme
+			br:color-accent={accentColor}
+			br:theme-mode="auto"
+			br:font-family-icon="FluentSystemIcons-Resizable"
+			br:font-family-sans-serif="'Figtree', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
+			br:font-family-monospace="'Google Sans Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace">
+			<br-tooltip>
+				<slot />
+			</br-tooltip>
+		</br-theme>
+		<script src="@/web-components/components/br-theme.ts"/>
+		<script src="@/web-components/components/br-tooltip.ts"/>
+	</body>
 </html>

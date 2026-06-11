@@ -17,18 +17,18 @@ export const Attributes = {
 } as const
 export type Attributes = typeof Attributes[keyof typeof Attributes]
 
-export const STYLES = new CSSStyleSheet()
 export const TAGNAME = '[br\\:as~=navigationitem]'
-const ELEMENT = `${BrTheme.TAGNAME} ${TAGNAME}`
-const STATE_DISABLED = `:where(:disabled,[${CSS.escape(Attributes.Disabled)}])`
-const STATE_SELECTED = `[${CSS.escape(Attributes.Selected)}]`
-const ATTR_LABEL = CSS.escape(Attributes.Label)
-const ATTR_KEEPFOCUSVISIBLE = CSS.escape(Attributes.KeepFocusVisible)
-let isDefined = false
+let _isDefined = false
 
 function _initDefaultStyles(): void {
-	document.adoptedStyleSheets.push(STYLES)
-	STYLES.replaceSync(`
+	const ELEMENT = `${BrTheme.TAGNAME} ${TAGNAME}`
+	const STATE_DISABLED = `:where(:disabled,[${CSS.escape(Attributes.Disabled)}])`
+	const STATE_SELECTED = `[${CSS.escape(Attributes.Selected)}]`
+	const ATTR_LABEL = CSS.escape(Attributes.Label)
+	const ATTR_KEEPFOCUSVISIBLE = CSS.escape(Attributes.KeepFocusVisible)
+	const styles = new CSSStyleSheet()
+	document.adoptedStyleSheets.push(styles)
+	styles.replaceSync(`
 ${ELEMENT} {
 	display: flex;
 	flex-direction: column;
@@ -133,14 +133,14 @@ function _initListeners(): void {
 }
 
 export function define(): void {
-	if (isDefined) {
+	if (!document || !window || _isDefined) {
 		return
 	}
 
 	_checkSelectedNavigationItems()
 	_initDefaultStyles()
 	_initListeners()
-	isDefined = true
+	_isDefined = true
 }
 
 BrTheme.define()

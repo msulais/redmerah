@@ -1,13 +1,13 @@
 import * as BrTheme from './br-theme.js'
 
-export const STYLES = new CSSStyleSheet()
 export const TAGNAME = ':where(input,textarea)[br\\:as~=textfield]'
-const ELEMENT = `${BrTheme.TAGNAME} ${TAGNAME}`
-let isDefined = false
+let _isDefined = false
 
-export function _initDefaultStyle(): void {
-	document.adoptedStyleSheets.push(STYLES)
-	STYLES.replaceSync(`
+export function _initDefaultStyles(): void {
+	const ELEMENT = `${BrTheme.TAGNAME} ${TAGNAME}`
+	const styles = new CSSStyleSheet()
+	document.adoptedStyleSheets.push(styles)
+	styles.replaceSync(`
 ${ELEMENT} {
 	border: 1px solid transparent;
 	padding: .25rem .5rem;
@@ -48,12 +48,12 @@ ${ELEMENT}:read-write:active {
 }
 
 export function define(): void {
-	if (isDefined) {
+	if (!document || !window || _isDefined) {
 		return
 	}
 
-	_initDefaultStyle()
-	isDefined = true
+	_initDefaultStyles()
+	_isDefined = true
 }
 
 define()

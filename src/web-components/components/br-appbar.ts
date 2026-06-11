@@ -1,5 +1,4 @@
-export const STYLES  = new CSSStyleSheet()
-export const TAGNAME = 'br-appbar'
+import { slotEmptyListeners } from "../utils"
 
 export const Slots = {
 	Leading: 'leading',
@@ -18,7 +17,18 @@ export const Parts = {
 } as const
 export type Parts = typeof Parts[keyof typeof Parts]
 
-const SHADOW_ROOT_INNER_HTML = `<header part="${Parts.Header}">
+export const TAGNAME = 'br-appbar'
+const STYLES = new CSSStyleSheet()
+
+export class BiruAppBarElement extends HTMLElement {
+	private _emptySlotListenerDesctructor: (() => unknown) | undefined
+
+	constructor() {
+		super()
+
+		const shadow = this.attachShadow({mode: 'open'})
+		shadow.adoptedStyleSheets = [STYLES]
+		shadow.innerHTML = `<header part="${Parts.Header}">
 	<div part="${Parts.Leading}"><slot name="${Slots.Leading}"></slot></div>
 	<div part="${Parts.Content}">
 		<h2 part="${Parts.Headline}"><slot name="${Slots.Headline}"></slot></h2>
@@ -27,28 +37,22 @@ const SHADOW_ROOT_INNER_HTML = `<header part="${Parts.Header}">
 	<div part="${Parts.Flex}"></div>
 	<div part="${Parts.Trailing}"><slot name="${Slots.Trailing}"></slot></div>
 </header>`
-
-export class BiruAppBarElement extends HTMLElement {
-	private _headline: HTMLHeadingElement
-
-	constructor() {
-		super()
-		const shadow = this.attachShadow({mode: 'open'})
-		shadow.innerHTML = SHADOW_ROOT_INNER_HTML
-		shadow.adoptedStyleSheets = [STYLES]
-		this._headline = shadow.querySelector<HTMLHeadingElement>('h2')!
 	}
 
-	get $headline(): string {
-		return this._headline.textContent
+	connectedCallback(): void {
+		this._emptySlotListenerDesctructor = slotEmptyListeners(this.shadowRoot!,
+			[Slots.Leading, Parts.Leading],
+			[Slots.Headline, Parts.Headline],
+			[Slots.Trailing, Parts.Trailing],
+		)
 	}
 
-	set $headline(value: string) {
-		this._headline.textContent = value
+	disconnectedCallback(): void {
+		this._emptySlotListenerDesctructor?.()
 	}
 }
 
-function _initDefaultStyle(): void {
+function _initDefaultStyles(): void {
 	STYLES.replaceSync(`
 :host {
 	padding: .5rem;
@@ -59,13 +63,11 @@ function _initDefaultStyle(): void {
 	width: 100%;
 	display: flex;
 	align-items: center;
-	gap: .25rem;
 }
 
 [part="${Parts.Content}"] {
 	display: flex;
 	align-items: center;
-	gap: .5rem;
 	overflow: hidden;
 }
 
@@ -76,7 +78,6 @@ function _initDefaultStyle(): void {
 	text-overflow: ellipsis;
 	text-wrap: nowrap;
 	display: flex;
-	gap: 1rem;
 	padding-right: 1rem;
 	margin: 0;
 }
@@ -88,18 +89,9 @@ function _initDefaultStyle(): void {
 [part="${Parts.Leading}"], [part="${Parts.Trailing}"] {
 	display: flex;
 	align-items: center;
-	gap: .125rem;
 }
 
-[part="${Parts.Leading}"]:not(:empty) {
-	padding-right: .5rem;
-}
-
-[part="${Parts.Trailing}"]:not(:empty) {
-	padding-left: .5rem;
-}
-
-:is([part="${Parts.Leading}"], [part="${Parts.Headline}"], [part="${Parts.Trailing}"]):empty {
+:is([part="${Parts.Leading}"], [part="${Parts.Headline}"], [part="${Parts.Trailing}"]).empty {
 	display: none !important;
 }
 `)
@@ -110,7 +102,7 @@ export function define(): void {
 		return
 	}
 
-	_initDefaultStyle()
+	_initDefaultStyles()
 	customElements.define(TAGNAME, BiruAppBarElement)
 }
 

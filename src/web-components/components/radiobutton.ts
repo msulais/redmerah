@@ -1,14 +1,14 @@
 import * as BrTheme from './br-theme.js'
 
-export const STYLES = new CSSStyleSheet()
 export const TAGNAME = 'label[br\\:as~=radiobutton]'
-const ELEMENT = `${BrTheme.TAGNAME} ${TAGNAME}`
-const INPUT = `${ELEMENT} input[type=radio]`
-let isDefined = false
+let _isDefined = false
 
-function _initDefaultStyle(): void {
-	document.adoptedStyleSheets.push(STYLES)
-	STYLES.replaceSync(`
+function _initDefaultStyles(): void {
+	const ELEMENT = `${BrTheme.TAGNAME} ${TAGNAME}`
+	const INPUT = `${ELEMENT} input[type=radio]`
+	const styles = new CSSStyleSheet()
+	document.adoptedStyleSheets.push(styles)
+	styles.replaceSync(`
 ${ELEMENT} {
 	display: flex;
 	align-items: center;
@@ -94,12 +94,12 @@ ${INPUT}:checked:not(:disabled):active::before {
 }
 
 export function define(): void {
-	if (isDefined) {
+	if (!document || !window || _isDefined) {
 		return
 	}
 
-	_initDefaultStyle()
-	isDefined = true
+	_initDefaultStyles()
+	_isDefined = true
 }
 
 BrTheme.define()

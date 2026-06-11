@@ -1,13 +1,13 @@
 import * as BrTheme from './br-theme.js'
 
-export const STYLES = new CSSStyleSheet()
 export const TAGNAME = 'select:not([br\\:as~="!select"])'
-const ELEMENT = `${BrTheme.TAGNAME} ${TAGNAME}`
-let isDefined = false
+let _isDefined = false
 
-function _initDefaultStyle(): void {
-	document.adoptedStyleSheets.push(STYLES)
-	STYLES.replaceSync(`
+function _initDefaultStyles(): void {
+	const ELEMENT = `${BrTheme.TAGNAME} ${TAGNAME}`
+	const styles = new CSSStyleSheet()
+	document.adoptedStyleSheets.push(styles)
+	styles.replaceSync(`
 ${ELEMENT} {
 	appearance: base-select;
 	padding: .25rem .5rem .25rem 1rem;
@@ -180,12 +180,12 @@ ${ELEMENT} option:checked:not(:disabled):active {
 }
 
 export function define(): void {
-	if (isDefined) {
+	if (!document || !window || _isDefined) {
 		return
 	}
 
-	_initDefaultStyle()
-	isDefined = true
+	_initDefaultStyles()
+	_isDefined = true
 }
 
 BrTheme.define()

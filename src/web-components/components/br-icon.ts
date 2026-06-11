@@ -1,7 +1,7 @@
 import * as BrTheme from './br-theme.js'
 
-export const STYLES = new CSSStyleSheet()
 export const TAGNAME = 'br-icon'
+const STYLES = new CSSStyleSheet()
 
 export class BiruIconElement extends HTMLElement {
 	constructor() {
@@ -12,7 +12,7 @@ export class BiruIconElement extends HTMLElement {
 	}
 }
 
-function _initDefaultStyle(): void {
+function _initDefaultStyles(): void {
 	STYLES.replaceSync(`:host {
 	line-height: 1;
 	font-size: 1.25rem;
@@ -25,7 +25,7 @@ export function define(): void {
 		return
 	}
 
-	_initDefaultStyle()
+	_initDefaultStyles()
 	customElements.define(TAGNAME, BiruIconElement)
 }
 

@@ -1,8 +1,6 @@
 import * as BrTheme from './br-theme.js'
 import { slotEmptyListeners } from "../utils.js"
 
-export const TAGNAME = 'br-scaffold'
-export const STYLES = new CSSStyleSheet()
 export const Slots = {
 	LeftSideBar: 'left-sidebar',
 	RightSideBar: 'right-sidebar',
@@ -21,6 +19,9 @@ export const Parts = {
 	BottomBar: 'bottombar',
 } as const
 export type Parts = typeof Parts[keyof typeof Parts]
+
+export const TAGNAME = 'br-scaffold'
+const STYLES = new CSSStyleSheet()
 
 export class BiruScaffoldElement extends HTMLElement {
 	private _emptySlotListenerDesctructor: (() => unknown) | undefined
@@ -54,7 +55,7 @@ export class BiruScaffoldElement extends HTMLElement {
 	}
 }
 
-function _initDefaultStyle(): void {
+function _initDefaultStyles(): void {
 	STYLES.replaceSync(`:host, [part="${Parts.Scaffold}"] {
 	max-height: 100dvh;
 	max-width: 100%;
@@ -105,7 +106,7 @@ export function define(): void {
 		return
 	}
 
-	_initDefaultStyle()
+	_initDefaultStyles()
 	customElements.define(TAGNAME, BiruScaffoldElement)
 }
 

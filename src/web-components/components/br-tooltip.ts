@@ -1,9 +1,9 @@
 import { GlobalAttributes } from '../global-attributes.js'
 import * as BrTheme from './br-theme.js'
 
-export const STYLES = new CSSStyleSheet()
 export const TAGNAME = 'br-tooltip'
 const HOVER_MEDIA_MOBILE = window.matchMedia('(hover:none)')
+const STYLES = new CSSStyleSheet()
 let _isTouchScreen = HOVER_MEDIA_MOBILE.matches
 
 export class BiruTooltipElement extends HTMLElement {
@@ -220,7 +220,7 @@ function _initListeners(): void {
 	})
 }
 
-function _initDefaultStyle(): void {
+function _initDefaultStyles(): void {
 	STYLES.replaceSync(`
 :host {
 	display: contents;
@@ -254,7 +254,7 @@ export function define(): void {
 		return
 	}
 
-	_initDefaultStyle()
+	_initDefaultStyles()
 	_initListeners()
 	customElements.define(TAGNAME, BiruTooltipElement)
 }

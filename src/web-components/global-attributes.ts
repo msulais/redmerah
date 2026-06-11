@@ -20,6 +20,7 @@ export const Commands = {
 	CloseNavigation : 'close-navigation',
 	ToggleNavigation: 'toggle-navigation',
 	OpenDialog      : 'open-dialog',
-	CloseDialog     : 'close-dialog'
+	CloseDialog     : 'close-dialog',
+	ToggleDialog    : 'toggle-dialog',
 } as const
 export type Commands = typeof Commands[keyof typeof Commands]

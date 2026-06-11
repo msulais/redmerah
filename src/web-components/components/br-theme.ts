@@ -65,7 +65,6 @@ export const ThemeMode = {
 export type ThemeMode = typeof ThemeMode[keyof typeof ThemeMode]
 
 export const TAGNAME = 'br-theme'
-export const STYLES = new CSSStyleSheet()
 const DEFAULT_COLOR_ACCENT_LIGHT     = 0x0051DF
 const DEFAULT_COLOR_ACCENT_DARK      = 0xB5C4FF
 const DEFAULT_COLOR_ON_ACCENT_LIGHT  = 0xFFFFFF
@@ -78,6 +77,7 @@ const DEFAULT_COLOR_BACKGROUND_LIGHT = 0xF2F2F2
 const DEFAULT_COLOR_BACKGROUND_DARK  = 0x1F1F1F
 const DEFAULT_DURATION_TRANSITION    = 200
 const ELEMENTS = new Set<BiruThemeElement>()
+const STYLES = new CSSStyleSheet()
 let _isSystemAnimationAllowed = true
 
 export class BiruThemeElement extends HTMLElement {
@@ -305,7 +305,7 @@ function _initListeners(): void {
 	})
 }
 
-function _initDefaultStyle(): void {
+function _initDefaultStyles(): void {
 	document.adoptedStyleSheets.push(STYLES)
 	STYLES.replaceSync(`
 ${TAGNAME} {
@@ -385,7 +385,7 @@ export function define(): void {
 		return
 	}
 
-	_initDefaultStyle()
+	_initDefaultStyles()
 	_initListeners()
 	customElements.define(TAGNAME, BiruThemeElement)
 }

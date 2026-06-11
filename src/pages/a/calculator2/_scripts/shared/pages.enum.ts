@@ -1,0 +1,5 @@
+export const Basic = 'basic'
+export const Scientific = 'scientific'
+export const Converter = 'converter'
+export const Programmer = 'programmer'
+export const Date = 'date'

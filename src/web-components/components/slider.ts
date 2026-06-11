@@ -1,13 +1,13 @@
 import * as BrTheme from './br-theme'
 
-export const STYLES = new CSSStyleSheet()
 export const TAGNAME = 'input[type=range][br\\:as~=slider]'
-const ELEMENT = `${BrTheme.TAGNAME} ${TAGNAME}`
-let isDefined = false
+let _isDefined = false
 
-function _initDefaultStyle(): void {
-	document.adoptedStyleSheets.push(STYLES)
-	STYLES.replaceSync(`
+function _initDefaultStyles(): void {
+	const ELEMENT = `${BrTheme.TAGNAME} ${TAGNAME}`
+	const styles = new CSSStyleSheet()
+	document.adoptedStyleSheets.push(styles)
+	styles.replaceSync(`
 ${ELEMENT} {
 	--slider-gap: .125rem;
 	--slider-line-width: .25rem;
@@ -67,12 +67,12 @@ ${ELEMENT}::-moz-range-thumb {
 }
 
 export function define(): void {
-	if (isDefined) {
+	if (!document || !window || _isDefined) {
 		return
 	}
 
-	_initDefaultStyle()
-	isDefined = true
+	_initDefaultStyles()
+	_isDefined = true
 }
 
 BrTheme.define()

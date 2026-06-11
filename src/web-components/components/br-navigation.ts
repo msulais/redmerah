@@ -19,7 +19,6 @@ export type Variant = typeof Variant[keyof typeof Variant]
 
 export const SCREEN_SIZE_MEDIUM_MIN_IN_REM = 37.5
 export const SCREEN_SIZE_MEDIUM_MAX_IN_REM = 52.5
-export const STYLES = new CSSStyleSheet()
 export const TAGNAME = 'br-navigation'
 let _allowAnimation = false
 
@@ -121,7 +120,10 @@ function _initListeners(): void {
 			&& !navigationItem.hasAttribute(NavigationItem.Attributes.Disabled)
 			&& !navigationItem.hasAttribute(GlobalAttributes.PreventDefault)
 		) {
-			(navigationItem.closest(TAGNAME) as BiruNavigationElement).biru.expanded = false
+			const navigation = navigationItem.closest(TAGNAME) as BiruNavigationElement | null
+			if (navigation && navigation.biru.isDrawerMode) {
+				navigation.biru.expanded = false
+			}
 		}
 	})
 
@@ -142,7 +144,7 @@ function _initListeners(): void {
 			return
 		}
 
-		const action = target.getAttribute(GlobalAttributes.Command) || Commands.TogglePopover
+		const action = target.getAttribute(GlobalAttributes.Command) || Commands.ToggleNavigation
 		switch (action) {
 		case Commands.CloseNavigation : return navigation.biru.expanded = false
 		case Commands.OpenNavigation  : return navigation.biru.expanded = true
@@ -163,7 +165,7 @@ function _initMedia(): void {
 		clearTimeout(timeoutId)
 		timeoutId = setTimeout(() => {
 			for (const navigation of document.querySelectorAll<BiruNavigationElement>(TAGNAME)) {
-				navigation.biru.expanded = isWide && navigation.biru.variant !== Variant.Drawer
+				navigation.biru.expanded = isWide && navigation.biru.variant === Variant.Auto
 			}
 
 			_allowAnimation = true
@@ -181,14 +183,16 @@ function _initMedia(): void {
 }
 
 function _initDefaultStyles(): void {
-	document.adoptedStyleSheets.push(STYLES)
+	const styles = new CSSStyleSheet()
+	document.adoptedStyleSheets.push(styles)
+
 	const ELEMENT = `${BrTheme.TAGNAME} ${TAGNAME}`
 	const ATTR_VARIANT = CSS.escape(Attributes.Variant)
 	const ATTR_EXPANDED = CSS.escape(Attributes.Expanded)
 	const VARIANT_AUTO = `:is([${ATTR_VARIANT}=${Variant.Auto}],:not([${ATTR_VARIANT}]))`
 	const VARIANT_SIDEBAR = `[${ATTR_VARIANT}=${Variant.SideBar}]`
 	const VARIANT_DRAWER = `[${ATTR_VARIANT}=${Variant.Drawer}]`
-	STYLES.replaceSync(`
+	styles.replaceSync(`
 ${ELEMENT} {
 	display: flex;
 	flex-direction: column;

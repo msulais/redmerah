@@ -1,10 +1,6 @@
 import { listenRouteChange } from "../router"
 import { QueryValidation } from "../utils"
 
-export const STYLES = new CSSStyleSheet()
-export const TAGNAME = 'br-view'
-const ELEMENTS = new Set<BiruViewElement>()
-
 export const Attributes = {
 
 	/** Multiple path separated by space. Example: `"/ /a/b /a/b/e"` */
@@ -33,6 +29,10 @@ export const Attributes = {
 	Media: 'br:media',
 } as const
 export type Attributes = typeof Attributes[keyof typeof Attributes]
+
+export const TAGNAME = 'br-view'
+const ELEMENTS = new Set<BiruViewElement>()
+const STYLES = new CSSStyleSheet()
 
 export class BiruViewElement extends HTMLElement {
 	private _shadowRoot: ShadowRoot
@@ -209,7 +209,7 @@ function _initListeners(): void {
 	listenRouteChange(() => _checkElementsState())
 }
 
-function _initDefaultStyle(): void {
+function _initDefaultStyles(): void {
 	STYLES.replaceSync(`
 		:host, div {
 			display: contents
@@ -223,7 +223,7 @@ export function define(): void {
 	}
 
 	_initListeners()
-	_initDefaultStyle()
+	_initDefaultStyles()
 	customElements.define(TAGNAME, BiruViewElement)
 }
 

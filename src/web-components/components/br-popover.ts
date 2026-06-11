@@ -80,7 +80,6 @@ export const EventTypes = {
 } as const
 export type EventTypes = typeof EventTypes[keyof typeof EventTypes]
 
-export const STYLES = new CSSStyleSheet()
 export const TAGNAME = 'br-popover'
 const VALID_POSITION = new Set(Object.values(Position))
 const ELEMENTS = new Set<BiruPopoverElement>()
@@ -89,6 +88,7 @@ const POPOVER_MARGIN = 8
 const DEFAULT_POPOVER_GAP = 8
 const DEFAULT_POPOVER_POSITION = Position.CenterBottom
 const OPENED_POPOVER = new Set<BiruPopoverElement>()
+const STYLES = new CSSStyleSheet()
 let _pointerX = 0
 let _pointerY = 0
 
@@ -695,7 +695,7 @@ function _initListeners(): void {
 	})
 }
 
-function _initDefaultStyle(): void {
+function _initDefaultStyles(): void {
 	STYLES.replaceSync(`
 :host {
 	${CSSVars.X}: 0px;
@@ -720,8 +720,8 @@ export function define(): void {
 		return
 	}
 
-	_initDefaultStyle()
 	_initListeners()
+	_initDefaultStyles()
 	customElements.define(TAGNAME, BiruPopoverElement)
 }
 

@@ -29,11 +29,11 @@ export const Attributes = {
 } as const
 export type Attributes = typeof Attributes[keyof typeof Attributes]
 
-export const STYLES = new CSSStyleSheet()
 export const TAGNAME = 'br-dialog'
 const ELEMENT_BY_IDS = new Map<string, BiruDialogElement>()
+const STYLES = new CSSStyleSheet()
 const DIALOG_MARGIN = 16
-let lastOpenedDialog: BiruDialogElement | undefined
+let _lastOpenedDialog: BiruDialogElement | undefined
 
 export class BiruDialogElement extends HTMLElement {
 	static observedAttributes = [
@@ -48,6 +48,7 @@ export class BiruDialogElement extends HTMLElement {
 
 	constructor() {
 		super()
+
 		const shadow = this.attachShadow({ mode: 'open' })
 		shadow.adoptedStyleSheets = [STYLES]
 		shadow.innerHTML = `
@@ -109,6 +110,17 @@ export class BiruDialogElement extends HTMLElement {
 	get biru() {
 		const self = this
 		return {
+			get isOpen(): boolean {
+				return self._isOpen
+			},
+			toggle() {
+				if (this.isOpen) {
+					this.close()
+				}
+				else {
+					this.open()
+				}
+			},
 			open() {
 				if (!self.isConnected) {
 					return
@@ -142,7 +154,7 @@ export class BiruDialogElement extends HTMLElement {
 				}
 
 				if (!self._isOpen) {
-					lastOpenedDialog = self
+					_lastOpenedDialog = self
 				}
 
 				self.style.setProperty('display', 'flex')
@@ -207,8 +219,8 @@ export class BiruDialogElement extends HTMLElement {
 					self.style.removeProperty('display')
 					self.style.removeProperty('z-index')
 					self.dispatchEvent(new CustomEvent(EventTypes.Toggle))
-					if (lastOpenedDialog === self) {
-						lastOpenedDialog = undefined
+					if (_lastOpenedDialog === self) {
+						_lastOpenedDialog = undefined
 					}
 				})
 			}
@@ -229,35 +241,36 @@ function _initListeners(): void {
 		}
 
 		const popover = ELEMENT_BY_IDS.get(popoverId)!
-		const action = target.getAttribute(GlobalAttributes.Command) || Commands.TogglePopover
+		const action = target.getAttribute(GlobalAttributes.Command) || Commands.ToggleDialog
 		switch (action) {
 		case Commands.CloseDialog: return popover.biru.close()
 		case Commands.OpenDialog: return popover.biru.open()
+		case Commands.ToggleDialog: return popover.biru.toggle()
 		}
 	})
 
 	listenDocumentEvent<KeyboardEvent>('keydown', (ev) => {
-		if (!lastOpenedDialog || ev.key !== 'Tab') {
+		if (!_lastOpenedDialog || ev.key !== 'Tab') {
 			return
 		}
 
 		const current = document.activeElement
 		const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-		const focusableElements = Array.from(lastOpenedDialog.querySelectorAll(focusableSelector)) as unknown as HTMLElement[]
-		focusableElements.unshift(lastOpenedDialog)
+		const focusableElements = Array.from(_lastOpenedDialog.querySelectorAll(focusableSelector)) as unknown as HTMLElement[]
+		focusableElements.unshift(_lastOpenedDialog)
 		focusableElements.filter(el =>
 			!(el as HTMLButtonElement)?.disabled && el.offsetParent !== null
 		)
 
 		if (focusableElements.length === 0) {
-			lastOpenedDialog.focus()
+			_lastOpenedDialog.focus()
 			ev.preventDefault()
 			return
 		}
 
 		const index = focusableElements.findIndex(v => v === current)
 		if (index < 0) {
-			lastOpenedDialog.focus()
+			_lastOpenedDialog.focus()
 			ev.preventDefault()
 			return
 		}
@@ -267,13 +280,13 @@ function _initListeners(): void {
 			ev.preventDefault()
 		}
 		else if (index === focusableElements.length - 1) {
-			lastOpenedDialog.focus()
+			_lastOpenedDialog.focus()
 			ev.preventDefault()
 		}
 	})
 }
 
-function _initDefaultStyle(): void {
+function _initDefaultStyles(): void {
 	STYLES.replaceSync(`
 :host {
 	position: fixed;
@@ -340,8 +353,8 @@ export function define(): void {
 		return
 	}
 
-	_initDefaultStyle()
 	_initListeners()
+	_initDefaultStyles()
 	customElements.define(TAGNAME, BiruDialogElement)
 }
 
