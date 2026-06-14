@@ -1,4 +1,4 @@
-import { ObservableStore } from "@/utils/store"
+import { ObservableStore } from "@/utils/signal"
 import { ScientificAngleType } from "../shared/enums"
 import { $, scrollInputToEnd } from "../core/dom-utils"
 import { ElementIds } from "../shared/ids"

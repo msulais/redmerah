@@ -1,7 +1,7 @@
 import { CButton } from "@/components/Button"
 import { ElementIds } from "../_shared/_ids"
 import { $ } from "./_dom-utils"
-import { ObservableStore } from "@/utils/store"
+import { ObservableStore } from "@/utils/signal"
 import { DEFAULT_VIBRATION_PATTERN } from "../_shared/_constant"
 import { showInputMessage, updateListElement } from "@/utils/element"
 import { CDialog } from "@/components/Dialog"

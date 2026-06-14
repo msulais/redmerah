@@ -1,5 +1,5 @@
 import type { NetworkInformation } from "@/interfaces/network-information"
-import { ObservableStore } from "@/utils/store"
+import { ObservableStore } from "@/utils/signal"
 import { ElementIds } from "../_shared/_ids"
 import { $ } from "./_dom-utils"
 import { CDialog } from "@/components/Dialog"

@@ -1,4 +1,4 @@
-import { ObservableStore } from "@/utils/store"
+import { ObservableStore } from "@/utils/signal"
 import { GradientStore, type GradientItem } from "./gradients"
 import { $, $$, $$$ } from "./dom-utils"
 import { CSSClasses } from "../../_styles/classes"

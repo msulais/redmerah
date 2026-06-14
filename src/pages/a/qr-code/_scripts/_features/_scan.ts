@@ -4,7 +4,7 @@ import { ElementIds } from "../_shared/_ids"
 import { BrowserQRCodeReader } from '@zxing/browser'
 import { BarcodeFormat, DecodeHintType } from "@zxing/library"
 import { pickFile } from "@/utils/file"
-import { ObservableStore } from "@/utils/store"
+import { ObservableStore } from "@/utils/signal"
 import { isAnimationAllowed } from "@/utils/animation"
 import { AnimationEasing } from "@/enums/animation"
 import { CTextAreaField } from "@/components/TextAreaField"

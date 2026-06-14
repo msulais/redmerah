@@ -1,4 +1,4 @@
-import { ObservableStore } from "@/utils/store"
+import { ObservableStore } from "@/utils/signal"
 import { updateEmojiList } from "./body"
 import { $ } from "./dom-utils"
 import { ElementIds } from "../shared/ids"

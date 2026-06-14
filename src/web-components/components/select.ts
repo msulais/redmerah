@@ -11,7 +11,7 @@ function _initDefaultStyles(): void {
 ${ELEMENT} {
 	appearance: base-select;
 	padding: .25rem .5rem .25rem 1rem;
-	border: 1px solid transparent;
+	border: 2px solid transparent;
 	display: flex;
 	background-color: rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .08);
 	align-items: center;
@@ -44,7 +44,7 @@ ${ELEMENT}:disabled {
 
 ${ELEMENT}:not(:disabled):open {
 	background-color: rgb(var(${BrTheme.CSSVars.ColorBackground}));
-	border-color: rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .32);
+	border-color: rgb(var(${BrTheme.CSSVars.ColorAccent}));
 }
 
 ${ELEMENT}:not(:disabled):hover {

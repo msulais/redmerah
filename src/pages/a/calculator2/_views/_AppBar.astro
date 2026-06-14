@@ -4,21 +4,32 @@ import * as BrNavigation from '@/web-components/components/br-navigation.server.
 import * as Ids from '../_scripts/shared/ids.enum'
 import * as ExternalLinks from '@/enums/external-links.enum.js'
 import * as Routes from '@/enums/routes.enum.js'
-import * as Constant from '../_scripts/shared/constant'
+import * as Constant from '../_scripts/shared/constant.enum.js'
 import * as InputNames from '../_scripts/shared/input-names.enum.js'
-import * as PlatformThemes from '@/enums/platform-themes.enum.js'
-import * as PlatformAnimation from '@/enums/platform-animation.enum.js'
+import * as BrTheme from '@/web-components/components/br-theme.server.js'
+import { DecimalNumberFormat, GroupingNumberFormat } from '../_scripts/shared/calculator'
 import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
 
 const THEMES: [text: string, value: string, icon: string][] = [
-	['Automatic', PlatformThemes.Auto , Icons.LaptopSettings],
-	['Light'    , PlatformThemes.Light, Icons.WeatherSunny  ],
-	['Dark'     , PlatformThemes.Dark , Icons.WeatherMoon   ],
+	['Automatic', BrTheme.ThemeMode.Auto , Icons.LaptopSettings],
+	['Light'    , BrTheme.ThemeMode.Light, Icons.WeatherSunny  ],
+	['Dark'     , BrTheme.ThemeMode.Dark , Icons.WeatherMoon   ],
 ]
 const ANIMATION: [text: string, value: string, icon: string][] = [
-	['Automatic', PlatformAnimation.Auto, Icons.VideoClipOptimize],
-	['On'       , PlatformAnimation.On  , Icons.VideoClip        ],
-	['Off'      , PlatformAnimation.Off , Icons.VideoClipOff     ],
+	['Automatic', BrTheme.Animation.Auto, Icons.VideoClipOptimize],
+	['On'       , BrTheme.Animation.On  , Icons.VideoClip        ],
+	['Off'      , BrTheme.Animation.Off , Icons.VideoClipOff     ],
+]
+const GROUPING: [text: string, value: string][] = [
+	['Point'     , GroupingNumberFormat.Point     ],
+	['Comma'     , GroupingNumberFormat.Comma     ],
+	['None'      , GroupingNumberFormat.None      ],
+	['Space'     , GroupingNumberFormat.Space     ],
+	['Underscore', GroupingNumberFormat.Underscore],
+]
+const DECIMALS: [text: string, value: string][] = [
+	['Point', DecimalNumberFormat.Point],
+	['Comma', DecimalNumberFormat.Comma],
 ]
 ---
 <br-appbar slot="appbar">
@@ -155,26 +166,15 @@ const ANIMATION: [text: string, value: string, icon: string][] = [
 				</button>
 				<br-popover br:submenu id={Ids.PopoverAppBarSettingsGrouping}>
 					<menu>
-						<li><label br:as="button">
-							<input checked type="radio" name="grouping"/>
-							Comma
-						</label></li>
-						<li><label br:as="button">
-							<input type="radio" name="grouping"/>
-							Point
-						</label></li>
-						<li><label br:as="button">
-							<input type="radio" name="grouping"/>
-							Space
-						</label></li>
-						<li><label br:as="button">
-							<input type="radio" name="grouping"/>
-							None
-						</label></li>
-						<li><label br:as="button">
-							<input type="radio" name="grouping"/>
-							Underscore
-						</label></li>
+						{GROUPING.map(v => <li><label br:as="button">
+							<input
+								checked={v[1] === Constant.DEFAULT_GROUPING_NUMBER_FORMAT}
+								value={v[1]}
+								type="radio"
+								name={InputNames.Grouping}
+							/>
+							{v[0]}
+						</label></li>)}
 					</menu>
 				</br-popover>
 			</li>
@@ -187,14 +187,15 @@ const ANIMATION: [text: string, value: string, icon: string][] = [
 				</button>
 				<br-popover br:submenu id={Ids.PopoverAppBarSettingsDecimal}>
 					<menu>
-						<li><label br:as="button">
-							<input type="radio" name="decimal"/>
-							Comma
-						</label></li>
-						<li><label br:as="button">
-							<input checked type="radio" name="decimal"/>
-							Point
-						</label></li>
+						{DECIMALS.map(v => <li><label br:as="button">
+							<input
+								checked={v[1] === Constant.DEFAULT_DECIMAL_NUMBER_FORMAT}
+								value={v[1]}
+								type="radio"
+								name={InputNames.Decimal}
+							/>
+							{v[0]}
+						</label></li>)}
 					</menu>
 				</br-popover>
 			</li>

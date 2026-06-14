@@ -1,6 +1,6 @@
 import { $, $$ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
-import { ObservableStore } from "@/utils/store"
+import { ObservableStore } from "@/utils/signal"
 import { DEFAULT_COLOR, DEFAULT_COLOR_IN_CMYK, DEFAULT_COLOR_IN_HSL, DEFAULT_COLOR_IN_HSV, DEFAULT_COLOR_IN_HWB, DEFAULT_COLOR_IN_RGB } from "../_shared/_constant"
 import { cmykToRgb, colorContrastPercentage, colorToRgb, hslToHsv, hslToRgb, hsvToHex, hsvToHsl, hsvToHwb, hsvToRgb, hwbToHsv, hwbToRgb, rgbToCmyk, rgbToColor, rgbToHex, rgbToHsl, rgbToHsv } from "@/utils/color"
 import { safeNumber } from "@/utils/number"

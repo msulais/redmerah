@@ -1,5 +1,5 @@
 import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
-import { ObservableStore } from "@/utils/store"
+import { ObservableStore } from "@/utils/signal"
 import { $, $$ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"
 import { LocalStorageKeys } from "@/enums/storage"

@@ -1,4 +1,4 @@
-import { ObservableStore } from "@/utils/store"
+import { ObservableStore } from "@/utils/signal"
 import { DEFAULT_SELECTION_COUNT, DEFAULT_SELECTION_LIST, DEFAULT_SELECTION_LIST_ID, DEFAULT_SELECTION_OUTPUT } from "../_shared/_constant"
 import { ElementIds } from "../_shared/_ids"
 import { $, $$$ } from "../_core/_dom-utils"

@@ -1,0 +1,74 @@
+---
+import * as Ids from '../_scripts/shared/ids.enum.js'
+import * as Pages from '../_scripts/shared/pages.enum.js'
+import * as Constant from '../_scripts/shared/constant.enum.js'
+import * as Styles from '../_styles/styles.enum.js'
+import * as Commands from '../_scripts/shared/commands.enum.js'
+import * as BrTheme from '@/web-components/components/br-theme.server.js'
+import * as Icons from '@/enums/icons.enum.js'
+---
+
+<br-view br:query={`page=${Pages.Basic}|none`}>
+	<div class={Styles.InputOutput}>
+		<input
+			id={Ids.PageBasicInput}
+			type="text"
+			placeholder="0"
+			value={Constant.DEFAULT_BASIC_INPUT}
+		/>
+		<input
+			id={Ids.PageBasicOutput}
+			type="text"
+			readonly
+			value={Constant.DEFAULT_BASIC_OUTPUT}
+		/>
+	</div>
+	<div class={Styles.InputOptions}>
+		<button
+			data-command={Commands.MemoryClear}
+			br:tooltip="Memory clear (Ctrl+Shift+C)">
+			MC
+		</button>
+		<button
+			data-command={Commands.MemoryAdd}
+			br:tooltip="Memory add (Ctrl+Shift+&quot;+&quot;)">
+			M+
+		</button>
+		<button
+			data-command={Commands.MemorySubtract}
+			br:tooltip="Memory subtract (Ctrl+Shift+&quot;-&quot;)">
+			M-
+		</button>
+		<button
+			data-command={Commands.MemoryRecall}
+			br:tooltip="Memory recall (Ctrl+Shift+R)">
+			MR: {Constant.DEFAULT_MEMORY}
+		</button>
+	</div>
+	<div class={Styles.InputButtons} style="grid-template-columns: repeat(4, 1fr);">
+		<button data-command={Commands.KeyChar} data-char="%" br:variant="tonal">%</button>
+		<button data-command={Commands.KeyChar} data-char="√" br:variant="tonal">√</button>
+		<button data-command={Commands.KeyClear} br:variant="tonal" style={`color:rgb(var(${BrTheme.CSSVars.ColorAccent}))`}>C</button>
+		<button data-command={Commands.KeyBackspace} br:variant="tonal" style={`color:rgb(var(${BrTheme.CSSVars.ColorAccent}))`}><br-icon set:html={Icons.Backspace}/></button>
+
+		<button data-command={Commands.KeyChar} data-char="7" data-type="number" br:variant="tonal">7</button>
+		<button data-command={Commands.KeyChar} data-char="8" data-type="number" br:variant="tonal">8</button>
+		<button data-command={Commands.KeyChar} data-char="9" data-type="number" br:variant="tonal">9</button>
+		<button data-command={Commands.KeyChar} data-char="÷" br:variant="tonal"><br-icon set:html={Icons.SlashForward}/></button>
+
+		<button data-command={Commands.KeyChar} data-char="4" data-type="number" br:variant="tonal">4</button>
+		<button data-command={Commands.KeyChar} data-char="5" data-type="number" br:variant="tonal">5</button>
+		<button data-command={Commands.KeyChar} data-char="6" data-type="number" br:variant="tonal">6</button>
+		<button data-command={Commands.KeyChar} data-char="×" br:variant="tonal"><br-icon set:html={Icons.Dismiss}/></button>
+
+		<button data-command={Commands.KeyChar} data-char="1" data-type="number" br:variant="tonal">1</button>
+		<button data-command={Commands.KeyChar} data-char="2" data-type="number" br:variant="tonal">2</button>
+		<button data-command={Commands.KeyChar} data-char="3" data-type="number" br:variant="tonal">3</button>
+		<button data-command={Commands.KeyChar} data-char="-" br:variant="tonal"><br-icon set:html={Icons.LineHorizontal1}/></button>
+
+		<button data-command={Commands.KeyChar} data-char="0" data-type="number" br:variant="tonal">0</button>
+		<button data-command={Commands.KeyDec} br:variant="tonal">.</button>
+		<button data-command={Commands.KeyEqual} br:variant="filled" style="font-weight:bold">=</button>
+		<button data-command={Commands.KeyChar} data-char="+" br:variant="tonal"><br-icon set:html={Icons.Add}/></button>
+	</div>
+</br-view>

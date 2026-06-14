@@ -1,4 +1,4 @@
-import { ObservableStore } from "@/utils/store"
+import { ObservableStore } from "@/utils/signal"
 import { Pages } from "../shared/enums"
 import { ElementIds } from "../shared/ids"
 import { $ } from "./dom-utils"

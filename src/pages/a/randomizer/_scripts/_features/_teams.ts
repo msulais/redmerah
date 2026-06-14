@@ -1,4 +1,4 @@
-import { ObservableStore } from "@/utils/store"
+import { ObservableStore } from "@/utils/signal"
 import { DEFAULT_TEAMS_COUNT, DEFAULT_TEAMS_MEMBERS_ID, DEFAULT_TEAMS_NAMES_ID, DEFAULT_TEAMS_OUTPUT } from "../_shared/_constant"
 import { ElementIds } from "../_shared/_ids"
 import { $, $$, $$$ } from "../_core/_dom-utils"

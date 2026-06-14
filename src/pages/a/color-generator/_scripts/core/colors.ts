@@ -1,5 +1,5 @@
 import type { HEXColor, RGBColor } from "@/types/color"
-import { ObservableStore } from "@/utils/store"
+import { ObservableStore } from "@/utils/signal"
 import { DEFAULT_COLOR, DEFAULT_PALETTE } from "../shared/constant"
 import { $, $$, $$$ } from "./dom-utils"
 import { ElementIds } from "../shared/ids"

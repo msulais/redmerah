@@ -9,11 +9,13 @@ export function _initDefaultStyles(): void {
 	document.adoptedStyleSheets.push(styles)
 	styles.replaceSync(`
 ${ELEMENT} {
+	display: block;
 	border: 1px solid transparent;
 	padding: .25rem .5rem;
 	border-radius: .25rem;
 	background-color: rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .08);
 	resize: none;
+	width: 100%;
 	font-size: .875rem;
 	min-height: 2rem;
 	outline: none;

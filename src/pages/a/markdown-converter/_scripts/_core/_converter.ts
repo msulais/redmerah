@@ -1,4 +1,4 @@
-import { ObservableStore } from "@/utils/store"
+import { ObservableStore } from "@/utils/signal"
 import { DEFAULT_CSS_TEXT, DEFAULT_MARKDOWN_TEXT } from "../_shared/_constant"
 import { $ } from "./_dom-utils"
 import { ElementIds } from "../_shared/_ids"

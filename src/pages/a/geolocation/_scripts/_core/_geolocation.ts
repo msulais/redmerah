@@ -1,7 +1,7 @@
 import { CButton } from "@/components/Button"
 import { ElementIds } from "../_shared/_ids"
 import { $, $$ } from "./_dom-utils"
-import { ObservableStore } from "@/utils/store"
+import { ObservableStore } from "@/utils/signal"
 import { CToast } from "@/components/Toast"
 import { CIcon } from "@/components/Icon"
 

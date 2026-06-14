@@ -1,0 +1,6 @@
+export const Backspace = 'Backspace'
+export const Enter     = 'Enter'
+export const Delete    = 'Delete'
+export const Space     = 'Space'
+export const KeyR      = 'KeyR'
+export const KeyC      = 'KeyC'

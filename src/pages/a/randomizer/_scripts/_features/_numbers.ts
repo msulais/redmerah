@@ -1,4 +1,4 @@
-import { ObservableStore } from "@/utils/store"
+import { ObservableStore } from "@/utils/signal"
 import { NumbersRandomizerType, NumbersRandomizerSort } from "../_shared/_enums"
 import { DEFAULT_NUMBERS_COUNT, DEFAULT_NUMBERS_DIGITS, DEFAULT_NUMBERS_MAX, DEFAULT_NUMBERS_MIN, DEFAULT_NUMBERS_OUTPUT, DEFAULT_NUMBERS_PREFIX, DEFAULT_NUMBERS_REPEAT, DEFAULT_NUMBERS_SEPARATOR, DEFAULT_NUMBERS_SORT, DEFAULT_NUMBERS_SUFFIX, DEFAULT_NUMBERS_TYPE } from "../_shared/_constant"
 import { $ } from "../_core/_dom-utils"

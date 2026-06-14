@@ -1,4 +1,4 @@
-import { ObservableStore } from "@/utils/store"
+import { ObservableStore } from "@/utils/signal"
 import { WordsRandomizerCase } from "../_shared/_enums"
 import { DEFAULT_WORDS_CASE, DEFAULT_WORDS_COUNT, DEFAULT_WORDS_LIST_ID, DEFAULT_WORDS_OUTPUT, DEFAULT_WORDS_PREFIX, DEFAULT_WORDS_REPEAT, DEFAULT_WORDS_SEPARATOR, DEFAULT_WORDS_SUFFIX } from "../_shared/_constant"
 import { ElementIds } from "../_shared/_ids"

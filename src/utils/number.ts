@@ -14,7 +14,7 @@ export function adjustDecimalNumber(num: number, digits: number): number {
 	return Number.parseFloat(num.toFixed(digits))
 }
 
-export function formatNumber(num: number, separator: {
+export function formatNumber(num: number, length = 3, separator: {
 	thousand?: string
 	decimal?: string
 } = {}): string {
@@ -25,7 +25,7 @@ export function formatNumber(num: number, separator: {
 	const sign = num < 0 ? '-' : ''
 	const absNumber = Math.abs(num)
 	const parts = numberToRealDigits(absNumber).split('.')
-	const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousand)
+	const integerPart = parts[0].replace(new RegExp(`\\B(?=(\\d{${length}})+(?!\\d))`, "g"), thousand)
 
 	let decimalPart = ''
 	if (parts.length > 1) decimalPart = parts[1]

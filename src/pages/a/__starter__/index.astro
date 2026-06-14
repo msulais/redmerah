@@ -1,5 +1,6 @@
 ---
-import * as Constant from './_scripts/shared/constant'
+import * as Constant from './_scripts/shared/constant.enum.js'
+import * as Styles from './_styles/styles.enum.js'
 import Html2 from '@/layouts/Html2/index.astro'
 import AppBar from './_views/_AppBar.astro'
 import Navigation from './_views/_Navigation.astro'
@@ -19,6 +20,7 @@ import Navigation from './_views/_Navigation.astro'
 	<br-scaffold>
 		<AppBar />
 		<Navigation/>
+		<main class={Styles.Main}></main>
 	</br-scaffold>
 	<script src="@/web-components/components/br-scaffold.ts"/>
 	<script src="@/web-components/components/br-view.ts"/>

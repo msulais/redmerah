@@ -1,13 +1,19 @@
 import { GlobalAttributes } from "./global-attributes"
 
 const LISTENER = new Set<Function>()
-const EVENT_TYPE_ROUTE_CHANGED = "br:route-changed"
+const EVENT_TYPE_ROUTE_CHANGED = "route-changed"
 
 export function listenRouteChange(callback: (ev: Event) => unknown) {
 	if (LISTENER.size === 0) {
-		window.addEventListener('hashchange', callback)
-		window.addEventListener('popstate', callback)
-		window.addEventListener(EVENT_TYPE_ROUTE_CHANGED, callback)
+		const fn = (ev: Event) => {
+			for (const listener of LISTENER) {
+				listener(ev)
+			}
+		}
+
+		window.addEventListener('hashchange', fn)
+		window.addEventListener('popstate', fn)
+		window.addEventListener(EVENT_TYPE_ROUTE_CHANGED, fn)
 		document.addEventListener("click", (e) => {
 			const target = e.target as HTMLElement
 			const anchor = target.closest("a")

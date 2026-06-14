@@ -1,0 +1,89 @@
+---
+import * as Ids from '../_scripts/shared/ids.enum.js'
+import * as Pages from '../_scripts/shared/pages.enum.js'
+import * as Constant from '../_scripts/shared/constant.enum.js'
+import { DateOperation } from '../_scripts/shared/calculator'
+---
+
+<br-view br:query={`page=${Pages.Date}`}>
+	<div style="padding:.5rem">
+		<label
+			style="font-size:.875rem"
+			for={Ids.PageDateOperation}>
+			Operation
+		</label>
+		<select
+			id={Ids.PageDateOperation}
+			style={{
+				width: 'min(100%, 22.5rem)',
+				margin: '.25rem 0 1rem 0'
+			}}>
+			<option selected={Constant.DEFAULT_DATE_OPERATION === DateOperation.Add} value={DateOperation.Add}>Add</option>
+			<option selected={Constant.DEFAULT_DATE_OPERATION === DateOperation.Subtract} value={DateOperation.Subtract}>Subtract</option>
+			<option selected={Constant.DEFAULT_DATE_OPERATION === DateOperation.Difference} value={DateOperation.Difference}>Difference</option>
+		</select>
+
+		<label
+			style="font-size:.875rem"
+			for={Ids.PageDateFrom}>
+			From
+		</label>
+		<input
+			id={Ids.PageDateFrom}
+			type="date"
+			style={{
+				margin: ".25rem 0 1rem 0",
+				width: 'min(100%, 22.5rem)',
+			}}
+			br:as="textfield"
+			style="width:fit-content"
+			value={Constant.DEFAULT_DATE_INPUT_FROM.toISOString().substring(0, 10)}
+		/>
+
+		<div id={Ids.PageDateDiff}>
+			<label
+				style="font-size:.875rem"
+				for={Ids.PageDateTo}>
+				To
+			</label>
+			<input
+				id={Ids.PageDateTo}
+				type="date"
+				style={{
+					margin: ".25rem 0 1rem 0",
+					width: 'min(100%, 22.5rem)',
+				}}
+				br:as="textfield"
+				value={Constant.DEFAULT_DATE_INPUT_TO.toISOString().substring(0, 10)}
+			/>
+		</div>
+
+		<div
+			id={Ids.PageDateAddOrSub}
+			style={{
+				display: 'none',
+				gridTemplateColumns: 'repeat(3,1fr)',
+				width: 'min(100%, 22.5rem)',
+				gap: '.5rem',
+				marginBottom: '1rem'
+			}}>
+			<div>
+				<label style="font-size:.875rem;margin-bottom:.25rem" for={Ids.PageDateYears}>Years</label>
+				<input br:as="textfield" id={Ids.PageDateYears} min="0" type="number" value={Constant.DEFAULT_DATE_INPUT_YEARS} />
+			</div>
+			<div>
+				<label style="font-size:.875rem;margin-bottom:.25rem" for={Ids.PageDateMonths}>Months</label>
+				<input br:as="textfield" id={Ids.PageDateMonths} min="0" type="number" value={Constant.DEFAULT_DATE_INPUT_MONTHS} />
+			</div>
+			<div>
+				<label style="font-size:.875rem;margin-bottom:.25rem" for={Ids.PageDateDays}>Days</label>
+				<input br:as="textfield" id={Ids.PageDateDays} min="0" type="number" value={Constant.DEFAULT_DATE_INPUT_DAYS} />
+			</div>
+		</div>
+
+		<label style="font-size:.875rem;" for={Ids.PageDateOutput}>Result</label>
+		<output
+			id={Ids.PageDateOutput}
+			style="display:block;font-size:1.5rem">{Constant.DEFAULT_DATE_OUTPUT}</output>
+	</div>
+</br-view>

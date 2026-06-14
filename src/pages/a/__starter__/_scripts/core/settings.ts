@@ -1,0 +1,123 @@
+import * as Constant from "../shared/constant.enum.js";
+import * as Ids from '../shared/ids.enum.js'
+import * as Pages from '../shared/pages.enum.js'
+import * as InputNames from '../shared/input-names.enum.js'
+import * as BrPopover from "@/web-components/components/br-popover";
+import * as BrTheme from '@/web-components/components/br-theme.js'
+import * as LocalStorageKeys from '@/enums/local-storage-keys.enum.js'
+import { listenRouteChange } from '@/web-components/router.js'
+import { signal } from "@/utils/signal.js";
+import { $, $$ } from "./dom-utils";
+import { isValidEnumValue } from "@/utils/object.js";
+
+const _sg_theme     = signal(Constant.DEFAULT_THEME)
+const _sg_animation = signal(Constant.DEFAULT_ANIMATION)
+const _sg_page      = signal<typeof Pages[keyof typeof Pages]>(Pages.Basic)
+
+export const Signals = {
+	theme: _sg_theme,
+	animation: _sg_animation,
+	page: _sg_page
+}
+
+const _ref_theme            = $$<BrTheme.BiruThemeElement>(BrTheme.TAGNAME)
+const _ref_themePopover     = $(Ids.PopoverAppBarSettingsTheme) as BrPopover.BiruPopoverElement
+const _ref_animationPopover = $(Ids.PopoverAppBarSettingsAnimation) as BrPopover.BiruPopoverElement
+
+function _initTheme(): void {
+	const theme = localStorage.getItem(LocalStorageKeys.PlatformTheme)
+	if (!_ref_theme || !theme || !isValidEnumValue(theme, BrTheme.ThemeMode) || theme === Constant.DEFAULT_THEME) {
+		return
+	}
+
+	_ref_theme.biru.themeMode = BrTheme.ThemeMode.Auto
+	const ref_previous = $$(
+		`input[name="${CSS.escape(InputNames.Theme)}"]:checked`
+	) as HTMLInputElement
+	const ref_target = $$(
+		`input[name="${CSS.escape(InputNames.Theme)}"][value="${CSS.escape(theme)}"]`
+	) as HTMLInputElement
+
+	if (ref_previous === ref_target) {
+		return
+	}
+
+	if (ref_previous) {
+		ref_previous.checked = false
+	}
+
+	if (ref_target) {
+		ref_target.checked = true
+	}
+}
+
+function _initAnimation(): void {
+	const animation = localStorage.getItem(LocalStorageKeys.PlatformAnimation)
+	if (!_ref_theme || !animation || !isValidEnumValue(animation, BrTheme.Animation) || animation === Constant.DEFAULT_ANIMATION) {
+		return
+	}
+
+	_ref_theme.biru.animation = BrTheme.Animation.Auto
+	const ref_previous = $$(
+		`input[name="${CSS.escape(InputNames.Animation)}"]:checked`
+	) as HTMLInputElement
+	const ref_target = $$(
+		`input[name="${CSS.escape(InputNames.Animation)}"][value="${CSS.escape(animation)}"]`
+	) as HTMLInputElement
+
+	if (ref_previous === ref_target) {
+		return
+	}
+
+	if (ref_previous) {
+		ref_previous.checked = false
+	}
+
+	if (ref_target) {
+		ref_target.checked = true
+	}
+}
+
+function _updatePage(): void {
+	const page = new URLSearchParams(window.location.search).get('page') as (typeof Pages[keyof typeof Pages])
+	if (!page || !isValidEnumValue(page, Pages)) {
+		return
+	}
+
+	_sg_page.set(page)
+}
+
+function _initEvents(): void {
+	listenRouteChange(() => _updatePage())
+
+	_ref_themePopover.addEventListener('change', ev => {
+		const target = ev.target as HTMLInputElement
+		const value = target?.value as BrTheme.ThemeMode
+		if (!_ref_theme || !value || !isValidEnumValue(value, BrTheme.ThemeMode)) {
+			return
+		}
+
+		_ref_theme.biru.themeMode = value
+		localStorage.setItem(LocalStorageKeys.PlatformTheme, value)
+		_sg_theme.set(value)
+	})
+
+	_ref_animationPopover.addEventListener('change', ev => {
+		const target = ev.target as HTMLInputElement
+		const value = target?.value as BrTheme.Animation
+		if (!_ref_theme || !value || !isValidEnumValue(value, BrTheme.Animation)) {
+			return
+		}
+
+		_ref_theme.biru.animation = value
+		localStorage.setItem(LocalStorageKeys.PlatformAnimation, value)
+		_sg_animation.set(value)
+	})
+}
+
+export default () => {
+	_updatePage()
+	_initAnimation()
+	_initTheme()
+	_initEvents()
+}

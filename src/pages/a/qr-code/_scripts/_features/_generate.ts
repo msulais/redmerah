@@ -1,4 +1,4 @@
-import { ObservableStore } from "@/utils/store"
+import { ObservableStore } from "@/utils/signal"
 import { $ } from "../_core/_dom-utils"
 import { ElementIds } from "../_shared/_ids"
 import { CTextAreaField } from "@/components/TextAreaField"

@@ -1,4 +1,4 @@
-import { ObservableStore } from "@/utils/store"
+import { ObservableStore } from "@/utils/signal"
 import { NavigationStore } from "./_navigation"
 import { Pages } from "../_shared/_enums"
 import { StringStore, updateOutput as updateStringOutput } from "../_features/_string"

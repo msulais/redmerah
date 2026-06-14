@@ -1,4 +1,4 @@
-import { ObservableStore } from "@/utils/store"
+import { ObservableStore } from "@/utils/signal"
 import { $$$ } from "./dom-utils"
 import { CSSClasses } from "../../_styles/classes"
 import { formatOutput } from "./string-utils"
@@ -91,6 +91,7 @@ function _subscribeValueRefView(v: MemoryStoreType, o: MemoryStoreType): void {
 		&& _memoryRecallRefs.values().every(v => v.textContent === formattedValue)
 	) return;
 
+	console.log('here')
 	for (const ref of _memoryRecallRefs) {
 		ref.textContent = formattedValue
 	}

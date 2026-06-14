@@ -87,6 +87,7 @@ ${ELEMENT_ITEM} {
 	min-height: 1.75rem;
 	padding: .25rem .5rem;
 	white-space: nowrap;
+	justify-content: flex-start;
 }
 
 ${ELEMENT_ITEM} input:where([type=checkbox],[type=radio]) {

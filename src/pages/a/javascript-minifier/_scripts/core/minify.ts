@@ -1,4 +1,4 @@
-import { ObservableStore } from "@/utils/store"
+import { ObservableStore } from "@/utils/signal"
 import { ElementIds } from "../shared/ids"
 import beautify from 'js-beautify'
 import { $ } from "./dom-utils"

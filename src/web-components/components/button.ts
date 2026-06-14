@@ -44,6 +44,7 @@ ${ELEMENT} {
 	cursor: pointer;
 	background-color: transparent;
 	padding: .25rem .75rem;
+	justify-content: center;
 	line-height: normal;
 	border: none;
 	filter: none;

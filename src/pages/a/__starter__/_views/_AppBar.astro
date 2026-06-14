@@ -4,21 +4,20 @@ import * as BrNavigation from '@/web-components/components/br-navigation.server.
 import * as Ids from '../_scripts/shared/ids.enum.js'
 import * as ExternalLinks from '@/enums/external-links.enum.js'
 import * as Routes from '@/enums/routes.enum.js'
-import * as Constant from '../_scripts/shared/constant.js'
+import * as Constant from '../_scripts/shared/constant.enum.js'
 import * as InputNames from '../_scripts/shared/input-names.enum.js'
-import * as PlatformThemes from '@/enums/platform-themes.enum.js'
-import * as PlatformAnimation from '@/enums/platform-animation.enum.js'
+import * as BrTheme from '@/web-components/components/br-theme.server.js'
 import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
 
 const THEMES: [text: string, value: string, icon: string][] = [
-	['Automatic', PlatformThemes.Auto , Icons.LaptopSettings],
-	['Light'    , PlatformThemes.Light, Icons.WeatherSunny  ],
-	['Dark'     , PlatformThemes.Dark , Icons.WeatherMoon   ],
+	['Automatic', BrTheme.ThemeMode.Auto , Icons.LaptopSettings],
+	['Light'    , BrTheme.ThemeMode.Light, Icons.WeatherSunny  ],
+	['Dark'     , BrTheme.ThemeMode.Dark , Icons.WeatherMoon   ],
 ]
 const ANIMATION: [text: string, value: string, icon: string][] = [
-	['Automatic', PlatformAnimation.Auto, Icons.VideoClipOptimize],
-	['On'       , PlatformAnimation.On  , Icons.VideoClip        ],
-	['Off'      , PlatformAnimation.Off , Icons.VideoClipOff     ],
+	['Automatic', BrTheme.Animation.Auto, Icons.VideoClipOptimize],
+	['On'       , BrTheme.Animation.On  , Icons.VideoClip        ],
+	['Off'      , BrTheme.Animation.Off , Icons.VideoClipOff     ],
 ]
 ---
 <br-appbar slot="appbar">

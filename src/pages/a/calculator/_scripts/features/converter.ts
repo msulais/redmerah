@@ -1,4 +1,4 @@
-import { ObservableStore } from "@/utils/store"
+import { ObservableStore } from "@/utils/signal"
 import { ConverterType } from "../shared/enums"
 import { AngleUnits, AreaUnits, FrequencyUnits, LengthUnits, PressureUnits, TemperatureUnits, TimeUnits, VolumeUnits, WeightUnits, type ConverterUnit } from "../shared/units"
 import { DEFAULT_CONVERTER_INPUT, DEFAULT_CONVERTER_INPUT_UNIT, DEFAULT_CONVERTER_OUTPUT, DEFAULT_CONVERTER_OUTPUT_UNIT, DEFAULT_CONVERTER_TYPE } from "../shared/constant"

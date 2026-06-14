@@ -1,5 +1,3 @@
-import type { DatabaseNames } from "@/enums/storage"
-
 type CreateObjectStoreParams<T extends object> = {
 	name: string
 	keyPath: (keyof T)
@@ -14,12 +12,12 @@ type Listeners = {
 }
 
 export class IDB {
-	readonly databaseName: DatabaseNames
+	readonly databaseName: string
 	readonly version: number
 	private _db: IDBDatabase | null = null
 	private _isOpen: boolean = false
 
-	constructor (databaseName: DatabaseNames, version: number = 1) {
+	constructor (databaseName: string, version: number = 1) {
 		this.databaseName = databaseName
 		this.version = version
 	}

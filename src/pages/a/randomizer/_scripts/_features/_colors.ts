@@ -1,4 +1,4 @@
-import { ObservableStore } from "@/utils/store"
+import { ObservableStore } from "@/utils/signal"
 import { $, $$$ } from "../_core/_dom-utils"
 import { ColorsRandomizerSpace } from "../_shared/_enums"
 import { ElementIds } from "../_shared/_ids"

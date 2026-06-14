@@ -1,8 +1,14 @@
 ---
-import * as Constant from './_scripts/shared/constant'
+import * as Constant from './_scripts/shared/constant.enum.js'
+import * as Styles from './_styles/styles.enum.js'
 import Html2 from '@/layouts/Html2/index.astro'
 import AppBar from './_views/_AppBar.astro'
 import Navigation from './_views/_Navigation.astro'
+import PageBasic from './_views/_PageBasic.astro'
+import PageScientific from './_views/_PageScientific.astro'
+import PageConverter from './_views/_PageConverter.astro'
+import PageProgrammer from './_views/_PageProgrammer.astro'
+import PageDate from './_views/_PageDate.astro'
 ---
 
 <Html2
@@ -19,6 +25,13 @@ import Navigation from './_views/_Navigation.astro'
 	<br-scaffold>
 		<AppBar />
 		<Navigation/>
+		<main class={Styles.Main}>
+			<PageBasic/>
+			<PageScientific/>
+			<PageConverter/>
+			<PageProgrammer/>
+			<PageDate/>
+		</main>
 	</br-scaffold>
 	<script src="@/web-components/components/br-scaffold.ts"/>
 	<script src="@/web-components/components/br-view.ts"/>
@@ -29,5 +42,8 @@ import Navigation from './_views/_Navigation.astro'
 	<script src="@/web-components/components/menu.ts"/>
 	<script src="@/web-components/components/navigationitem.ts"/>
 	<script src="@/web-components/components/button.ts"/>
+	<script src="@/web-components/components/select.ts"/>
+	<script src="@/web-components/components/checkbox.ts"/>
+	<script src="@/web-components/components/textfield.ts"/>
 	<script src="./_scripts/index.ts"/>
 </Html2>
