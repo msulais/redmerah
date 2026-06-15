@@ -24,7 +24,26 @@ export const Attributes = {
 	 * Example: `"(not (width > 1000px)) and (color), print and (color)"`
 	 * */
 	Media: 'br:media',
+
+	AnimationFor               : 'br:animation-for',
+
+	/** `Keyframe[] | PropertyIndexedKeyframes` */
+	AnimationStartKeyframes    : 'br:animation-start-keyframes',
+	AnimationStartEasing       : 'br:animation-start-easing',
+	AnimationStartDuration     : 'br:animation-start-duration',
+	AnimationStartDelayDuration: 'br:animation-start-delay-duration',
+
+	/** `Keyframe[] | PropertyIndexedKeyframes` */
+	AnimationEndKeyframes      : 'br:animation-end-keyframes',
+	AnimationEndEasing         : 'br:animation-end-easing',
+	AnimationEndDuration       : 'br:animation-end-duration',
+	AnimationEndDelayDuration  : 'br:animation-end-delay-duration',
 } as const
 export type Attributes = typeof Attributes[keyof typeof Attributes]
+
+export const EventTypes = {
+	Toggle: 'br:toggle'
+} as const
+export type EventTypes = typeof EventTypes[keyof typeof EventTypes]
 
 export const TAGNAME = 'br-view'
