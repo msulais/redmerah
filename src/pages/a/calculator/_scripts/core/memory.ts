@@ -13,24 +13,20 @@ import { saveStorageItem } from "./database.js"
 import { signal } from '@/utils/signal.js'
 import { ProgrammerNumTypes } from '../shared/calculator.js'
 
-const _sg_memoryValue = signal(Constant.DEFAULT_MEMORY)
-
-export const Signals = {
-	memoryValue: _sg_memoryValue
-}
+export const sg_memoryValue = signal(Constant.DEFAULT_MEMORY)
 
 const _refs_memoryRecall = $$$<HTMLButtonElement>(`[data-command=${Commands.MemoryRecall}]`)
 
 export function recallMemory(): void {
-	let value = formatOutput(_sg_memoryValue())
-	switch (Settings.Signals.page()) {
-	case Pages.Basic     : return Basic.Signals.input     .set(v => v + value)
-	case Pages.Scientific: return Scientific.Signals.input.set(v => v + value)
-	case Pages.Converter : return Converter.Signals.input .set(v => v + value)
+	let value = formatOutput(sg_memoryValue())
+	switch (Settings.sg_page()) {
+	case Pages.Basic     : return Basic.sg_input     .set(v => v + value)
+	case Pages.Scientific: return Scientific.sg_input.set(v => v + value)
+	case Pages.Converter : return Converter.sg_input .set(v => v + value)
 	case Pages.Programmer:
-		const bin = numberToBinary(_sg_memoryValue())
+		const bin = numberToBinary(sg_memoryValue())
 		const parsedBin = Number.parseInt(bin, 2)
-		switch (Programmer.Signals.numType()) {
+		switch (Programmer.sg_numType()) {
 		case ProgrammerNumTypes.Decimal: break
 		case ProgrammerNumTypes.Hexadecimal:
 			value = parsedBin.toString(16).toUpperCase()
@@ -43,7 +39,7 @@ export function recallMemory(): void {
 			break
 		}
 
-		Programmer.Signals.input.set(v => v + value)
+		Programmer.sg_input.set(v => v + value)
 		break
 	case Pages.Date:
 	}
@@ -51,25 +47,25 @@ export function recallMemory(): void {
 
 export function updateMemory(type: 'add' | 'min'): void {
 	let output: number | null = null
-	switch (Settings.Signals.page()) {
-	case Pages.Basic     : output = Basic     .Signals.output(); break
-	case Pages.Scientific: output = Scientific.Signals.output(); break
-	case Pages.Converter : output = Converter .Signals.output(); break
-	case Pages.Programmer: output = Programmer.Signals.output(); break
+	switch (Settings.sg_page()) {
+	case Pages.Basic     : output = Basic     .sg_output(); break
+	case Pages.Scientific: output = Scientific.sg_output(); break
+	case Pages.Converter : output = Converter .sg_output(); break
+	case Pages.Programmer: output = Programmer.sg_output(); break
 	case Pages.Date: break
 	}
 
 	if (output !== null) {
-		_sg_memoryValue.set(v => v + (output * (type === 'min'? -1 : 1)))
+		sg_memoryValue.set(v => v + (output * (type === 'min'? -1 : 1)))
 	}
 }
 
 export function clearMemory(): void {
-	_sg_memoryValue.set(0)
+	sg_memoryValue.set(0)
 }
 
 function _initSubscriber(): void {
-	_sg_memoryValue.subscribe(v => {
+	sg_memoryValue.subscribe(v => {
 		const formattedValue = 'MR: ' + formatOutput(v)
 		for (const ref of _refs_memoryRecall) {
 			ref.textContent = formattedValue

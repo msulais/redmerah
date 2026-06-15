@@ -10,18 +10,12 @@ import { signal } from "@/utils/signal"
 import { ProgrammerNumTypes } from '../shared/calculator.js'
 import { isValidEnumValue } from '@/utils/object'
 
-const _sg_input = signal(Constant.DEFAULT_PROGRAMMER_INPUT)
+export const sg_input = signal(Constant.DEFAULT_PROGRAMMER_INPUT)
 
 // IN DEC ONLY
-const _sg_output = signal(Constant.DEFAULT_PROGRAMMER_OUTPUT)
+export const sg_output = signal(Constant.DEFAULT_PROGRAMMER_OUTPUT)
 
-const _sg_numType = signal(Constant.DEFAULT_PROGRAMMER_NUMBER_TYPE)
-
-export const Signals = {
-	input: _sg_input,
-	output: _sg_output,
-	numType: _sg_numType
-}
+export const sg_numType = signal(Constant.DEFAULT_PROGRAMMER_NUMBER_TYPE)
 
 const _ref_input = $(Ids.PageProgrammerInput) as HTMLInputElement
 const _ref_outputDec = $(Ids.PageProgrammerOutputDec) as HTMLInputElement
@@ -36,11 +30,11 @@ const _refs_binButton = $$$<HTMLButtonElement>(`.${Styles.PageProgrammerBtnBin}`
 let _time_calculate: ReturnType<typeof setTimeout> | undefined
 
 function _inputToDecimal(input: string): string {
-	if (_sg_numType() !== ProgrammerNumTypes.Decimal) {
+	if (sg_numType() !== ProgrammerNumTypes.Decimal) {
 		input = input.replace(/[,\.]+/g, '')
 	}
 
-	switch (_sg_numType()) {
+	switch (sg_numType()) {
 	case ProgrammerNumTypes.Decimal: break
 	case ProgrammerNumTypes.Hexadecimal:
 		input = input.replace(/[0-9A-F]+/g, (v) => Number.parseInt(v, 16).toString())
@@ -62,29 +56,29 @@ function _inputToDecimal(input: string): string {
 function _calculate(): void {
 	clearTimeout(_time_calculate)
 	_time_calculate = setTimeout(() => {
-		const output = calculate(_inputToDecimal(_sg_input()))
+		const output = calculate(_inputToDecimal(sg_input()))
 		const parsedOutput = Number.parseFloat(output)
-		_sg_output.set(isNumberDefined(parsedOutput)? parsedOutput : null)
+		sg_output.set(isNumberDefined(parsedOutput)? parsedOutput : null)
 	}, 50)
 }
 
 function _initSubscriber(): void {
-	_sg_numType.subscribe(v => {
+	sg_numType.subscribe(v => {
 		_ref_numTypes.value = v
 		saveStorageItem('page-programmer-num-type', v, 250)
 
 		// update disabled buttons & update input
-		const isOutputNull = _sg_output() === null
+		const isOutputNull = sg_output() === null
 		let cls = Styles.PageProgrammerBtnDec
 		let elements = _refs_decButton
 		let updatedTextInput = ''
 
-		const bin = () => numberToBinary(_sg_output()!)
+		const bin = () => numberToBinary(sg_output()!)
 		const parsedBin = () => Number.parseInt(bin(), 2)
 		switch (v) {
 		case ProgrammerNumTypes.Decimal:
 			if (!isOutputNull) {
-				updatedTextInput = formatOutput(_sg_output()!)
+				updatedTextInput = formatOutput(sg_output()!)
 			}
 			break
 		case ProgrammerNumTypes.Hexadecimal:
@@ -119,10 +113,10 @@ function _initSubscriber(): void {
 			ref.disabled = false
 		}
 
-		_sg_input.set(updatedTextInput)
+		sg_input.set(updatedTextInput)
 	})
 
-	_sg_output.subscribe(v => {
+	sg_output.subscribe(v => {
 		if (v === null) {
 			_ref_outputHex.value = ''
 			_ref_outputDec.value = ''
@@ -147,7 +141,7 @@ function _initSubscriber(): void {
 		_ref_outputBin.value = customFormat(bin, 4, ' ')
 	})
 
-	_sg_input.subscribe(v => {
+	sg_input.subscribe(v => {
 		_ref_input.value = v
 		saveStorageItem('page-programmer-input', v, 250)
 		scrollInputToEnd(_ref_input)
@@ -163,11 +157,11 @@ function _initEvents(): void {
 			return
 		}
 
-		_sg_numType.set(value)
+		sg_numType.set(value)
 	})
 
 	_ref_input.addEventListener('input', () => {
-		_sg_input.set(_ref_input.value)
+		sg_input.set(_ref_input.value)
 	})
 }
 

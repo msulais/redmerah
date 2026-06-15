@@ -18,19 +18,11 @@ import { $, $$, $$$ } from "./dom-utils.js";
 import { isValidEnumValue } from "@/utils/object.js";
 import { saveStorageItem } from "./database.js";
 
-const _sg_theme          = signal(Constant.DEFAULT_THEME)
-const _sg_animation      = signal(Constant.DEFAULT_ANIMATION)
-const _sg_page           = signal<typeof Pages[keyof typeof Pages]>(Pages.Basic)
-const _sg_decimalFormat  = signal(Constant.DEFAULT_DECIMAL_NUMBER_FORMAT)
-const _sg_groupingFormat = signal(Constant.DEFAULT_GROUPING_NUMBER_FORMAT)
-
-export const Signals = {
-	theme: _sg_theme,
-	animation: _sg_animation,
-	page: _sg_page,
-	decimalFormat: _sg_decimalFormat,
-	groupingFormat: _sg_groupingFormat,
-}
+export const sg_theme          = signal(Constant.DEFAULT_THEME)
+export const sg_animation      = signal(Constant.DEFAULT_ANIMATION)
+export const sg_page           = signal<typeof Pages[keyof typeof Pages]>(Pages.Basic)
+export const sg_decimalFormat  = signal(Constant.DEFAULT_DECIMAL_NUMBER_FORMAT)
+export const sg_groupingFormat = signal(Constant.DEFAULT_GROUPING_NUMBER_FORMAT)
 
 const DECIMAL_TOKEN  = crypto.randomUUID()
 const GROUPING_TOKEN = crypto.randomUUID()
@@ -100,29 +92,29 @@ function _updatePage(): void {
 		return
 	}
 
-	_sg_page.set(page)
+	sg_page.set(page)
 }
 
 function _notifyDecimalAndGroupingFormatChanges(oldDecimal: DecimalNumberFormat, oldGrouping: GroupingNumberFormat): void {
 	const format = (input: string) => (input
 		.replaceAll(oldDecimal, DECIMAL_TOKEN)
 		.replaceAll(oldGrouping, GROUPING_TOKEN)
-		.replaceAll(DECIMAL_TOKEN, _sg_decimalFormat())
-		.replaceAll(GROUPING_TOKEN, _sg_groupingFormat())
+		.replaceAll(DECIMAL_TOKEN, sg_decimalFormat())
+		.replaceAll(GROUPING_TOKEN, sg_groupingFormat())
 	)
 
-	Basic     .Signals.input.set(format)
-	Converter .Signals.input.set(format)
-	Scientific.Signals.input.set(format)
-	if (Programmer.Signals.numType() === ProgrammerNumTypes.Decimal) {
-		Programmer.Signals.input.set(format)
+	Basic     .sg_input.set(format)
+	Converter .sg_input.set(format)
+	Scientific.sg_input.set(format)
+	if (Programmer.sg_numType() === ProgrammerNumTypes.Decimal) {
+		Programmer.sg_input.set(format)
 	}
 
-	Basic     .Signals.output.notify()
-	Converter .Signals.output.notify()
-	Scientific.Signals.output.notify()
-	Programmer.Signals.output.notify()
-	Memory    .Signals.memoryValue.notify()
+	Basic     .sg_output.notify()
+	Converter .sg_output.notify()
+	Scientific.sg_output.notify()
+	Programmer.sg_output.notify()
+	Memory    .sg_memoryValue.notify()
 }
 
 function _sub_decimalFormat(v: DecimalNumberFormat): void {
@@ -166,8 +158,8 @@ function _sub_groupingFormat(v: GroupingNumberFormat): void {
 }
 
 function _initSubscribers(): void {
-	_sg_decimalFormat.subscribe(_sub_decimalFormat)
-	_sg_groupingFormat.subscribe(_sub_groupingFormat)
+	sg_decimalFormat.subscribe(_sub_decimalFormat)
+	sg_groupingFormat.subscribe(_sub_groupingFormat)
 }
 
 function _initEvents(): void {
@@ -182,7 +174,7 @@ function _initEvents(): void {
 
 		_ref_theme.biru.themeMode = value
 		localStorage.setItem(LocalStorageKeys.PlatformTheme, value)
-		_sg_theme.set(value)
+		sg_theme.set(value)
 	})
 
 	_ref_animationPopover.addEventListener('change', ev => {
@@ -194,7 +186,7 @@ function _initEvents(): void {
 
 		_ref_theme.biru.animation = value
 		localStorage.setItem(LocalStorageKeys.PlatformAnimation, value)
-		_sg_animation.set(value)
+		sg_animation.set(value)
 	})
 
 	_ref_groupingPopover.addEventListener('change', ev => {
@@ -204,20 +196,20 @@ function _initEvents(): void {
 			return
 		}
 
-		const oldDecimalFormat = _sg_decimalFormat()
-		const oldGroupingFormat = _sg_groupingFormat()
-		if (value === _sg_decimalFormat()) {
+		const oldDecimalFormat = sg_decimalFormat()
+		const oldGroupingFormat = sg_groupingFormat()
+		if (value === sg_decimalFormat()) {
 			switch (value) {
 			case GroupingNumberFormat.Comma:
-				_sg_decimalFormat.set(DecimalNumberFormat.Point)
+				sg_decimalFormat.set(DecimalNumberFormat.Point)
 				break
 			case GroupingNumberFormat.Point:
-				_sg_decimalFormat.set(DecimalNumberFormat.Comma)
+				sg_decimalFormat.set(DecimalNumberFormat.Comma)
 				break
 			}
 		}
 
-		_sg_groupingFormat.set(value)
+		sg_groupingFormat.set(value)
 		_notifyDecimalAndGroupingFormatChanges(oldDecimalFormat, oldGroupingFormat)
 	})
 
@@ -228,20 +220,20 @@ function _initEvents(): void {
 			return
 		}
 
-		const oldDecimalFormat = _sg_decimalFormat()
-		const oldGroupingFormat = _sg_groupingFormat()
-		if (value === _sg_groupingFormat()) {
+		const oldDecimalFormat = sg_decimalFormat()
+		const oldGroupingFormat = sg_groupingFormat()
+		if (value === sg_groupingFormat()) {
 			switch (value) {
 			case DecimalNumberFormat.Point:
-				_sg_groupingFormat.set(GroupingNumberFormat.Comma)
+				sg_groupingFormat.set(GroupingNumberFormat.Comma)
 				break
 			case DecimalNumberFormat.Comma:
-				_sg_groupingFormat.set(GroupingNumberFormat.Point)
+				sg_groupingFormat.set(GroupingNumberFormat.Point)
 				break
 			}
 		}
 
-		_sg_decimalFormat.set(value)
+		sg_decimalFormat.set(value)
 		_notifyDecimalAndGroupingFormatChanges(oldDecimalFormat, oldGroupingFormat)
 	})
 }

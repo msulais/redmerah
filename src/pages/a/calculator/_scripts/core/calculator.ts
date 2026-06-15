@@ -9,7 +9,6 @@ import { AngleUnits, ConverterUnit, TemperatureUnits } from "../shared/units.js"
 import { ConverterTypes, ScientificAngleTypes } from "../shared/calculator.js"
 
 export function repairInput(input: string): string {
-	const settings = Settings.Signals
 	const openBracketCount = countString(input, /\(/g)
 	const closeBracketCount = countString(input, /\)/g)
 
@@ -27,10 +26,10 @@ export function repairInput(input: string): string {
 	input = input.replace(/\s/g, '')
 
 	// '123,456,789' => '123456789'
-	input = input.replaceAll(settings.groupingFormat(), '')
+	input = input.replaceAll(Settings.sg_groupingFormat(), '')
 
 	// '123456,789' => '123456.789'
-	input = input.replaceAll(settings.decimalFormat(), '.')
+	input = input.replaceAll(Settings.sg_decimalFormat(), '.')
 
 	// '.234' => '0.234'
 	input = input.replace(/(?<!\d)\.\d+/g, (s) => '0' + s)
@@ -150,7 +149,7 @@ export function convertUnit(
 }
 
 export function calculate(input: string): string {
-	const pages = Settings.Signals.page()
+	const page = Settings.sg_page()
 	const fnRegex = new RegExp(String.raw`(${Constant.FUNCTION_REGEX})\(([+-]?${Constant.NUMBER_REGEX})\)`)
 	const bracketRegex = new RegExp(String.raw`(?<!${Constant.FUNCTION_REGEX})\(([+-]?${Constant.NUMBER_REGEX})\)`)
 	const sqrtRegex       = /√([-+]?\d+(?:\.\d+)?)/g
@@ -167,9 +166,9 @@ export function calculate(input: string): string {
 	const fnOperation = (input: string) => input.replace(fnRegex, (_, fnName, value) => {
 		let parsedValue: number = Number.parseFloat(value)
 		const angleToRadian = (value: number) => {
-			if (pages !== Pages.Scientific) return value
+			if (page !== Pages.Scientific) return value
 
-			const angle = Scientific.Signals.angle()
+			const angle = Scientific.sg_angle()
 			let unit: ConverterUnit = AngleUnits.radian
 			if (angle === ScientificAngleTypes.Degree) unit = AngleUnits.degree
 			else if (angle === ScientificAngleTypes.Gradian) unit = AngleUnits.gradian
@@ -177,9 +176,9 @@ export function calculate(input: string): string {
 			return convertUnit(value, ConverterTypes.Angle, unit, AngleUnits.radian)
 		}
 		const radianToAngle = (value: number) => {
-			if (pages !== Pages.Scientific) return value
+			if (page !== Pages.Scientific) return value
 
-			const angle = Scientific.Signals.angle()
+			const angle = Scientific.sg_angle()
 			let unit: ConverterUnit = AngleUnits.radian
 			if (angle == ScientificAngleTypes.Degree) unit = AngleUnits.degree
 			else if (angle == ScientificAngleTypes.Gradian) unit = AngleUnits.gradian

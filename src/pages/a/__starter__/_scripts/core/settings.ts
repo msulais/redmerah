@@ -10,15 +10,9 @@ import { signal } from "@/utils/signal.js";
 import { $, $$ } from "./dom-utils";
 import { isValidEnumValue } from "@/utils/object.js";
 
-const _sg_theme     = signal(Constant.DEFAULT_THEME)
-const _sg_animation = signal(Constant.DEFAULT_ANIMATION)
-const _sg_page      = signal<typeof Pages[keyof typeof Pages]>(Pages.Basic)
-
-export const Signals = {
-	theme: _sg_theme,
-	animation: _sg_animation,
-	page: _sg_page
-}
+export const sg_theme     = signal(Constant.DEFAULT_THEME)
+export const sg_animation = signal(Constant.DEFAULT_ANIMATION)
+export const sg_page      = signal<typeof Pages[keyof typeof Pages]>(Pages.Basic)
 
 const _ref_theme            = $$<BrTheme.BiruThemeElement>(BrTheme.TAGNAME)
 const _ref_themePopover     = $(Ids.PopoverAppBarSettingsTheme) as BrPopover.BiruPopoverElement
@@ -84,7 +78,7 @@ function _updatePage(): void {
 		return
 	}
 
-	_sg_page.set(page)
+	sg_page.set(page)
 }
 
 function _initEvents(): void {
@@ -99,7 +93,7 @@ function _initEvents(): void {
 
 		_ref_theme.biru.themeMode = value
 		localStorage.setItem(LocalStorageKeys.PlatformTheme, value)
-		_sg_theme.set(value)
+		sg_theme.set(value)
 	})
 
 	_ref_animationPopover.addEventListener('change', ev => {
@@ -111,7 +105,7 @@ function _initEvents(): void {
 
 		_ref_theme.biru.animation = value
 		localStorage.setItem(LocalStorageKeys.PlatformAnimation, value)
-		_sg_animation.set(value)
+		sg_animation.set(value)
 	})
 }
 

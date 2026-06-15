@@ -33,7 +33,7 @@ function _initCommandsEvents(): void {
 			insertKeyChar(char)
 		}; break
 		case Commands.KeyDec:
-			insertKeyChar(Settings.Signals.decimalFormat())
+			insertKeyChar(Settings.sg_decimalFormat())
 			break
 		case Commands.KeyPlusMin:
 			insertKeyPlusMinus()

@@ -76,60 +76,60 @@ function _readAllStorage(store: IDBObjectStore): void {
 		case "settings-decimal-format":
 			isString
 			&& isValidEnumValue(value, DecimalNumberFormat)
-			&& Settings.Signals.decimalFormat.set(value as DecimalNumberFormat)
+			&& Settings.sg_decimalFormat.set(value as DecimalNumberFormat)
 			break
 		case 'settings-grouping-format':
 			isString
 			&& isValidEnumValue(value, GroupingNumberFormat)
-			&& Settings.Signals.groupingFormat.set(value as GroupingNumberFormat)
+			&& Settings.sg_groupingFormat.set(value as GroupingNumberFormat)
 			break
 		case 'page-basic-input':
 			isString
-			&& Basic.Signals.input.set(value)
+			&& Basic.sg_input.set(value)
 			break
 		case 'page-scientific-input':
 			isString
-			&& Scientific.Signals.input.set(value)
+			&& Scientific.sg_input.set(value)
 			break
 		case 'page-scientific-angle':
 			isString
 			&& isValidEnumValue(value, ScientificAngleTypes)
-			&& Scientific.Signals.angle.set(value as ScientificAngleTypes)
+			&& Scientific.sg_angle.set(value as ScientificAngleTypes)
 			break
 		case 'memory-value':
 			isNumber
-			&& Memory.Signals.memoryValue.set(value)
+			&& Memory.sg_memoryValue.set(value)
 			break
 		case 'page-converter-input':
 			isString
-			&& Converter.Signals.input.set(value)
+			&& Converter.sg_input.set(value)
 			break
 		case 'page-date-input-days':
 			isNumber
-			&& DDate.Signals.inputDays.set(value)
+			&& DDate.sg_inputDays.set(value)
 			break
 		case 'page-date-input-months':
 			isNumber
-			&& DDate.Signals.inputMonths.set(value)
+			&& DDate.sg_inputMonths.set(value)
 			break
 		case 'page-date-input-years':
 			isNumber
-			&& DDate.Signals.inputYears.set(value)
+			&& DDate.sg_inputYears.set(value)
 			break
 		case 'page-date-operation':
 			isString
 			&& isValidEnumValue(value, DateOperation)
-			&& DDate.Signals.operation.set(value as DateOperation)
+			&& DDate.sg_operation.set(value as DateOperation)
 			break
 		case 'page-date-input-from':
 			isString
 			&& !Number.isNaN(new Date(value).getTime())
-			&& DDate.Signals.inputFrom.set(new Date(value))
+			&& DDate.sg_inputFrom.set(new Date(value))
 			break
 		case 'page-date-input-to':
 			isString
 			&& !Number.isNaN(new Date(value).getTime())
-			&& DDate.Signals.inputTo.set(new Date(value))
+			&& DDate.sg_inputTo.set(new Date(value))
 			break
 		}
 
@@ -146,7 +146,7 @@ function _readStorageConverter(store: IDBObjectStore): void {
 			return
 		}
 
-		Converter.Signals.converter.set(value as ConverterTypes)
+		Converter.sg_converter.set(value as ConverterTypes)
 		_db.get<_IDBStoreStorage<_StorageItems['page-converter-input-unit']>>(store,
 			'page-converter-input-unit' satisfies _StorageKeys
 		).then(v => {
@@ -160,7 +160,7 @@ function _readStorageConverter(store: IDBObjectStore): void {
 				return
 			}
 
-			Converter.Signals.inputUnit.set(unit)
+			Converter.sg_inputUnit.set(unit)
 		})
 
 		_db.get<_IDBStoreStorage<_StorageItems['page-converter-output-unit']>>(store,
@@ -176,7 +176,7 @@ function _readStorageConverter(store: IDBObjectStore): void {
 				return
 			}
 
-			Converter.Signals.outputUnit.set(unit)
+			Converter.sg_outputUnit.set(unit)
 		})
 	})
 }
@@ -190,7 +190,7 @@ function _readStorageProgrammer(store: IDBObjectStore): void {
 			return
 		}
 
-		Programmer.Signals.numType.set(value)
+		Programmer.sg_numType.set(value)
 		_db.get<_IDBStoreStorage<_StorageItems['page-programmer-input']>>(store,
 			'page-programmer-input' satisfies _StorageKeys
 		).then(v => {
@@ -199,7 +199,7 @@ function _readStorageProgrammer(store: IDBObjectStore): void {
 				return
 			}
 
-			Programmer.Signals.input.set(value)
+			Programmer.sg_input.set(value)
 		})
 	})
 }

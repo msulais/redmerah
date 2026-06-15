@@ -8,23 +8,13 @@ import { saveStorageItem } from "../core/database.js"
 import { signal } from "@/utils/signal"
 import { DateOperation } from '../shared/calculator.js'
 
-const _sg_inputDays = signal(Constant.DEFAULT_DATE_INPUT_DAYS)
-const _sg_inputMonths = signal(Constant.DEFAULT_DATE_INPUT_MONTHS)
-const _sg_inputYears = signal(Constant.DEFAULT_DATE_INPUT_YEARS)
-const _sg_inputFrom = signal(Constant.DEFAULT_DATE_INPUT_FROM)
-const _sg_inputTo = signal(Constant.DEFAULT_DATE_INPUT_TO)
-const _sg_operation = signal(Constant.DEFAULT_DATE_OPERATION)
-const _sg_output = signal(Constant.DEFAULT_DATE_OUTPUT)
-
-export const Signals = {
-	inputDays: _sg_inputDays,
-	inputMonths: _sg_inputMonths,
-	inputYears: _sg_inputYears,
-	inputFrom: _sg_inputFrom,
-	inputTo: _sg_inputTo,
-	operation: _sg_operation,
-	output: _sg_output,
-}
+export const sg_inputDays = signal(Constant.DEFAULT_DATE_INPUT_DAYS)
+export const sg_inputMonths = signal(Constant.DEFAULT_DATE_INPUT_MONTHS)
+export const sg_inputYears = signal(Constant.DEFAULT_DATE_INPUT_YEARS)
+export const sg_inputFrom = signal(Constant.DEFAULT_DATE_INPUT_FROM)
+export const sg_inputTo = signal(Constant.DEFAULT_DATE_INPUT_TO)
+export const sg_operation = signal(Constant.DEFAULT_DATE_OPERATION)
+export const sg_output = signal(Constant.DEFAULT_DATE_OUTPUT)
 
 const _ref_operation = $(Ids.PageDateOperation) as HTMLSelectElement
 const _ref_inputFrom = $(Ids.PageDateFrom) as HTMLInputElement
@@ -41,23 +31,23 @@ function _calculate(): void {
 	clearTimeout(_time_calculate)
 	_time_calculate = setTimeout(() => {
 		let output = ''
-		const isSubtract = _sg_operation() === DateOperation.Subtract
-		switch (_sg_operation()) {
+		const isSubtract = sg_operation() === DateOperation.Subtract
+		switch (sg_operation()) {
 		case DateOperation.Add:
 		case DateOperation.Subtract:
 			output = new Date(
-				_sg_inputFrom().getFullYear() + (_sg_inputYears() * (isSubtract? -1 : 1)),
-				_sg_inputFrom().getMonth() + (_sg_inputMonths() * (isSubtract? -1 : 1)),
-				_sg_inputFrom().getDate() + (_sg_inputDays() * (isSubtract? -1 : 1))
+				sg_inputFrom().getFullYear() + (sg_inputYears() * (isSubtract? -1 : 1)),
+				sg_inputFrom().getMonth() + (sg_inputMonths() * (isSubtract? -1 : 1)),
+				sg_inputFrom().getDate() + (sg_inputDays() * (isSubtract? -1 : 1))
 			).toLocaleDateString('en', {
 				year: 'numeric',
 				month: 'long',
 				day: 'numeric'
 			})
-			_sg_output.set(output)
+			sg_output.set(output)
 			break
 		case DateOperation.Difference: {
-			let days = Math.abs(dateDiffInDays(_sg_inputFrom(), _sg_inputTo()))
+			let days = Math.abs(dateDiffInDays(sg_inputFrom(), sg_inputTo()))
 			const diffInDays = days
 			if (days >= 365.25) {
 				const n = Math.floor(days / 365.25)
@@ -87,7 +77,7 @@ function _calculate(): void {
 				output += ` (${diffInDays} day${diffInDays > 1? "s" : ""})`
 			}
 
-			_sg_output.set(output)
+			sg_output.set(output)
 			break
 		}}
 	}, 50)
@@ -102,7 +92,7 @@ function _calculate(): void {
 // }
 
 function _initSubscriber(): void {
-	_sg_operation.subscribe(v => {
+	sg_operation.subscribe(v => {
 		_ref_operation.value = v
 		_calculate()
 		saveStorageItem('page-date-operation', v, 250)
@@ -119,7 +109,7 @@ function _initSubscriber(): void {
 		}
 	})
 
-	_sg_inputFrom.subscribe(v => {
+	sg_inputFrom.subscribe(v => {
 		if (document.activeElement !== _ref_inputFrom) {
 			_ref_inputFrom.valueAsDate = v
 		}
@@ -128,7 +118,7 @@ function _initSubscriber(): void {
 		saveStorageItem('page-date-input-from', v.toISOString(), 250)
 	})
 
-	_sg_inputTo.subscribe(v => {
+	sg_inputTo.subscribe(v => {
 		if (document.activeElement !== _ref_inputTo) {
 			_ref_inputTo.valueAsDate = v
 		}
@@ -137,7 +127,7 @@ function _initSubscriber(): void {
 		saveStorageItem('page-date-input-to', v.toISOString(), 250)
 	})
 
-	_sg_inputYears.subscribe(v => {
+	sg_inputYears.subscribe(v => {
 		if (document.activeElement !== _ref_inputYears) {
 			_ref_inputYears.valueAsNumber = v
 		}
@@ -146,7 +136,7 @@ function _initSubscriber(): void {
 		saveStorageItem('page-date-input-years', v, 250)
 	})
 
-	_sg_inputMonths.subscribe(v => {
+	sg_inputMonths.subscribe(v => {
 		if (document.activeElement !== _ref_inputMonths) {
 			_ref_inputMonths.valueAsNumber = v
 		}
@@ -155,7 +145,7 @@ function _initSubscriber(): void {
 		saveStorageItem('page-date-input-months', v, 250)
 	})
 
-	_sg_inputDays.subscribe(v => {
+	sg_inputDays.subscribe(v => {
 		if (document.activeElement !== _ref_inputDays) {
 			_ref_inputDays.valueAsNumber = v
 		}
@@ -164,7 +154,7 @@ function _initSubscriber(): void {
 		saveStorageItem('page-date-input-days', v, 250)
 	})
 
-	_sg_output.subscribe(v => {
+	sg_output.subscribe(v => {
 		_ref_dateOutput.textContent = v
 	})
 }
@@ -176,7 +166,7 @@ function _initEvents(): void {
 			return
 		}
 
-		_sg_inputFrom.set(date)
+		sg_inputFrom.set(date)
 	})
 
 	_ref_inputTo.addEventListener("input", () => {
@@ -185,7 +175,7 @@ function _initEvents(): void {
 			return
 		}
 
-		_sg_inputTo.set(date)
+		sg_inputTo.set(date)
 	})
 
 	_ref_operation.addEventListener('change', () => {
@@ -194,34 +184,34 @@ function _initEvents(): void {
 			return
 		}
 
-		_sg_operation.set(value)
+		sg_operation.set(value)
 	})
 
 	_ref_inputYears.addEventListener('input', () => {
-		const value = Math.floor(safeNumber(_ref_inputYears.valueAsNumber, _sg_inputYears()))
-		_sg_inputYears.set(value)
+		const value = Math.floor(safeNumber(_ref_inputYears.valueAsNumber, sg_inputYears()))
+		sg_inputYears.set(value)
 	})
 
 	_ref_inputMonths.addEventListener('input', () => {
-		const value = Math.floor(safeNumber(_ref_inputMonths.valueAsNumber, _sg_inputMonths()))
-		_sg_inputMonths.set(value)
+		const value = Math.floor(safeNumber(_ref_inputMonths.valueAsNumber, sg_inputMonths()))
+		sg_inputMonths.set(value)
 	})
 
 	_ref_inputDays.addEventListener('input', () => {
-		const value = Math.floor(safeNumber(_ref_inputDays.valueAsNumber, _sg_inputDays()))
-		_sg_inputDays.set(value)
+		const value = Math.floor(safeNumber(_ref_inputDays.valueAsNumber, sg_inputDays()))
+		sg_inputDays.set(value)
 	})
 
 	_ref_operationAddSub.addEventListener('focusout', ev => {
 		switch (ev.target) {
 		case _ref_inputYears:
-			_ref_inputYears.valueAsNumber = _sg_inputYears()
+			_ref_inputYears.valueAsNumber = sg_inputYears()
 			break
 		case _ref_inputMonths:
-			_ref_inputMonths.valueAsNumber = _sg_inputMonths()
+			_ref_inputMonths.valueAsNumber = sg_inputMonths()
 			break
 		case _ref_inputDays:
-			_ref_inputDays.valueAsNumber = _sg_inputDays()
+			_ref_inputDays.valueAsNumber = sg_inputDays()
 			break
 		}
 	})

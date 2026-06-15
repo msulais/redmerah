@@ -15,15 +15,9 @@ import { saveStorageItem } from "../core/database.js"
 import { signal } from "@/utils/signal.js"
 import { ScientificAngleTypes } from "../shared/calculator.js"
 
-const _sg_angle = signal(Constant.DEFAULT_SCIENTIFIC_ANGLE)
-const _sg_input = signal(Constant.DEFAULT_SCIENTIFIC_INPUT)
-const _sg_output = signal(Constant.DEFAULT_SCIENTIFIC_OUTPUT)
-
-export const Signals = {
-	angle: _sg_angle,
-	input: _sg_input,
-	output: _sg_output,
-}
+export const sg_angle = signal(Constant.DEFAULT_SCIENTIFIC_ANGLE)
+export const sg_input = signal(Constant.DEFAULT_SCIENTIFIC_INPUT)
+export const sg_output = signal(Constant.DEFAULT_SCIENTIFIC_OUTPUT)
 
 const _ref_theme = $$(BrTheme.TAGNAME) as BrTheme.BiruThemeElement
 const _ref_angle = $(Ids.PageScientificAngle) as HTMLSelectElement
@@ -42,27 +36,27 @@ let _time_calculate: ReturnType<typeof setTimeout> | undefined
 function _calculate(): void {
 	clearTimeout(_time_calculate)
 	_time_calculate = setTimeout(() => {
-		const output = calculate(_sg_input())
+		const output = calculate(sg_input())
 		const parsedOutput = Number.parseFloat(output)
-		_sg_output.set(isNumberDefined(parsedOutput)? parsedOutput : null)
+		sg_output.set(isNumberDefined(parsedOutput)? parsedOutput : null)
 	}, 50)
 }
 
 function _initSubscriber(): void {
-	_sg_angle.subscribe((v) => {
+	sg_angle.subscribe((v) => {
 		_calculate()
 		_ref_angle.value = v
 		saveStorageItem('page-scientific-angle', v, 250)
 	})
 
-	_sg_input.subscribe((v) => {
+	sg_input.subscribe((v) => {
 		_calculate()
 		_ref_input.value = v
 		scrollInputToEnd(_ref_input)
 		saveStorageItem('page-scientific-input', v, 250)
 	})
 
-	_sg_output.subscribe((v) => {
+	sg_output.subscribe((v) => {
 		_ref_output.value = v === null? '' : formatOutput(v)
 	})
 }
@@ -74,7 +68,7 @@ function _initEvents(): void {
 			return
 		}
 
-		_sg_angle.set(value)
+		sg_angle.set(value)
 	})
 
 	_ref_fn_popover.addEventListener(BrPopover.EventTypes.Toggle, () => {
@@ -119,7 +113,7 @@ function _initEvents(): void {
 	})
 
 	_ref_input.addEventListener('input', () => {
-		_sg_input.set(_ref_input.value)
+		sg_input.set(_ref_input.value)
 	})
 }
 

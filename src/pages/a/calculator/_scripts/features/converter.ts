@@ -11,19 +11,11 @@ import { formatOutput } from '../core/string-utils.js'
 import { isValidEnumValue } from '@/utils/object.js'
 import { saveStorageItem } from '../core/database.js'
 
-const _sg_converter = signal<ConverterTypes>(Constant.DEFAULT_CONVERTER_TYPE)
-const _sg_input = signal(Constant.DEFAULT_CONVERTER_INPUT)
-const _sg_output = signal(Constant.DEFAULT_CONVERTER_OUTPUT)
-const _sg_inputUnit = signal(Constant.DEFAULT_CONVERTER_INPUT_UNIT)
-const _sg_outputUnit = signal(Constant.DEFAULT_CONVERTER_OUTPUT_UNIT)
-
-export const Signals = {
-	converter: _sg_converter,
-	input: _sg_input,
-	output: _sg_output,
-	inputUnit: _sg_inputUnit,
-	outputUnit: _sg_outputUnit,
-}
+export const sg_converter = signal<ConverterTypes>(Constant.DEFAULT_CONVERTER_TYPE)
+export const sg_input = signal(Constant.DEFAULT_CONVERTER_INPUT)
+export const sg_output = signal(Constant.DEFAULT_CONVERTER_OUTPUT)
+export const sg_inputUnit = signal(Constant.DEFAULT_CONVERTER_INPUT_UNIT)
+export const sg_outputUnit = signal(Constant.DEFAULT_CONVERTER_OUTPUT_UNIT)
 
 const _ref_input      = $(Ids.PageConverterInput) as HTMLInputElement
 const _ref_output     = $(Ids.PageConverterOutput) as HTMLInputElement
@@ -34,7 +26,7 @@ let _time_calculate: ReturnType<typeof setTimeout> | undefined
 
 function _changeUnit(type: 'input' | 'output', unitId: string): void {
 	let units = LengthUnits.all
-	switch (_sg_converter()) {
+	switch (sg_converter()) {
 	case ConverterTypes.Length     : units = LengthUnits     .all; break
 	case ConverterTypes.Area       : units = AreaUnits       .all; break
 	case ConverterTypes.Volume     : units = VolumeUnits     .all; break
@@ -52,22 +44,22 @@ function _changeUnit(type: 'input' | 'output', unitId: string): void {
 	}
 
 	switch (type) {
-	case 'input' : _sg_inputUnit .set(unit); break
-	case 'output': _sg_outputUnit.set(unit); break
+	case 'input' : sg_inputUnit .set(unit); break
+	case 'output': sg_outputUnit.set(unit); break
 	}
 }
 
 function _calculate(): void {
 	clearTimeout(_time_calculate)
 	_time_calculate = setTimeout(() => {
-		const output = calculate(_sg_input())
+		const output = calculate(sg_input())
 		const parsedOutput = convertUnit(
 			Number.parseFloat(output),
-			_sg_converter(),
-			_sg_inputUnit(),
-			_sg_outputUnit()
+			sg_converter(),
+			sg_inputUnit(),
+			sg_outputUnit()
 		)
-		_sg_output.set(isNumberDefined(parsedOutput)? parsedOutput : null)
+		sg_output.set(isNumberDefined(parsedOutput)? parsedOutput : null)
 	}, 50)
 }
 
@@ -115,36 +107,36 @@ function _changeConverterType(type: ConverterTypes): void {
 	_ref_outputUnit.replaceChildren(...refs_outputOption)
 
 	batch(() => {
-		_sg_inputUnit.set(units[0])
-		_sg_outputUnit.set(units[1])
+		sg_inputUnit.set(units[0])
+		sg_outputUnit.set(units[1])
 	})
 }
 
 function _initSubscriber(): void {
-	_sg_input.subscribe((v) => {
+	sg_input.subscribe((v) => {
 		_calculate()
 		_ref_input.value = v
 		scrollInputToEnd(_ref_input)
 		saveStorageItem('page-converter-input', v, 250)
 	})
 
-	_sg_output.subscribe((v) => {
+	sg_output.subscribe((v) => {
 		_ref_output.value = v === null? '' : formatOutput(v)
 	})
 
-	_sg_converter.subscribe(v => {
+	sg_converter.subscribe(v => {
 		_ref_converter.value = v
 		_changeConverterType(v)
 		saveStorageItem('page-converter-type', v)
 	})
 
-	_sg_inputUnit.subscribe(v => {
+	sg_inputUnit.subscribe(v => {
 		_calculate()
 		_ref_inputUnit.value = v.id
 		saveStorageItem('page-converter-input-unit', v.id)
 	})
 
-	_sg_outputUnit.subscribe(v => {
+	sg_outputUnit.subscribe(v => {
 		_calculate()
 		_ref_outputUnit.value = v.id
 		saveStorageItem('page-converter-output-unit', v.id)
@@ -158,7 +150,7 @@ function _initEvents(): void {
 			return
 		}
 
-		_sg_converter.set(value as ConverterTypes)
+		sg_converter.set(value as ConverterTypes)
 	})
 
 	_ref_inputUnit.addEventListener('change', () => {
@@ -170,7 +162,7 @@ function _initEvents(): void {
 	})
 
 	_ref_input.addEventListener('input', () => {
-		_sg_input.set(_ref_input.value)
+		sg_input.set(_ref_input.value)
 	})
 }
 

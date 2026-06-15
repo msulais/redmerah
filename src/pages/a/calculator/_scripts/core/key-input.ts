@@ -14,47 +14,47 @@ import { batch } from '@/utils/signal'
 
 export function insertKeyBackspace(): void {
 	const backspace = (input: string) => input.substring(0, input.length-1)
-	switch (Settings.Signals.page()) {
-	case Pages.Basic     : return Basic     .Signals.input.set(v => backspace(v))
-	case Pages.Scientific: return Scientific.Signals.input.set(v => backspace(v))
-	case Pages.Converter : return Converter .Signals.input.set(v => backspace(v))
-	case Pages.Programmer: return Programmer.Signals.input.set(v => backspace(v))
+	switch (Settings.sg_page()) {
+	case Pages.Basic     : return Basic     .sg_input.set(v => backspace(v))
+	case Pages.Scientific: return Scientific.sg_input.set(v => backspace(v))
+	case Pages.Converter : return Converter .sg_input.set(v => backspace(v))
+	case Pages.Programmer: return Programmer.sg_input.set(v => backspace(v))
 	case Pages.Date: break
 	}
 }
 
 export function insertKeyClear(): void {
-	switch (Settings.Signals.page()) {
-	case Pages.Basic     : return Basic     .Signals.input.set('')
-	case Pages.Scientific: return Scientific.Signals.input.set('')
-	case Pages.Converter : return Converter .Signals.input.set('')
-	case Pages.Programmer: return Programmer.Signals.input.set('')
+	switch (Settings.sg_page()) {
+	case Pages.Basic     : return Basic     .sg_input.set('')
+	case Pages.Scientific: return Scientific.sg_input.set('')
+	case Pages.Converter : return Converter .sg_input.set('')
+	case Pages.Programmer: return Programmer.sg_input.set('')
 	case Pages.Date: break
 	}
 }
 
 export function insertKeyEqual(): void {
 	const isNumber = (v: any) => typeof v === 'number'
-	switch (Settings.Signals.page()) {
+	switch (Settings.sg_page()) {
 	case Pages.Basic: {
-		const output = Basic.Signals.output()
-		Basic.Signals.input.set(isNumber(output)? formatOutput(output) : Basic.Signals.input())
+		const output = Basic.sg_output()
+		Basic.sg_input.set(isNumber(output)? formatOutput(output) : Basic.sg_input())
 	}	break
 	case Pages.Scientific: {
-		const output = Scientific.Signals.output()
-		Scientific.Signals.input.set(isNumber(output)? formatOutput(output) : Scientific.Signals.input())
+		const output = Scientific.sg_output()
+		Scientific.sg_input.set(isNumber(output)? formatOutput(output) : Scientific.sg_input())
 	}	break
 	case Pages.Converter: {
-		const output = Converter.Signals.output()
-		Converter.Signals.input.set(isNumber(output)? formatOutput(output) : Converter.Signals.input())
+		const output = Converter.sg_output()
+		Converter.sg_input.set(isNumber(output)? formatOutput(output) : Converter.sg_input())
 	}	break
 	case Pages.Programmer: {
-		const output = Programmer.Signals.output()
+		const output = Programmer.sg_output()
 		if (output !== null) {
 			let text = formatOutput(output)
 			const bin = numberToBinary(output)
 			const parsedBin = Number.parseInt(bin, 2)
-			type: switch (Programmer.Signals.numType()) {
+			type: switch (Programmer.sg_numType()) {
 			case ProgrammerNumTypes.Decimal: break type
 			case ProgrammerNumTypes.Hexadecimal:
 				text = parsedBin.toString(16).toUpperCase()
@@ -67,7 +67,7 @@ export function insertKeyEqual(): void {
 				break type
 			}
 
-			Programmer.Signals.input.set(text)
+			Programmer.sg_input.set(text)
 		}
 	};	break
 	case Pages.Date: break
@@ -76,11 +76,11 @@ export function insertKeyEqual(): void {
 
 export function insertKeyChar(char: string): void {
 	const add = (input: string) => input + char
-	switch (Settings.Signals.page()) {
-	case Pages.Basic     : return Basic     .Signals.input.set(v => add(v))
-	case Pages.Scientific: return Scientific.Signals.input.set(v => add(v))
-	case Pages.Converter : return Converter .Signals.input.set(v => add(v))
-	case Pages.Programmer: return Programmer.Signals.input.set(v => add(v))
+	switch (Settings.sg_page()) {
+	case Pages.Basic     : return Basic     .sg_input.set(v => add(v))
+	case Pages.Scientific: return Scientific.sg_input.set(v => add(v))
+	case Pages.Converter : return Converter .sg_input.set(v => add(v))
+	case Pages.Programmer: return Programmer.sg_input.set(v => add(v))
 	case Pages.Date: break
 	}
 }
@@ -89,7 +89,7 @@ export function insertKeyPlusMinus(): void {
 	const inverse = (value: string) => {
 		const re_point = /(.*?)([-+]{0,2})(\d*(?:\.\d*)?)$/s
 		const re_comma = /(,*?)([-+]{0,2})(\d*(?:,\d*)?)$/s
-		const match = value.match(Settings.Signals.decimalFormat() === DecimalNumberFormat.Comma? re_comma : re_point)
+		const match = value.match(Settings.sg_decimalFormat() === DecimalNumberFormat.Comma? re_comma : re_point)
 		if (value.trim().length === 0) {
 			value = '-'
 		}
@@ -126,26 +126,26 @@ export function insertKeyPlusMinus(): void {
 		return value
 	}
 
-	switch (Settings.Signals.page()) {
-	case Pages.Basic     : return Basic     .Signals.input.set(v => inverse(v))
-	case Pages.Scientific: return Scientific.Signals.input.set(v => inverse(v))
-	case Pages.Converter : return Converter .Signals.input.set(v => inverse(v))
-	case Pages.Programmer: return Programmer.Signals.input.set(v => inverse(v))
+	switch (Settings.sg_page()) {
+	case Pages.Basic     : return Basic     .sg_input.set(v => inverse(v))
+	case Pages.Scientific: return Scientific.sg_input.set(v => inverse(v))
+	case Pages.Converter : return Converter .sg_input.set(v => inverse(v))
+	case Pages.Programmer: return Programmer.sg_input.set(v => inverse(v))
 	case Pages.Date: break
 	}
 }
 
 export function insertKeySwap(): void {
 	batch(() => {
-		const temp = Converter.Signals.inputUnit()
-		Converter.Signals.inputUnit.set(Converter.Signals.outputUnit())
-		Converter.Signals.outputUnit.set(temp)
+		const temp = Converter.sg_inputUnit()
+		Converter.sg_inputUnit.set(Converter.sg_outputUnit())
+		Converter.sg_outputUnit.set(temp)
 	})
 }
 
 function _initEvents(): void {
 	document.body.addEventListener('keydown', ev => {
-		if (Settings.Signals.page() === Pages.Date) {
+		if (Settings.sg_page() === Pages.Date) {
 			return
 		}
 
