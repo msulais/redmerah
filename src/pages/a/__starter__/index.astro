@@ -4,6 +4,7 @@ import * as Styles from './_styles/styles.enum.js'
 import Html2 from '@/layouts/Html2/index.astro'
 import AppBar from './_views/_AppBar.astro'
 import Navigation from './_views/_Navigation.astro'
+import Splash from './_views/_Splash.astro'
 ---
 
 <Html2
@@ -17,6 +18,7 @@ import Navigation from './_views/_Navigation.astro'
 		<link rel="icon" type="image/png" sizes="16x16" href={`/favicon${Constant.APP.link}/favicon-16x16.png`}>
 		<link rel="manifest" href={`/favicon${Constant.APP.link}/site.webmanifest`}>
 	</Fragment>
+	<Splash/>
 	<br-scaffold>
 		<AppBar />
 		<Navigation/>

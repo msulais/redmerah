@@ -1,69 +1,73 @@
-import { KeyboardCode, KeyboardValue } from "@/enums/keyboard"
-import { NumberType, Pages } from "../shared/enums"
-import { NavigationStore } from "./navigation"
-import { BasicStore } from "../features/basic"
-import { ProgrammerStore } from "../features/programmer"
-import { ConverterStore } from "../features/converter"
-import { ScientificStore } from "../features/scientific"
-import { formatOutput } from "./string-utils"
+import * as Pages from '../shared/pages.enum.js'
+import * as Settings from './settings.js'
+import * as Basic from "../features/basic.js"
+import * as Programmer from "../features/programmer.js"
+import * as Converter from "../features/converter.js"
+import * as Scientific from "../features/scientific.js"
+import * as KeyboardValues from '@/enums/keyboard-values.enum.js'
+import * as KeyboardCodes from '@/enums/keyboard-codes.enum.js'
+import { formatOutput } from "./string-utils.js"
 import { numberToBinary } from "@/utils/number"
-import { clearMemory, recallMemory, updateMemory } from "./memory"
+import { clearMemory, recallMemory, updateMemory } from "./memory.js"
+import { DecimalNumberFormat, ProgrammerNumTypes } from '../shared/calculator.js'
+import { batch } from '@/utils/signal'
 
 export function insertKeyBackspace(): void {
 	const backspace = (input: string) => input.substring(0, input.length-1)
-	switch (NavigationStore.value.page) {
-	case Pages.Basic     : return BasicStore     .update(v => v.input = backspace(v.input))
-	case Pages.Scientific: return ScientificStore.update(v => v.input = backspace(v.input))
-	case Pages.Converter : return ConverterStore .update(v => v.input = backspace(v.input))
-	case Pages.Orogrammer: return ProgrammerStore.update(v => v.input = backspace(v.input))
+	switch (Settings.Signals.page()) {
+	case Pages.Basic     : return Basic     .Signals.input.set(v => backspace(v))
+	case Pages.Scientific: return Scientific.Signals.input.set(v => backspace(v))
+	case Pages.Converter : return Converter .Signals.input.set(v => backspace(v))
+	case Pages.Programmer: return Programmer.Signals.input.set(v => backspace(v))
 	case Pages.Date: break
 	}
 }
 
 export function insertKeyClear(): void {
-	switch (NavigationStore.value.page) {
-	case Pages.Basic     : return BasicStore     .update(v => v.input = '')
-	case Pages.Scientific: return ScientificStore.update(v => v.input = '')
-	case Pages.Converter : return ConverterStore .update(v => v.input = '')
-	case Pages.Orogrammer: return ProgrammerStore.update(v => v.input = '')
+	switch (Settings.Signals.page()) {
+	case Pages.Basic     : return Basic     .Signals.input.set('')
+	case Pages.Scientific: return Scientific.Signals.input.set('')
+	case Pages.Converter : return Converter .Signals.input.set('')
+	case Pages.Programmer: return Programmer.Signals.input.set('')
 	case Pages.Date: break
 	}
 }
 
 export function insertKeyEqual(): void {
 	const isNumber = (v: any) => typeof v === 'number'
-	switch (NavigationStore.value.page) {
+	switch (Settings.Signals.page()) {
 	case Pages.Basic: {
-		const output = BasicStore.value.output
-		BasicStore.update(v => v.input = isNumber(output)? formatOutput(output) : v.input)
+		const output = Basic.Signals.output()
+		Basic.Signals.input.set(isNumber(output)? formatOutput(output) : Basic.Signals.input())
 	}	break
 	case Pages.Scientific: {
-		const output = ScientificStore.value.output
-		ScientificStore.update(v => v.input = isNumber(output)? formatOutput(output) : v.input)
+		const output = Scientific.Signals.output()
+		Scientific.Signals.input.set(isNumber(output)? formatOutput(output) : Scientific.Signals.input())
 	}	break
 	case Pages.Converter: {
-		const output = ConverterStore.value.output
-		ConverterStore.update(v => v.input = isNumber(output)? formatOutput(output) : v.input)
+		const output = Converter.Signals.output()
+		Converter.Signals.input.set(isNumber(output)? formatOutput(output) : Converter.Signals.input())
 	}	break
-	case Pages.Orogrammer: {
-		const output = ProgrammerStore.value.output
+	case Pages.Programmer: {
+		const output = Programmer.Signals.output()
 		if (output !== null) {
 			let text = formatOutput(output)
 			const bin = numberToBinary(output)
 			const parsedBin = Number.parseInt(bin, 2)
-			type: switch (ProgrammerStore.value.numberType) {
-			case NumberType.Decimal: break type
-			case NumberType.Hexadecimal:
+			type: switch (Programmer.Signals.numType()) {
+			case ProgrammerNumTypes.Decimal: break type
+			case ProgrammerNumTypes.Hexadecimal:
 				text = parsedBin.toString(16).toUpperCase()
 				break type
-			case NumberType.Octal:
+			case ProgrammerNumTypes.Octal:
 				text = parsedBin.toString(8)
 				break type
-			case NumberType.Binary:
+			case ProgrammerNumTypes.Binary:
 				text = bin
 				break type
 			}
-			ProgrammerStore.update(v => v.input = text)
+
+			Programmer.Signals.input.set(text)
 		}
 	};	break
 	case Pages.Date: break
@@ -72,19 +76,20 @@ export function insertKeyEqual(): void {
 
 export function insertKeyChar(char: string): void {
 	const add = (input: string) => input + char
-	switch (NavigationStore.value.page) {
-	case Pages.Basic     : return BasicStore     .update(v => v.input = add(v.input))
-	case Pages.Scientific: return ScientificStore.update(v => v.input = add(v.input))
-	case Pages.Converter : return ConverterStore .update(v => v.input = add(v.input))
-	case Pages.Orogrammer: return ProgrammerStore.update(v => v.input = add(v.input))
+	switch (Settings.Signals.page()) {
+	case Pages.Basic     : return Basic     .Signals.input.set(v => add(v))
+	case Pages.Scientific: return Scientific.Signals.input.set(v => add(v))
+	case Pages.Converter : return Converter .Signals.input.set(v => add(v))
+	case Pages.Programmer: return Programmer.Signals.input.set(v => add(v))
 	case Pages.Date: break
 	}
 }
 
 export function insertKeyPlusMinus(): void {
 	const inverse = (value: string) => {
-		const re = /(.*?)([-+]{0,2})(\d*(?:\.\d*)?)$/s
-		const match = value.match(re)
+		const re_point = /(.*?)([-+]{0,2})(\d*(?:\.\d*)?)$/s
+		const re_comma = /(,*?)([-+]{0,2})(\d*(?:,\d*)?)$/s
+		const match = value.match(Settings.Signals.decimalFormat() === DecimalNumberFormat.Comma? re_comma : re_point)
 		if (value.trim().length === 0) {
 			value = '-'
 		}
@@ -121,24 +126,28 @@ export function insertKeyPlusMinus(): void {
 		return value
 	}
 
-	switch (NavigationStore.value.page) {
-	case Pages.Basic     : return BasicStore     .update(v => v.input = inverse(v.input))
-	case Pages.Scientific: return ScientificStore.update(v => v.input = inverse(v.input))
-	case Pages.Converter : return ConverterStore .update(v => v.input = inverse(v.input))
-	case Pages.Orogrammer: return ProgrammerStore.update(v => v.input = inverse(v.input))
+	switch (Settings.Signals.page()) {
+	case Pages.Basic     : return Basic     .Signals.input.set(v => inverse(v))
+	case Pages.Scientific: return Scientific.Signals.input.set(v => inverse(v))
+	case Pages.Converter : return Converter .Signals.input.set(v => inverse(v))
+	case Pages.Programmer: return Programmer.Signals.input.set(v => inverse(v))
 	case Pages.Date: break
 	}
 }
 
 export function insertKeySwap(): void {
-	ConverterStore.update(v => {
-		[v.inputUnit, v.outputUnit] = [v.outputUnit, v.inputUnit]
+	batch(() => {
+		const temp = Converter.Signals.inputUnit()
+		Converter.Signals.inputUnit.set(Converter.Signals.outputUnit())
+		Converter.Signals.outputUnit.set(temp)
 	})
 }
 
 function _initEvents(): void {
 	document.body.addEventListener('keydown', ev => {
-		if (NavigationStore.value.page === Pages.Date) return
+		if (Settings.Signals.page() === Pages.Date) {
+			return
+		}
 
 		const key = ev.key
 		const target = ev.target as HTMLElement
@@ -146,8 +155,12 @@ function _initEvents(): void {
 		const tagName = target.tagName
 		const shiftKey = ev.shiftKey
 		const ctrlKey = ev.ctrlKey
+		if (target instanceof HTMLInputElement) {
+			return
+		}
+
 		if (
-			[KeyboardValue.Space, KeyboardValue.Enter].includes(key as KeyboardValue)
+			[KeyboardValues.Space, KeyboardValues.Enter].includes(key as any)
 			&& (
 				['BUTTON', 'A'].includes(tagName)
 				|| (tagName === 'INPUT' && (target as HTMLInputElement).type !== 'text')
@@ -157,12 +170,12 @@ function _initEvents(): void {
 		}
 
 		switch (key) {
-		case KeyboardValue.Enter:
-		case KeyboardValue.Equal:
+		case KeyboardValues.Enter:
+		case KeyboardValues.Equal:
 			return insertKeyEqual()
-		case KeyboardValue.Backspace:
+		case KeyboardValues.Backspace:
 			return insertKeyBackspace()
-		case KeyboardValue.Delete:
+		case KeyboardValues.Delete:
 			return insertKeyClear()
 		}
 
@@ -170,25 +183,25 @@ function _initEvents(): void {
 			const prevent = () => ev.preventDefault()
 
 			// Ctrl + Shift + C
-			if (code === KeyboardCode.KeyC) {
+			if (code === KeyboardCodes.KeyC) {
 				clearMemory()
 				return prevent()
 			}
 
 			// Ctrl + Shift + R
-			else if (code === KeyboardCode.KeyR) {
+			else if (code === KeyboardCodes.KeyR) {
 				recallMemory()
 				return prevent()
 			}
 
 			// Ctrl + Shift + '+'
-			else if (key === KeyboardValue.Plus) {
+			else if (key === KeyboardValues.Plus) {
 				updateMemory('add')
 				return prevent()
 			}
 
 			// Ctrl + Shift + '-'
-			else if (key === KeyboardValue.Underscore) {
+			else if (key === KeyboardValues.Underscore) {
 				updateMemory('min')
 				return prevent()
 			}

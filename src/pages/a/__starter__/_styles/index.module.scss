@@ -6,6 +6,7 @@
 	border: 1px solid rgba(var(--br-theme-color-on-surface), .08);
 	border-right: none;
 	border-bottom: none;
+	overflow: auto;
 
 	@media (width < 37.5rem) {
 		border: none;

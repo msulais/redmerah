@@ -17,6 +17,12 @@ function _initDefaultStyles(): void {
 	line-height: 1;
 	font-size: 1.25rem;
 	font-family: var(${BrTheme.CSSVars.FontFamilyIcon}) !important;
+}
+
+@media (hover:none) {
+	:host {
+		font-size: 1.5rem;
+	}
 }`)
 }
 

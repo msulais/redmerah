@@ -9,13 +9,15 @@ const checkAnimation = () => {
 	const animation = get('platform:animation')
 	if (!animation || !includes(animation, ['auto', 'on', 'off'])) {return}
 
-	setAttr('data-animation', animation)
+	setAttr('data-animation', animation) // TODO: remove when all legacy code removed
+	setAttr('data-splash-animation', animation)
 }
 const checkTheme = () => {
 	const theme = get('platform:theme')
 	if (!theme || !includes(theme, ['auto', 'light', 'dark'])) {return}
 
-	setAttr('data-theme', theme)
+	setAttr('data-theme', theme) // TODO: remove when all legacy code removed
+	setAttr('data-splash-theme', theme)
 }
 
 checkAnimation()

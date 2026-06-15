@@ -1,147 +1,100 @@
-import { ObservableStore } from "@/utils/signal"
-import { ScientificAngleType } from "../shared/enums"
-import { $, scrollInputToEnd } from "../core/dom-utils"
-import { ElementIds } from "../shared/ids"
-import { calculate } from "../core/calculator"
+import * as Ids from "../shared/ids.enum.js"
+import * as Button from '@/web-components/components/button.js'
+import * as BrIcon from '@/web-components/components/br-icon.js'
+import * as BrPopover from '@/web-components/components/br-popover.js'
+import * as Constant from "../shared/constant.enum.js"
+import * as Styles from '../../_styles/styles.enum.js'
+import * as BrTheme from '@/web-components/components/br-theme.js'
+import * as AnimationEasing from '@/enums/animation-easing.enum.js'
+import { $, $$, $$$, scrollInputToEnd } from "../core/dom-utils.js"
+import { calculate } from "../core/calculator.js"
 import { isNumberDefined } from "@/utils/number"
-import { formatOutput } from "../core/string-utils"
+import { formatOutput } from "../core/string-utils.js"
 import { isValidEnumValue } from "@/utils/object"
-import { DEFAULT_SCIENTIFIC_ANGLE, DEFAULT_SCIENTIFIC_INPUT, DEFAULT_SCIENTIFIC_OUTPUT } from "../shared/constant"
-import { CButton } from "@/components/Button"
-import { AnimationEasing } from "@/enums/animation"
-import { isAnimationAllowed } from "@/utils/animation"
-import { CSSClasses } from "../../_styles/classes"
-import { CIcon } from "@/components/Icon"
-import { saveStorageItem } from "../core/database"
-import { CComboBox } from "@/components/ComboBox"
+import { saveStorageItem } from "../core/database.js"
+import { signal } from "@/utils/signal.js"
+import { ScientificAngleTypes } from "../shared/calculator.js"
 
-export type ScientificStoreType = Readonly<{
-	input: string
-	output: number | null
-	angle: ScientificAngleType
-}>
+const _sg_angle = signal(Constant.DEFAULT_SCIENTIFIC_ANGLE)
+const _sg_input = signal(Constant.DEFAULT_SCIENTIFIC_INPUT)
+const _sg_output = signal(Constant.DEFAULT_SCIENTIFIC_OUTPUT)
 
-export const ScientificStore = new ObservableStore<ScientificStoreType>({
-	angle: DEFAULT_SCIENTIFIC_ANGLE,
-	input: DEFAULT_SCIENTIFIC_INPUT,
-	output: DEFAULT_SCIENTIFIC_OUTPUT,
-})
-const _ref_angle = $(ElementIds.pgSci_angle) as CComboBox.CElement
-const _ref_input = $(ElementIds.pgSci_input) as HTMLInputElement
-const _ref_output = $(ElementIds.pgSci_output) as HTMLInputElement
+export const Signals = {
+	angle: _sg_angle,
+	input: _sg_input,
+	output: _sg_output,
+}
+
+const _ref_theme = $$(BrTheme.TAGNAME) as BrTheme.BiruThemeElement
+const _ref_angle = $(Ids.PageScientificAngle) as HTMLSelectElement
+const _ref_input = $(Ids.PageScientificInput) as HTMLInputElement
+const _ref_output = $(Ids.PageScientificOutput) as HTMLInputElement
 
 // fn = function
-const _ref_fn_Btn = $(ElementIds.pgSci_fnBtn) as CButton.CElement
-const _ref_fn_Menu = $(ElementIds.pgSci_fnMenu) as HTMLDivElement
-const _ref_fn_invers = $(ElementIds.pgSci_fnInv) as HTMLInputElement
-const _ref_fn_hyper = $(ElementIds.pgSci_fnHyper) as HTMLInputElement
+const _ref_fn_btn = $(Ids.PageScientificFunctionButton) as HTMLButtonElement
+const _ref_fn_popover = $(Ids.PageScientificFunctionPopover) as BrPopover.BiruPopoverElement
+const _ref_fn_invers = $(Ids.PageScientificFunctionInverse) as HTMLInputElement
+const _ref_fn_hyper = $(Ids.PageScientificFunctionHyperbolic) as HTMLInputElement
+const _refs_fn_trigonometry = $$$<HTMLButtonElement>('.' + Styles.PageScientificFunctionTrigonometry)
 
-let _time_calculate: number | null | NodeJS.Timeout = null
-let _time_saveInput: number | null | NodeJS.Timeout = null
+let _time_calculate: ReturnType<typeof setTimeout> | undefined
 
 function _calculate(): void {
-	if (_time_calculate !== null) {
-		clearTimeout(_time_calculate)
-	}
-
+	clearTimeout(_time_calculate)
 	_time_calculate = setTimeout(() => {
-		_time_calculate = null
-		const output = calculate(ScientificStore.value.input)
+		const output = calculate(_sg_input())
 		const parsedOutput = Number.parseFloat(output)
-		ScientificStore.update(v => v.output = isNumberDefined(parsedOutput)? parsedOutput : null)
+		_sg_output.set(isNumberDefined(parsedOutput)? parsedOutput : null)
 	}, 50)
 }
 
-function _subscribeAngleChanges(value: ScientificStoreType, old: ScientificStoreType): void {
-	const angle = value.angle
-	if (angle === old.angle) return
-
-	_calculate()
-	_ref_angle.value = angle
-	saveStorageItem('calc:scientific/angle', angle)
-}
-
-function _subscribeInputChanges(value: ScientificStoreType, old: ScientificStoreType) {
-	const input = value.input
-	if (input === old.input) return
-
-	_calculate()
-	if (_time_saveInput !== null) {
-		clearTimeout(_time_saveInput)
-	}
-
-	_time_saveInput = setTimeout(() => {
-		_time_saveInput = null
-		saveStorageItem('calc:scientific/input', input)
-	}, 250)
-}
-
-function _subscribeInputRefView(value: ScientificStoreType) {
-	const input = value.input
-	if (input === _ref_input.value) return
-
-	_ref_input.value = input
-	scrollInputToEnd(_ref_input)
-}
-
-function _subscribeOutputRefView(value: ScientificStoreType, old: ScientificStoreType) {
-	const output = value.output
-	const oldOutput = old.output
-	if (output === null) return _ref_output.value = ''
-
-	const formattedOutput = formatOutput(output)
-	if (
-		output === oldOutput
-		&& _ref_output.value === formattedOutput
-	) {return}
-
-	_ref_output.value = formattedOutput
-}
-
-function _subscribeAngleRefView(value: ScientificStoreType): void {
-	const angle = value.angle
-	if (angle === _ref_angle.value) return
-
-	_ref_angle.value = angle
-}
-
 function _initSubscriber(): void {
-	ScientificStore.subscribe(_subscribeAngleChanges)
-	ScientificStore.subscribe(_subscribeInputChanges)
-	ScientificStore.subscribe(_subscribeInputRefView)
-	ScientificStore.subscribe(_subscribeOutputRefView)
-	ScientificStore.subscribe(_subscribeAngleRefView)
+	_sg_angle.subscribe((v) => {
+		_calculate()
+		_ref_angle.value = v
+		saveStorageItem('page-scientific-angle', v, 250)
+	})
+
+	_sg_input.subscribe((v) => {
+		_calculate()
+		_ref_input.value = v
+		scrollInputToEnd(_ref_input)
+		saveStorageItem('page-scientific-input', v, 250)
+	})
+
+	_sg_output.subscribe((v) => {
+		_ref_output.value = v === null? '' : formatOutput(v)
+	})
 }
 
 function _initEvents(): void {
 	_ref_angle.addEventListener('change', () => {
-		const value = _ref_angle.value as ScientificAngleType
-		if (!isValidEnumValue(value, ScientificAngleType)) return
-
-		ScientificStore.update(v => v.angle = value)
-	})
-
-	_ref_fn_Menu.addEventListener('toggle', ev => {
-		const isOpen = (ev as ToggleEvent).newState === 'open'
-		_ref_fn_Btn.setAttribute('aria-expanded', String(isOpen))
-		CButton.update(_ref_fn_Btn, {
-			Button: {variant: isOpen? CButton.Variant.Filled : CButton.Variant.Tonal}
-		})
-
-		const iconRef = _ref_fn_Btn.querySelector<HTMLElement>('.' + CIcon.Classes.Icon + ":last-child")
-		iconRef?.style.setProperty('transform', isOpen? 'rotate(180deg)' : null)
-		if (isAnimationAllowed()) {
-			iconRef?.animate({
-				transform: [`rotate(${isOpen? 0 : 180}deg)`, `rotate(${isOpen? 180 : 0}deg)`]
-			}, {duration: 250, easing: AnimationEasing.Spring})
+		const value = _ref_angle.value as ScientificAngleTypes
+		if (!isValidEnumValue(value, ScientificAngleTypes)) {
+			return
 		}
+
+		_sg_angle.set(value)
 	})
 
-	_ref_fn_Menu.addEventListener('change', ev => {
+	_ref_fn_popover.addEventListener(BrPopover.EventTypes.Toggle, () => {
+		const isOpen = _ref_fn_popover.biru.isOpen
+		const iconRef = _ref_fn_btn.querySelector<BrIcon.BiruIconElement>(`${BrIcon.TAGNAME}:last-child`)
+		_ref_fn_btn.setAttribute(
+			Button.Attributes.Variant,
+			isOpen? Button.Variant.Filled : Button.Variant.Tonal
+		)
+
+		iconRef?.style.setProperty('transform', isOpen? 'rotate(180deg)' : null)
+		iconRef?.animate({
+			transform: [`rotate(${isOpen? 0 : 180}deg)`, `rotate(${isOpen? 180 : 0}deg)`]
+		}, {duration: _ref_theme.biru.transitionDuration, easing: AnimationEasing.Spring})
+	})
+
+	_ref_fn_popover.addEventListener('change', ev => {
 		switch (ev.target) {
 		case _ref_fn_invers:
 		case _ref_fn_hyper:
-			const refs = document.querySelectorAll<CButton.CElement>('.' + CSSClasses.bdPageSci_trigonometry)
 			const inv = _ref_fn_invers.checked
 			const hyp = _ref_fn_hyper.checked
 			const trigonometry = [
@@ -152,15 +105,21 @@ function _initEvents(): void {
 				(inv? 'a' : '') + 'sec' + (hyp? 'h' : ''),
 				(inv? 'a' : '') + 'cot' + (hyp? 'h' : '')
 			]
-			for (let i = 0; i < Math.min(trigonometry.length, refs.length); i++) {
-				const ref = refs.item(i)
+			for (let i = 0; i < Math.min(trigonometry.length, _refs_fn_trigonometry.length); i++) {
+				const ref = _refs_fn_trigonometry[i]
 				const char = trigonometry[i]
-				if (!ref || !char) continue
+				if (!ref || !char) {
+					continue
+				}
 
 				ref.setAttribute('data-char', char + '(')
 				ref.textContent = char + '(x)'
 			}
 		}
+	})
+
+	_ref_input.addEventListener('input', () => {
+		_sg_input.set(_ref_input.value)
 	})
 }
 

@@ -2,11 +2,18 @@
 import * as Ids from '../_scripts/shared/ids.enum.js'
 import * as Pages from '../_scripts/shared/pages.enum.js'
 import * as Constant from '../_scripts/shared/constant.enum.js'
-import { DateOperation } from '../_scripts/shared/calculator'
+import { DateOperation } from '../_scripts/shared/calculator.js'
 ---
 
-<br-view br:query={`page=${Pages.Date}`}>
-	<div style="padding:.5rem">
+<br-view
+	br:query={`page=${Pages.Date}`}
+	br:animation-for={Ids.PageDate}
+	br:animation-start-duration="500"
+	br:animation-start-keyframes={JSON.stringify({
+		opacity: [0, 1],
+		translate: ['0 2rem', '0 0']
+	})}>
+	<div style="padding:.5rem" id={Ids.PageDate}>
 		<label
 			style="font-size:.875rem"
 			for={Ids.PageDateOperation}>

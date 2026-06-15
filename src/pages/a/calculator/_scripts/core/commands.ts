@@ -1,7 +1,7 @@
-import { Commands } from "../shared/commands"
-import { insertKeyBackspace, insertKeyChar, insertKeyClear, insertKeyEqual, insertKeyPlusMinus, insertKeySwap } from "./key-input"
-import { clearMemory, recallMemory, updateMemory } from "./memory"
-import { SettingsStore } from "./settings"
+import * as Commands from "../shared/commands.enum.js"
+import * as Settings from "./settings.js"
+import { insertKeyBackspace, insertKeyChar, insertKeyClear, insertKeyEqual, insertKeyPlusMinus, insertKeySwap } from "./key-input.js"
+import { clearMemory, recallMemory, updateMemory } from "./memory.js"
 
 function _initCommandsEvents(): void {
 	document.body.addEventListener('click', ev => {
@@ -12,18 +12,18 @@ function _initCommandsEvents(): void {
 		if (!target) return
 
 		const dataset = target.dataset
-		const type = dataset.command as Commands
+		const type = dataset.command as (typeof Commands[keyof typeof Commands])
 		switch (type) {
-		case Commands.MemoAdd:
+		case Commands.MemoryAdd:
 			updateMemory('add')
 			break
-		case Commands.MemoSub:
+		case Commands.MemorySubtract:
 			updateMemory('min')
 			break
-		case Commands.MemoRecall:
+		case Commands.MemoryRecall:
 			recallMemory()
 			break
-		case Commands.MemoClear:
+		case Commands.MemoryClear:
 			clearMemory()
 			break
 		case Commands.KeyChar: {
@@ -33,7 +33,7 @@ function _initCommandsEvents(): void {
 			insertKeyChar(char)
 		}; break
 		case Commands.KeyDec:
-			insertKeyChar(SettingsStore.value.decimalFormat)
+			insertKeyChar(Settings.Signals.decimalFormat())
 			break
 		case Commands.KeyPlusMin:
 			insertKeyPlusMinus()

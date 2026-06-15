@@ -1,0 +1,97 @@
+<style lang="scss">
+	.splash {
+		z-index: 999;
+		width: 100%;
+		height: 100dvh;
+		background-color: #F2F2F2;
+		position: fixed;
+		left: 0;
+		top: 0;
+		flex-direction: column;
+		gap: 2rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	:root[data-splash-theme=dark] .splash {
+		background-color: #1F1F1F;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:root[data-splash-theme=auto] .splash {
+			background-color: #1F1F1F;
+		}
+	}
+
+	.splash > :global(svg) {
+		width: 6.75rem !important;
+		height: 6.75rem !important;
+	}
+
+	.loading-indicator {
+		display: block;
+		width: 6.75rem * 1.5;
+		height: .25rem;
+		max-width: calc(100% - 2rem);
+		border-radius: var(--g-border-radius4);
+		background-color: rgb(var(--g-color-accent));
+		animation: loading 1s ease-in-out infinite;
+
+		:root[data-splash-animation=off] & {
+			display: none;
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			:root[data-splash-animation=auto] & {
+				display: none;
+			}
+		}
+	}
+
+	@keyframes loading {
+		0% {
+			clip-path: xywh(0 0 0 100% round .25rem);
+		}
+		50% {
+			clip-path: xywh(0 0 100% 100% round .25rem);
+		}
+		100% {
+			clip-path: xywh(100% 0 100% 100% round .25rem);
+		}
+	}
+</style>
+<div
+	class="splash"
+	id='def9a97a-7d1b-4f6b-b838-0e2e8d0ffa5d'>
+	<slot />
+	<span class="loading-indicator"/>
+</div>
+<script>
+	import * as BrTheme from '../../web-components/components/br-theme.js'
+	import * as AnimationEasing from '../../enums/animation-easing.enum.js'
+
+	window.addEventListener('load', () => {
+		const splashRef = document.getElementById('def9a97a-7d1b-4f6b-b838-0e2e8d0ffa5d')
+		if (!splashRef) {
+			return
+		}
+
+		// see: public/scripts/root-settings.min.js
+		const splashAnimation = document.documentElement.getAttribute('data-splash-animation') || BrTheme.Animation.Auto
+		const isAnimationAllowed = (
+			splashAnimation === BrTheme.Animation.On
+			|| (splashAnimation === BrTheme.Animation.Auto && !window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+		)
+		if (!isAnimationAllowed) {
+			splashRef.remove()
+			return
+		}
+
+		splashRef.animate({
+			opacity: [1, 0],
+		}, {duration: 1000, easing: AnimationEasing.Spring}).finished.then(() => {
+			splashRef.remove()
+		})
+	})
+</script>

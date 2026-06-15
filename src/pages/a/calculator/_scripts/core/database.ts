@@ -1,17 +1,15 @@
-import { DatabaseNames } from "@/enums/storage"
-import { IDB } from "@/utils/indexeddb"
-import { NavigationStore } from "./navigation"
-import { ConverterType, DateOperation, DecimalNumberFormat, GroupingNumberFormat, NumberType, Pages, ScientificAngleType } from "../shared/enums"
-import { isValidEnumValue } from "@/utils/object"
-import { SettingsStore } from "./settings"
-import { MemoryStore, type MemoryStoreType } from "./memory"
-import { BasicStore, type BasicStoreType } from "../features/basic"
-import { ScientificStore, type ScientificStoreType } from "../features/scientific"
-import { ConverterStore, type ConverterStoreType } from "../features/converter"
-import { ProgrammerStore, type ProgrammerStoreType } from "../features/programmer"
-import { DateStore, type DateStoreType } from "../features/date"
-import { isNumberDefined } from "@/utils/number"
-import { AllUnits } from "../shared/units"
+import * as Constant from '../shared/constant.enum.js'
+import * as Settings from './settings.js'
+import * as Basic from '../features/basic.js'
+import * as Memory from './memory.js'
+import * as Scientific from '../features/scientific.js'
+import * as Converter from '../features/converter.js'
+import * as Programmer from '../features/programmer.js'
+import * as DDate from '../features/date.js'
+import { ConverterTypes, DateOperation, DecimalNumberFormat, GroupingNumberFormat, ProgrammerNumTypes, ScientificAngleTypes } from '../shared/calculator.js'
+import { IDB } from '@/utils/indexeddb'
+import { AllUnits, ConverterUnit } from '../shared/units.js'
+import { isValidEnumValue } from '@/utils/object.js'
 
 type _IDBStoreStorage<T = unknown> = {
 	key: string
@@ -19,113 +17,119 @@ type _IDBStoreStorage<T = unknown> = {
 }
 
 type _StorageItems = {
-	page                         : Pages
-	'sett:decimal'               : DecimalNumberFormat
-	'sett:grouping'              : GroupingNumberFormat
-	'memory-value'               : MemoryStoreType['value']
-	'calc:basic/input'           : BasicStoreType['input']
-	'calc:scientific/input'      : ScientificStoreType['input']
-	'calc:scientific/angle'      : ScientificStoreType['angle']
-	'calc:converter/input'       : ConverterStoreType['input']
-	'calc:converter/type'        : ConverterStoreType['converter']
-	'calc:converter/input-unit'  : ConverterStoreType['inputUnit']['id']
-	'calc:converter/output-unit' : ConverterStoreType['outputUnit']['id']
-	'calc:programmer/input'      : ProgrammerStoreType['input']
-	'calc:programmer/number-type': ProgrammerStoreType['numberType']
-	'calc:date/operation'        : DateStoreType['operation']
-	'calc:date/input-from'       : DateStoreType['inputFrom']['toISOString']['name']
-	'calc:date/input-to'         : DateStoreType['inputTo']['toISOString']['name']
-	'calc:date/input-years'      : DateStoreType['inputYears']
-	'calc:date/input-months'     : DateStoreType['inputMonths']
-	'calc:date/input-days'       : DateStoreType['inputDays']
+	'settings-decimal-format': DecimalNumberFormat
+	'settings-grouping-format': GroupingNumberFormat
+	'page-basic-input': string
+	'page-scientific-angle': ScientificAngleTypes
+	'page-scientific-input': string
+	'page-converter-type': ConverterTypes
+	'page-converter-input': string
+	'page-converter-input-unit': ConverterUnit['id']
+	'page-converter-output-unit': ConverterUnit['id']
+	'page-programmer-num-type': ProgrammerNumTypes
+	'page-programmer-input': string
+	'page-date-operation': DateOperation
+	'page-date-input-from': ReturnType<Date['toISOString']>
+	'page-date-input-to': ReturnType<Date['toISOString']>
+	'page-date-input-years': number
+	'page-date-input-months': number
+	'page-date-input-days': number
+	'memory-value': number
 }
 
 type _StorageKeys = keyof _StorageItems
 
-enum _ObjectStoreNames {
-	Storage = 'storage'
-}
+const _ObjectStoreNames = {
+	Storage: 'storage'
+} as const
+type _ObjectStoreNames = typeof _ObjectStoreNames[keyof typeof _ObjectStoreNames]
 
-const _db = new IDB(DatabaseNames.Calculator)
+const _db = new IDB(Constant.APP.name.replace(/[^A-Za-z]/g, '_'))
+const _storageTimeoutIds = new Map<_StorageKeys, ReturnType<typeof setTimeout>>()
 
-export function saveStorageItem<K extends _StorageKeys>(key: K, value: _StorageItems[K]) {
-	return _db
+export function saveStorageItem<K extends _StorageKeys>(key: K, value: _StorageItems[K], delayDuration = 0) {
+	clearTimeout(_storageTimeoutIds.get(key))
+	_storageTimeoutIds.set(key, setTimeout(() => {
+		_db
 		.writeStore(_ObjectStoreNames.Storage)
 		?.put({key, value} satisfies _IDBStoreStorage<_StorageItems[K]>)
+	}, delayDuration))
 }
 
-function _readStorageAll(store: IDBObjectStore): void {
+function _readAllStorage(store: IDBObjectStore): void {
 	_db.cursor(store, (cursor) => {
 		const key = cursor?.key
 		const value = cursor?.value.value
-		if (value === null || value === undefined) return true
+		if (value === null || value === undefined) {
+			return true
+		}
 
-		const isNumber = typeof value === 'number'
 		const isString = typeof value === 'string'
+		const isNumber = typeof value === 'number'
 		switch (key as _StorageKeys) {
-		case "calc:converter/input-unit":
-		case "calc:converter/output-unit":
-		case "calc:converter/type":
-		case "calc:programmer/input":
-		case "calc:programmer/number-type":
+		case "page-converter-type":
+		case "page-converter-input-unit":
+		case "page-converter-output-unit":
+		case "page-programmer-input":
+		case "page-programmer-num-type":
 			break
-		case "page":
-			isValidEnumValue(value, Pages)
-			&& NavigationStore.update(v => v.page = value)
+		case "settings-decimal-format":
+			isString
+			&& isValidEnumValue(value, DecimalNumberFormat)
+			&& Settings.Signals.decimalFormat.set(value as DecimalNumberFormat)
 			break
-		case "sett:decimal":
-			isValidEnumValue(value, DecimalNumberFormat)
-			&& SettingsStore.update(v => v.decimalFormat = value)
+		case 'settings-grouping-format':
+			isString
+			&& isValidEnumValue(value, GroupingNumberFormat)
+			&& Settings.Signals.groupingFormat.set(value as GroupingNumberFormat)
 			break
-		case "sett:grouping":
-			isValidEnumValue(value, GroupingNumberFormat)
-			&& SettingsStore.update(v => v.groupingFormat = value)
+		case 'page-basic-input':
+			isString
+			&& Basic.Signals.input.set(value)
 			break
-		case "memory-value":
+		case 'page-scientific-input':
+			isString
+			&& Scientific.Signals.input.set(value)
+			break
+		case 'page-scientific-angle':
+			isString
+			&& isValidEnumValue(value, ScientificAngleTypes)
+			&& Scientific.Signals.angle.set(value as ScientificAngleTypes)
+			break
+		case 'memory-value':
 			isNumber
-			&& MemoryStore.update(v => v.value = value)
+			&& Memory.Signals.memoryValue.set(value)
 			break
-		case "calc:basic/input":
+		case 'page-converter-input':
 			isString
-			&& BasicStore.update(v => v.input = value)
+			&& Converter.Signals.input.set(value)
 			break
-		case "calc:scientific/input":
-			isString
-			&& ScientificStore.update(v => v.input = value)
-			break
-		case "calc:scientific/angle":
-			isValidEnumValue(value, ScientificAngleType)
-			&& ScientificStore.update(v => v.angle = value)
-			break
-		case "calc:converter/input":
-			isString
-			&& ConverterStore.update(v => v.input = value)
-			break
-		case "calc:date/operation":
-			isValidEnumValue(value, DateOperation)
-			&& DateStore.update(v => v.operation = value)
-			break
-		case "calc:date/input-from":
-			isString
-			&& isNumberDefined(new Date(value).valueOf())
-			&& DateStore.update(v => v.inputFrom = new Date(value))
-			break
-		case "calc:date/input-to":
-			isString
-			&& isNumberDefined(new Date(value).valueOf())
-			&& DateStore.update(v => v.inputTo = new Date(value))
-			break
-		case "calc:date/input-years":
+		case 'page-date-input-days':
 			isNumber
-			&& DateStore.update(v => v.inputYears = value)
+			&& DDate.Signals.inputDays.set(value)
 			break
-		case "calc:date/input-months":
+		case 'page-date-input-months':
 			isNumber
-			&& DateStore.update(v => v.inputMonths = value)
+			&& DDate.Signals.inputMonths.set(value)
 			break
-		case "calc:date/input-days":
+		case 'page-date-input-years':
 			isNumber
-			&& DateStore.update(v => v.inputDays = value)
+			&& DDate.Signals.inputYears.set(value)
+			break
+		case 'page-date-operation':
+			isString
+			&& isValidEnumValue(value, DateOperation)
+			&& DDate.Signals.operation.set(value as DateOperation)
+			break
+		case 'page-date-input-from':
+			isString
+			&& !Number.isNaN(new Date(value).getTime())
+			&& DDate.Signals.inputFrom.set(new Date(value))
+			break
+		case 'page-date-input-to':
+			isString
+			&& !Number.isNaN(new Date(value).getTime())
+			&& DDate.Signals.inputTo.set(new Date(value))
 			break
 		}
 
@@ -134,64 +138,79 @@ function _readStorageAll(store: IDBObjectStore): void {
 }
 
 function _readStorageConverter(store: IDBObjectStore): void {
-	_db.get<_IDBStoreStorage<_StorageItems['calc:converter/type']>>(store,
-		'calc:converter/type' satisfies _StorageKeys
+	_db.get<_IDBStoreStorage<_StorageItems['page-converter-type']>>(store,
+		'page-converter-type' satisfies _StorageKeys
 	).then(v => {
 		const value = v?.value
-		if (!value || !isValidEnumValue(value, ConverterType)) return
+		if (!value || !isValidEnumValue(value, ConverterTypes)) {
+			return
+		}
 
-		ConverterStore.update(v => v.converter = value as ConverterType)
-		_db.get<_IDBStoreStorage<_StorageItems['calc:converter/input-unit']>>(store,
-			'calc:converter/input-unit' satisfies _StorageKeys
+		Converter.Signals.converter.set(value as ConverterTypes)
+		_db.get<_IDBStoreStorage<_StorageItems['page-converter-input-unit']>>(store,
+			'page-converter-input-unit' satisfies _StorageKeys
 		).then(v => {
 			const value = v?.value
-			if (!value) return
+			if (!value) {
+				return
+			}
 
 			const unit = AllUnits.find(v => v.id === value)
-			if (!unit) return
+			if (!unit) {
+				return
+			}
 
-			ConverterStore.update(v => v.inputUnit = unit)
+			Converter.Signals.inputUnit.set(unit)
 		})
 
-		_db.get<_IDBStoreStorage<_StorageItems['calc:converter/output-unit']>>(store,
-			'calc:converter/output-unit' satisfies _StorageKeys
+		_db.get<_IDBStoreStorage<_StorageItems['page-converter-output-unit']>>(store,
+			'page-converter-output-unit' satisfies _StorageKeys
 		).then(v => {
 			const value = v?.value
-			if (!value) return
+			if (!value) {
+				return
+			}
 
 			const unit = AllUnits.find(v => v.id === value)
-			if (!unit) return
+			if (!unit) {
+				return
+			}
 
-			ConverterStore.update(v => v.outputUnit = unit)
+			Converter.Signals.outputUnit.set(unit)
 		})
 	})
 }
 
 function _readStorageProgrammer(store: IDBObjectStore): void {
-	_db.get<_IDBStoreStorage<_StorageItems['calc:programmer/number-type']>>(store,
-		'calc:programmer/number-type' satisfies _StorageKeys
+	_db.get<_IDBStoreStorage<_StorageItems['page-programmer-num-type']>>(store,
+		'page-programmer-num-type' satisfies _StorageKeys
 	).then(v => {
 		const value = v?.value
-		if (!value || !isValidEnumValue(value, NumberType)) return
+		if (!value || !isValidEnumValue(value, ProgrammerNumTypes)) {
+			return
+		}
 
-		ProgrammerStore.update(v => v.numberType = value)
-
-		_db.get<_IDBStoreStorage<_StorageItems['calc:programmer/input']>>(store,
-			'calc:programmer/input' satisfies _StorageKeys
+		Programmer.Signals.numType.set(value)
+		_db.get<_IDBStoreStorage<_StorageItems['page-programmer-input']>>(store,
+			'page-programmer-input' satisfies _StorageKeys
 		).then(v => {
 			const value = v?.value
-			if (!value) return
+			if (!value) {
+				return
+			}
 
-			ProgrammerStore.update(v => v.input = value)
+			Programmer.Signals.input.set(value)
 		})
 	})
 }
 
 function _readStorage(): void {
 	const store = _db.readStore(_ObjectStoreNames.Storage)
-	if (!store) return
+	if (!store) {
+		return
+	}
 
-	_readStorageAll(store)
+	_readAllStorage(store)
 	_readStorageConverter(store)
 	_readStorageProgrammer(store)
 }

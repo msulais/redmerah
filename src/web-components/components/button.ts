@@ -6,7 +6,7 @@ export const Attributes = {
 	Focused: 'br:focused',
 
 	/** Keep focus ring visible */
-	KeepFocusVisible: 'br:keepfocusvisible',
+	KeepFocusVisible: 'br:keep-focus-visible',
 
 	/** For element that has no `:disabled` state selector */
 	Disabled: 'br:disabled'

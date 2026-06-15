@@ -30,7 +30,7 @@ function _initTheme(): void {
 		return
 	}
 
-	_ref_theme.biru.themeMode = BrTheme.ThemeMode.Auto
+	_ref_theme.biru.themeMode = theme as BrTheme.ThemeMode
 	const ref_previous = $$(
 		`input[name="${CSS.escape(InputNames.Theme)}"]:checked`
 	) as HTMLInputElement
@@ -57,7 +57,7 @@ function _initAnimation(): void {
 		return
 	}
 
-	_ref_theme.biru.animation = BrTheme.Animation.Auto
+	_ref_theme.biru.animation = animation as BrTheme.Animation
 	const ref_previous = $$(
 		`input[name="${CSS.escape(InputNames.Animation)}"]:checked`
 	) as HTMLInputElement

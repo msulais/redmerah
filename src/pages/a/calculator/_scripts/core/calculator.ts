@@ -1,15 +1,15 @@
+import * as Constant from "../shared/constant.enum.js"
+import * as Settings from "./settings.js"
+import * as Pages from '../shared/pages.enum.js'
+import * as Scientific from "../features/scientific.js"
 import { countString, reverseString } from "@/utils/string"
-import { DIVISION_CHAR, FUNCTION_REGEX, MULTIPLY_CHAR, NUMBER_REGEX } from "../shared/constant"
-import { SettingsStore } from "./settings"
 import { Math_acot, Math_acoth, Math_acsc, Math_acsch, Math_asec, Math_asech, Math_cot, Math_coth, Math_csc, Math_csch, Math_sec, Math_sech } from "@/utils/math"
 import { numberToRealDigits } from "@/utils/number"
-import { AngleUnits, ConverterUnit, TemperatureUnits } from "../shared/units"
-import { NavigationStore } from "./navigation"
-import { ScientificStore } from "../features/scientific"
-import { ConverterType, Pages, ScientificAngleType } from "../shared/enums"
+import { AngleUnits, ConverterUnit, TemperatureUnits } from "../shared/units.js"
+import { ConverterTypes, ScientificAngleTypes } from "../shared/calculator.js"
 
 export function repairInput(input: string): string {
-	const settings = SettingsStore.value
+	const settings = Settings.Signals
 	const openBracketCount = countString(input, /\(/g)
 	const closeBracketCount = countString(input, /\)/g)
 
@@ -27,10 +27,10 @@ export function repairInput(input: string): string {
 	input = input.replace(/\s/g, '')
 
 	// '123,456,789' => '123456789'
-	input = input.replaceAll(settings.groupingFormat, '')
+	input = input.replaceAll(settings.groupingFormat(), '')
 
 	// '123456,789' => '123456.789'
-	input = input.replaceAll(settings.decimalFormat, '.')
+	input = input.replaceAll(settings.decimalFormat(), '.')
 
 	// '.234' => '0.234'
 	input = input.replace(/(?<!\d)\.\d+/g, (s) => '0' + s)
@@ -47,8 +47,8 @@ export function repairInput(input: string): string {
 			return group1
 				+ (power > 0
 					? (isMinus
-						? DIVISION_CHAR
-						: MULTIPLY_CHAR
+						? Constant.DIVISION_CHAR
+						: Constant.MULTIPLY_CHAR
 					) + '1' + '0'.repeat(power)
 					: ''
 				)
@@ -64,7 +64,7 @@ export function repairInput(input: string): string {
 
 	// '123(456)' => '123×(456)'
 	const implicitMultiplyRegex = [
-		new RegExp(String.raw`(${NUMBER_REGEX}|[\)%!π]|(?<!\\)e)([\(π√\\]|(?<!\\)e|${FUNCTION_REGEX}(?=\())`, 'g'),
+		new RegExp(String.raw`(${Constant.NUMBER_REGEX}|[\)%!π]|(?<!\\)e)([\(π√\\]|(?<!\\)e|${Constant.FUNCTION_REGEX}(?=\())`, 'g'),
 		/([\)%π!]|(?<!\\)e)(\d+(?:\.\d+)?|[\(π√]|(?<!\\)e)/g,
 	]
 	let iterator = 0
@@ -74,11 +74,11 @@ export function repairInput(input: string): string {
 	) {
 		input = input.replace(
 			implicitMultiplyRegex[0],
-			(_, group1, group2) => group1 + MULTIPLY_CHAR + group2
+			(_, group1, group2) => group1 + Constant.MULTIPLY_CHAR + group2
 		)
 		input = input.replace(
 			implicitMultiplyRegex[1],
-			(_, group1, group2) => group1 + MULTIPLY_CHAR + group2
+			(_, group1, group2) => group1 + Constant.MULTIPLY_CHAR + group2
 		)
 
 		++iterator
@@ -108,12 +108,12 @@ export function repairInput(input: string): string {
 
 export function convertUnit(
 	input: number,
-	type: ConverterType,
+	type: ConverterTypes,
 	inputUnit: ConverterUnit,
 	outputUnit: ConverterUnit,
 ): number {
 	const isEqual = (unit: ConverterUnit, from = inputUnit) => from.equals(unit)
-	if (type == ConverterType.Angle) {
+	if (type == ConverterTypes.Angle) {
 		let degree: number = 0
 		if (isEqual(AngleUnits.degree)) degree = input
 		else if (isEqual(AngleUnits.radian)) degree = input * 180 / Math.PI
@@ -125,7 +125,7 @@ export function convertUnit(
 
 		return input
 	}
-	if (type == ConverterType.Temperature) {
+	if (type == ConverterTypes.Temperature) {
 		let celsius: number = 0
 		if (isEqual(TemperatureUnits.celcius)) celsius = input
 		else if (isEqual(TemperatureUnits.kelvin)) celsius = input - 273.15
@@ -150,70 +150,70 @@ export function convertUnit(
 }
 
 export function calculate(input: string): string {
-	const pages = NavigationStore.value
-	const fnRegex = new RegExp(String.raw`(${FUNCTION_REGEX})\(([+-]?${NUMBER_REGEX})\)`)
-	const bracketRegex = new RegExp(String.raw`(?<!${FUNCTION_REGEX})\(([+-]?${NUMBER_REGEX})\)`)
-	const sqrtRegex = /√([-+]?\d+(?:\.\d+)?)/g
-	const percentRegex = /(\d+(?:\.\d+)?)%/g
-	const factorialRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)!/g
-	const expRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)\^([+-]?\d+(?:\.\d+)?)/
+	const pages = Settings.Signals.page()
+	const fnRegex = new RegExp(String.raw`(${Constant.FUNCTION_REGEX})\(([+-]?${Constant.NUMBER_REGEX})\)`)
+	const bracketRegex = new RegExp(String.raw`(?<!${Constant.FUNCTION_REGEX})\(([+-]?${Constant.NUMBER_REGEX})\)`)
+	const sqrtRegex       = /√([-+]?\d+(?:\.\d+)?)/g
+	const percentRegex    = /(\d+(?:\.\d+)?)%/g
+	const factorialRegex  = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)!/g
+	const expRegex        = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)\^([+-]?\d+(?:\.\d+)?)/
 	const expReverseRegex = /((?:\d+\.)?\d+[+-]?)\^((?:\d+\.)?\d+(?:[-+](?!\d))?)/
-	const lshRshRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)(lsh|rsh|<<|>>)([+-]?\d+(?:\.\d+)?)/
-	const andRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)(?:&|and)([+-]?\d+(?:\.\d+)?)/
-	const orRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)(?:\||or)([+-]?\d+(?:\.\d+)?)/
-	const xorRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)xor([+-]?\d+(?:\.\d+)?)/
-	const addSubRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)([+-])([+-]?\d+(?:\.\d+)?)/
-	const divMulModRegex = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)([*×\/÷]|mod)([+-]?\d+(?:\.\d+)?)/
+	const lshRshRegex     = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)(lsh|rsh|<<|>>)([+-]?\d+(?:\.\d+)?)/
+	const andRegex        = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)(?:&|and)([+-]?\d+(?:\.\d+)?)/
+	const orRegex         = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)(?:\||or)([+-]?\d+(?:\.\d+)?)/
+	const xorRegex        = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)xor([+-]?\d+(?:\.\d+)?)/
+	const addSubRegex     = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)([+-])([+-]?\d+(?:\.\d+)?)/
+	const divMulModRegex  = /((?:(?<!\d)[-+])?\d+(?:\.\d+)?)([*×\/÷]|mod)([+-]?\d+(?:\.\d+)?)/
 	const fnOperation = (input: string) => input.replace(fnRegex, (_, fnName, value) => {
 		let parsedValue: number = Number.parseFloat(value)
 		const angleToRadian = (value: number) => {
-			if (pages.page !== Pages.Scientific) return value
+			if (pages !== Pages.Scientific) return value
 
-			const angle = ScientificStore.value.angle
+			const angle = Scientific.Signals.angle()
 			let unit: ConverterUnit = AngleUnits.radian
-			if (angle === ScientificAngleType.DEG) unit = AngleUnits.degree
-			else if (angle === ScientificAngleType.GRAD) unit = AngleUnits.gradian
+			if (angle === ScientificAngleTypes.Degree) unit = AngleUnits.degree
+			else if (angle === ScientificAngleTypes.Gradian) unit = AngleUnits.gradian
 
-			return convertUnit(value, ConverterType.Angle, unit, AngleUnits.radian)
+			return convertUnit(value, ConverterTypes.Angle, unit, AngleUnits.radian)
 		}
 		const radianToAngle = (value: number) => {
-			if (pages.page !== Pages.Scientific) return value
+			if (pages !== Pages.Scientific) return value
 
-			const angle = ScientificStore.value.angle
+			const angle = Scientific.Signals.angle()
 			let unit: ConverterUnit = AngleUnits.radian
-			if (angle == ScientificAngleType.DEG) unit = AngleUnits.degree
-			else if (angle == ScientificAngleType.GRAD) unit = AngleUnits.gradian
+			if (angle == ScientificAngleTypes.Degree) unit = AngleUnits.degree
+			else if (angle == ScientificAngleTypes.Gradian) unit = AngleUnits.gradian
 
-			return convertUnit(value, ConverterType.Angle, AngleUnits.radian, unit)
+			return convertUnit(value, ConverterTypes.Angle, AngleUnits.radian, unit)
 		}
 
 		switch (fnName) {
-		case 'not': parsedValue = ~parsedValue; break
-		case 'abs': parsedValue = Math.abs(parsedValue); break
-		case 'log': parsedValue = Math.log10(parsedValue); break
-		case 'ln': parsedValue = Math.log(parsedValue); break
-		case 'ceil': parsedValue = Math.ceil(parsedValue); break
+		case 'not'  : parsedValue = ~parsedValue; break
+		case 'abs'  : parsedValue = Math.abs(parsedValue); break
+		case 'log'  : parsedValue = Math.log10(parsedValue); break
+		case 'ln'   : parsedValue = Math.log(parsedValue); break
+		case 'ceil' : parsedValue = Math.ceil(parsedValue); break
 		case 'floor': parsedValue = Math.floor(parsedValue); break
 		case 'round': parsedValue = Math.round(parsedValue); break
-		case 'sqrt': parsedValue = Math.sqrt(parsedValue); break
-		case 'sin': parsedValue = Math.sin(angleToRadian(parsedValue)); break
-		case 'cos': parsedValue = Math.cos(angleToRadian(parsedValue)); break
-		case 'tan': parsedValue = Math.tan(angleToRadian(parsedValue)); break
-		case 'csc': parsedValue = Math_csc(angleToRadian(parsedValue)); break
-		case 'sec': parsedValue = Math_sec(angleToRadian(parsedValue)); break
-		case 'cot': parsedValue = Math_cot(angleToRadian(parsedValue)); break
-		case 'sinh': parsedValue = Math.sinh(angleToRadian(parsedValue)); break
-		case 'cosh': parsedValue = Math.cosh(angleToRadian(parsedValue)); break
-		case 'tanh': parsedValue = Math.tanh(angleToRadian(parsedValue)); break
-		case 'csch': parsedValue = Math_csch(angleToRadian(parsedValue)); break
-		case 'sech': parsedValue = Math_sech(angleToRadian(parsedValue)); break
-		case 'coth': parsedValue = Math_coth(angleToRadian(parsedValue)); break
-		case 'asin': parsedValue = radianToAngle(Math.asin(parsedValue)); break
-		case 'acos': parsedValue = radianToAngle(Math.acos(parsedValue)); break
-		case 'atan': parsedValue = radianToAngle(Math.atan(parsedValue)); break
-		case 'acsc': parsedValue = radianToAngle(Math_acsc(parsedValue)); break
-		case 'asec': parsedValue = radianToAngle(Math_asec(parsedValue)); break
-		case 'acot': parsedValue = radianToAngle(Math_acot(parsedValue)); break
+		case 'sqrt' : parsedValue = Math.sqrt(parsedValue); break
+		case 'sin'  : parsedValue = Math.sin(angleToRadian(parsedValue)); break
+		case 'cos'  : parsedValue = Math.cos(angleToRadian(parsedValue)); break
+		case 'tan'  : parsedValue = Math.tan(angleToRadian(parsedValue)); break
+		case 'csc'  : parsedValue = Math_csc(angleToRadian(parsedValue)); break
+		case 'sec'  : parsedValue = Math_sec(angleToRadian(parsedValue)); break
+		case 'cot'  : parsedValue = Math_cot(angleToRadian(parsedValue)); break
+		case 'sinh' : parsedValue = Math.sinh(angleToRadian(parsedValue)); break
+		case 'cosh' : parsedValue = Math.cosh(angleToRadian(parsedValue)); break
+		case 'tanh' : parsedValue = Math.tanh(angleToRadian(parsedValue)); break
+		case 'csch' : parsedValue = Math_csch(angleToRadian(parsedValue)); break
+		case 'sech' : parsedValue = Math_sech(angleToRadian(parsedValue)); break
+		case 'coth' : parsedValue = Math_coth(angleToRadian(parsedValue)); break
+		case 'asin' : parsedValue = radianToAngle(Math.asin(parsedValue)); break
+		case 'acos' : parsedValue = radianToAngle(Math.acos(parsedValue)); break
+		case 'atan' : parsedValue = radianToAngle(Math.atan(parsedValue)); break
+		case 'acsc' : parsedValue = radianToAngle(Math_acsc(parsedValue)); break
+		case 'asec' : parsedValue = radianToAngle(Math_asec(parsedValue)); break
+		case 'acot' : parsedValue = radianToAngle(Math_acot(parsedValue)); break
 		case 'asinh': parsedValue = radianToAngle(Math.asinh(parsedValue)); break
 		case 'acosh': parsedValue = radianToAngle(Math.acosh(parsedValue)); break
 		case 'atanh': parsedValue = radianToAngle(Math.atanh(parsedValue)); break

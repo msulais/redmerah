@@ -1,222 +1,164 @@
-import { ObservableStore } from "@/utils/signal"
-import { ConverterType } from "../shared/enums"
-import { AngleUnits, AreaUnits, FrequencyUnits, LengthUnits, PressureUnits, TemperatureUnits, TimeUnits, VolumeUnits, WeightUnits, type ConverterUnit } from "../shared/units"
-import { DEFAULT_CONVERTER_INPUT, DEFAULT_CONVERTER_INPUT_UNIT, DEFAULT_CONVERTER_OUTPUT, DEFAULT_CONVERTER_OUTPUT_UNIT, DEFAULT_CONVERTER_TYPE } from "../shared/constant"
-import { calculate, convertUnit } from "../core/calculator"
-import { $, scrollInputToEnd } from "../core/dom-utils"
-import { isNumberDefined } from "@/utils/number"
-import { formatOutput } from "../core/string-utils"
-import { ElementIds } from "../shared/ids"
-import { isValidEnumValue } from "@/utils/object"
-import { AppCSSColors } from "@/enums/app-data"
-import { saveStorageItem } from "../core/database"
-import { CComboBox } from "@/components/ComboBox"
+import * as Constant from '../shared/constant.enum.js'
+import * as BrTheme from '@/web-components/components/br-theme.js'
+import * as Ids from '../shared/ids.enum.js'
+import { ConverterTypes } from '../shared/calculator.js'
+import { batch, signal } from "@/utils/signal.js"
+import { $, scrollInputToEnd } from '../core/dom-utils.js'
+import { AngleUnits, AreaUnits, FrequencyUnits, LengthUnits, PressureUnits, TemperatureUnits, TimeUnits, VolumeUnits, WeightUnits } from '../shared/units.js'
+import { calculate, convertUnit } from '../core/calculator.js'
+import { isNumberDefined } from '@/utils/number'
+import { formatOutput } from '../core/string-utils.js'
+import { isValidEnumValue } from '@/utils/object.js'
+import { saveStorageItem } from '../core/database.js'
 
-export type ConverterStoreType = Readonly<{
-	input: string
-	output: number | null
-	converter: ConverterType
-	inputUnit: ConverterUnit
-	outputUnit: ConverterUnit
-}>
+const _sg_converter = signal<ConverterTypes>(Constant.DEFAULT_CONVERTER_TYPE)
+const _sg_input = signal(Constant.DEFAULT_CONVERTER_INPUT)
+const _sg_output = signal(Constant.DEFAULT_CONVERTER_OUTPUT)
+const _sg_inputUnit = signal(Constant.DEFAULT_CONVERTER_INPUT_UNIT)
+const _sg_outputUnit = signal(Constant.DEFAULT_CONVERTER_OUTPUT_UNIT)
 
-export const ConverterStore = new ObservableStore<ConverterStoreType>({
-	converter: DEFAULT_CONVERTER_TYPE,
-	input: DEFAULT_CONVERTER_INPUT,
-	output: DEFAULT_CONVERTER_OUTPUT,
-	inputUnit: DEFAULT_CONVERTER_INPUT_UNIT,
-	outputUnit: DEFAULT_CONVERTER_OUTPUT_UNIT
-})
-const _ref_input      = $(ElementIds.pgConv_input) as HTMLInputElement
-const _ref_output     = $(ElementIds.pgConv_output) as HTMLInputElement
-const _ref_converter  = $(ElementIds.pgConv_type) as CComboBox.CElement
-const _ref_inputUnit  = $(ElementIds.pgConv_inputUnit) as CComboBox.CElement
-const _ref_outputUnit = $(ElementIds.pgConv_outputUnit) as CComboBox.CElement
-let _time_calculate: NodeJS.Timeout | number | null = null
-let _time_saveInput: NodeJS.Timeout | number | null = null
+export const Signals = {
+	converter: _sg_converter,
+	input: _sg_input,
+	output: _sg_output,
+	inputUnit: _sg_inputUnit,
+	outputUnit: _sg_outputUnit,
+}
+
+const _ref_input      = $(Ids.PageConverterInput) as HTMLInputElement
+const _ref_output     = $(Ids.PageConverterOutput) as HTMLInputElement
+const _ref_converter  = $(Ids.PageConverterType) as HTMLSelectElement
+const _ref_inputUnit  = $(Ids.PageConverterInputUnit) as HTMLSelectElement
+const _ref_outputUnit = $(Ids.PageConverterOutputUnit) as HTMLSelectElement
+let _time_calculate: ReturnType<typeof setTimeout> | undefined
 
 function _changeUnit(type: 'input' | 'output', unitId: string): void {
 	let units = LengthUnits.all
-	switch (ConverterStore.value.converter) {
-	case ConverterType.Length     : units = LengthUnits     .all; break
-	case ConverterType.Area       : units = AreaUnits       .all; break
-	case ConverterType.Volume     : units = VolumeUnits     .all; break
-	case ConverterType.Temperature: units = TemperatureUnits.all; break
-	case ConverterType.Time       : units = TimeUnits       .all; break
-	case ConverterType.Weight     : units = WeightUnits     .all; break
-	case ConverterType.Frequency  : units = FrequencyUnits  .all; break
-	case ConverterType.Pressure   : units = PressureUnits   .all; break
-	case ConverterType.Angle      : units = AngleUnits      .all; break
+	switch (_sg_converter()) {
+	case ConverterTypes.Length     : units = LengthUnits     .all; break
+	case ConverterTypes.Area       : units = AreaUnits       .all; break
+	case ConverterTypes.Volume     : units = VolumeUnits     .all; break
+	case ConverterTypes.Temperature: units = TemperatureUnits.all; break
+	case ConverterTypes.Time       : units = TimeUnits       .all; break
+	case ConverterTypes.Weight     : units = WeightUnits     .all; break
+	case ConverterTypes.Frequency  : units = FrequencyUnits  .all; break
+	case ConverterTypes.Pressure   : units = PressureUnits   .all; break
+	case ConverterTypes.Angle      : units = AngleUnits      .all; break
 	}
 
 	const unit = units.find(v => v.id === unitId)
-	if (!unit) return;
-
-	ConverterStore.update(v => {
-		if (type === 'input') {
-			v.inputUnit = unit
-		}
-		else {
-			v.outputUnit = unit
-		}
-	})
-}
-
-function _calculate(value: ConverterStoreType): void {
-	if (_time_calculate !== null) {
-		clearTimeout(_time_calculate)
+	if (!unit) {
+		return
 	}
 
+	switch (type) {
+	case 'input' : _sg_inputUnit .set(unit); break
+	case 'output': _sg_outputUnit.set(unit); break
+	}
+}
+
+function _calculate(): void {
+	clearTimeout(_time_calculate)
 	_time_calculate = setTimeout(() => {
-		const output = calculate(value.input)
-		const parsedOutput = convertUnit(Number.parseFloat(output), value.converter, value.inputUnit, value.outputUnit)
-		ConverterStore.update(v => v.output = isNumberDefined(parsedOutput)? parsedOutput : null)
+		const output = calculate(_sg_input())
+		const parsedOutput = convertUnit(
+			Number.parseFloat(output),
+			_sg_converter(),
+			_sg_inputUnit(),
+			_sg_outputUnit()
+		)
+		_sg_output.set(isNumberDefined(parsedOutput)? parsedOutput : null)
 	}, 50)
 }
 
-function _subsConverterChanges(value: ConverterStoreType, old: ConverterStoreType): void {
-	const type = value.converter
-	if (type === old.converter) return;
-
+function _changeConverterType(type: ConverterTypes): void {
 	let units = LengthUnits.all
-	console.log(type)
 	switch (type) {
-	case ConverterType.Length     : units = LengthUnits     .all; break
-	case ConverterType.Area       : units = AreaUnits       .all; break
-	case ConverterType.Volume     : units = VolumeUnits     .all; break
-	case ConverterType.Temperature: units = TemperatureUnits.all; break
-	case ConverterType.Time       : units = TimeUnits       .all; break
-	case ConverterType.Weight     : units = WeightUnits     .all; break
-	case ConverterType.Frequency  : units = FrequencyUnits  .all; break
-	case ConverterType.Pressure   : units = PressureUnits   .all; break
-	case ConverterType.Angle      : units = AngleUnits      .all; break
+	case ConverterTypes.Length     : units = LengthUnits     .all; break
+	case ConverterTypes.Area       : units = AreaUnits       .all; break
+	case ConverterTypes.Volume     : units = VolumeUnits     .all; break
+	case ConverterTypes.Temperature: units = TemperatureUnits.all; break
+	case ConverterTypes.Time       : units = TimeUnits       .all; break
+	case ConverterTypes.Weight     : units = WeightUnits     .all; break
+	case ConverterTypes.Frequency  : units = FrequencyUnits  .all; break
+	case ConverterTypes.Pressure   : units = PressureUnits   .all; break
+	case ConverterTypes.Angle      : units = AngleUnits      .all; break
 	}
 
-	const refs_inputOption: CComboBox.COption.CElement[] = []
-	const refs_outputOption: CComboBox.COption.CElement[] = []
+	const refs_inputOption: HTMLOptionElement[] = []
+	const refs_outputOption: HTMLOptionElement[] = []
 	for (const i in units) {
 		const ref_inputSpan = document.createElement('span')
-		ref_inputSpan.style.setProperty('color', `rgb(${AppCSSColors.Accent})`)
+		ref_inputSpan.style.setProperty('color', `rgb(var(${BrTheme.CSSVars.ColorAccent}))`)
 		ref_inputSpan.textContent = units[i].symbol
-		const ref_inputOption = CComboBox.COption.create({
-			Option: {children: [`${units[i].name} [\xa0`, ref_inputSpan, '\xa0]']}
-		})
+
+		const ref_inputOption = document.createElement('option')
+		ref_inputOption.innerHTML = `${units[i].name} [\xa0${ref_inputSpan.outerHTML}\xa0]`
 		ref_inputOption.value = units[i].id
 		ref_inputOption.selected = Number(i) === 0
 		ref_inputOption.style.setProperty('gap', '0')
 		refs_inputOption.push(ref_inputOption)
 
 		const ref_outputSpan = document.createElement('span')
-		ref_outputSpan.style.setProperty('color', `rgb(${AppCSSColors.Accent})`)
+		ref_outputSpan.style.setProperty('color', `rgb(var(${BrTheme.CSSVars.ColorAccent}))`)
 		ref_outputSpan.textContent = units[i].symbol
-		const ref_outputOption = CComboBox.COption.create({
-			Option: {children: [`${units[i].name} [\xa0`, ref_outputSpan, '\xa0]']}
-		})
+
+		const ref_outputOption = document.createElement('option')
+		ref_outputOption.innerHTML = `${units[i].name} [\xa0${ref_outputSpan.outerHTML}\xa0]`
 		ref_outputOption.value = units[i].id
 		ref_outputOption.selected = Number(i) === 1
 		ref_outputOption.style.setProperty('gap', '0')
 		refs_outputOption.push(ref_outputOption)
 	}
 
-	CComboBox.update(_ref_inputUnit, {
-		ComboBox: {children: refs_inputOption}
+	_ref_inputUnit.replaceChildren(...refs_inputOption)
+	_ref_outputUnit.replaceChildren(...refs_outputOption)
+
+	batch(() => {
+		_sg_inputUnit.set(units[0])
+		_sg_outputUnit.set(units[1])
 	})
-	CComboBox.update(_ref_outputUnit, {
-		ComboBox: {children: refs_outputOption}
-	})
-
-	ConverterStore.update(v => {
-		v.inputUnit = units[0]
-		v.outputUnit = units[1]
-	})
-}
-
-function _subsUnitChanges(value: ConverterStoreType, old: ConverterStoreType): void {
-	if (
-		value.inputUnit.equals(old.inputUnit)
-		&& value.outputUnit.equals(old.outputUnit)
-	) return;
-
-	_calculate(value)
-	saveStorageItem('calc:converter/type', value.converter)
-	saveStorageItem('calc:converter/input-unit', value.inputUnit.id)
-	saveStorageItem('calc:converter/output-unit', value.outputUnit.id)
-}
-
-function _subsInputChanges(value: ConverterStoreType, old: ConverterStoreType) {
-	const input = value.input
-	if (input === old.input) return
-
-	_calculate(value)
-	if (_time_saveInput !== null) {
-		clearTimeout(_time_saveInput)
-	}
-
-	_time_saveInput = setTimeout(() => {
-		_time_saveInput = null
-		saveStorageItem('calc:converter/input', input)
-	}, 250)
-}
-
-function _subsInputView(value: ConverterStoreType) {
-	const input = value.input
-	if (input === _ref_input.value) return
-
-	_ref_input.value = input
-	scrollInputToEnd(_ref_input)
-}
-
-function _subsOutputView(value: ConverterStoreType, old: ConverterStoreType) {
-	const output = value.output
-	if (output === null) return _ref_output.value = ''
-
-	const formattedOutput = formatOutput(output)
-	if (
-		output === old.output
-		&& _ref_output.value === formattedOutput
-	) return;
-
-	_ref_output.value = formattedOutput
-}
-
-function _subsConverterView(value: ConverterStoreType): void {
-	const converter = value.converter
-	if (converter === _ref_converter.value) return
-
-	_ref_converter.value = converter
-}
-
-function _subsInputUnitView(value: ConverterStoreType): void {
-	const id = value.inputUnit.id
-	if (id === _ref_inputUnit.value) return
-
-	_ref_inputUnit.value = id
-}
-
-function _subsOutputUnitView(value: ConverterStoreType): void {
-	const id = value.outputUnit.id
-	if (id === _ref_outputUnit.value) return
-
-	_ref_outputUnit.value = id
 }
 
 function _initSubscriber(): void {
-	ConverterStore.subscribe(_subsConverterChanges)
-	ConverterStore.subscribe(_subsUnitChanges)
-	ConverterStore.subscribe(_subsInputChanges)
-	ConverterStore.subscribe(_subsInputView)
-	ConverterStore.subscribe(_subsOutputView)
-	ConverterStore.subscribe(_subsConverterView)
-	ConverterStore.subscribe(_subsInputUnitView)
-	ConverterStore.subscribe(_subsOutputUnitView)
+	_sg_input.subscribe((v) => {
+		_calculate()
+		_ref_input.value = v
+		scrollInputToEnd(_ref_input)
+		saveStorageItem('page-converter-input', v, 250)
+	})
+
+	_sg_output.subscribe((v) => {
+		_ref_output.value = v === null? '' : formatOutput(v)
+	})
+
+	_sg_converter.subscribe(v => {
+		_ref_converter.value = v
+		_changeConverterType(v)
+		saveStorageItem('page-converter-type', v)
+	})
+
+	_sg_inputUnit.subscribe(v => {
+		_calculate()
+		_ref_inputUnit.value = v.id
+		saveStorageItem('page-converter-input-unit', v.id)
+	})
+
+	_sg_outputUnit.subscribe(v => {
+		_calculate()
+		_ref_outputUnit.value = v.id
+		saveStorageItem('page-converter-output-unit', v.id)
+	})
 }
 
 function _initEvents(): void {
 	_ref_converter.addEventListener('change', () => {
 		const value = _ref_converter.value
-		if (!isValidEnumValue(value, ConverterType)) return
+		if (!isValidEnumValue(value, ConverterTypes)) {
+			return
+		}
 
-		ConverterStore.update(v => v.converter = value as ConverterType)
+		_sg_converter.set(value as ConverterTypes)
 	})
 
 	_ref_inputUnit.addEventListener('change', () => {
@@ -225,6 +167,10 @@ function _initEvents(): void {
 
 	_ref_outputUnit.addEventListener('change', () => {
 		_changeUnit('output', _ref_outputUnit.value)
+	})
+
+	_ref_input.addEventListener('input', () => {
+		_sg_input.set(_ref_input.value)
 	})
 }
 
