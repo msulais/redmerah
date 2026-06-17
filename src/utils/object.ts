@@ -66,25 +66,3 @@ export function createObject<T>(...data: [key: keyof T, value: unknown][]): T {
 
 	return obj as T
 }
-
-/**
- * Basically switch-case but without `break` keyword.
- *
- * Why do I made this? for simplicity. You know, "MINIFY" javascript.
- * Althought, I don't use it cause it HARD to use compare to `switch`.
- * @param source
- * @param args
- * @returns
- */
-export function match<T, U>(
-	source: T,
-	...args: [value: T, callback: (() => U) | U][]
-): U | void {
-	for (const arg of args) {
-		if (arg[0] === source) {
-			return typeof arg[1] === 'function'
-				? (arg[1] as () => U)()
-				: arg[1] as U
-		}
-	}
-}

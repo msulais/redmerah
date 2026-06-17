@@ -1,4 +1,4 @@
-import type { Emoji } from "@/types/emoji"
+type Emoji = [emoji: string, description: string]
 
 // source: https://unicode.org/emoji/charts/full-emoji-list.html
 export const EMOJIS_SMILEY_AND_EMOTION: Emoji[] = [

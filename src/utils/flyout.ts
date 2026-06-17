@@ -43,6 +43,9 @@ type FlyoutPositionResult = {
 	right: number
 }
 
+/**
+ * @deprecated
+ */
 export function getFlyoutPosition({
 	flyout,
 	anchor,

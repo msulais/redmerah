@@ -1,3 +1,6 @@
+/*
+ * @deprecated
+ */
 export enum AnimationEasing {
 	Spring = 'cubic-bezier(.25,0,0,1)',
 	SpringInverse = 'cubic-bezier(1,0,0.75,1)',

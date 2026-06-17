@@ -1,3 +1,6 @@
+/**
+ * @deprecated
+ */
 export enum GlobalElementIds {
 	ColorAccent = 'g-color-accent',
 	Splash = 'g-splash',

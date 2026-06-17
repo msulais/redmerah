@@ -1,3 +1,7 @@
+
+/**
+ * @deprecated
+ */
 export enum AppCSSColors {
 	Background = 'var(--g-color-background)',
 	Accent     = 'var(--g-color-accent)',
@@ -8,6 +12,9 @@ export enum AppCSSColors {
 	OnError    = 'var(--g-color-on-error)',
 }
 
+/**
+ * @deprecated
+ */
 export enum AppCSSFontSizes {
 	S   = 'var(--g-font-size-s)',
 	XS  = 'var(--g-font-size-xs)',
@@ -23,6 +30,9 @@ export enum AppCSSFontSizes {
 	XXD = 'var(--g-font-size-xxd)',
 }
 
+/**
+ * @deprecated
+ */
 export enum AppCSSOpacity {
 	O0 = 'var(--g-opacity0)',
 	O1 = 'var(--g-opacity1)',
@@ -41,16 +51,25 @@ export enum AppCSSOpacity {
 	Half = 'var(--g-opacity-half)'
 }
 
+/**
+ * @deprecated
+ */
 export enum AppCSSTransition {
 	Spring = 'var(--g-transition-spring)',
 	SpringBounce = 'var(--g-transition-spring-bounce)'
 }
 
+/**
+ * @deprecated
+ */
 export enum AppCSSFontFamily {
 	SansSerif = 'var(--g-font-family-sans-serif)',
 	Monospace = 'var(--g-font-family-monospace)'
 }
 
+/**
+ * @deprecated
+ */
 export enum AppCSSElevation {
 	E1 = 'var(--g-elevation1)',
 	E2 = 'var(--g-elevation2)',
@@ -59,10 +78,16 @@ export enum AppCSSElevation {
 	E5 = 'var(--g-elevation5)',
 }
 
+/**
+ * @deprecated
+ */
 export enum AppCSSDuration {
 	Transition = 'var(--g-duration-transition)'
 }
 
+/**
+ * @deprecated
+ */
 export enum AppCSSBlur {
 	Glass = 'var(--g-blur-glass)'
 }

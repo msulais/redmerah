@@ -1,3 +1,6 @@
+/**
+ * @deprecated
+ */
 export enum KeyboardCode {
 	Backspace = 'Backspace',
 	Enter     = 'Enter',
@@ -7,6 +10,9 @@ export enum KeyboardCode {
 	KeyC      = 'KeyC',
 }
 
+/**
+ * @deprecated
+ */
 export enum KeyboardValue {
 	Backspace = 'Backspace',
 	Enter = 'Enter',

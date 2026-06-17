@@ -1,3 +1,6 @@
+/**
+ * @deprecated
+ */
 export enum IconCodes {
 	Add = 0xE00D,
 	AddCircle = 0xE00F,

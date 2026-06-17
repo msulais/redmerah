@@ -14,6 +14,7 @@
  * BOTTOM |     [<v  ] | [v>  ] [<v> ] [<v  ] | [v>  ]
  *        |            v                      v
  * ```
+ * @deprecated
  */
 export enum FlyoutPosition {
 	LeftTop = 'lt',

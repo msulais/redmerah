@@ -1,9 +1,15 @@
+/**
+ * @deprecated
+ */
 export enum LocalStorageKeys {
 	PlatformTheme = 'platform:theme',
 	PlatformAnimation = 'platform:animation',
 	PlatformAccentColor = 'platform:accent-color',
 }
 
+/**
+ * @deprecated
+ */
 export enum DatabaseNames {
 	CSSUnitConverter = 'css-unit-converter',
 	MarkdownConverter = 'markdown-converter',

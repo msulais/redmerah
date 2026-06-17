@@ -43,9 +43,8 @@
 		"noImplicitThis": true,
 		"paths": {
 			"@/*": [
-				"src/*"
+				"./src/*"
 			]
-		},
-		"baseUrl": ".",
+		}
 	},
 }

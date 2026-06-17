@@ -1,3 +1,6 @@
+/**
+ * @deprecated
+ */
 export enum RoutesLinks {
 	Home = '/',
 	Apps = '/apps',
@@ -58,6 +61,9 @@ export enum RoutesLinks {
 	TextEditor = '/a/text-editor',
 }
 
+/**
+ * @deprecated
+ */
 export enum ExternalLinks {
 	SiteUrl = 'https://redmerah.com',
 	ContactEmail = 'redmerah1813@gmail.com',

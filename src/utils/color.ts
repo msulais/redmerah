@@ -419,6 +419,7 @@ type GenerateColorResult = {
  * - On Color
  * - Color Dark
  * - On Color Dark
+ * @deprecated Use `<br-theme>` instead
 */
 export function generateColorPalette(hex: HEXColor): GenerateColorResult {
 	if (!isColorValid(hex)) {
