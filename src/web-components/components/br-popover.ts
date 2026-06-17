@@ -128,7 +128,7 @@ export class BiruPopoverElement extends HTMLElement {
 		this._theme = this.closest(BrTheme.TAGNAME) ?? undefined
 		this._shadowElementsListenerDesctructor = shadowElementsListener(
 			[this._slot, 'slotchange', () => {
-				if (this.firstElementChild?.tagName === 'MENU') {
+				if (this.querySelector(":where(menu:not([br\\:as~=\"!menu\"]),[br\\:as~=menu])")) {
 					this.style.setProperty(CSSVars.Padding, '.25rem')
 				}
 				else {
@@ -725,7 +725,4 @@ export function define(): void {
 	customElements.define(TAGNAME, BiruPopoverElement)
 }
 
-Button.define()
-BrTheme.define()
-BrDialog.define()
 define()

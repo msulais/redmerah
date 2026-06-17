@@ -64,14 +64,6 @@ export class BiruDialogElement extends HTMLElement {
 		this._lastFocusElement = null
 	}
 
-	get $manual(): boolean {
-		return this.hasAttribute(Attributes.Manual)
-	}
-
-	set $manual(value: boolean) {
-		this.toggleAttribute(Attributes.Manual, value)
-	}
-
 	connectedCallback() {
 		this._emptySlotListenerDesctructor = slotEmptyListeners(this.shadowRoot!,
 			[Slots.Footer, Parts.Footer],
@@ -110,6 +102,12 @@ export class BiruDialogElement extends HTMLElement {
 	get biru() {
 		const self = this
 		return {
+			get manual(): boolean {
+				return self.hasAttribute(Attributes.Manual)
+			},
+			set manual(value: boolean) {
+				self.toggleAttribute(Attributes.Manual, value)
+			},
 			get isOpen(): boolean {
 				return self._isOpen
 			},
@@ -138,7 +136,7 @@ export class BiruDialogElement extends HTMLElement {
 					backdrop.style.setProperty('z-index', registerZIndex(backdrop) + '')
 					backdrop.addEventListener('click', (ev) => {
 						ev.stopPropagation()
-						if (self.$manual) {
+						if (this.manual) {
 							return
 						}
 
@@ -159,7 +157,7 @@ export class BiruDialogElement extends HTMLElement {
 
 				self.style.setProperty('display', 'flex')
 				self.style.setProperty('z-index', registerZIndex(self, (ref) => {
-					if (ref.$manual) {
+					if (this.manual) {
 						return
 					}
 

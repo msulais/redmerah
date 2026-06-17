@@ -39,119 +39,125 @@ const angles: [text: string, value: ScientificAngleTypes][] = [
 			/>
 		</div>
 		<div class={Styles.InputOptions}>
-			<button
-				id={Ids.PageScientificFunctionButton}
-				br:variant="tonal"
-				br:command-for={Ids.PageScientificFunctionPopover}>
-				<br-icon set:html={Icons.MathFormula}/>
-				Function
-				<div style="min-width:.25rem;max-width:.25rem"/>
-				<br-icon set:html={Icons.ChevronDown}/>
-			</button>
-			<br-popover style="overflow:hidden;width:19.5rem" id={Ids.PageScientificFunctionPopover}>
-				<div class={Styles.PageScientificFunctionGrid}>
-					<button data-command={Commands.KeyChar} data-char="abs(" br:variant="tonal">abs(x)</button>
-					<button data-command={Commands.KeyChar} data-char="log(" br:variant="tonal">log(x)</button>
-					<button data-command={Commands.KeyChar} data-char="ln(" br:variant="tonal">ln(x)</button>
-					<button data-command={Commands.KeyChar} data-char="ceil(" br:variant="tonal">ceil(x)</button>
-					<button data-command={Commands.KeyChar} data-char="round(" br:variant="tonal">round(x)</button>
-					<button data-command={Commands.KeyChar} data-char="floor(" br:variant="tonal">floor(x)</button>
-				</div>
-				<div style={{
-					padding: '.25rem 1rem',
-					display: 'flex',
-					width: 'calc(100% + 2rem)',
-					position: 'relative',
-					left: '-1rem',
-					gap: '.25rem',
-					marginTop: '1rem',
-					borderTop: `1px solid rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .32)`
-				}}>
-					<label br:as="checkbox">
-						<input id={Ids.PageScientificFunctionInverse} type="checkbox"/>
-						Inverse
-					</label>
-					<label br:as="checkbox">
-						<input id={Ids.PageScientificFunctionHyperbolic} type="checkbox"/>
-						Hyperbolic
-					</label>
-				</div>
-				<div class={Styles.PageScientificFunctionGrid}>
-					<button data-command={Commands.KeyChar} data-char="sin(" class={Styles.PageScientificFunctionTrigonometry} br:variant="tonal">sin(x)</button>
-					<button data-command={Commands.KeyChar} data-char="cos(" class={Styles.PageScientificFunctionTrigonometry} br:variant="tonal">cos(x)</button>
-					<button data-command={Commands.KeyChar} data-char="tan(" class={Styles.PageScientificFunctionTrigonometry} br:variant="tonal">tan(x)</button>
-					<button data-command={Commands.KeyChar} data-char="csc(" class={Styles.PageScientificFunctionTrigonometry} br:variant="tonal">csc(x)</button>
-					<button data-command={Commands.KeyChar} data-char="sec(" class={Styles.PageScientificFunctionTrigonometry} br:variant="tonal">sec(x)</button>
-					<button data-command={Commands.KeyChar} data-char="cot(" class={Styles.PageScientificFunctionTrigonometry} br:variant="tonal">cot(x)</button>
-				</div>
-			</br-popover>
+			<br-focusgroup br:direction="horizontal">
+				<button
+					id={Ids.PageScientificFunctionButton}
+					br:variant="tonal"
+					br:command-for={Ids.PageScientificFunctionPopover}>
+					<br-icon set:html={Icons.MathFormula}/>
+					Function
+					<div style="min-width:.25rem;max-width:.25rem"/>
+					<br-icon set:html={Icons.ChevronDown}/>
+				</button>
+				<br-popover style="overflow:hidden;width:19.5rem" id={Ids.PageScientificFunctionPopover}>
+					<br-focusgroup class={Styles.PageScientificFunctionGrid} br:direction="grid">
+						<button data-command={Commands.KeyChar} data-char="abs(" br:variant="tonal">abs(x)</button>
+						<button data-command={Commands.KeyChar} data-char="log(" br:variant="tonal">log(x)</button>
+						<button data-command={Commands.KeyChar} data-char="ln(" br:variant="tonal">ln(x)</button>
+						<button data-command={Commands.KeyChar} data-char="ceil(" br:variant="tonal">ceil(x)</button>
+						<button data-command={Commands.KeyChar} data-char="round(" br:variant="tonal">round(x)</button>
+						<button data-command={Commands.KeyChar} data-char="floor(" br:variant="tonal">floor(x)</button>
+					</br-focusgroup>
+					<br-focusgroup
+						style={{
+							padding: '.25rem 1rem',
+							display: 'flex',
+							width: 'calc(100% + 2rem)',
+							position: 'relative',
+							left: '-1rem',
+							gap: '.25rem',
+							marginTop: '1rem',
+							borderTop: `1px solid rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .32)`
+						}}
+						br:direction="horizontal">
+						<label br:as="checkbox">
+							<input id={Ids.PageScientificFunctionInverse} type="checkbox"/>
+							Inverse
+						</label>
+						<label br:as="checkbox">
+							<input id={Ids.PageScientificFunctionHyperbolic} type="checkbox"/>
+							Hyperbolic
+						</label>
+					</br-focusgroup>
+					<br-focusgroup class={Styles.PageScientificFunctionGrid} br:direction="grid">
+						<button data-command={Commands.KeyChar} data-char="sin(" class={Styles.PageScientificFunctionTrigonometry} br:variant="tonal">sin(x)</button>
+						<button data-command={Commands.KeyChar} data-char="cos(" class={Styles.PageScientificFunctionTrigonometry} br:variant="tonal">cos(x)</button>
+						<button data-command={Commands.KeyChar} data-char="tan(" class={Styles.PageScientificFunctionTrigonometry} br:variant="tonal">tan(x)</button>
+						<button data-command={Commands.KeyChar} data-char="csc(" class={Styles.PageScientificFunctionTrigonometry} br:variant="tonal">csc(x)</button>
+						<button data-command={Commands.KeyChar} data-char="sec(" class={Styles.PageScientificFunctionTrigonometry} br:variant="tonal">sec(x)</button>
+						<button data-command={Commands.KeyChar} data-char="cot(" class={Styles.PageScientificFunctionTrigonometry} br:variant="tonal">cot(x)</button>
+					</br-focusgroup>
+				</br-popover>
 
-			<select id={Ids.PageScientificAngle}>
-				{angles.map(v =>
-					<option
-						selected={v[1] === Constant.DEFAULT_SCIENTIFIC_ANGLE}
-						value={v[1]}>
-						{v[0]}
-					</option>
-				)}
-			</select>
-			<button
-				data-command={Commands.MemoryClear}
-				br:tooltip="Memory clear (Ctrl+Shift+C)">
-				MC
-			</button>
-			<button
-				data-command={Commands.MemoryAdd}
-				br:tooltip="Memory add (Ctrl+Shift+&quot;+&quot;)">
-				M+
-			</button>
-			<button
-				data-command={Commands.MemorySubtract}
-				br:tooltip="Memory subtract (Ctrl+Shift+&quot;-&quot;)">
-				M-
-			</button>
-			<button
-				data-command={Commands.MemoryRecall}
-				br:tooltip="Memory recall (Ctrl+Shift+R)">
-				MR: {Constant.DEFAULT_MEMORY}
-			</button>
+				<select id={Ids.PageScientificAngle}>
+					{angles.map(v =>
+						<option
+							selected={v[1] === Constant.DEFAULT_SCIENTIFIC_ANGLE}
+							value={v[1]}>
+							{v[0]}
+						</option>
+					)}
+				</select>
+				<button
+					data-command={Commands.MemoryClear}
+					br:tooltip="Memory clear (Ctrl+Shift+C)">
+					MC
+				</button>
+				<button
+					data-command={Commands.MemoryAdd}
+					br:tooltip="Memory add (Ctrl+Shift+&quot;+&quot;)">
+					M+
+				</button>
+				<button
+					data-command={Commands.MemorySubtract}
+					br:tooltip="Memory subtract (Ctrl+Shift+&quot;-&quot;)">
+					M-
+				</button>
+				<button
+					data-command={Commands.MemoryRecall}
+					br:tooltip="Memory recall (Ctrl+Shift+R)">
+					MR: {Constant.DEFAULT_MEMORY}
+				</button>
+			</br-focusgroup>
 		</div>
 		<div class={Styles.InputButtons} style="grid-template-columns: repeat(5, 1fr);">
-			<button data-command={Commands.KeyChar} data-char="mod" br:variant="tonal">mod</button>
-			<button data-command={Commands.KeyChar} data-char="(" br:variant="tonal">(</button>
-			<button data-command={Commands.KeyChar} data-char=")" br:variant="tonal">)</button>
-			<button data-command={Commands.KeyClear} br:variant="tonal" style={`color:rgb(var(${BrTheme.CSSVars.ColorAccent}))`}>C</button>
-			<button data-command={Commands.KeyBackspace} br:variant="tonal" style={`color:rgb(var(${BrTheme.CSSVars.ColorAccent}))`}><br-icon set:html={Icons.Backspace}/></button>
+			<br-focusgroup br:direction="grid">
+				<button data-command={Commands.KeyChar} data-char="mod" br:variant="tonal">mod</button>
+				<button data-command={Commands.KeyChar} data-char="(" br:variant="tonal">(</button>
+				<button data-command={Commands.KeyChar} data-char=")" br:variant="tonal">)</button>
+				<button data-command={Commands.KeyClear} br:variant="tonal" style={`color:rgb(var(${BrTheme.CSSVars.ColorAccent}))`}>C</button>
+				<button data-command={Commands.KeyBackspace} br:variant="tonal" style={`color:rgb(var(${BrTheme.CSSVars.ColorAccent}))`}><br-icon set:html={Icons.Backspace}/></button>
 
-			<button data-command={Commands.KeyChar} data-char="%" br:variant="tonal">%</button>
-			<button data-command={Commands.KeyChar} data-char="10^" br:variant="tonal">10^</button>
-			<button data-command={Commands.KeyChar} data-char="^2" br:variant="tonal">^2</button>
-			<button data-command={Commands.KeyChar} data-char="e^" br:variant="tonal">e^</button>
-			<button data-command={Commands.KeyChar} data-char="^" br:variant="tonal"><br-icon set:html={Icons.ChevronUp}/></button>
+				<button data-command={Commands.KeyChar} data-char="%" br:variant="tonal">%</button>
+				<button data-command={Commands.KeyChar} data-char="10^" br:variant="tonal">10^</button>
+				<button data-command={Commands.KeyChar} data-char="^2" br:variant="tonal">^2</button>
+				<button data-command={Commands.KeyChar} data-char="e^" br:variant="tonal">e^</button>
+				<button data-command={Commands.KeyChar} data-char="^" br:variant="tonal"><br-icon set:html={Icons.ChevronUp}/></button>
 
-			<button data-command={Commands.KeyChar} data-char="!" br:variant="tonal">!</button>
-			<button data-command={Commands.KeyChar} data-char="7" data-type="number" br:variant="tonal">7</button>
-			<button data-command={Commands.KeyChar} data-char="8" data-type="number" br:variant="tonal">8</button>
-			<button data-command={Commands.KeyChar} data-char="9" data-type="number" br:variant="tonal">9</button>
-			<button data-command={Commands.KeyChar} data-char="÷" br:variant="tonal"><br-icon set:html={Icons.SlashForward}/></button>
+				<button data-command={Commands.KeyChar} data-char="!" br:variant="tonal">!</button>
+				<button data-command={Commands.KeyChar} data-char="7" data-type="number" br:variant="tonal">7</button>
+				<button data-command={Commands.KeyChar} data-char="8" data-type="number" br:variant="tonal">8</button>
+				<button data-command={Commands.KeyChar} data-char="9" data-type="number" br:variant="tonal">9</button>
+				<button data-command={Commands.KeyChar} data-char="÷" br:variant="tonal"><br-icon set:html={Icons.SlashForward}/></button>
 
-			<button data-command={Commands.KeyChar} data-char="e" br:variant="tonal">e</button>
-			<button data-command={Commands.KeyChar} data-char="4" data-type="number" br:variant="tonal">4</button>
-			<button data-command={Commands.KeyChar} data-char="5" data-type="number" br:variant="tonal">5</button>
-			<button data-command={Commands.KeyChar} data-char="6" data-type="number" br:variant="tonal">6</button>
-			<button data-command={Commands.KeyChar} data-char="×" br:variant="tonal"><br-icon set:html={Icons.Dismiss}/></button>
+				<button data-command={Commands.KeyChar} data-char="e" br:variant="tonal">e</button>
+				<button data-command={Commands.KeyChar} data-char="4" data-type="number" br:variant="tonal">4</button>
+				<button data-command={Commands.KeyChar} data-char="5" data-type="number" br:variant="tonal">5</button>
+				<button data-command={Commands.KeyChar} data-char="6" data-type="number" br:variant="tonal">6</button>
+				<button data-command={Commands.KeyChar} data-char="×" br:variant="tonal"><br-icon set:html={Icons.Dismiss}/></button>
 
-			<button data-command={Commands.KeyChar} data-char="π" br:variant="tonal">π</button>
-			<button data-command={Commands.KeyChar} data-char="1" data-type="number" br:variant="tonal">1</button>
-			<button data-command={Commands.KeyChar} data-char="2" data-type="number" br:variant="tonal">2</button>
-			<button data-command={Commands.KeyChar} data-char="3" data-type="number" br:variant="tonal">3</button>
-			<button data-command={Commands.KeyChar} data-char="-" br:variant="tonal"><br-icon set:html={Icons.LineHorizontal1}/></button>
+				<button data-command={Commands.KeyChar} data-char="π" br:variant="tonal">π</button>
+				<button data-command={Commands.KeyChar} data-char="1" data-type="number" br:variant="tonal">1</button>
+				<button data-command={Commands.KeyChar} data-char="2" data-type="number" br:variant="tonal">2</button>
+				<button data-command={Commands.KeyChar} data-char="3" data-type="number" br:variant="tonal">3</button>
+				<button data-command={Commands.KeyChar} data-char="-" br:variant="tonal"><br-icon set:html={Icons.LineHorizontal1}/></button>
 
-			<button data-command={Commands.KeyChar} data-char="√" br:variant="tonal">√</button>
-			<button data-command={Commands.KeyChar} data-char="0" data-type="number" br:variant="tonal">0</button>
-			<button data-command={Commands.KeyDec} br:variant="tonal">.</button>
-			<button data-command={Commands.KeyEqual} br:variant="filled" style="font-weight:bold">=</button>
-			<button data-command={Commands.KeyChar} data-char="+" br:variant="tonal"><br-icon set:html={Icons.Add}/></button>
+				<button data-command={Commands.KeyChar} data-char="√" br:variant="tonal">√</button>
+				<button data-command={Commands.KeyChar} data-char="0" data-type="number" br:variant="tonal">0</button>
+				<button data-command={Commands.KeyDec} br:variant="tonal">.</button>
+				<button data-command={Commands.KeyEqual} br:variant="filled" style="font-weight:bold">=</button>
+				<button data-command={Commands.KeyChar} data-char="+" br:variant="tonal"><br-icon set:html={Icons.Add}/></button>
+			</br-focusgroup>
 		</div>
 	</div>
 </br-view>

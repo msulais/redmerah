@@ -1,5 +1,8 @@
 import { $create, $classlist, $query, $is_false, $children, $is_array, $is_node } from "../utils"
 
+/**
+ * @deprecated
+ */
 export namespace CApp {
 	export type CElement<T extends HTMLElement = HTMLDivElement> = T
 	export type UpdateOptions<T extends CElement, U extends 'with-tagname' | null = null> = {
