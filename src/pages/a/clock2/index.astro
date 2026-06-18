@@ -5,6 +5,9 @@ import Html2 from '@/layouts/Html2/index.astro'
 import AppBar from './_views/_AppBar.astro'
 import Navigation from './_views/_Navigation.astro'
 import Splash from './_views/_Splash.astro'
+import PageStopwatch from './_views/_PageStopwatch.astro'
+import PageClock from './_views/_PageClock.astro'
+import PageTimer from './_views/_PageTimer.astro'
 ---
 
 <Html2
@@ -22,7 +25,11 @@ import Splash from './_views/_Splash.astro'
 	<br-scaffold>
 		<AppBar />
 		<Navigation/>
-		<main class={Styles.Main}></main>
+		<main class={Styles.Main}>
+			<PageStopwatch/>
+			<PageClock/>
+			<PageTimer/>
+		</main>
 	</br-scaffold>
 	<script src="@/web-components/components/br-scaffold.ts"/>
 	<script src="@/web-components/components/br-view.ts"/>
@@ -30,9 +37,11 @@ import Splash from './_views/_Splash.astro'
 	<script src="@/web-components/components/br-appbar.ts"/>
 	<script src="@/web-components/components/br-popover.ts"/>
 	<script src="@/web-components/components/br-navigation.ts"/>
-	<script src="@/web-components/components/br-focusgroup.ts"/>
+	<script src="@/web-components/components/br-dialog.ts"/>
 	<script src="@/web-components/components/menu.ts"/>
 	<script src="@/web-components/components/navigationitem.ts"/>
 	<script src="@/web-components/components/button.ts"/>
+	<script src="@/web-components/components/textfield.ts"/>
+	<script src="@/web-components/components/label.ts"/>
 	<script src="./_scripts/index.ts"/>
 </Html2>

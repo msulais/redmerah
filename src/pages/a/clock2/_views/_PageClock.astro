@@ -1,0 +1,22 @@
+---
+import * as Ids from '../_scripts/shared/ids.enum.js'
+import * as Pages from '../_scripts/shared/pages.enum.js'
+import * as Styles from '../_styles/styles.enum.js'
+
+const CURRENT_TIME = new Date().toLocaleTimeString('en', {hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false})
+const CURRENT_DATE = new Date().toLocaleDateString('en', {year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'})
+---
+
+<br-view
+	br:query={`page=${Pages.Clock}|none`}
+	br:animation-for={Ids.PageClock}
+	br:animation-start-duration="500"
+	br:animation-start-keyframes={JSON.stringify({
+		opacity: [0, 1],
+		scale: [.9, 1]
+	})}>
+	<div id={Ids.PageClock} class={Styles.PageClock}>
+		<h2 id={Ids.PageClockTime}>{CURRENT_TIME}</h2>
+		<p id={Ids.PageClockDate}>{CURRENT_DATE}</p>
+	</div>
+</br-view>

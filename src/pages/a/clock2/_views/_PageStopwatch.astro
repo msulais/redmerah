@@ -1,0 +1,62 @@
+---
+import * as Ids from '../_scripts/shared/ids.enum.js'
+import * as Constant from '../_scripts/shared/constant.enum.js'
+import * as Pages from '../_scripts/shared/pages.enum.js'
+
+function textHHMMSS(ms: number): string {
+	let hour = 0
+	let minute = 0
+	let second = 0
+	if (ms >= 3_600_000) {
+		hour = Math.floor(ms / 3_600_000)
+		ms = Math.floor(ms % 3_600_000)
+	}
+	if (ms >= 60_000) {
+		minute = Math.floor(ms / 60_000)
+		ms = Math.floor(ms % 60_000)
+	}
+	if (ms >= 1000) {
+		second = Math.floor(ms / 1000)
+		ms = Math.floor(ms % 1000)
+	}
+
+	ms = Math.floor(ms / 10)
+	return (
+		hour.toString()
+		+ ':'
+		+ [minute, second].map(v => v.toString().padStart(2, '0')).join(':')
+	)
+}
+
+function textMS(ms: number): string {
+	if (ms >= 3_600_000) {
+		ms = Math.floor(ms % 3_600_000)
+	}
+	if (ms >= 60_000) {
+		ms = Math.floor(ms % 60_000)
+	}
+	if (ms >= 1000) {
+		ms = Math.floor(ms % 1000)
+	}
+
+	ms = Math.floor(ms / 10)
+	return ms.toString().padStart(2, '0')
+}
+---
+
+<br-view
+	br:query={`page=${Pages.Stopwatch}`}
+	br:animation-for={Ids.PageStopwatch}
+	br:animation-start-duration="500"
+	br:animation-start-keyframes={JSON.stringify({
+		opacity: [0, 1],
+		scale: [.9, 1]
+	})}>
+	<div id={Ids.PageStopwatch}>
+		<h2>
+			<span
+				id={Ids.PageStopwatchHHMMSS}>{textHHMMSS(Constant.DEFAULT_STOPWATCH_MS)}</span
+			>,<small id={Ids.PageStopwatchMS}>{textMS(Constant.DEFAULT_STOPWATCH_MS)}</small>
+		</h2>
+	</div>
+</br-view>

@@ -1,0 +1,35 @@
+---
+import * as Icons from '@/enums/icons.enum.js'
+import * as Ids from '../_scripts/shared/ids.enum.js'
+import * as Pages from '../_scripts/shared/pages.enum.js'
+---
+<br-navigation slot="left-sidebar" id={Ids.Navigation}>
+	<button
+		aria-label="Toggle navigation"
+		br:tooltip="Toggle navigation"
+		br:variant="icon"
+		br:command-for={Ids.Navigation}>
+		<br-icon set:html={Icons.LineHorizontal3}/>
+	</button>
+	<a
+		br:as="navigationitem"
+		href={`?page=${Pages.Clock}`}
+		br:query={`page=${Pages.Clock}|none`}
+		br:label="Clock">
+		<br-icon set:html={Icons.Calculator}/>
+	</a>
+	<a
+		br:as="navigationitem"
+		href={`?page=${Pages.Stopwatch}`}
+		br:query={`page=${Pages.Stopwatch}`}
+		br:label="Stopwatch">
+		<br-icon set:html={Icons.Beaker}/>
+	</a>
+	<a
+		br:as="navigationitem"
+		href={`?page=${Pages.Timer}`}
+		br:query={`page=${Pages.Timer}`}
+		br:label="Timer">
+		<br-icon set:html={Icons.ArrowSort}/>
+	</a>
+</br-navigation>
