@@ -1,15 +1,11 @@
-import appbar from "./core/appbar"
-import settings from "./core/settings"
-import navigation from "./core/navigation"
-import clock from './features/clock'
-import timer from "./features/timer"
-import stopwatch from './features/stopwatch'
 import database from "./core/database"
+import settings from "./core/settings"
+import clock from "./features/clock"
+import stopwatch from "./features/stopwatch"
+import timer from "./features/timer"
 
-appbar()
+database()
 settings()
-navigation()
 clock()
 timer()
 stopwatch()
-database()

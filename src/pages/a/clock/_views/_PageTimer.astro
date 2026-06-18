@@ -24,12 +24,7 @@ const SECONDS = Math.floor(Math.floor(Constant.DEFAULT_TIMER_SECONDS % 3600) % 6
 			[HOURS, MINUTES, SECONDS].map(v => v.toString().padStart(2, '0')).join(':')
 		}</h2>
 		<audio id={Ids.PageTimerAudio} loop src={ringtone}></audio>
-		<div
-			style={{
-				display: 'flex',
-				justifyContent: 'center',
-				gap: '.5rem'
-			}}>
+		<div>
 			<button style="width:5.75rem" br:variant="filled" id={Ids.PageTimerPlayPause}>
 				<br-icon set:html={Constant.DEFAULT_TIMER_RUNNING? Icons.PauseFilled : Icons.PlayFilled}/>
 				<span>{Constant.DEFAULT_TIMER_RUNNING? 'Pause' : 'Start'}</span>

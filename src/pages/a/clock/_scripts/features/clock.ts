@@ -1,46 +1,37 @@
-import { ObservableStore } from "@/utils/signal"
-import { ElementIds } from "../shared/ids"
-import { $ } from "../core/dom-utils"
-import { NavigationStore } from "../core/navigation"
-import { Pages } from "../shared/enums"
-import { SettingsStore } from "../core/settings"
+import * as Ids from '../shared/ids.enum.js'
+import * as Pages from '../shared/pages.enum.js'
+import * as Settings from '../core/settings.js'
+import { $ } from '../core/dom-utils.js'
+import { signal } from "@/utils/signal"
 
-export type ClockStoreType = Readonly<{
-	datetime: Date,
-}>
+export const sg_datetime = signal(new Date())
 
-export const ClockStore = new ObservableStore<ClockStoreType>({
-	datetime: new Date(),
-})
-const _ref_time = $(ElementIds.pgClk_time) as HTMLHeadingElement
-const _ref_date = $(ElementIds.pgClk_date) as HTMLParagraphElement
+const _ref_time = $(Ids.PageClockTime) as HTMLHeadingElement
+const _ref_date = $(Ids.PageClockDate) as HTMLParagraphElement
 
 function _initDateTime(): void {
 	setInterval(() => {
-		if (NavigationStore.value.page !== Pages.Clock) return
+		if (Settings.sg_page() !== Pages.Clock) {
+			return
+		}
 
-		ClockStore.update(v => v.datetime = new Date())
+		sg_datetime.set(new Date())
 	}, 250)
 }
 
-function _subscribeDatetimeRefView(v: ClockStoreType, o: ClockStoreType): void {
-	const datetime = v.datetime
-	if (datetime.valueOf() === o.datetime.valueOf()) return
-
-	_ref_time.textContent = datetime.toLocaleTimeString(SettingsStore.value.languageCode, {
-		hour: 'numeric',
-		minute: 'numeric',
-		second: 'numeric',
-		hour12: false
-	})
-	_ref_date.textContent = datetime.toLocaleDateString(
-		SettingsStore.value.languageCode,
-		{ year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' }
-	)
-}
-
 function _initSubscriber(): void {
-	ClockStore.subscribe(_subscribeDatetimeRefView)
+	sg_datetime.subscribe(v => {
+		_ref_time.textContent = v.toLocaleTimeString(Settings.sg_languageCode(), {
+			hour: 'numeric',
+			minute: 'numeric',
+			second: 'numeric',
+			hour12: false
+		})
+		_ref_date.textContent = v.toLocaleDateString(
+			Settings.sg_languageCode(),
+			{ year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' }
+		)
+	})
 }
 
 export default () => {

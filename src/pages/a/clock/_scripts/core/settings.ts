@@ -1,210 +1,154 @@
-import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
-import { ObservableStore } from "@/utils/signal"
-import { $, $$ } from "./dom-utils"
-import { ElementIds } from "../shared/ids"
-import { LocalStorageKeys } from "@/enums/storage"
-import { isValidEnumValue } from "@/utils/object"
-import { RootAttributes } from "@/enums/attributes"
-import { RadioNames } from "../shared/input-names"
-import { DEFAULT_ANIMATION, DEFAULT_KEEP_AWAKE, DEFAULT_LANGUAGE_CODE, DEFAULT_THEME } from "../shared/constant"
-import { CDialog } from "@/components/Dialog"
-import { saveStorageItem } from "./database"
+import * as Constant from "../shared/constant.enum.js";
+import * as Ids from '../shared/ids.enum.js'
+import * as Pages from '../shared/pages.enum.js'
+import * as InputNames from '../shared/input-names.enum.js'
+import * as BrPopover from "@/web-components/components/br-popover";
+import * as BrTheme from '@/web-components/components/br-theme.js'
+import * as LocalStorageKeys from '@/enums/local-storage-keys.enum.js'
+import { listenRouteChange } from '@/web-components/router.js'
+import { signal } from "@/utils/signal.js";
+import { $, $$ } from "./dom-utils";
+import { isValidEnumValue } from "@/utils/object.js";
+import { saveStorageItem } from "./database.js";
 
-export type SettingsStoreType = Readonly<{
-	theme    : PlatformThemeMode
-	animation: PlatformAnimationMode
-	keepAwake: boolean
-	languageCode: string
-}>
+export const sg_theme        = signal(Constant.DEFAULT_THEME)
+export const sg_animation    = signal(Constant.DEFAULT_ANIMATION)
+export const sg_page         = signal<typeof Pages[keyof typeof Pages]>(Pages.Clock)
+export const sg_languageCode = signal(Constant.DEFAULT_LANGUAGE_CODE)
 
-export const SettingsStore = new ObservableStore<SettingsStoreType>({
-	theme    : DEFAULT_THEME,
-	animation: DEFAULT_ANIMATION,
-	keepAwake: DEFAULT_KEEP_AWAKE,
-	languageCode: DEFAULT_LANGUAGE_CODE
-})
-const _ref_root = document.documentElement
-const _ref_keepAwakeError = $(ElementIds.bdDlg_wakeLockError) as CDialog.CElement
-const _ref_keepAwakeBtn = $(ElementIds.apSett_keepAwake) as HTMLInputElement
-const _ref_theme = $(ElementIds.apSett_themeMenu) as HTMLDivElement
-const _ref_animation = $(ElementIds.apSett_animationMenu) as HTMLDivElement
-const _ref_language = $(ElementIds.apSett_languageMenu) as HTMLDivElement
-const _ref_settingsMenu = $(ElementIds.apSett_menu) as HTMLDivElement
-let _wakeLock: WakeLockSentinel | null = null
+const _ref_theme            = $$<BrTheme.BiruThemeElement>(BrTheme.TAGNAME)
+const _ref_themePopover     = $(Ids.PopoverAppBarSettingsTheme) as BrPopover.BiruPopoverElement
+const _ref_animationPopover = $(Ids.PopoverAppBarSettingsAnimation) as BrPopover.BiruPopoverElement
+const _ref_language         = $(Ids.PopoverAppBarSettingsDatetimeLanguage) as BrPopover.BiruPopoverElement
 
-function _subscribeKeepAwakeChanges(v: SettingsStoreType, o: SettingsStoreType): void {
-	const keepAwake = v.keepAwake
-	if (keepAwake === o.keepAwake) return
-
-	saveStorageItem('settings/keep-awake', keepAwake)
-	if (keepAwake) {
-		navigator.wakeLock.request()
-		.then((v) => {
-			_wakeLock = v
-		})
-		.catch(() => {
-			_ref_keepAwakeError.showModal()
-			_wakeLock = null
-			SettingsStore.update(v => v.keepAwake = false)
-		})
+function _initTheme(): void {
+	const theme = localStorage.getItem(LocalStorageKeys.PlatformTheme)
+	if (!_ref_theme || !theme || !isValidEnumValue(theme, BrTheme.ThemeMode) || theme === Constant.DEFAULT_THEME) {
 		return
 	}
 
-	if (_wakeLock !== null) {
-		_wakeLock
-			.release()
-			.then(() => _wakeLock = null)
-			.catch(() => _wakeLock = null)
+	_ref_theme.biru.themeMode = theme as BrTheme.ThemeMode
+	const ref_previous = $$(
+		`input[name="${CSS.escape(InputNames.Theme)}"]:checked`
+	) as HTMLInputElement
+	const ref_target = $$(
+		`input[name="${CSS.escape(InputNames.Theme)}"][value="${CSS.escape(theme)}"]`
+	) as HTMLInputElement
+
+	if (ref_previous === ref_target) {
+		return
 	}
-	else {
-		_wakeLock = null
+
+	if (ref_previous) {
+		ref_previous.checked = false
+	}
+
+	if (ref_target) {
+		ref_target.checked = true
 	}
 }
 
-function _subscribeAnimationChanges(v: SettingsStoreType, o: SettingsStoreType): void {
-	const animation = v.animation
-	if (animation === o.animation) return
+function _initAnimation(): void {
+	const animation = localStorage.getItem(LocalStorageKeys.PlatformAnimation)
+	if (!_ref_theme || !animation || !isValidEnumValue(animation, BrTheme.Animation) || animation === Constant.DEFAULT_ANIMATION) {
+		return
+	}
 
-	localStorage.setItem(LocalStorageKeys.PlatformAnimation, animation)
-}
-
-function _subscribeThemeChanges(v: SettingsStoreType, o: SettingsStoreType): void {
-	const theme = v.theme
-	if (theme === o.theme) return
-
-	localStorage.setItem(LocalStorageKeys.PlatformTheme, theme)
-}
-
-function _subscribeDatetimeLanguageChanges(v: SettingsStoreType, o: SettingsStoreType): void {
-	const language = v.languageCode
-	if (language === o.animation) return
-
-	saveStorageItem('settings/language-code', language)
-}
-
-function _subscribeAnimationRefView(v: SettingsStoreType, o: SettingsStoreType): void {
-	const animation = v.animation
-	if (animation === o.animation) return
-
-	_ref_root.setAttribute(RootAttributes.Animation, animation)
+	_ref_theme.biru.animation = animation as BrTheme.Animation
 	const ref_previous = $$(
-		`input[name="${CSS.escape(RadioNames.Animation)}"]:checked`
+		`input[name="${CSS.escape(InputNames.Animation)}"]:checked`
 	) as HTMLInputElement
 	const ref_target = $$(
-		`input[name="${CSS.escape(RadioNames.Animation)}"][value="${CSS.escape(animation)}"]`
+		`input[name="${CSS.escape(InputNames.Animation)}"][value="${CSS.escape(animation)}"]`
 	) as HTMLInputElement
 
-	if (ref_previous === ref_target) {return}
-	if (ref_previous) ref_previous.checked = false
-	if (ref_target) ref_target.checked = true
+	if (ref_previous === ref_target) {
+		return
+	}
+
+	if (ref_previous) {
+		ref_previous.checked = false
+	}
+
+	if (ref_target) {
+		ref_target.checked = true
+	}
 }
 
-function _subscribeDatetimeLanguageRefView(v: SettingsStoreType, o: SettingsStoreType): void {
-	const language = v.languageCode
-	if (language === o.animation) return
+function _updatePage(): void {
+	const page = new URLSearchParams(window.location.search).get('page') as (typeof Pages[keyof typeof Pages])
+	if (!page || !isValidEnumValue(page, Pages)) {
+		return
+	}
 
-	const ref_previous = $$(
-		`input[name="${CSS.escape(RadioNames.Language)}"]:checked`
-	) as HTMLInputElement
-	const ref_target = $$(
-		`input[name="${CSS.escape(RadioNames.Language)}"][value="${CSS.escape(language)}"]`
-	) as HTMLInputElement
-
-	if (ref_previous === ref_target) {return}
-	if (ref_previous) ref_previous.checked = false
-	if (ref_target) ref_target.checked = true
-}
-
-function _subscribeThemeRefView(v: SettingsStoreType, o: SettingsStoreType): void {
-	const theme = v.theme
-	if (theme === o.theme) return
-
-	_ref_root.setAttribute(RootAttributes.Theme, theme)
-	const ref_previous = $$(
-		`input[name="${CSS.escape(RadioNames.Theme)}"]:checked`
-	) as HTMLInputElement
-	const ref_target = $$(
-		`input[name="${CSS.escape(RadioNames.Theme)}"][value="${CSS.escape(theme)}"]`
-	) as HTMLInputElement
-
-	if (ref_previous === ref_target) {return}
-	if (ref_previous) ref_previous.checked = false
-	if (ref_target) ref_target.checked = true
-}
-
-function _subscribeKeepAwakeRefView(v: SettingsStoreType): void {
-	const keepAwake = v.keepAwake
-	if (keepAwake === _ref_keepAwakeBtn.checked) return
-
-	_ref_keepAwakeBtn.checked = keepAwake
+	sg_page.set(page)
 }
 
 function _initSubscriber(): void {
-	SettingsStore.subscribeAll([
-		_subscribeAnimationChanges,
-		_subscribeThemeChanges,
-		_subscribeAnimationRefView,
-		_subscribeThemeRefView,
-		_subscribeKeepAwakeRefView,
-		_subscribeKeepAwakeChanges,
-		_subscribeDatetimeLanguageRefView,
-		_subscribeDatetimeLanguageChanges
-	])
+	// TODO
+	sg_languageCode.subscribe((v) => {
+		saveStorageItem('settings-language-code', v, 250)
+		const ref_previous = $$(
+			`input[name="${CSS.escape(InputNames.Language)}"]:checked`
+		) as HTMLInputElement
+		const ref_target = $$(
+			`input[name="${CSS.escape(InputNames.Language)}"][value="${CSS.escape(v)}"]`
+		) as HTMLInputElement
+
+		if (ref_previous !== ref_target) {
+			if (ref_previous) {
+				ref_previous.checked = false
+			}
+
+			if (ref_target) {
+				ref_target.checked = true
+			}
+		}
+	})
 }
 
 function _initEvents(): void {
-	_ref_keepAwakeBtn.addEventListener('change', () => {
-		SettingsStore.update(v => v.keepAwake = _ref_keepAwakeBtn.checked)
-		_ref_settingsMenu.hidePopover()
+	listenRouteChange(() => _updatePage())
+
+	_ref_themePopover.addEventListener('change', ev => {
+		const target = ev.target as HTMLInputElement
+		const value = target?.value as BrTheme.ThemeMode
+		if (!_ref_theme || !value || !isValidEnumValue(value, BrTheme.ThemeMode)) {
+			return
+		}
+
+		_ref_theme.biru.themeMode = value
+		localStorage.setItem(LocalStorageKeys.PlatformTheme, value)
+		sg_theme.set(value)
 	})
 
-	_ref_theme.addEventListener('change', ev => {
+	_ref_animationPopover.addEventListener('change', ev => {
 		const target = ev.target as HTMLInputElement
-		const value = target?.value as PlatformThemeMode
-		if (!value || !isValidEnumValue(value, PlatformThemeMode)) {return}
+		const value = target?.value as BrTheme.Animation
+		if (!_ref_theme || !value || !isValidEnumValue(value, BrTheme.Animation)) {
+			return
+		}
 
-		_ref_settingsMenu.hidePopover()
-		SettingsStore.update(v => v.theme = value as PlatformThemeMode)
+		_ref_theme.biru.animation = value
+		localStorage.setItem(LocalStorageKeys.PlatformAnimation, value)
+		sg_animation.set(value)
 	})
 
-	_ref_language.addEventListener('change', ev => {
-		_ref_settingsMenu.hidePopover()
+	_ref_language.addEventListener('change', (ev) => {
 		const target = ev.target as HTMLInputElement
-		const value = target?.value
+		const value = target.value
 		if (!value) {
 			return
 		}
 
-		SettingsStore.update(v => v.languageCode = value)
+		sg_languageCode.set(value)
 	})
-
-	_ref_animation.addEventListener('change', ev => {
-		const target = ev.target as HTMLInputElement
-		const value = target?.value as PlatformAnimationMode
-		if (!value || !isValidEnumValue(value, PlatformAnimationMode)) {return}
-
-		_ref_settingsMenu.hidePopover()
-		SettingsStore.update(v => v.animation = value as PlatformAnimationMode)
-	})
-}
-
-function _initTheme(): void {
-	const theme = localStorage.getItem(LocalStorageKeys.PlatformTheme) as PlatformThemeMode
-	if (!theme || !isValidEnumValue(theme, PlatformThemeMode) || theme === DEFAULT_THEME) return
-
-	SettingsStore.update(v => v.theme = theme)
-}
-
-function _initAnimation(): void {
-	const animation = localStorage.getItem(LocalStorageKeys.PlatformAnimation) as PlatformAnimationMode
-	if (!animation || !isValidEnumValue(animation, PlatformAnimationMode)) return
-
-	SettingsStore.update(v => v.animation = animation)
 }
 
 export default () => {
-	_initSubscriber()
-	_initTheme()
+	_updatePage()
 	_initAnimation()
+	_initTheme()
 	_initEvents()
+	_initSubscriber()
 }

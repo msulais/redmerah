@@ -1,0 +1,6 @@
+export const PageStopwatchCopyLapTime = 'B648896E'
+export const PageStopwatchCopyLapTotal = '6B4F0846'
+export const PageStopwatchCopyLapAll = '20F777F0'
+export const PageStopwatchCopyLapTimeMS = 'E09EC8CF'
+export const PageStopwatchCopyLapTotalMS = '76254FE1'
+export const PageStopwatchCopyLapAllMS = '2831CF0A'

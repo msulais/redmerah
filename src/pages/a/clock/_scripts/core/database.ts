@@ -1,10 +1,7 @@
-import { DatabaseNames } from "@/enums/storage"
-import { IDB } from "@/utils/indexeddb"
-import { NavigationStore } from "./navigation"
-import { isValidEnumValue } from "@/utils/object"
-import { SettingsStore, type SettingsStoreType } from "./settings"
-import { Pages } from "../shared/enums"
-import { TimerStore, type TimerStoreType } from "../features/timer"
+import * as Constant from '../shared/constant.enum.js'
+import * as Settings from './settings.js'
+import * as Timer from '../features/timer.js'
+import { IDB } from '@/utils/indexeddb'
 
 type _IDBStoreStorage<T = unknown> = {
 	key: string
@@ -12,51 +9,46 @@ type _IDBStoreStorage<T = unknown> = {
 }
 
 type _StorageItems = {
-	page: Pages
-	'settings/keep-awake': SettingsStoreType['keepAwake']
-	'settings/language-code': SettingsStoreType['languageCode']
-	'timer/seconds': TimerStoreType['timerInSeconds'],
+	'settings-language-code': string
+	'page-timer-seconds': number
 }
 
 type _StorageKeys = keyof _StorageItems
 
-enum _ObjectStoreNames {
-	Storage = 'storage'
-}
+const _ObjectStoreNames = {
+	Storage: 'storage'
+} as const
+type _ObjectStoreNames = typeof _ObjectStoreNames[keyof typeof _ObjectStoreNames]
 
-const _db = new IDB(DatabaseNames.Clock)
+const _db = new IDB(Constant.APP.name.replace(/[^A-Za-z]/g, '_'))
+const _storageTimeoutIds = new Map<_StorageKeys, ReturnType<typeof setTimeout>>()
 
-export function saveStorageItem<K extends _StorageKeys>(key: K, value: _StorageItems[K]) {
-	return _db
+export function saveStorageItem<K extends _StorageKeys>(key: K, value: _StorageItems[K], delayDuration = 0) {
+	clearTimeout(_storageTimeoutIds.get(key))
+	_storageTimeoutIds.set(key, setTimeout(() => {
+		_db
 		.writeStore(_ObjectStoreNames.Storage)
 		?.put({key, value} satisfies _IDBStoreStorage<_StorageItems[K]>)
+	}, delayDuration))
 }
 
-function _readStorageAll(store: IDBObjectStore): void {
+function _readAllStorage(store: IDBObjectStore): void {
 	_db.cursor(store, (cursor) => {
 		const key = cursor?.key
 		const value = cursor?.value.value
 		if (value === null || value === undefined) return true
 
-		const isNumber = typeof value === 'number'
-		const isBoolean = typeof value === 'boolean'
 		const isString = typeof value === 'string'
+		const isNumber = typeof value === 'number'
 		switch (key as _StorageKeys) {
-		case "page":
-			isValidEnumValue(value, Pages)
-			&& NavigationStore.update(v => v.page = value)
-			break
-		case "settings/keep-awake":
-			isBoolean
-			&& SettingsStore.update(v => v.keepAwake = value)
-			break
-		case "timer/seconds":
-			isNumber
-			&& TimerStore.update(v => v.currentSeconds = v.timerInSeconds = value)
-			break
-		case "settings/language-code":
+		case 'settings-language-code':
 			isString
-			&& SettingsStore.update(v => v.languageCode = value)
+			&& Settings.sg_languageCode.set(value)
+			break
+		case 'page-timer-seconds':
+			isNumber
+			&& (Timer.sg_timerInSeconds.set(value), Timer.sg_currectSeconds.set(value))
+			break
 		}
 
 		return true
@@ -65,9 +57,11 @@ function _readStorageAll(store: IDBObjectStore): void {
 
 function _readStorage(): void {
 	const store = _db.readStore(_ObjectStoreNames.Storage)
-	if (!store) return
+	if (!store) {
+		return
+	}
 
-	_readStorageAll(store)
+	_readAllStorage(store)
 }
 
 function _initDatabase(): void {

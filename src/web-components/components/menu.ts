@@ -36,7 +36,7 @@ function _initListeners(): void {
 			!target
 			|| target.tagName === 'LABEL'
 			|| target.hasAttribute(GlobalAttributes.PreventDefault)
-			|| !target.closest(`${BrPopover.TAGNAME}>${TAGNAME}`)
+			|| !target.closest(`${TAGNAME}`)
 		) {
 			return
 		}
