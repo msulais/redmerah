@@ -7,7 +7,7 @@ import * as BrTheme from '@/web-components/components/br-theme.js'
 import * as LocalStorageKeys from '@/enums/local-storage-keys.enum.js'
 import { listenRouteChange } from '@/web-components/router.js'
 import { signal } from "@/utils/signal.js";
-import { $, $$ } from "./dom-utils";
+import { $, $$ } from "./dom-utils.js";
 import { isValidEnumValue } from "@/utils/object.js";
 import { saveStorageItem } from "./database.js";
 
