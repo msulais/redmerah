@@ -85,7 +85,6 @@ function _updatePage(): void {
 }
 
 function _initSubscriber(): void {
-	// TODO
 	sg_languageCode.subscribe((v) => {
 		saveStorageItem('settings-language-code', v, 250)
 		const ref_previous = $$(
