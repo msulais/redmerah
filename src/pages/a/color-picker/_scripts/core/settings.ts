@@ -1,5 +1,6 @@
 import * as Constant from "../shared/constant.enum.js";
 import * as Ids from '../shared/ids.enum.js'
+import * as AnimationEasing from '@/enums/animation-easing.enum.js'
 import * as ColorPickerMode from '../shared/modes.enum.js'
 import * as InputNames from '../shared/input-names.enum.js'
 import * as BrPopover from "@/web-components/components/br-popover";
@@ -84,6 +85,16 @@ function _initSubscriber(): void {
 			if (!hasMode && ref.dataset.pickerMode === v) {
 				ref.hidden = false
 				hasMode = true
+
+				const max = Math.max(ref.offsetWidth, ref.offsetHeight)
+				const startScale = (max / (max + 16) * 100) + '%'
+				ref.animate({
+					opacity: [0, 1],
+					scale: [startScale, '1']
+				}, {
+					duration: (_ref_theme?.biru.transitionDuration ?? 0) > 0? 500 : 0,
+					easing: AnimationEasing.Spring
+				})
 				continue
 			}
 
