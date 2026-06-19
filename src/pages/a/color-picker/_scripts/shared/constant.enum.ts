@@ -1,13 +1,13 @@
-import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
-import { ColorPickerMode } from "./_enums"
+import * as BrTheme from '@/web-components/components/br-theme.server.js'
+import * as ColorPickerMode from './modes.enum.js'
 import { APP_COLOR_PICKER } from "@/constants/apps"
-import { hexToRgb, rgbToCmyk, rgbToHsl, rgbToHsv, rgbToHwb } from "@/utils/color"
-import type { AppItem } from "@/types/apps"
+import { hexToRgb, rgbToCmyk, rgbToHsl, rgbToHsv, rgbToHwb } from '@/utils/color'
+import type { EnumOf } from '@/types/collections.js'
 
-export const APP: AppItem = APP_COLOR_PICKER
-export const DEFAULT_THEME = PlatformThemeMode.Auto
-export const DEFAULT_ANIMATION = PlatformAnimationMode.Auto
-export const DEFAULT_PICKER_MODE: ColorPickerMode = ColorPickerMode.Rectangle
+export const APP = APP_COLOR_PICKER
+export const DEFAULT_THEME: BrTheme.ThemeMode = BrTheme.ThemeMode.Auto
+export const DEFAULT_ANIMATION: BrTheme.Animation = BrTheme.Animation.Auto
+export const DEFAULT_PICKER_MODE: EnumOf<typeof ColorPickerMode> = ColorPickerMode.Rectangle
 export const DEFAULT_COLOR = APP_COLOR_PICKER.color
 export const DEFAULT_COLOR_IN_VALUE = Number.parseInt(DEFAULT_COLOR.replace(/[^A-Fa-f0-9]/g, ''), 16)
 export const DEFAULT_COLOR_IN_RGB = hexToRgb(DEFAULT_COLOR)

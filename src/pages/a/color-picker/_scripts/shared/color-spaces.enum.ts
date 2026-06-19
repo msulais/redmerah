@@ -1,0 +1,6 @@
+export const HEX = 'hex'
+export const RGB = 'rgb'
+export const HSL = 'hsl'
+export const HSV = 'hsv'
+export const CMYK = 'cmyk'
+export const HWB = 'hwb'

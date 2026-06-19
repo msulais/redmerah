@@ -1,0 +1,128 @@
+---
+import * as ColorPickerMode from '../_scripts/shared/modes.enum.js'
+import * as Constant from '../_scripts/shared/constant.enum.js'
+import * as Styles from '../_styles/styles.enum.js'
+import * as Ids from '../_scripts/shared/ids.enum.js'
+import type { EnumOf } from '@/types/collections'
+import { hexToCmyk, hexToHsl, hexToHsv, hexToHwb, hexToRgb } from '@/utils/color'
+
+const MODES: {text: string, mode: EnumOf<typeof ColorPickerMode>}[] = [
+	{mode: ColorPickerMode.Image, text: 'Image'},
+	{mode: ColorPickerMode.Rectangle, text: 'Rectangle'},
+	{mode: ColorPickerMode.RectangleHsl, text: 'Rectangle HSL'},
+	// {mode: ColorPickerMode.palette, text: 'Palette'},
+	{mode: ColorPickerMode.Spectrum, text: 'Spectrum'},
+	// {mode: ColorPickerMode.wheel, text: 'Wheel'},
+	{mode: ColorPickerMode.SliderRgb, text: 'Slider RGB'},
+	{mode: ColorPickerMode.SliderHsl, text: 'Slider HSL'},
+	{mode: ColorPickerMode.SliderCmyk, text: 'Slider CMYK'},
+	{mode: ColorPickerMode.SliderHex, text: 'Slider HEX'},
+	{mode: ColorPickerMode.SliderHsv, text: 'Slider HSV'},
+	{mode: ColorPickerMode.SliderHwb, text: 'Slider HWB'},
+]
+---
+<div class={Styles.Inputs}>
+	<label for={Ids.PickerMode}>Picker mode:</label>
+	<select id={Ids.PickerMode}>
+		{MODES.map(v => <option
+			value={v.mode}
+			selected={v.mode === Constant.DEFAULT_PICKER_MODE}>
+			{v.text}
+		</option>)}
+	</select>
+	<output
+		for={Ids.InputHex}
+		style={{backgroundColor: Constant.DEFAULT_COLOR}}
+		id={Ids.Preview}
+	/>
+	<div class={Styles.InputGroup}>
+		<input
+			type="text"
+			id={Ids.InputHex}
+			value={Constant.DEFAULT_COLOR}
+			br:as="textfield"
+		/>
+		<label for={Ids.InputHex}>HEX</label>
+	</div>
+	<div class={Styles.InputGroup}>
+		<input
+			type="text"
+			id={Ids.InputRgb}
+			value={(() => {
+				const rgb = hexToRgb(Constant.DEFAULT_COLOR)
+				return [
+					Math.round(rgb.r * 0xff),
+					Math.round(rgb.g * 0xff),
+					Math.round(rgb.b * 0xff)
+				].join(', ')
+			})()}
+			br:as="textfield"
+		/>
+		<label for={Ids.InputRgb}>RGB</label>
+	</div>
+	<div class={Styles.InputGroup}>
+		<input
+			type="text"
+			id={Ids.InputHsl}
+			value={(() => {
+				const hsl = hexToHsl(Constant.DEFAULT_COLOR)
+				return [
+					Math.round(hsl.h * 360) + '°',
+					Math.round(hsl.s * 100) + '%',
+					Math.round(hsl.l * 100) + '%',
+				].join(', ')
+			})()}
+			br:as="textfield"
+		/>
+		<label for={Ids.InputHsl}>HSL</label>
+	</div>
+	<div class={Styles.InputGroup}>
+		<input
+			type="text"
+			id={Ids.InputHsv}
+			value={(() => {
+				const hsv = hexToHsv(Constant.DEFAULT_COLOR)
+				return [
+					Math.round(hsv.h * 360) + '°',
+					Math.round(hsv.s * 100) + '%',
+					Math.round(hsv.v * 100) + '%',
+				].join(', ')
+			})()}
+			br:as="textfield"
+		/>
+		<label for={Ids.InputHsv}>HSV</label>
+	</div>
+	<div class={Styles.InputGroup}>
+		<input
+			type="text"
+			id={Ids.InputHwb}
+			value={(() => {
+				const hwb = hexToHwb(Constant.DEFAULT_COLOR)
+				return [
+					Math.round(hwb.h * 360) + '°',
+					Math.round(hwb.w * 100) + '%',
+					Math.round(hwb.b * 100) + '%',
+				].join(', ')
+			})()}
+			br:as="textfield"
+		/>
+		<label for={Ids.InputHwb}>HWB</label>
+	</div>
+	<div class={Styles.InputGroup}>
+		<input
+			type="text"
+			id={Ids.InputCmyk}
+			value={(() => {
+				const cmyk = hexToCmyk(Constant.DEFAULT_COLOR)
+				return [
+					Math.round(cmyk.c * 100) + '%',
+					Math.round(cmyk.m * 100) + '%',
+					Math.round(cmyk.y * 100) + '%',
+					Math.round(cmyk.k * 100) + '%',
+				].join(', ')
+			})()}
+			br:as="textfield"
+		/>
+		<label for={Ids.InputCmyk}>CMYK</label>
+	</div>
+</div>

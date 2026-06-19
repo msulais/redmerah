@@ -1,30 +1,42 @@
 ---
-import { APP_COLOR_PICKER as APP } from '@/constants/apps'
-
-import UIAppBar from './_views/_UIAppBar.astro'
-import UIBody from './_views/_UIBody.astro'
-import UISplash from './_views/_UISplash.astro'
-import App from '@/components/App/index.astro'
-import Html from '@/layouts/Html/index.astro'
-
-export const prerender = true
+import * as Constant from './_scripts/shared/constant.enum.js'
+import * as Styles from './_styles/styles.enum.js'
+import Html2 from '@/layouts/Html2/index.astro'
+import AppBar from './_views/_AppBar.astro'
+import Splash from './_views/_Splash.astro'
+import Inputs from './_views/_Inputs.astro'
+import Pickers from './_views/_Pickers.astro'
 ---
 
-<Html
-	title={APP.name + ' • Redmerah'}
-	accentColor={APP.color}
-	description={APP.description}>
+<Html2
+	title={Constant.APP.name + ' • Redmerah'}
+	accentColor={Constant.APP.color}
+	description={Constant.APP.description}>
 	<Fragment slot="favicon">
-		<link rel="shortcut icon" type="image/ico" href={`/favicon${APP.link}/favicon.ico`} />
-		<link rel="apple-touch-icon" sizes="180x180" href={`/favicon${APP.link}/apple-touch-icon.png`}>
-		<link rel="icon" type="image/png" sizes="32x32" href={`/favicon${APP.link}/favicon-32x32.png`}>
-		<link rel="icon" type="image/png" sizes="16x16" href={`/favicon${APP.link}/favicon-16x16.png`}>
-		<link rel="manifest" href={`/favicon${APP.link}/site.webmanifest`}>
+		<link rel="shortcut icon" type="image/ico" href={`/favicon${Constant.APP.link}/favicon.ico`} />
+		<link rel="apple-touch-icon" sizes="180x180" href={`/favicon${Constant.APP.link}/apple-touch-icon.png`}>
+		<link rel="icon" type="image/png" sizes="32x32" href={`/favicon${Constant.APP.link}/favicon-32x32.png`}>
+		<link rel="icon" type="image/png" sizes="16x16" href={`/favicon${Constant.APP.link}/favicon-16x16.png`}>
+		<link rel="manifest" href={`/favicon${Constant.APP.link}/site.webmanifest`}>
 	</Fragment>
-	<UISplash/>
-	<App>
-		<UIAppBar slot="appbar"/>
-		<UIBody />
-	</App>
-	<script src="./_scripts/_index.ts"/>
-</Html>
+	<Splash/>
+	<br-scaffold>
+		<AppBar />
+		<main class={Styles.Main}>
+			<Pickers/>
+			<Inputs/>
+		</main>
+	</br-scaffold>
+	<script src="@/web-components/components/br-scaffold.ts"/>
+	<script src="@/web-components/components/br-view.ts"/>
+	<script src="@/web-components/components/br-icon.ts"/>
+	<script src="@/web-components/components/br-appbar.ts"/>
+	<script src="@/web-components/components/br-popover.ts"/>
+	<script src="@/web-components/components/br-focusgroup.ts"/>
+	<script src="@/web-components/components/menu.ts"/>
+	<script src="@/web-components/components/button.ts"/>
+	<script src="@/web-components/components/select.ts"/>
+	<script src="@/web-components/components/label.ts"/>
+	<script src="@/web-components/components/textfield.ts"/>
+	<script src="./_scripts/index.ts"/>
+</Html2>
