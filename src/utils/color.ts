@@ -419,7 +419,7 @@ type GenerateColorResult = {
  * - On Color
  * - Color Dark
  * - On Color Dark
- * @deprecated Use `<br-theme>` instead
+ * @deprecated Use `generateColorAccentPalette()` instead
 */
 export function generateColorPalette(hex: HEXColor): GenerateColorResult {
 	if (!isColorValid(hex)) {
@@ -435,4 +435,35 @@ export function generateColorPalette(hex: HEXColor): GenerateColorResult {
 	]
 
 	return {color, onColor, colorDark, onColorDark}
+}
+
+export function generateColorAccent(seed: RGBColor, background: RGBColor): RGBColor {
+	const hsl_seed = rgbToHsl(seed)
+	const h = hsl_seed.h
+	const size = 250
+	const validColors: HSLColor[] = []
+
+	// O(size^2)
+	for (let s = 0; s <= size; s++) {
+		for (let l = 0; l <= size; l++) {
+			const hsl: HSLColor = {h, s: s / size, l: l / size}
+			const ratio = colorContrastRatio(hslToRgb(hsl), background)
+			if (ratio > 10) {
+				validColors.push(hsl)
+			}
+		}
+	}
+
+	if (validColors.length === 0) {
+		return seed
+	}
+
+	// using Euclidean distance
+	const distance = (hsl: HSLColor) => Math.sqrt(
+		Math.pow(hsl.s - hsl_seed.s, 2) + Math.pow(hsl.l - hsl_seed.l, 2)
+	)
+
+	// find the closest one with the seed
+	const hsl = validColors.reduce((a, b) => distance(a) < distance(b)? a : b)
+	return hslToRgb(hsl)
 }
