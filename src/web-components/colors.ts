@@ -71,21 +71,6 @@ export function colorLuminance(rgb: RGBColor): number {
 	return r * 0.2126 + g * 0.7152 + b * 0.0722
 }
 
-export function colorContrastPercentage(rgb1: RGBColor, rgb2: RGBColor): number {
-	/**
-	 * `Y` = Luminance
-	 */
-	function yToLStar(Y: number): number {
-		if (Y <= (216 / 24389)) return Y * (24389 / 27)
-		return Math.pow(Y, (1 / 3)) * 116 - 16
-	}
-
-	const L1 = yToLStar(colorLuminance(rgb1))
-	const L2 = yToLStar(colorLuminance(rgb2))
-	const ratio = Math.max(L1, L2) - Math.min(L1, L2)
-	return ratio
-}
-
 export function isColorValid(hex: string): boolean {
 	return /^#[0-9a-fA-F]{6}$/i.test(hex)
 }

@@ -1,4 +1,4 @@
-import { colorContrastPercentage, colorContrastRatio, colorToHex, colorToRgb, hexToRgb, hslToRgb, isColorValid, rgbToHsl, type HEXColor, type HSLColor, type RGBColor } from "../colors"
+import { colorContrastRatio, colorToHex, colorToRgb, hexToRgb, hslToRgb, isColorValid, rgbToHsl, type HEXColor, type HSLColor, type RGBColor } from "../colors"
 
 export const CSSVars = {
 
@@ -193,49 +193,35 @@ function _rgbParts(rgb: RGBColor): string {
 	return [Math.round(rgb.r * 0xff), Math.round(rgb.g * 0xff), Math.round(rgb.b * 0xff)].join(', ')
 }
 
-function _generateAccent(seed: RGBColor, background: RGBColor): {accent: RGBColor, onAccent: RGBColor} {
+function _generateAccent(seed: RGBColor, background: RGBColor): RGBColor {
 	const hsl_seed = rgbToHsl(seed)
 	const h = hsl_seed.h
-	const size = 500
+	const size = 250
 	const validColors: HSLColor[] = []
-	const output: {accent: RGBColor, onAccent: RGBColor} = {
-		accent: seed,
-		onAccent: colorToRgb(colorContrastPercentage(seed, colorToRgb(0x000000)) > 50
-			?  0x000000
-			: 0xffffff
-		)
-	}
 
-	// size^2 loops
+	// O(size^2)
 	for (let s = 0; s <= size; s++) {
 		for (let l = 0; l <= size; l++) {
 			const hsl: HSLColor = {h, s: s / size, l: l / size}
 			const ratio = colorContrastRatio(hslToRgb(hsl), background)
-			if (ratio > 7.0) {
+			if (ratio > 10) {
 				validColors.push(hsl)
 			}
 		}
 	}
 
 	if (validColors.length === 0) {
-		return output
+		return seed
 	}
 
 	// using Euclidean distance
 	const distance = (hsl: HSLColor) => Math.sqrt(
-		Math.pow(hsl.s - hsl_seed.s, 2) +
-		Math.pow(hsl.l - hsl_seed.l, 2)
+		Math.pow(hsl.s - hsl_seed.s, 2) + Math.pow(hsl.l - hsl_seed.l, 2)
 	)
 
 	// find the closest one with the seed
 	const hsl = validColors.reduce((a, b) => distance(a) < distance(b)? a : b)
-	const num = hslToRgb(hsl)
-	output.accent = num
-	output.onAccent = colorToRgb(colorContrastPercentage(num, colorToRgb(0x000000)) > 50
-		?  0x000000
-		: 0xffffff
-	)
-	return output
+	return hslToRgb(hsl)
 }
 
 function _insertNewStyle(
@@ -285,13 +271,15 @@ function _insertNewStyle(
 
 function _updateAccentColor(oldValue: string | null, newValue: string | null): void {
 	_insertNewStyle(Attributes.ColorAccent, oldValue, newValue, (value) => {
-		const accentLight = _generateAccent(hexToRgb(value as HEXColor), colorToRgb(DEFAULT_COLOR_BACKGROUND_LIGHT))
-		const accentDark = _generateAccent(hexToRgb(value as HEXColor), colorToRgb(DEFAULT_COLOR_BACKGROUND_DARK))
+		const accentLight   = _generateAccent(hexToRgb(value as HEXColor), colorToRgb(DEFAULT_COLOR_BACKGROUND_LIGHT))
+		const accentDark    = _generateAccent(hexToRgb(value as HEXColor), colorToRgb(DEFAULT_COLOR_BACKGROUND_DARK))
+		const accentOnLight = _generateAccent(hslToRgb({h: rgbToHsl(accentLight).h, l: .5, s: 1}), accentLight)
+		const accentOnDark  = _generateAccent(hslToRgb({h: rgbToHsl(accentDark).h, l: .5, s: 1}), accentDark)
 		const properties: string = [
-			[CSSVars.ColorAccentLight    , _rgbParts(accentLight.accent  )].join(':'),
-			[CSSVars.ColorOnAccentLight  , _rgbParts(accentLight.onAccent)].join(':'),
-			[CSSVars.ColorAccentDark     , _rgbParts(accentDark.accent   )].join(':'),
-			[CSSVars.ColorOnAccentDark   , _rgbParts(accentDark.onAccent )].join(':'),
+			[CSSVars.ColorAccentLight    , _rgbParts(accentLight  )].join(':'),
+			[CSSVars.ColorOnAccentLight  , _rgbParts(accentOnLight)].join(':'),
+			[CSSVars.ColorAccentDark     , _rgbParts(accentDark   )].join(':'),
+			[CSSVars.ColorOnAccentDark   , _rgbParts(accentOnDark )].join(':'),
 		].join(';')
 		return properties
 	})
