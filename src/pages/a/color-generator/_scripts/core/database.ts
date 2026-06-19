@@ -1,8 +1,8 @@
-import { DatabaseNames } from "@/enums/storage"
-import { IDB } from "@/utils/indexeddb"
-import { ColorsStore, type ColorsStoreType } from "./colors"
-import { isColorValid } from "@/utils/color"
-import type { HEXColor } from "@/types/color"
+import * as Constant from '../shared/constant.enum.js'
+import * as Colors from './colors.js'
+import type { HEXColor } from '@/types/color.js'
+import { isColorValid } from '@/utils/color.js'
+import { IDB } from '@/utils/indexeddb'
 
 type _IDBStoreStorage<T = unknown> = {
 	key: string
@@ -10,42 +10,40 @@ type _IDBStoreStorage<T = unknown> = {
 }
 
 type _StorageItems = {
-	'colors/seed': ColorsStoreType['seed']
-	'colors/palette': ColorsStoreType['palette']
+	'seed': HEXColor
 }
 
 type _StorageKeys = keyof _StorageItems
 
-enum _ObjectStoreNames {
-	Storage = 'storage'
-}
+const _ObjectStoreNames = {
+	Storage: 'storage'
+} as const
+type _ObjectStoreNames = typeof _ObjectStoreNames[keyof typeof _ObjectStoreNames]
 
-const _db = new IDB(DatabaseNames.ColorGenerator)
+const _db = new IDB(Constant.APP.name.replace(/[^A-Za-z]/g, '_'))
+const _storageTimeoutIds = new Map<_StorageKeys, ReturnType<typeof setTimeout>>()
 
-export function saveStorageItem<K extends _StorageKeys>(key: K, value: _StorageItems[K]) {
-	return _db
+export function saveStorageItem<K extends _StorageKeys>(key: K, value: _StorageItems[K], delayDuration = 0) {
+	clearTimeout(_storageTimeoutIds.get(key))
+	_storageTimeoutIds.set(key, setTimeout(() => {
+		_db
 		.writeStore(_ObjectStoreNames.Storage)
 		?.put({key, value} satisfies _IDBStoreStorage<_StorageItems[K]>)
+	}, delayDuration))
 }
 
-function _readStorageAll(store: IDBObjectStore): void {
+function _readAllStorage(store: IDBObjectStore): void {
 	_db.cursor(store, (cursor) => {
 		const key = cursor?.key
 		const value = cursor?.value.value
 		if (value === null || value === undefined) return true
 
 		const isString = typeof value === 'string'
-		const isArray = Array.isArray(value)
 		switch (key as _StorageKeys) {
-		case "colors/seed":
+		case "seed":
 			isString
 			&& isColorValid(value)
-			&& ColorsStore.update(v => v.seed = value as HEXColor)
-			break
-		case "colors/palette":
-			isArray
-			&& ColorsStore.update(v => v.palette = value.filter(v => isColorValid(v)))
-			break
+			&& Colors.sg_seed.set(value as HEXColor)
 		}
 
 		return true
@@ -54,9 +52,11 @@ function _readStorageAll(store: IDBObjectStore): void {
 
 function _readStorage(): void {
 	const store = _db.readStore(_ObjectStoreNames.Storage)
-	if (!store) return
+	if (!store) {
+		return
+	}
 
-	_readStorageAll(store)
+	_readAllStorage(store)
 }
 
 function _initDatabase(): void {

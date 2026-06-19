@@ -1,119 +1,102 @@
-import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
-import { ObservableStore } from "@/utils/signal"
-import { $, $$ } from "./dom-utils"
-import { ElementIds } from "../shared/ids"
-import { LocalStorageKeys } from "@/enums/storage"
-import { isValidEnumValue } from "@/utils/object"
-import { RootAttributes } from "@/enums/attributes"
-import { RadioNames } from "../shared/input-names"
-import { DEFAULT_ANIMATION, DEFAULT_THEME } from "../shared/constant"
+import * as Constant from "../shared/constant.enum.js";
+import * as Ids from '../shared/ids.enum.js'
+import * as InputNames from '../shared/input-names.enum.js'
+import * as BrPopover from "@/web-components/components/br-popover";
+import * as BrTheme from '@/web-components/components/br-theme.js'
+import * as LocalStorageKeys from '@/enums/local-storage-keys.enum.js'
+import { signal } from "@/utils/signal.js";
+import { $, $$ } from "./dom-utils.js";
+import { isValidEnumValue } from "@/utils/object.js";
 
-export type SettingsStoreType = Readonly<{
-	theme    : PlatformThemeMode
-	animation: PlatformAnimationMode
-}>
+export const sg_theme     = signal(Constant.DEFAULT_THEME)
+export const sg_animation = signal(Constant.DEFAULT_ANIMATION)
 
-export const SettingsStore = new ObservableStore<SettingsStoreType>({
-	theme    : DEFAULT_THEME,
-	animation: DEFAULT_ANIMATION,
-})
-const _ref_root = document.documentElement
-const _ref_theme = $(ElementIds.apSett_themeMenu) as HTMLDivElement
-const _ref_animation = $(ElementIds.apSett_animationMenu) as HTMLDivElement
-const _ref_settingsMenu = $(ElementIds.apSett_menu) as HTMLDivElement
-
-function _subscribeAnimationChanges(v: SettingsStoreType, o: SettingsStoreType): void {
-	const animation = v.animation
-	if (animation === o.animation) return
-
-	localStorage.setItem(LocalStorageKeys.PlatformAnimation, animation)
-}
-
-function _subscribeThemeChanges(v: SettingsStoreType, o: SettingsStoreType): void {
-	const theme = v.theme
-	if (theme === o.theme) return
-
-	localStorage.setItem(LocalStorageKeys.PlatformTheme, theme)
-}
-
-function _subscribeAnimationRefView(v: SettingsStoreType, o: SettingsStoreType): void {
-	const animation = v.animation
-	if (animation === o.animation) return
-
-	_ref_root.setAttribute(RootAttributes.Animation, animation)
-	const ref_previous = $$(
-		`input[name="${CSS.escape(RadioNames.Animation)}"]:checked`
-	) as HTMLInputElement
-	const ref_target = $$(
-		`input[name="${CSS.escape(RadioNames.Animation)}"][value="${CSS.escape(animation)}"]`
-	) as HTMLInputElement
-
-	if (ref_previous === ref_target) {return}
-	if (ref_previous) ref_previous.checked = false
-	if (ref_target) ref_target.checked = true
-}
-
-function _subscribeThemeRefView(v: SettingsStoreType, o: SettingsStoreType): void {
-	const theme = v.theme
-	if (theme === o.theme) return
-
-	_ref_root.setAttribute(RootAttributes.Theme, theme)
-	const ref_previous = $$(
-		`input[name="${CSS.escape(RadioNames.Theme)}"]:checked`
-	) as HTMLInputElement
-	const ref_target = $$(
-		`input[name="${CSS.escape(RadioNames.Theme)}"][value="${CSS.escape(theme)}"]`
-	) as HTMLInputElement
-
-	if (ref_previous === ref_target) {return}
-	if (ref_previous) ref_previous.checked = false
-	if (ref_target) ref_target.checked = true
-}
-
-function _initSubscriber(): void {
-	SettingsStore.subscribe(_subscribeAnimationChanges)
-	SettingsStore.subscribe(_subscribeThemeChanges)
-	SettingsStore.subscribe(_subscribeAnimationRefView)
-	SettingsStore.subscribe(_subscribeThemeRefView)
-}
-
-function _initEvents(): void {
-	_ref_theme.addEventListener('change', ev => {
-		const target = ev.target as HTMLInputElement
-		const value = target?.value as PlatformThemeMode
-		if (!value || !isValidEnumValue(value, PlatformThemeMode)) {return}
-
-		_ref_settingsMenu.hidePopover()
-		SettingsStore.update(v => v.theme = value)
-	})
-
-	_ref_animation.addEventListener('change', ev => {
-		const target = ev.target as HTMLInputElement
-		const value = target?.value as PlatformAnimationMode
-		if (!value || !isValidEnumValue(value, PlatformAnimationMode)) {return}
-
-		_ref_settingsMenu.hidePopover()
-		SettingsStore.update(v => v.animation = value)
-	})
-}
+const _ref_theme            = $$<BrTheme.BiruThemeElement>(BrTheme.TAGNAME)
+const _ref_themePopover     = $(Ids.PopoverAppBarSettingsTheme) as BrPopover.BiruPopoverElement
+const _ref_animationPopover = $(Ids.PopoverAppBarSettingsAnimation) as BrPopover.BiruPopoverElement
 
 function _initTheme(): void {
-	const theme = localStorage.getItem(LocalStorageKeys.PlatformTheme) as PlatformThemeMode
-	if (!theme || !isValidEnumValue(theme, PlatformThemeMode) || theme === DEFAULT_THEME) return
+	const theme = localStorage.getItem(LocalStorageKeys.PlatformTheme)
+	if (!_ref_theme || !theme || !isValidEnumValue(theme, BrTheme.ThemeMode) || theme === Constant.DEFAULT_THEME) {
+		return
+	}
 
-	SettingsStore.update(v => v.theme = theme)
+	_ref_theme.biru.themeMode = theme as BrTheme.ThemeMode
+	const ref_previous = $$(
+		`input[name="${CSS.escape(InputNames.Theme)}"]:checked`
+	) as HTMLInputElement
+	const ref_target = $$(
+		`input[name="${CSS.escape(InputNames.Theme)}"][value="${CSS.escape(theme)}"]`
+	) as HTMLInputElement
+
+	if (ref_previous === ref_target) {
+		return
+	}
+
+	if (ref_previous) {
+		ref_previous.checked = false
+	}
+
+	if (ref_target) {
+		ref_target.checked = true
+	}
 }
 
 function _initAnimation(): void {
-	const animation = localStorage.getItem(LocalStorageKeys.PlatformAnimation) as PlatformAnimationMode
-	if (!animation || !isValidEnumValue(animation, PlatformAnimationMode)) return
+	const animation = localStorage.getItem(LocalStorageKeys.PlatformAnimation)
+	if (!_ref_theme || !animation || !isValidEnumValue(animation, BrTheme.Animation) || animation === Constant.DEFAULT_ANIMATION) {
+		return
+	}
 
-	SettingsStore.update(v => v.animation = animation)
+	_ref_theme.biru.animation = animation as BrTheme.Animation
+	const ref_previous = $$(
+		`input[name="${CSS.escape(InputNames.Animation)}"]:checked`
+	) as HTMLInputElement
+	const ref_target = $$(
+		`input[name="${CSS.escape(InputNames.Animation)}"][value="${CSS.escape(animation)}"]`
+	) as HTMLInputElement
+
+	if (ref_previous === ref_target) {
+		return
+	}
+
+	if (ref_previous) {
+		ref_previous.checked = false
+	}
+
+	if (ref_target) {
+		ref_target.checked = true
+	}
+}
+
+function _initEvents(): void {
+	_ref_themePopover.addEventListener('change', ev => {
+		const target = ev.target as HTMLInputElement
+		const value = target?.value as BrTheme.ThemeMode
+		if (!_ref_theme || !value || !isValidEnumValue(value, BrTheme.ThemeMode)) {
+			return
+		}
+
+		_ref_theme.biru.themeMode = value
+		localStorage.setItem(LocalStorageKeys.PlatformTheme, value)
+		sg_theme.set(value)
+	})
+
+	_ref_animationPopover.addEventListener('change', ev => {
+		const target = ev.target as HTMLInputElement
+		const value = target?.value as BrTheme.Animation
+		if (!_ref_theme || !value || !isValidEnumValue(value, BrTheme.Animation)) {
+			return
+		}
+
+		_ref_theme.biru.animation = value
+		localStorage.setItem(LocalStorageKeys.PlatformAnimation, value)
+		sg_animation.set(value)
+	})
 }
 
 export default () => {
-	_initSubscriber()
-	_initTheme()
 	_initAnimation()
+	_initTheme()
 	_initEvents()
 }
