@@ -30,22 +30,34 @@ export const CSSVars = {
 export type CSSVars = typeof CSSVars[keyof typeof CSSVars]
 
 export const Attributes = {
-	/** `HEXColor` */
+	/**
+	 * @type {string} Hex color
+	 * */
 	ColorAccent: 'br:color-accent',
 
-	/** `'light' | 'dark' | 'auto'` */
-	ThemeMode  : 'br:theme-mode',
+	/**
+	 * @type {string} `"light" | "dark" | "auto"`
+	 * */
+	ThemeMode: 'br:theme-mode',
 
-	/** `string` - List of font-family */
+	/**
+	 * @type {string} List of font-family
+	 * */
 	FontFamilyIcon: 'br:font-family-icon',
 
-	/** `string` - List of font-family */
+	/**
+	 * @type {string} List of font-family
+	 * */
 	FontFamilyMonospace: 'br:font-family-monospace',
 
-	/** `string` - List of font-family */
+	/**
+	 * @type {string} List of font-family
+	 * */
 	FontFamilySansSerif: 'br:font-family-sans-serif',
 
-	/** `'on' | 'off' | 'auto'` */
+	/**
+	 * @type {string} `"on" | "off" | "auto"`
+	 * */
 	Animation: 'br:animation'
 } as const
 export type Attributes = typeof Attributes[keyof typeof Attributes]

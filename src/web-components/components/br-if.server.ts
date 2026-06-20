@@ -1,9 +1,16 @@
 export const Attributes = {
-
-	/** Multiple path separated by space. Example: `"/ /a/b /a/b/e"` */
+	/**
+	 * Multiple path separated by space. Example: `"/ /a/b /a/b/e"`
+	 *
+	 * @type {string[]}
+	 * */
 	Path : 'br:path' ,
 
-	/** Multiple hash target separated by space. Example: `"#id1 #id2 #id3"` */
+	/**
+	 * Multiple hash target separated by space. Example: `"#id1 #id2 #id3"`
+	 *
+	 * @type {string[]}
+	 * */
 	Hash : 'br:hash' ,
 
 	/**
@@ -15,6 +22,8 @@ export const Attributes = {
 	 * * `|` = OR
 	 * * `!` = NOT
 	 * * `none` = true
+	 *
+	 * @type {string}
 	*/
 	Query: 'br:query',
 
@@ -22,22 +31,53 @@ export const Attributes = {
 	 * Complex media query. Equal to how implement media query in CSS.
 	 *
 	 * Example: `"(not (width > 1000px)) and (color), print and (color)"`
+	 *
+	 * @type {string}
 	 * */
 	Media: 'br:media',
 
-	AnimationFor               : 'br:animation-for',
+	/**
+	 * Element ids
+	 *
+	 * @type {string[]}
+	 */
+	AnimationFor: 'br:animation-for',
 
 	/** `Keyframe[] | PropertyIndexedKeyframes` */
-	AnimationStartKeyframes    : 'br:animation-start-keyframes',
-	AnimationStartEasing       : 'br:animation-start-easing',
-	AnimationStartDuration     : 'br:animation-start-duration',
+	AnimationStartKeyframes: 'br:animation-start-keyframes',
+
+	/**
+	 * @type {string}
+	 */
+	AnimationStartEasing: 'br:animation-start-easing',
+
+	/**
+	 * @type {number} in milliseconds
+	 */
+	AnimationStartDuration: 'br:animation-start-duration',
+
+	/**
+	 * @type {number} in milliseconds
+	 */
 	AnimationStartDelayDuration: 'br:animation-start-delay-duration',
 
 	/** `Keyframe[] | PropertyIndexedKeyframes` */
-	AnimationEndKeyframes      : 'br:animation-end-keyframes',
-	AnimationEndEasing         : 'br:animation-end-easing',
-	AnimationEndDuration       : 'br:animation-end-duration',
-	AnimationEndDelayDuration  : 'br:animation-end-delay-duration',
+	AnimationEndKeyframes: 'br:animation-end-keyframes',
+
+	/**
+	 * @type {string}
+	 */
+	AnimationEndEasing: 'br:animation-end-easing',
+
+	/**
+	 * @type {number} in milliseconds
+	 */
+	AnimationEndDuration: 'br:animation-end-duration',
+
+	/**
+	 * @type {number} in milliseconds
+	 */
+	AnimationEndDelayDuration: 'br:animation-end-delay-duration',
 } as const
 export type Attributes = typeof Attributes[keyof typeof Attributes]
 

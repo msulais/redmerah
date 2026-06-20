@@ -1,14 +1,24 @@
 import * as BrTheme from './br-theme.js'
 
 export const Attributes = {
-	/** `"colored" | "tonal" | "outlined" | "filled" | "link" | "icon"` */
+	/**
+	 * @type {string[]} `"colored" | "tonal" | "outlined" | "filled" | "link" | "icon"`
+	 * */
 	Variant: 'br:variant',
 	Focused: 'br:focused',
 
-	/** Keep focus ring visible */
+	/**
+	 * Keep focus ring visible
+	 *
+	 * @type {boolean}
+	 * */
 	KeepFocusVisible: 'br:keep-focus-visible',
 
-	/** For element that has no `:disabled` state selector */
+	/**
+	 * For element that has no `:disabled` state selector.
+	 *
+	 * @type {boolean}
+	 * */
 	Disabled: 'br:disabled'
 } as const
 export type Attributes = typeof Attributes[keyof typeof Attributes]

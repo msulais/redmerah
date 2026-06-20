@@ -1,5 +1,12 @@
 export const Attributes = {
-	Variant : 'br:variant',
+	/**
+	 * @type {string} `"auto" | "sidebar" | "drawer"`
+	 * */
+	Variant: 'br:variant',
+
+	/**
+	 * @type {boolean}
+	 * */
 	Expanded: 'br:expanded',
 } as const
 export type Attributes = typeof Attributes[keyof typeof Attributes]

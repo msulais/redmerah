@@ -1,14 +1,29 @@
 export const Attributes = {
-	/** Direction of focus key. Default `"both"` */
+	/**
+	 * Direction of focus key. Default `"both"`
+	 *
+	 * @type {string} `"vertical" | "horizontal" | "both" | "grid"` */
 	Direction: 'br:direction',
 
-	/** Element ids. Separated by space character. All children if not present. */
+	/**
+	 * Element ids. Separated by space character. All children if not present.
+	 *
+	 * @type {string[]}
+	 * */
 	For: 'br:for',
 
-	/** Element ids to exclude from auto-detection. Separated by space character. */
+	/**
+	 * Element ids to exclude from auto-detection. Separated by space character.
+	 *
+	 * @type {string[]}
+	 * */
 	Except: 'br:except',
 
-	/** Disables the roving tabindex behavior when present */
+	/**
+	 * Disables the roving tabindex behavior when present.
+	 *
+	 * @type {boolean}
+	 * */
 	DisableAutoTabindex: 'br:disabled-auto-tabindex'
 } as const
 export type Attributes = typeof Attributes[keyof typeof Attributes]

@@ -7,13 +7,32 @@ import { shadowElementsListener } from '../utils.js'
 import { listenDocumentEvent } from '../event-registry.js'
 
 export const Attributes = {
-	Manual  : 'br:manual',
-	Gap     : 'br:gap',
-	Position: 'br:position',
-	Padding : 'br:padding',
+	/**
+	 * @type {boolean}
+	 */
+	Manual: 'br:manual',
 
-	/** To override `padding`, `position`, and `gap` */
-	SubMenu : 'br:submenu'
+	/**
+	 * @type {number}
+	 */
+	Gap: 'br:gap',
+
+	/**
+	 * @type {string} `"left-top" | "left-center-to-bottom" | "left-center" | "left-center-to-top" | "left-bottom" | "right-top" | "right-center-to-bottom" | "right-center" | "right-center-to-top" | "right-bottom" | "center-top-to-right" | "center-top" | "center-top-to-left" | "center-bottom-to-right" | "center-bottom" | "center-bottom-to-left" | "center-center-left-top" | "center-center-left" | "center-center-left-bottom" | "center-center-top" | "center-center" | "center-center-bottom" | "center-center-right-top" | "center-center-right" | "center-center-right-bottom"`
+	 */
+	Position: 'br:position',
+
+	/**
+	 * @type {number}
+	 */
+	Padding: 'br:padding',
+
+	/**
+	 * To override `padding`, `position`, and `gap`
+	 *
+	 * @type {boolean}
+	 * */
+	SubMenu: 'br:submenu'
 } as const
 export type Attributes = typeof Attributes[keyof typeof Attributes]
 

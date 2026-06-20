@@ -3,16 +3,56 @@ import { QueryValidation } from '../utils.js'
 import * as BrTheme from './br-theme.js'
 
 export const Attributes = {
-	Path    : 'br:path',
-	Query   : 'br:query',
-	Hash    : 'br:hash',
-	Label   : 'br:label',
+	/**
+	 * Multiple path separated by space. Example: `"/ /a/b /a/b/e"`
+	 *
+	 * @type {string[]}
+	 * */
+	Path: 'br:path',
+
+	/**
+	 * Complex url query. Example: `"(page=home | none) & id=2 & !date=now"`.
+	 *
+	 * Operator:
+	 *
+	 * * `&` = AND
+	 * * `|` = OR
+	 * * `!` = NOT
+	 * * `none` = true
+	 *
+	 * @type {string}
+	*/
+	Query: 'br:query',
+
+	/**
+	 * Multiple hash target separated by space. Example: `"#id1 #id2 #id3"`
+	 *
+	 * @type {string[]}
+	 * */
+	Hash: 'br:hash',
+
+	/**
+	 * @type {string}
+	 */
+	Label: 'br:label',
+
+	/**
+	 * @type {boolean}
+	 */
 	Selected: 'br:selected',
 
-	/** Keep focus ring visible */
+	/**
+	 * Keep focus ring visible
+	 *
+	 * @type {boolean}
+	 * */
 	KeepFocusVisible: 'br:keep-focus-visible',
 
-	/** For element that has no `:disabled` state selector */
+	/**
+	 * For element that has no `:disabled` state selector
+	 *
+	 * @type {boolean}
+	 * */
 	Disabled: 'br:disabled'
 } as const
 export type Attributes = typeof Attributes[keyof typeof Attributes]
