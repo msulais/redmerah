@@ -49,11 +49,11 @@ export const EventTypes = {
 } as const
 export type EventTypes = typeof EventTypes[keyof typeof EventTypes]
 
-export const TAGNAME = 'br-view'
-const ELEMENTS = new Set<BiruViewElement>()
+export const TAGNAME = 'br-if'
+const ELEMENTS = new Set<BiruIfElement>()
 const STYLES = new CSSStyleSheet()
 
-export class BiruViewElement extends HTMLElement {
+export class BiruIfElement extends HTMLElement {
 	private _shadowRoot: ShadowRoot
 	private _container: HTMLDivElement
 	private _media: MediaQueryList | undefined
@@ -390,7 +390,7 @@ export class BiruViewElement extends HTMLElement {
 	}
 }
 
-function _checkElementsState(element?: BiruViewElement | undefined): void {
+function _checkElementsState(element?: BiruIfElement | undefined): void {
 	for (const el of (element? [element] : ELEMENTS)) {
 		if (el.biru.isVisible()) {
 			el.biru.show()
@@ -422,7 +422,7 @@ export function define(): void {
 
 	_initListeners()
 	_initDefaultStyles()
-	customElements.define(TAGNAME, BiruViewElement)
+	customElements.define(TAGNAME, BiruIfElement)
 }
 
 define()

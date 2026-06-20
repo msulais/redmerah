@@ -46,4 +46,4 @@ export const EventTypes = {
 } as const
 export type EventTypes = typeof EventTypes[keyof typeof EventTypes]
 
-export const TAGNAME = 'br-view'
+export const TAGNAME = 'br-if'

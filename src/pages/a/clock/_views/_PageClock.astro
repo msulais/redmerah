@@ -7,7 +7,7 @@ const CURRENT_TIME = new Date().toLocaleTimeString('en', {hour: 'numeric', minut
 const CURRENT_DATE = new Date().toLocaleDateString('en', {year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'})
 ---
 
-<br-view
+<br-if
 	br:query={`page=${Pages.Clock}|none`}
 	br:animation-for={Ids.PageClock}
 	br:animation-start-duration="500"
@@ -19,4 +19,4 @@ const CURRENT_DATE = new Date().toLocaleDateString('en', {year: 'numeric', month
 		<h2 id={Ids.PageClockTime}>{CURRENT_TIME}</h2>
 		<p id={Ids.PageClockDate}>{CURRENT_DATE}</p>
 	</div>
-</br-view>
+</br-if>

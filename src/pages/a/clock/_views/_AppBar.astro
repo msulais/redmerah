@@ -86,7 +86,7 @@ const LANGUAGES: [text: string, code: string][] = [
 ]
 ---
 <br-appbar slot="appbar">
-	<br-view
+	<br-if
 		br:media={`(width < ${BrNavigation.SCREEN_SIZE_MEDIUM_MIN_IN_REM}rem)`}
 		slot="leading">
 		<button
@@ -97,7 +97,7 @@ const LANGUAGES: [text: string, code: string][] = [
 			br:command-for={Ids.Navigation}>
 			<br-icon set:html={Icons.LineHorizontal3}/>
 		</button>
-	</br-view>
+	</br-if>
 	<img
 		slot="headline"
 		src={Constant.APP.logoUrl}

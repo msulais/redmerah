@@ -8,7 +8,7 @@ import * as BrTheme from '@/web-components/components/br-theme.server.js'
 import * as Icons from '@/enums/icons.enum.js'
 ---
 
-<br-view
+<br-if
 	br:query={`page=${Pages.Basic}|none`}
 	br:animation-for={Ids.PageBasic}
 	br:animation-start-duration="500"
@@ -84,4 +84,4 @@ import * as Icons from '@/enums/icons.enum.js'
 			</br-focusgroup>
 		</div>
 	</div>
-</br-view>
+</br-if>

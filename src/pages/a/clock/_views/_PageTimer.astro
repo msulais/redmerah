@@ -11,7 +11,7 @@ const MINUTES = Math.floor(Math.floor(Constant.DEFAULT_TIMER_SECONDS % 3600) / 6
 const SECONDS = Math.floor(Math.floor(Constant.DEFAULT_TIMER_SECONDS % 3600) % 60)
 ---
 
-<br-view
+<br-if
 	br:query={`page=${Pages.Timer}`}
 	br:animation-for={Ids.PageTimer}
 	br:animation-start-duration="500"
@@ -89,4 +89,4 @@ const SECONDS = Math.floor(Math.floor(Constant.DEFAULT_TIMER_SECONDS % 3600) % 6
 			Dismiss
 		</button>
 	</br-dialog>
-</br-view>
+</br-if>

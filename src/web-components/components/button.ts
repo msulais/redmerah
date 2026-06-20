@@ -59,6 +59,7 @@ ${ELEMENT} {
 		font-size: 1rem;
 		min-height: 3rem;
 		min-width: 3rem;
+		padding: .25rem 1rem;
 		border-radius: 1.5rem;
 	}
 }

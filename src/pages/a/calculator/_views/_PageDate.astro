@@ -5,7 +5,7 @@ import * as Constant from '../_scripts/shared/constant.enum.js'
 import { DateOperation } from '../_scripts/shared/calculator.js'
 ---
 
-<br-view
+<br-if
 	br:query={`page=${Pages.Date}`}
 	br:animation-for={Ids.PageDate}
 	br:animation-start-duration="500"
@@ -82,4 +82,4 @@ import { DateOperation } from '../_scripts/shared/calculator.js'
 			tabindex="0"
 			style="display:block;font-size:1.5rem">{Constant.DEFAULT_DATE_OUTPUT}</output>
 	</div>
-</br-view>
+</br-if>
