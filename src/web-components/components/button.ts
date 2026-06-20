@@ -46,12 +46,21 @@ ${ELEMENT} {
 	padding: .25rem .75rem;
 	justify-content: center;
 	line-height: normal;
-	border: none;
+	border: 1px solid transparent;
 	filter: none;
 	gap: .5rem;
 	color: rgb(var(${BrTheme.CSSVars.ColorOnSurface}));
 	text-decoration: none;
 	align-items: center;
+}
+
+@media (hover: none) {
+	${ELEMENT} {
+		font-size: 1rem;
+		min-height: 3rem;
+		min-width: 3rem;
+		border-radius: 1.5rem;
+	}
 }
 
 ${ELEMENT}:has( :focus-visible) {

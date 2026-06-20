@@ -22,6 +22,13 @@ ${ELEMENT} {
 	border-bottom: 2px solid rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .32);
 }
 
+@media (hover: none) {
+	${ELEMENT} {
+		font-size: 1rem;
+		min-height: 3rem;
+	}
+}
+
 ${ELEMENT}[type=color] {
 	padding: 0;
 	border: none;

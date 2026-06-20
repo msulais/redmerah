@@ -713,6 +713,12 @@ function _initDefaultStyles(): void {
 	box-shadow: 0 .25rem .5rem rgba(0, 0, 0, .25);
 	border-radius: .5rem;
 }
+
+@media (hover: none) {
+	:host {
+		border-radius: 1.75rem;
+	}
+}
 `)}
 
 export function define(): void {

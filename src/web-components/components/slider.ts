@@ -15,7 +15,7 @@ ${ELEMENT} {
 	--slider-mixed-color: color-mix(in srgb, rgb(var(${BrTheme.CSSVars.ColorAccent})), rgb(var(${BrTheme.CSSVars.ColorOnSurface})) var(--slider-hover-effect, 0%));
 	-webkit-appearance :none;
 	-moz-appearance :none;
-	height: calc(var(--slider-thumb-width) + .125rem);
+	height: calc(var(--slider-thumb-width) + var(--slider-gap));
 	appearance :none;
 	background: none;
 	cursor: pointer;

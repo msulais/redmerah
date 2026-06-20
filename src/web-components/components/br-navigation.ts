@@ -218,6 +218,14 @@ ${ELEMENT}${VARIANT_SIDEBAR}[${ATTR_EXPANDED}] ${NavigationItem.TAGNAME} {
 	padding: .25rem .75rem;
 }
 
+@media (hover: none) {
+	${ELEMENT}${VARIANT_SIDEBAR}[${ATTR_EXPANDED}] ${NavigationItem.TAGNAME} {
+		font-size: 1rem;
+		min-height: 3rem;
+		border-radius: 1.5rem;
+	}
+}
+
 ${ELEMENT}${VARIANT_SIDEBAR}[${ATTR_EXPANDED}] ${NavigationItem.TAGNAME}[${CSS.escape(NavigationItem.Attributes.Selected)}] {
 	background-color: rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .08);
 	color: rgb(var(${BrTheme.CSSVars.ColorAccent}));
@@ -252,6 +260,14 @@ ${ELEMENT}${VARIANT_DRAWER} ${NavigationItem.TAGNAME} {
 	gap: .5rem;
 	min-height: 2rem;
 	padding: .25rem .75rem;
+}
+
+@media (hover: none) {
+	${ELEMENT}${VARIANT_DRAWER} ${NavigationItem.TAGNAME} {
+		min-height: 3rem;
+		font-size: 1rem;
+		border-radius: 1.5rem;
+	}
 }
 
 ${ELEMENT}${VARIANT_DRAWER} ${NavigationItem.TAGNAME}[${CSS.escape(NavigationItem.Attributes.Selected)}] {
@@ -290,6 +306,14 @@ ${ELEMENT}${VARIANT_DRAWER} ${NavigationItem.TAGNAME} > :first-child {
 	}
 }
 
+@media (width >= ${SCREEN_SIZE_MEDIUM_MIN_IN_REM}rem) and (hover: none) {
+	${ELEMENT}${VARIANT_AUTO}[${ATTR_EXPANDED}] ${NavigationItem.TAGNAME} {
+		min-height: 3rem;
+		font-size: 1rem;
+		border-radius: 1.5rem;
+	}
+}
+
 @media (width < ${SCREEN_SIZE_MEDIUM_MIN_IN_REM}rem) {
 	${ELEMENT}${VARIANT_AUTO} {
 		position: fixed;
@@ -325,6 +349,14 @@ ${ELEMENT}${VARIANT_DRAWER} ${NavigationItem.TAGNAME} > :first-child {
 	${ELEMENT}${VARIANT_AUTO} ${NavigationItem.TAGNAME} > :first-child {
 		padding: 0px;
 		background-color: transparent;
+	}
+}
+
+@media (width < ${SCREEN_SIZE_MEDIUM_MIN_IN_REM}rem) and (hover: none) {
+	${ELEMENT}${VARIANT_AUTO} ${NavigationItem.TAGNAME} {
+		min-height: 3rem;
+		font-size: 1rem;
+		border-radius: 1.5rem;
 	}
 }
 `)

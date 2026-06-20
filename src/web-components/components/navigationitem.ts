@@ -30,6 +30,7 @@ function _initDefaultStyles(): void {
 	document.adoptedStyleSheets.push(styles)
 	styles.replaceSync(`
 ${ELEMENT} {
+	border: 1px solid transparent;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -43,6 +44,12 @@ ${ELEMENT} {
 	width: 100%;
 	border-radius: .25rem;
 	color: rgb(var(${BrTheme.CSSVars.ColorOnSurface}));
+}
+
+@media (hover: none) {
+	${ELEMENT} {
+		font-size: 1rem;
+	}
 }
 
 ${ELEMENT}:focus-visible {

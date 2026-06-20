@@ -90,6 +90,15 @@ ${ELEMENT_ITEM} {
 	justify-content: flex-start;
 }
 
+@media (hover: none) {
+	${ELEMENT_ITEM} {
+		min-height: 3rem;
+		min-width: 3rem;
+		gap: .5rem;
+		border-radius: 1.5rem;
+	}
+}
+
 ${ELEMENT_ITEM} input:where([type=checkbox],[type=radio]) {
 	appearance: none;
 	-webkit-appearance: none;

@@ -7,6 +7,12 @@ function _initDefaultStyles(): void {
 	styles.replaceSync(`
 ${TAGNAME} {
 	font-size: .875rem;
+}
+
+@media (hover: none) {
+	${TAGNAME} {
+		font-size: 1rem;
+	}
 }`)
 }
 

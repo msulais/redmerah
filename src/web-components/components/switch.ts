@@ -9,13 +9,21 @@ function _initDefaultStyles(): void {
 	document.adoptedStyleSheets.push(styles)
 	styles.replaceSync(`
 ${ELEMENT} {
+	--width: 2.5rem;
+	--height: calc(var(--width) / 2);
 	-webkit-appearance: none;
 	appearance: none;
 	position: relative;
-	width: 2.5rem;
+	width: var(--width);
 	border-radius: 9999px;
-	height: 1.25rem;
+	height: var(--height);
 	cursor: pointer;
+}
+
+@media (hover: none) {
+	${ELEMENT} {
+		--width: 2.75rem;
+	}
 }
 
 ${ELEMENT}:not(:disabled):hover::after {
@@ -37,8 +45,8 @@ ${ELEMENT}::before {
 	top: 0;
 	position: absolute;
 	outline: 1px solid rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .32);
-	width: 2.5rem;
-	height: 1.25rem;
+	width: var(--width);
+	height: var(--height);
 	border-radius: 999999px;
 	cursor: inherit;
 	transition-duration: var(${BrTheme.CSSVars.DurationTransition});
@@ -53,10 +61,10 @@ ${ELEMENT}:checked::before {
 ${ELEMENT}::after {
 	content: "";
 	position: absolute;
-	top: .25rem;
-	left: .25rem;
-	width: .75rem;
-	height: .75rem;
+	top: calc(var(--width) * 0.1);
+	left: calc(var(--width) * 0.1);
+	width: calc(var(--width) * 0.3);
+	height: calc(var(--width) * 0.3);
 	border-radius: 999999px;
 	cursor: inherit;
 	transition-duration: var(${BrTheme.CSSVars.DurationTransition});
@@ -64,7 +72,7 @@ ${ELEMENT}::after {
 }
 
 ${ELEMENT}:checked::after {
-	translate: 1.25rem 0;
+	translate: calc(var(--width) / 2) 0;
 	background-color: rgb(var(${BrTheme.CSSVars.ColorOnAccent}));
 }
 `)

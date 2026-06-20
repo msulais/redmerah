@@ -14,11 +14,7 @@ import { DateOperation } from '../_scripts/shared/calculator.js'
 		translate: ['0 2rem', '0 0']
 	})}>
 	<div style="padding:.5rem" id={Ids.PageDate}>
-		<label
-			style="font-size:.875rem"
-			for={Ids.PageDateOperation}>
-			Operation
-		</label>
+		<label for={Ids.PageDateOperation}>Operation</label>
 		<select
 			id={Ids.PageDateOperation}
 			style={{
@@ -30,11 +26,7 @@ import { DateOperation } from '../_scripts/shared/calculator.js'
 			<option selected={Constant.DEFAULT_DATE_OPERATION === DateOperation.Difference} value={DateOperation.Difference}>Difference</option>
 		</select>
 
-		<label
-			style="font-size:.875rem"
-			for={Ids.PageDateFrom}>
-			From
-		</label>
+		<label for={Ids.PageDateFrom}>From</label>
 		<input
 			id={Ids.PageDateFrom}
 			type="date"
@@ -48,11 +40,7 @@ import { DateOperation } from '../_scripts/shared/calculator.js'
 		/>
 
 		<div id={Ids.PageDateDiff}>
-			<label
-				style="font-size:.875rem"
-				for={Ids.PageDateTo}>
-				To
-			</label>
+			<label for={Ids.PageDateTo}>To</label>
 			<input
 				id={Ids.PageDateTo}
 				type="date"
@@ -75,20 +63,20 @@ import { DateOperation } from '../_scripts/shared/calculator.js'
 				marginBottom: '1rem'
 			}}>
 			<div>
-				<label style="font-size:.875rem;margin-bottom:.25rem" for={Ids.PageDateYears}>Years</label>
-				<input br:as="textfield" id={Ids.PageDateYears} min="0" type="number" value={Constant.DEFAULT_DATE_INPUT_YEARS} />
+				<label for={Ids.PageDateYears}>Years</label>
+				<input style="margin-top:.25rem" br:as="textfield" id={Ids.PageDateYears} min="0" type="number" value={Constant.DEFAULT_DATE_INPUT_YEARS} />
 			</div>
 			<div>
-				<label style="font-size:.875rem;margin-bottom:.25rem" for={Ids.PageDateMonths}>Months</label>
-				<input br:as="textfield" id={Ids.PageDateMonths} min="0" type="number" value={Constant.DEFAULT_DATE_INPUT_MONTHS} />
+				<label for={Ids.PageDateMonths}>Months</label>
+				<input style="margin-top:.25rem" br:as="textfield" id={Ids.PageDateMonths} min="0" type="number" value={Constant.DEFAULT_DATE_INPUT_MONTHS} />
 			</div>
 			<div>
-				<label style="font-size:.875rem;margin-bottom:.25rem" for={Ids.PageDateDays}>Days</label>
-				<input br:as="textfield" id={Ids.PageDateDays} min="0" type="number" value={Constant.DEFAULT_DATE_INPUT_DAYS} />
+				<label for={Ids.PageDateDays}>Days</label>
+				<input style="margin-top:.25rem" br:as="textfield" id={Ids.PageDateDays} min="0" type="number" value={Constant.DEFAULT_DATE_INPUT_DAYS} />
 			</div>
 		</div>
 
-		<label style="font-size:.875rem;" for={Ids.PageDateOutput}>Result</label>
+		<label for={Ids.PageDateOutput}>Result</label>
 		<output
 			id={Ids.PageDateOutput}
 			tabindex="0"

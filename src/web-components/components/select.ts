@@ -28,6 +28,13 @@ ${ELEMENT} {
 	-ms-overflow-style: none;
 }
 
+@media (hover: none) {
+	${ELEMENT} {
+		font-size: 1rem;
+		min-height: 3rem;
+	}
+}
+
 ${ELEMENT}[multiple] {
 	padding: .25rem 0;
 }
@@ -84,6 +91,12 @@ ${ELEMENT}::picker(select) {
 	transition-duration: var(${BrTheme.CSSVars.DurationTransition});
 }
 
+@media (hover: none) {
+	${ELEMENT}::picker(select) {
+		border-radius: 1.5rem;
+	}
+}
+
 ${ELEMENT}::picker(select):popover-open {
 	opacity: 1;
 	translate: 0 0;
@@ -118,6 +131,14 @@ ${ELEMENT} option {
 	position: relative;
 }
 
+@media (hover: none) {
+	${ELEMENT} option {
+		font-size: 1rem;
+		min-height: 3rem;
+		border-radius: 1.5rem;
+	}
+}
+
 ${ELEMENT} option::checkmark {
 	display: none;
 }
@@ -136,6 +157,13 @@ ${ELEMENT} option::before {
 	border-radius: 99999px;
 	transition-property: height;
 	transition-duration: var(${BrTheme.CSSVars.DurationTransition});
+}
+
+@media (hover: none) {
+	${ELEMENT} option::before {
+		width: .5rem;
+		height: .5rem;
+	}
 }
 
 ${ELEMENT} option:not(:first-of-type) {
@@ -167,6 +195,12 @@ ${ELEMENT} option:checked {
 ${ELEMENT} option:checked::before {
 	height: max(50%, .1875rem);
 	opacity: 1;
+}
+
+@media (hover: none) {
+	${ELEMENT} option:checked::before {
+		height: .5rem;
+	}
 }
 
 ${ELEMENT} option:checked:not(:disabled):hover {

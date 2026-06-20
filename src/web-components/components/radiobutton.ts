@@ -23,6 +23,13 @@ ${ELEMENT} {
 	width: fit-content;
 }
 
+@media (hover: none) {
+	${ELEMENT} {
+		font-size: 1rem;
+		min-height: 3rem;
+	}
+}
+
 ${ELEMENT}:has( input[type=radio]:disabled) {
 	cursor: not-allowed;
 }

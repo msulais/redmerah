@@ -35,7 +35,7 @@ import { LengthUnits } from '../_scripts/shared/units.js'
 		<div class={Styles.InputOptions}>
 			<br-focusgroup br:direction="horizontal">
 				<label>
-					<span style="font-size: .875rem">Type:</span>
+					<span>Type:</span>
 					<select id={Ids.PageConverterType}>
 						{Constant.CONVERTER_TYPES.map(c =>
 							<option
@@ -47,7 +47,7 @@ import { LengthUnits } from '../_scripts/shared/units.js'
 					</select>
 				</label>
 				<label>
-					<span style="font-size: .875rem">From:</span>
+					<span>From:</span>
 					<select id={Ids.PageConverterInputUnit}>
 						{LengthUnits.all.map(c =>
 							<option
@@ -60,7 +60,7 @@ import { LengthUnits } from '../_scripts/shared/units.js'
 					</select>
 				</label>
 				<label>
-					<span style="font-size: .875rem">To:</span>
+					<span>To:</span>
 					<select id={Ids.PageConverterOutputUnit}>
 						{LengthUnits.all.map(c =>
 							<option
