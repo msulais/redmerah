@@ -1,0 +1,34 @@
+---
+import * as Constant from '../_scripts/shared/constant.enum.js'
+import * as Styles from '../_styles/styles.enum.js'
+import * as Ids from '../_scripts/shared/ids.enum.js'
+---
+<ul class={Styles.Inputs}>
+	<li><label for={Ids.ColorInputBackground}>Color 1 ({Constant.DEFAULT_BACKGROUND_COLOR})</label><input value={Constant.DEFAULT_BACKGROUND_COLOR} id={Ids.ColorInputBackground} type="color"/></li>
+	<li><label for={Ids.ColorInputForeground}>Color 2 ({Constant.DEFAULT_FOREGROUND_COLOR})</label><input value={Constant.DEFAULT_FOREGROUND_COLOR} id={Ids.ColorInputForeground} type="color"/></li>
+	<li>
+		<ul>
+			<li>Ratio<span id={Ids.InfoRatio}>3.87</span></li>
+			<li>Percentage<span id={Ids.InfoPercentage}>42.86%</span></li>
+			<li br:tooltip="Pass = ratio ≥ 4.5">WCAG (Normal AA)<span id={Ids.WCAGNormalAA}>FAIL</span></li>
+			<li br:tooltip="Pass = ratio ≥ 7.0">WCAG (Normal AAA)<span id={Ids.WCAGNormalAAA}>FAIL</span></li>
+			<li br:tooltip="Pass = ratio ≥ 3.0">WCAG (Large AA)<span id={Ids.WCAGLargeAA}>PASS</span></li>
+			<li br:tooltip="Pass = ratio ≥ 4.5">WCAG (Large AAA)<span id={Ids.WCAGLargeAAA}>FAIL</span></li>
+		</ul>
+	</li>
+</ul>
+
+<div
+	class={Styles.Preview}
+	id={Ids.Preview}
+	style={{
+		'--color': Constant.DEFAULT_FOREGROUND_COLOR,
+		'--background-color': Constant.DEFAULT_BACKGROUND_COLOR,
+	}}>
+	<textarea aria-label="Normal text 12pt" style="font-size:12pt">Normal text 12pt. Cillum in laboris occaecat sint dolor est proident id.</textarea>
+	<textarea aria-label="Normal text 12pt" data-css-inverse style="font-size:12pt">Normal text 12pt. Do commodo tempor ullamco sint laborum dolore non ipsum duis eiusmod officia cillum ut.</textarea>
+	<textarea aria-label="Large text 14pt bold" style="font-size:14pt;font-weight:bold;">Large text 14pt bold. Exercitation laborum eu ullamco irure dolor irure velit ut.</textarea>
+	<textarea aria-label="Large text 14pt bold" data-css-inverse style="font-size:14pt;font-weight:bold;">Large text 14pt bold. Proident eiusmod sit deserunt anim.</textarea>
+	<textarea aria-label="Large text 18pt" style="font-size:18pt">Large text 18pt. Proident in esse pariatur do id cupidatat duis voluptate consequat incididunt veniam in veniam est.</textarea>
+	<textarea aria-label="Large text 18pt" data-css-inverse style="font-size:18pt">Large text 18pt. Consectetur in exercitation minim nostrud.</textarea>
+</div>

@@ -1,0 +1,15 @@
+export const PopoverAppBarInfo = '74EB4B1A'
+export const PopoverAppBarSettings = 'FFBBE90C'
+export const PopoverAppBarSettingsAnimation = 'F6241AE6'
+export const PopoverAppBarSettingsTheme = '769E54AD'
+
+export const ColorInputBackground = '639C429C'
+export const ColorInputForeground = '9A7BBA1B'
+
+export const InfoRatio = '819A12C9'
+export const InfoPercentage = 'AAB5E1DE'
+export const WCAGNormalAA = 'B621A55C'
+export const WCAGNormalAAA = '7E1FEC1C'
+export const WCAGLargeAA = 'E227E7EE'
+export const WCAGLargeAAA = 'AE7CE861'
+export const Preview = '95D2F528'
