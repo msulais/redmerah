@@ -1,4 +1,4 @@
-export const PopoverAppBarInfo = 'id1'
-export const PopoverAppBarSettings = 'id2'
-export const PopoverAppBarSettingsAnimation = 'id3'
-export const PopoverAppBarSettingsTheme = 'id4'
+export const PopoverAppBarInfo = '74EB4B1A'
+export const PopoverAppBarSettings = 'FFBBE90C'
+export const PopoverAppBarSettingsAnimation = 'F6241AE6'
+export const PopoverAppBarSettingsTheme = '769E54AD'
