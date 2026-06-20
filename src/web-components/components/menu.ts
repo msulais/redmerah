@@ -85,7 +85,6 @@ ${ELEMENT} hr {
 ${ELEMENT_ITEM} {
 	width: 100%;
 	min-height: 1.75rem;
-	padding: .25rem .5rem;
 	white-space: nowrap;
 	justify-content: flex-start;
 }
