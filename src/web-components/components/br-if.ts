@@ -1,3 +1,4 @@
+import * as BrTheme from './br-theme.js'
 import { listenRouteChange } from "../router"
 import { QueryValidation } from "../utils"
 
@@ -340,12 +341,14 @@ export class BiruIfElement extends HTMLElement {
 				self.setAttribute(Attributes.Media, value)
 			},
 			show() {
+				const theme = self.closest<BrTheme.BiruThemeElement>(BrTheme.TAGNAME)
+				const themeDuration = theme?.biru.transitionDuration ?? 0
 				self._container.style.setProperty('display', 'contents')
 				const elements = this.animationFor
 				const keyframes = this.animationStartKeyframes
-				const duration = this.animationStartDuration
+				const duration = themeDuration > 0? this.animationStartDuration : 0
+				const delay = themeDuration > 0? this.animationStartDelayDuration : 0
 				const easing = this.animationStartEasing
-				const delay = this.animationStartDelayDuration
 				if (!keyframes || elements.length === 0) {
 					return
 				}
@@ -368,11 +371,13 @@ export class BiruIfElement extends HTMLElement {
 				}
 			},
 			hide() {
+				const theme = self.closest<BrTheme.BiruThemeElement>(BrTheme.TAGNAME)
+				const themeDuration = theme?.biru.transitionDuration ?? 0
 				const elements = this.animationFor
 				const keyframes = this.animationEndKeyframes
-				const duration = this.animationEndDuration
+				const duration = themeDuration > 0? this.animationEndDuration : 0
+				const delay = themeDuration > 0? this.animationEndDelayDuration : 0
 				const easing = this.animationEndEasing
-				const delay = this.animationEndDelayDuration
 				const animations: Animation[] = []
 				for (const element of elements) {
 					if (!keyframes || elements.length === 0) {
@@ -484,4 +489,5 @@ export function define(): void {
 	customElements.define(TAGNAME, BiruIfElement)
 }
 
+BrTheme.define()
 define()

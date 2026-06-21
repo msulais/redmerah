@@ -1,3 +1,4 @@
+import * as BrTheme from './br-theme.js'
 import { listenRouteChange } from "../router"
 import { QueryValidation } from "../utils"
 
@@ -360,13 +361,15 @@ export class BiruMoveIfElement extends HTMLElement {
 				self.setAttribute(Attributes.Fallback, id)
 			},
 			move() {
+				const theme = self.closest<BrTheme.BiruThemeElement>(BrTheme.TAGNAME)
+				const themeDuration = theme?.biru.transitionDuration ?? 0
 				const elements = this.targetElements
 				self.replaceChildren(...elements)
 
 				const keyframes = this.animationStartKeyframes
-				const duration = this.animationStartDuration
+				const duration = themeDuration > 0? this.animationStartDuration : 0
+				const delay = themeDuration > 0? this.animationStartDelayDuration : 0
 				const easing = this.animationStartEasing
-				const delay = this.animationStartDelayDuration
 				if (!keyframes || elements.length === 0) {
 					return
 				}
@@ -401,10 +404,12 @@ export class BiruMoveIfElement extends HTMLElement {
 
 				prev.replaceChildren(...elements)
 
+				const theme = self.closest<BrTheme.BiruThemeElement>(BrTheme.TAGNAME)
+				const themeDuration = theme?.biru.transitionDuration ?? 0
 				const keyframes = this.animationEndKeyframes
-				const duration = this.animationEndDuration
+				const duration = themeDuration > 0? this.animationEndDuration : 0
+				const delay = themeDuration > 0? this.animationEndDelayDuration : 0
 				const easing = this.animationEndEasing
-				const delay = this.animationEndDelayDuration
 				if (!keyframes || elements.length === 0) {
 					return
 				}
@@ -507,4 +512,5 @@ export function define(): void {
 	customElements.define(TAGNAME, BiruMoveIfElement)
 }
 
+BrTheme.define()
 define()
