@@ -75,6 +75,8 @@ export class BiruTooltipElement extends HTMLElement {
 
 	private _pointerover(ev: PointerEvent): void {
 		const ref_target = (ev.target as HTMLElement).closest<HTMLElement>(`[${CSS.escape(GlobalAttributes.Tooltip)}]`)
+		this._pointerX = ev.clientX
+		this._pointerY = ev.clientY
 		this._open(ref_target)
 	}
 
