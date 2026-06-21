@@ -19,7 +19,8 @@ export type EventTypes = typeof EventTypes[keyof typeof EventTypes]
 
 export const Attributes = {
 	/**
-	 * @type {boolean} */
+	 * @type {boolean}
+	 * */
 	Manual: 'br:manual'
 } as const
 export type Attributes = typeof Attributes[keyof typeof Attributes]

@@ -40,18 +40,25 @@ export const Attributes = {
 	Media: 'br:media',
 
 	/**
-	 * Always make this visible. Override any conditions.
+	 * Always move selected element here. Override any conditions.
 	 *
 	 * @type {boolean}
 	 */
-	Visible: 'br:visible',
+	Moved: 'br:moved',
 
 	/**
 	 * Element ids
 	 *
 	 * @type {string[]}
 	 */
-	AnimationFor: 'br:animation-for',
+	For: 'br:for',
+
+	/**
+	 * Move back Element when condition are not true.
+	 *
+	 * @type {string} Element id
+	 */
+	Fallback: 'br:fallback',
 
 	/** `Keyframe[] | PropertyIndexedKeyframes` */
 	AnimationStartKeyframes: 'br:animation-start-keyframes',
@@ -96,13 +103,11 @@ export const EventTypes = {
 } as const
 export type EventTypes = typeof EventTypes[keyof typeof EventTypes]
 
-export const TAGNAME = 'br-if'
-const ELEMENTS = new Set<BiruIfElement>()
+export const TAGNAME = 'br-moveif'
+const ELEMENTS = new Set<BiruMoveIfElement>()
 const STYLES = new CSSStyleSheet()
 
-export class BiruIfElement extends HTMLElement {
-	private _shadowRoot: ShadowRoot
-	private _container: HTMLDivElement
+export class BiruMoveIfElement extends HTMLElement {
 	private _media: MediaQueryList | undefined
 	private _animations = new Set<Animation>()
 
@@ -110,17 +115,13 @@ export class BiruIfElement extends HTMLElement {
 		Attributes.Path,
 		Attributes.Query,
 		Attributes.Hash,
-		Attributes.Visible,
-		Attributes.Media
+		Attributes.Moved,
+		Attributes.Media,
+		Attributes.Fallback,
 	]
 
 	constructor() {
 		super()
-		this._shadowRoot = this.attachShadow({mode: 'open'})
-		this._shadowRoot.adoptedStyleSheets = [STYLES]
-		this._container = document.createElement('div')
-		this._container.append(document.createElement('slot'))
-		this._shadowRoot.append(this._container)
 	}
 
 	connectedCallback(): void {
@@ -139,7 +140,8 @@ export class BiruIfElement extends HTMLElement {
 		case Attributes.Path:
 		case Attributes.Query:
 		case Attributes.Hash:
-		case Attributes.Visible:
+		case Attributes.Moved:
+		case Attributes.Fallback:
 			_checkElementsState(this)
 			break
 		case Attributes.Media:
@@ -163,8 +165,8 @@ export class BiruIfElement extends HTMLElement {
 		const self = this
 
 		return {
-			get animationFor() {
-				const ids = (self.getAttribute(Attributes.AnimationFor) || '').split(/ +/g)
+			get targetElements() {
+				const ids = (self.getAttribute(Attributes.For) || '').split(/ +/g)
 				const elements: Element[] = []
 				for (const id of ids) {
 					const element = document.getElementById(id.trim())
@@ -175,7 +177,7 @@ export class BiruIfElement extends HTMLElement {
 
 				return elements
 			},
-			set animationFor(elements: Element[]) {
+			set targetElements(elements: Element[]) {
 				const ids = new Set<string>()
 				for (const element of elements) {
 					let id = element.id
@@ -187,7 +189,7 @@ export class BiruIfElement extends HTMLElement {
 					ids.add(id)
 				}
 
-				self.setAttribute(Attributes.AnimationFor, ids.values().toArray().join(' '))
+				self.setAttribute(Attributes.For, ids.values().toArray().join(' '))
 			},
 			get animationStartKeyframes(): Keyframe[] | PropertyIndexedKeyframes | null {
 				return self.hasAttribute(Attributes.AnimationStartKeyframes)
@@ -285,10 +287,10 @@ export class BiruIfElement extends HTMLElement {
 				self.setAttribute(Attributes.AnimationEndEasing, value)
 			},
 			get visible(): boolean {
-				return self.hasAttribute(Attributes.Visible)
+				return self.hasAttribute(Attributes.Moved)
 			},
 			set visible(value: boolean) {
-				self.toggleAttribute(Attributes.Visible, value)
+				self.toggleAttribute(Attributes.Moved, value)
 			},
 			get path() {
 				return self.getAttribute(Attributes.Path)?.split(/ +/) ?? []
@@ -339,9 +341,28 @@ export class BiruIfElement extends HTMLElement {
 
 				self.setAttribute(Attributes.Media, value)
 			},
-			show() {
-				self._container.style.setProperty('display', 'contents')
-				const elements = this.animationFor
+			get fallbackElement() {
+				const id = self.getAttribute(Attributes.Fallback) || ''
+				return document.getElementById(id)
+			},
+			set fallbackElement(value: Element | null) {
+				if (value === null) {
+					self.removeAttribute(Attributes.Fallback)
+					return
+				}
+
+				let id = value.id
+				if (id.trim().length === 0) {
+					id = crypto.randomUUID()
+					value.id = id
+				}
+
+				self.setAttribute(Attributes.Fallback, id)
+			},
+			move() {
+				const elements = this.targetElements
+				self.replaceChildren(...elements)
+
 				const keyframes = this.animationStartKeyframes
 				const duration = this.animationStartDuration
 				const easing = this.animationStartEasing
@@ -367,18 +388,28 @@ export class BiruIfElement extends HTMLElement {
 					catch  {}
 				}
 			},
-			hide() {
-				const elements = this.animationFor
+
+			/**
+			 * Only works when `[br:fallback]` attribute exist
+			 */
+			fallback() {
+				const elements = this.targetElements
+				const prev = this.fallbackElement
+				if (!prev) {
+					return
+				}
+
+				prev.replaceChildren(...elements)
+
 				const keyframes = this.animationEndKeyframes
 				const duration = this.animationEndDuration
 				const easing = this.animationEndEasing
 				const delay = this.animationEndDelayDuration
-				const animations: Animation[] = []
-				for (const element of elements) {
-					if (!keyframes || elements.length === 0) {
-						continue
-					}
+				if (!keyframes || elements.length === 0) {
+					return
+				}
 
+				for (const element of elements) {
 					const animations = element.getAnimations()
 					for (const animation of animations) {
 						if (self._animations.has(animation)) {
@@ -391,16 +422,11 @@ export class BiruIfElement extends HTMLElement {
 						const animation = element.animate(keyframes, {duration, easing, delay})
 						self._animations.add(animation)
 						animation.finished.catch(() => {}).finally(() => self._animations.delete(animation))
-						animations.push(animation)
 					}
 					catch  {}
 				}
-
-				Promise.all(animations.map(v => v.finished)).catch(() => {}).finally(() => {
-					self._container.style.setProperty('display', 'none')
-				})
 			},
-			isVisible() {
+			isMoved() {
 				const media = this.media
 				const path  = this.path
 				const query = this.query
@@ -449,13 +475,13 @@ export class BiruIfElement extends HTMLElement {
 	}
 }
 
-function _checkElementsState(element?: BiruIfElement | undefined): void {
+function _checkElementsState(element?: BiruMoveIfElement | undefined): void {
 	for (const el of (element? [element] : ELEMENTS)) {
-		if (el.biru.isVisible()) {
-			el.biru.show()
+		if (el.biru.isMoved()) {
+			el.biru.move()
 		}
 		else {
-			el.biru.hide()
+			el.biru.fallback()
 		}
 
 		el.dispatchEvent(new Event(EventTypes.Toggle))
@@ -467,11 +493,8 @@ function _initListeners(): void {
 }
 
 function _initDefaultStyles(): void {
-	STYLES.replaceSync(`
-		:host, div {
-			display: contents
-		}
-	`)
+	document.adoptedStyleSheets.push(STYLES)
+	STYLES.replaceSync(`${TAGNAME} {display: contents}`)
 }
 
 export function define(): void {
@@ -481,7 +504,7 @@ export function define(): void {
 
 	_initListeners()
 	_initDefaultStyles()
-	customElements.define(TAGNAME, BiruIfElement)
+	customElements.define(TAGNAME, BiruMoveIfElement)
 }
 
 define()
