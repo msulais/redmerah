@@ -206,6 +206,7 @@ ${ELEMENT} {
 	padding: .5rem;
 	height: 100%;
 	overflow: auto;
+	min-width: 5rem;
 	max-height: 100%;
 	gap: .5rem;
 	align-items: center;
