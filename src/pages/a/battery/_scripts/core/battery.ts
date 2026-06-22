@@ -1,7 +1,7 @@
 import * as BrDialog from '@/web-components/components/br-dialog.js'
 import * as Ids from '../shared/ids.enum.js'
 import type { BatteryManager } from "@/interfaces/battery"
-import { $ } from "./dom-utils"
+import { $ } from "./dom-utils.js"
 
 const _ref_textLevel = $(Ids.LevelText) as HTMLHeadingElement
 const _ref_statusText = $(Ids.StatusText) as HTMLDivElement
