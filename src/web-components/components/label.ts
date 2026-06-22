@@ -6,6 +6,7 @@ function _initDefaultStyles(): void {
 	document.adoptedStyleSheets.push(styles)
 	styles.replaceSync(`
 ${TAGNAME} {
+	display: block;
 	font-size: .875rem;
 }
 
