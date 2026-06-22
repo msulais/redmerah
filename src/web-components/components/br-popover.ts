@@ -144,7 +144,7 @@ export class BiruPopoverElement extends HTMLElement {
 		ELEMENT_BY_IDS.set(this.id, this)
 		this.tabIndex = 0
 		this.role = 'dialog'
-		this._theme = this.closest(BrTheme.TAGNAME) ?? undefined
+		this._theme = this.closest<BrTheme.BiruThemeElement>(BrTheme.TAGNAME) ?? undefined
 		this._shadowElementsListenerDesctructor = shadowElementsListener(
 			[this._slot, 'slotchange', () => {
 				if (this.querySelector(":where(menu:not([br\\:as~=\"!menu\"]),[br\\:as~=menu])")) {

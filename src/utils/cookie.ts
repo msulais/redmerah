@@ -1,5 +1,3 @@
-import { CookieKeys } from "@/enums/cookies"
-
 type CookieOptions = {
 	domain?: string,
 	expires?: number,
@@ -11,7 +9,7 @@ type CookieOptions = {
 }
 
 export function setCookie(
-	key: CookieKeys,
+	key: string,
 	value: string,
 	options: CookieOptions = {sameSite: 'Lax', expires: 9999, path: '/'}
 ): void {
@@ -34,7 +32,7 @@ export function setCookie(
 	document.cookie = cookie
 }
 
-export function getCookie(key: CookieKeys): string | null {
+export function getCookie(key: string): string | null {
 	const cookieName = key + "="
 	const cookies = document.cookie.split(';')
 	for (const i in cookies) {

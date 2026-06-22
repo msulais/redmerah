@@ -72,7 +72,7 @@ export class BiruDialogElement extends HTMLElement {
 			[Slots.Footer, Parts.Footer],
 			[Slots.Title, Parts.Title],
 		)
-		this._theme = this.closest(BrTheme.TAGNAME) ?? undefined
+		this._theme = this.closest<BrTheme.BiruThemeElement>(BrTheme.TAGNAME) ?? undefined
 		this.tabIndex = 0
 		this.role = 'dialog'
 		this.ariaModal = 'true'
