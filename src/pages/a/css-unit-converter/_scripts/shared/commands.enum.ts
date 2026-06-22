@@ -1,0 +1,6 @@
+export const KeyChar = 'key-char'
+export const KeyDec = 'key-decimal'
+export const KeyPlusMin = 'key-plus-min'
+export const KeyClear = 'key-clear'
+export const KeyBackspace = 'key-backspace'
+export const KeyUnitSwap = 'key-unit-swap'
