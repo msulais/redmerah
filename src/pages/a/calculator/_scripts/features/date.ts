@@ -7,6 +7,7 @@ import { safeNumber } from "@/utils/number"
 import { saveStorageItem } from "../core/database.js"
 import { signal } from "@/utils/signal"
 import { DateOperation } from '../shared/calculator.js'
+import { delegateEvent } from '@/utils/event-registry.js'
 
 export const sg_inputDays = signal(Constant.DEFAULT_DATE_INPUT_DAYS)
 export const sg_inputMonths = signal(Constant.DEFAULT_DATE_INPUT_MONTHS)
@@ -83,14 +84,6 @@ function _calculate(): void {
 	}, 50)
 }
 
-// TODO: what is this?
-// function _initDates(): void {
-// 	DateStore.update(v => {
-// 		v.inputFrom = new Date()
-// 		v.inputTo = new Date()
-// 	})
-// }
-
 function _initSubscriber(): void {
 	sg_operation.subscribe(v => {
 		_ref_operation.value = v
@@ -160,7 +153,7 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_ref_inputFrom.addEventListener("input", () => {
+	delegateEvent(_ref_inputFrom, "input", () => {
 		const date = _ref_inputFrom.valueAsDate
 		if (!date || Number.isNaN(date.getTime())) {
 			return
@@ -169,7 +162,7 @@ function _initEvents(): void {
 		sg_inputFrom.set(date)
 	})
 
-	_ref_inputTo.addEventListener("input", () => {
+	delegateEvent(_ref_inputTo, "input", () => {
 		const date = _ref_inputTo.valueAsDate
 		if (!date || Number.isNaN(date.getTime())) {
 			return
@@ -178,7 +171,7 @@ function _initEvents(): void {
 		sg_inputTo.set(date)
 	})
 
-	_ref_operation.addEventListener('change', () => {
+	delegateEvent(_ref_operation, 'change', () => {
 		const value = _ref_operation.value as DateOperation
 		if (!isValidEnumValue(value, DateOperation)) {
 			return
@@ -187,17 +180,17 @@ function _initEvents(): void {
 		sg_operation.set(value)
 	})
 
-	_ref_inputYears.addEventListener('input', () => {
+	delegateEvent(_ref_inputYears, 'input', () => {
 		const value = Math.floor(safeNumber(_ref_inputYears.valueAsNumber, sg_inputYears()))
 		sg_inputYears.set(value)
 	})
 
-	_ref_inputMonths.addEventListener('input', () => {
+	delegateEvent(_ref_inputMonths, 'input', () => {
 		const value = Math.floor(safeNumber(_ref_inputMonths.valueAsNumber, sg_inputMonths()))
 		sg_inputMonths.set(value)
 	})
 
-	_ref_inputDays.addEventListener('input', () => {
+	delegateEvent(_ref_inputDays, 'input', () => {
 		const value = Math.floor(safeNumber(_ref_inputDays.valueAsNumber, sg_inputDays()))
 		sg_inputDays.set(value)
 	})

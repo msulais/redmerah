@@ -6,6 +6,7 @@ import { isNumberDefined } from "@/utils/number"
 import { formatOutput } from "../core/string-utils.js"
 import { saveStorageItem } from "../core/database.js"
 import { signal } from '@/utils/signal.js'
+import { delegateEvent } from '@/utils/event-registry.js'
 
 export const sg_input = signal(Constant.DEFAULT_BASIC_INPUT)
 export const sg_output = signal(Constant.DEFAULT_BASIC_OUTPUT)
@@ -37,7 +38,7 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_ref_input.addEventListener('input', () => {
+	delegateEvent(_ref_input, 'input', () => {
 		sg_input.set(_ref_input.value)
 	})
 }

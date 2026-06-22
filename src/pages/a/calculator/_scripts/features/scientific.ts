@@ -14,6 +14,7 @@ import { isValidEnumValue } from "@/utils/object"
 import { saveStorageItem } from "../core/database.js"
 import { signal } from "@/utils/signal.js"
 import { ScientificAngleTypes } from "../shared/calculator.js"
+import { delegateEvent } from "@/utils/event-registry.js"
 
 export const sg_angle = signal(Constant.DEFAULT_SCIENTIFIC_ANGLE)
 export const sg_input = signal(Constant.DEFAULT_SCIENTIFIC_INPUT)
@@ -62,7 +63,7 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_ref_angle.addEventListener('change', () => {
+	delegateEvent(_ref_angle, 'change', () => {
 		const value = _ref_angle.value as ScientificAngleTypes
 		if (!isValidEnumValue(value, ScientificAngleTypes)) {
 			return
@@ -71,7 +72,7 @@ function _initEvents(): void {
 		sg_angle.set(value)
 	})
 
-	_ref_fn_popover.addEventListener(BrPopover.EventTypes.Toggle, () => {
+	delegateEvent(_ref_fn_popover, BrPopover.EventTypes.Toggle, () => {
 		const isOpen = _ref_fn_popover.biru.isOpen
 		const iconRef = _ref_fn_btn.querySelector<BrIcon.BiruIconElement>(`${BrIcon.TAGNAME}:last-child`)
 		_ref_fn_btn.setAttribute(
@@ -85,7 +86,7 @@ function _initEvents(): void {
 		}, {duration: _ref_theme.biru.transitionDuration, easing: AnimationEasing.Spring})
 	})
 
-	_ref_fn_popover.addEventListener('change', ev => {
+	delegateEvent(_ref_fn_popover, 'change', ev => {
 		switch (ev.target) {
 		case _ref_fn_invers:
 		case _ref_fn_hyper:
@@ -112,7 +113,7 @@ function _initEvents(): void {
 		}
 	})
 
-	_ref_input.addEventListener('input', () => {
+	delegateEvent(_ref_input, 'input', () => {
 		sg_input.set(_ref_input.value)
 	})
 }

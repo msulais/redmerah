@@ -9,6 +9,7 @@ import { $, $$ } from '../core/dom-utils.js'
 import { batch, signal } from "@/utils/signal"
 import { safeNumber } from '@/utils/number.js'
 import { saveStorageItem } from '../core/database.js'
+import { delegateEvent } from '@/utils/event-registry.js'
 
 export const sg_running        = signal(Constant.DEFAULT_TIMER_RUNNING)
 export const sg_timerInSeconds = signal(Constant.DEFAULT_TIMER_SECONDS)
@@ -131,12 +132,12 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_ref_playPauseButton.addEventListener('click', () => {
+	delegateEvent(_ref_playPauseButton, 'click', () => {
 		sg_currectSeconds.set(v => sg_running()? v : (v - 1))
 		sg_running.set(v => !v)
 	})
 
-	_ref_editResetButton.addEventListener('click', () => {
+	delegateEvent(_ref_editResetButton, 'click', () => {
 		if (sg_currectSeconds() === sg_timerInSeconds()) {
 			_showEditModal()
 		}
@@ -147,7 +148,7 @@ function _initEvents(): void {
 		}
 	})
 
-	_ref_editSaveButton.addEventListener('click', () => {
+	delegateEvent(_ref_editSaveButton, 'click', () => {
 		const seconds = Math.floor(safeNumber(
 			(_ref_editHours.valueAsNumber * 3600)
 			+ (_ref_editMinutes.valueAsNumber * 60)
@@ -160,7 +161,7 @@ function _initEvents(): void {
 		})
 	})
 
-	_ref_doneDialog.addEventListener(BrDialog.EventTypes.Toggle, () => {
+	delegateEvent(_ref_doneDialog, BrDialog.EventTypes.Toggle, () => {
 		if (!_ref_doneDialog.biru.isOpen) {
 			_ref_audio.pause()
 		}

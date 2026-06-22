@@ -1,6 +1,6 @@
 type EventType = string
 type ParentElement = Document | Element
-type Listener = (ev: Event) => unknown
+type Listener<T extends Event> = (ev: T) => unknown
 
 const NON_BUBBLING_EVENTS = new Set([
 	'focus',
@@ -18,14 +18,14 @@ const LISTENERS = new WeakMap<
 	ParentElement,
 	Map<EventType, {
 		fn: (ev: Event) => unknown
-		elements: Map<Element, Set<Listener>>
+		elements: Map<Element, Set<Listener<Event>>>
 	}>
 >()
 
-export function delegateEvent(
+export function delegateEvent<T extends Event = Event>(
 	target: Element,
 	type: EventType,
-	callback: Listener,
+	callback: Listener<T>,
 	parent: ParentElement = document,
 ) {
 	if (!LISTENERS.has(parent)) {
@@ -64,16 +64,16 @@ export function delegateEvent(
 	}
 
 	const callbacks = elementsMap.get(target)!
-	callbacks.add(callback)
+	callbacks.add(callback as Listener<Event>)
 	return () => undelegateEvent(target, type, callback, parent)
 }
 
-export function undelegateEvent(
+export function undelegateEvent<T extends Event = Event>(
 	target: Element,
 	type: EventType,
-	callback: Listener,
+	callback: Listener<T>,
 	parent: ParentElement = document,
-): void {
+) {
 	const parentMap = LISTENERS.get(parent)
 	if (!parentMap) {
 		return
@@ -90,7 +90,7 @@ export function undelegateEvent(
 		return
 	}
 
-	callbacks.delete(callback)
+	callbacks.delete(callback as Listener<Event>)
 	if (callbacks.size > 0) {
 		return
 	}

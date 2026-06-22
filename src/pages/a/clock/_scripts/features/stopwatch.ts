@@ -8,6 +8,7 @@ import * as WebComponents from '@/web-components/global-attributes.js'
 import type { EnumOf } from '@/types/collections.js'
 import { $, $$ } from '../core/dom-utils.js'
 import { batch, signal } from '@/utils/signal'
+import { delegateEvent } from '@/utils/event-registry.js'
 
 export const sg_ms      = signal(Constant.DEFAULT_STOPWATCH_MS)
 export const sg_running = signal(Constant.DEFAULT_STOPWATCH_RUNNING)
@@ -171,11 +172,11 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_ref_playOrPauseButton.addEventListener('click', () => {
+	delegateEvent(_ref_playOrPauseButton, 'click', () => {
 		sg_running.set(v => !v)
 	})
 
-	_ref_resetOrLapButton.addEventListener('click', () => {
+	delegateEvent(_ref_resetOrLapButton, 'click', () => {
 		if (sg_running()) {
 			sg_laps().unshift(sg_ms())
 			sg_laps.notify()
@@ -188,7 +189,7 @@ function _initEvents(): void {
 		}
 	})
 
-	_ref_morePopover.addEventListener('click', (ev) => {
+	delegateEvent(_ref_morePopover, 'click', (ev) => {
 		const ref_btn = (ev.target as HTMLElement)?.closest('[data-command]') as HTMLButtonElement | undefined
 		if (!ref_btn) {
 			return

@@ -9,6 +9,7 @@ import { listenRouteChange } from '@/web-components/router.js'
 import { signal } from "@/utils/signal.js";
 import { $, $$ } from "./dom-utils";
 import { isValidEnumValue } from "@/utils/object.js";
+import { delegateEvent } from "@/utils/event-registry.js";
 
 export const sg_theme     = signal(Constant.DEFAULT_THEME)
 export const sg_animation = signal(Constant.DEFAULT_ANIMATION)
@@ -84,7 +85,7 @@ function _updatePage(): void {
 function _initEvents(): void {
 	listenRouteChange(() => _updatePage())
 
-	_ref_themePopover.addEventListener('change', ev => {
+	delegateEvent(_ref_themePopover, 'change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as BrTheme.ThemeMode
 		if (!_ref_theme || !value || !isValidEnumValue(value, BrTheme.ThemeMode)) {
@@ -96,7 +97,7 @@ function _initEvents(): void {
 		sg_theme.set(value)
 	})
 
-	_ref_animationPopover.addEventListener('change', ev => {
+	delegateEvent(_ref_animationPopover, 'change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as BrTheme.Animation
 		if (!_ref_theme || !value || !isValidEnumValue(value, BrTheme.Animation)) {

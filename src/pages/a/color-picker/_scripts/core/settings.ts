@@ -11,6 +11,7 @@ import { $, $$, $$$ } from "./dom-utils.js";
 import { isValidEnumValue } from "@/utils/object.js";
 import type { EnumOf } from "@/types/collections.js";
 import { saveStorageItem } from "./database.js";
+import { delegateEvent } from "@/utils/event-registry.js";
 
 export const sg_theme      = signal(Constant.DEFAULT_THEME)
 export const sg_animation  = signal(Constant.DEFAULT_ANIMATION)
@@ -104,7 +105,7 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_ref_themePopover.addEventListener('change', ev => {
+	delegateEvent(_ref_themePopover, 'change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as BrTheme.ThemeMode
 		if (!_ref_theme || !value || !isValidEnumValue(value, BrTheme.ThemeMode)) {
@@ -116,7 +117,7 @@ function _initEvents(): void {
 		sg_theme.set(value)
 	})
 
-	_ref_animationPopover.addEventListener('change', ev => {
+	delegateEvent(_ref_animationPopover, 'change', ev => {
 		const target = ev.target as HTMLInputElement
 		const value = target?.value as BrTheme.Animation
 		if (!_ref_theme || !value || !isValidEnumValue(value, BrTheme.Animation)) {
@@ -128,7 +129,7 @@ function _initEvents(): void {
 		sg_animation.set(value)
 	})
 
-	_ref_pickerMode.addEventListener('change', () => {
+	delegateEvent(_ref_pickerMode, 'change', () => {
 		const value = _ref_pickerMode.value as EnumOf<typeof ColorPickerMode>
 		if (!isValidEnumValue(value, ColorPickerMode)) {
 			return

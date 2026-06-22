@@ -489,7 +489,7 @@ function _checkElementsState(element?: BiruMoveIfElement | undefined): void {
 			el.biru.fallback()
 		}
 
-		el.dispatchEvent(new Event(EventTypes.Toggle))
+		el.dispatchEvent(new CustomEvent(EventTypes.Toggle, {bubbles: true}))
 	}
 }
 

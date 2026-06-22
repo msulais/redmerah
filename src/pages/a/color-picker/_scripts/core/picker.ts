@@ -10,6 +10,7 @@ import { pxToRem } from '@/utils/css'
 import { safeNumber } from '@/utils/number.js'
 import { saveStorageItem } from './database.js'
 import { pickFile } from '@/utils/file.js'
+import { delegateEvent } from '@/utils/event-registry.js'
 
 export const sg_hsl  = signal(Constant.DEFAULT_COLOR_IN_HSL)
 export const sg_hex  = signal(Constant.DEFAULT_COLOR)
@@ -388,7 +389,7 @@ function _initSubscriber(): void {
 
 function _initEvents(): void {
 	function inputs(): void {
-		_ref_inputHex.addEventListener('input', () => {
+		delegateEvent(_ref_inputHex, 'input', () => {
 			const value = safeNumber(Number.parseInt(_ref_inputHex.value.replace(/[^0-9A-Fa-f]/g, ''), 16))
 			const rgb = colorToRgb(value)
 			const hex = rgbToHex(rgb)
@@ -399,7 +400,7 @@ function _initEvents(): void {
 			batchUpdateColors(rgb, hex, hsv, hsl, cmyk, hwb)
 		})
 
-		_ref_inputRgb.addEventListener('input', () => {
+		delegateEvent(_ref_inputRgb, 'input', () => {
 			const v = _ref_inputRgb
 				.value
 				.replace(/[^0-9,.]/gs, '')
@@ -418,7 +419,7 @@ function _initEvents(): void {
 			batchUpdateColors(rgb, hex, hsv, hsl, cmyk, hwb)
 		})
 
-		_ref_inputHsl.addEventListener('input', () => {
+		delegateEvent(_ref_inputHsl, 'input', () => {
 			const v = _ref_inputHsl
 				.value
 				.replace(/[^0-9,.]/gs, '')
@@ -437,7 +438,7 @@ function _initEvents(): void {
 			batchUpdateColors(rgb, hex, hsv, hsl, cmyk, hwb)
 		})
 
-		_ref_inputHsv.addEventListener('input', () => {
+		delegateEvent(_ref_inputHsv, 'input', () => {
 			const v = _ref_inputHsv
 				.value
 				.replace(/[^0-9,.]/gs, '')
@@ -456,7 +457,7 @@ function _initEvents(): void {
 			batchUpdateColors(rgb, hex, hsv, hsl, cmyk, hwb)
 		})
 
-		_ref_inputHwb.addEventListener('input', () => {
+		delegateEvent(_ref_inputHwb, 'input', () => {
 			const v = _ref_inputHwb
 				.value
 				.replace(/[^0-9,.]/gs, '')
@@ -475,7 +476,7 @@ function _initEvents(): void {
 			batchUpdateColors(rgb, hex, hsv, hsl, cmyk, hwb)
 		})
 
-		_ref_inputCmyk.addEventListener('input', () => {
+		delegateEvent(_ref_inputCmyk, 'input', () => {
 			const v = _ref_inputCmyk
 				.value
 				.replace(/[^0-9,.]/gs, '')
@@ -518,22 +519,22 @@ function _initEvents(): void {
 				isDragging = false
 				_ref_pickerRectangleRect.releasePointerCapture(ev.pointerId)
 			}
-			_ref_pickerRectangleRect.addEventListener('pointerdown', (ev) => {
+			delegateEvent(_ref_pickerRectangleRect, 'pointerdown', (ev: PointerEvent) => {
 				_ref_pickerRectangleRect.setPointerCapture(ev.pointerId)
 				rect = _ref_pickerRectangleRect.getBoundingClientRect()
 				isDragging = true
 				updateColor(ev.clientX, ev.clientY)
 			})
 
-			_ref_pickerRectangleRect.addEventListener('pointermove', (ev) => {
+			delegateEvent(_ref_pickerRectangleRect, 'pointermove', (ev: PointerEvent) => {
 				if (!isDragging) {return}
 				updateColor(ev.clientX, ev.clientY)
 			})
 
-			_ref_pickerRectangleRect.addEventListener('pointerup', onPointerUp)
-			_ref_pickerRectangleRect.addEventListener('pointercancel', onPointerUp)
+			delegateEvent(_ref_pickerRectangleRect, 'pointerup', onPointerUp)
+			delegateEvent(_ref_pickerRectangleRect, 'pointercancel', onPointerUp)
 
-			_ref_pickerRectangleHue.addEventListener('input', () => {
+			delegateEvent(_ref_pickerRectangleHue, 'input', () => {
 				const value = Math_clamp(_ref_pickerRectangleHue.valueAsNumber, 0, 360)
 				const hsv = {...sg_hsv(), h: value / 360}
 				const rgb = hsvToRgb(hsv)
@@ -568,22 +569,22 @@ function _initEvents(): void {
 				_ref_pickerRectangleHslRect.releasePointerCapture(ev.pointerId)
 			}
 
-			_ref_pickerRectangleHslRect.addEventListener('pointerdown', (ev) => {
+			delegateEvent(_ref_pickerRectangleHslRect, 'pointerdown', (ev: PointerEvent) => {
 				_ref_pickerRectangleHslRect.setPointerCapture(ev.pointerId)
 				rect = _ref_pickerRectangleHslRect.getBoundingClientRect()
 				isDragging = true
 				updateColor(ev.clientX, ev.clientY)
 			})
 
-			_ref_pickerRectangleHslRect.addEventListener('pointermove', (ev) => {
+			delegateEvent(_ref_pickerRectangleHslRect, 'pointermove', (ev: PointerEvent) => {
 				if (!isDragging) {return}
 				updateColor(ev.clientX, ev.clientY)
 			})
 
-			_ref_pickerRectangleHslRect.addEventListener('pointerup', onPointerUp)
-			_ref_pickerRectangleHslRect.addEventListener('pointercancel', onPointerUp)
+			delegateEvent(_ref_pickerRectangleHslRect, 'pointerup', onPointerUp)
+			delegateEvent(_ref_pickerRectangleHslRect, 'pointercancel', onPointerUp)
 
-			_ref_pickerRectangleHslHue.addEventListener('input', () => {
+			delegateEvent(_ref_pickerRectangleHslHue, 'input', () => {
 				const value = Math_clamp(_ref_pickerRectangleHslHue.valueAsNumber, 0, 360)
 				const hsl = {...sg_hsl(), h: value / 360}
 				const rgb = hslToRgb(hsl)
@@ -618,22 +619,22 @@ function _initEvents(): void {
 				_ref_pickerSpectrumRect.releasePointerCapture(ev.pointerId)
 			}
 
-			_ref_pickerSpectrumRect.addEventListener('pointerdown', (ev) => {
+			delegateEvent(_ref_pickerSpectrumRect, 'pointerdown', (ev: PointerEvent) => {
 				_ref_pickerSpectrumRect.setPointerCapture(ev.pointerId)
 				rect = _ref_pickerSpectrumRect.getBoundingClientRect()
 				isDragging = true
 				updateColor(ev.clientX, ev.clientY)
 			})
 
-			_ref_pickerSpectrumRect.addEventListener('pointermove', (ev) => {
+			delegateEvent(_ref_pickerSpectrumRect, 'pointermove', (ev: PointerEvent) => {
 				if (!isDragging) {return}
 				updateColor(ev.clientX, ev.clientY)
 			})
 
-			_ref_pickerSpectrumRect.addEventListener('pointerup', onPointerUp)
-			_ref_pickerSpectrumRect.addEventListener('pointercancel', onPointerUp)
+			delegateEvent(_ref_pickerSpectrumRect, 'pointerup', onPointerUp)
+			delegateEvent(_ref_pickerSpectrumRect, 'pointercancel', onPointerUp)
 
-			_ref_pickerSpectrumHue.addEventListener('input', () => {
+			delegateEvent(_ref_pickerSpectrumHue, 'input', () => {
 				const value = Math_clamp(_ref_pickerSpectrumHue.valueAsNumber, 0, 100)
 				const hsv = {...sg_hsv(), v: 1 - (value / 100)}
 				const rgb = hsvToRgb(hsv)
@@ -646,7 +647,7 @@ function _initEvents(): void {
 		}
 
 		function sliderRgb(): void {
-			_ref_pickerRgbRed.addEventListener('input', () => {
+			delegateEvent(_ref_pickerRgbRed, 'input', () => {
 				const value = Math_clamp(_ref_pickerRgbRed.valueAsNumber, 0, 0xff)
 				const rgb = {...sg_rgb(), r: value / 0xff}
 				const hsl = rgbToHsl(rgb)
@@ -657,7 +658,7 @@ function _initEvents(): void {
 				batchUpdateColors(rgb, hex, hsv, hsl, cmyk, hwb)
 			})
 
-			_ref_pickerRgbGreen.addEventListener('input', () => {
+			delegateEvent(_ref_pickerRgbGreen, 'input', () => {
 				const value = Math_clamp(_ref_pickerRgbGreen.valueAsNumber, 0, 0xff)
 				const rgb = {...sg_rgb(), g: value / 0xff}
 				const hsl = rgbToHsl(rgb)
@@ -668,7 +669,7 @@ function _initEvents(): void {
 				batchUpdateColors(rgb, hex, hsv, hsl, cmyk, hwb)
 			})
 
-			_ref_pickerRgbBlue.addEventListener('input', () => {
+			delegateEvent(_ref_pickerRgbBlue, 'input', () => {
 				const value = Math_clamp(_ref_pickerRgbBlue.valueAsNumber, 0, 0xff)
 				const rgb = {...sg_rgb(), b: value / 0xff}
 				const hsl = rgbToHsl(rgb)
@@ -681,7 +682,7 @@ function _initEvents(): void {
 		}
 
 		function sliderHsl(): void {
-			_ref_pickerHslHue.addEventListener('input', () => {
+			delegateEvent(_ref_pickerHslHue, 'input', () => {
 				const value = Math_clamp(_ref_pickerHslHue.valueAsNumber, 0, 360)
 				const hsl = {...sg_hsl(), h: value / 360}
 				const rgb = hslToRgb(hsl)
@@ -691,7 +692,7 @@ function _initEvents(): void {
 				const hwb = hsvToHwb(hsv)
 				batchUpdateColors(rgb, hex, hsv, hsl, cmyk, hwb)
 			})
-			_ref_pickerHslSaturation.addEventListener('input', () => {
+			delegateEvent(_ref_pickerHslSaturation, 'input', () => {
 				const value = Math_clamp(_ref_pickerHslSaturation.valueAsNumber, 0, 100)
 				const hsl = {...sg_hsl(), s: value / 100}
 				const rgb = hslToRgb(hsl)
@@ -701,7 +702,7 @@ function _initEvents(): void {
 				const hwb = hsvToHwb(hsv)
 				batchUpdateColors(rgb, hex, hsv, hsl, cmyk, hwb)
 			})
-			_ref_pickerHslLightness.addEventListener('input', () => {
+			delegateEvent(_ref_pickerHslLightness, 'input', () => {
 				const value = Math_clamp(_ref_pickerHslLightness.valueAsNumber, 0, 100)
 				const hsl = {...sg_hsl(), l: value / 100}
 				const rgb = hslToRgb(hsl)
@@ -714,7 +715,7 @@ function _initEvents(): void {
 		}
 
 		function sliderCmyk(): void {
-			_ref_pickerCmykCyan.addEventListener('input', () => {
+			delegateEvent(_ref_pickerCmykCyan, 'input', () => {
 				const value = Math_clamp(_ref_pickerCmykCyan.valueAsNumber, 0, 100)
 				const cmyk = {...sg_cmyk(), c: value / 100}
 				const rgb = cmykToRgb(cmyk)
@@ -724,7 +725,7 @@ function _initEvents(): void {
 				const hwb = hsvToHwb(hsv)
 				batchUpdateColors(rgb, hex, hsv, hsl, cmyk, hwb)
 			})
-			_ref_pickerCmykMagenta.addEventListener('input', () => {
+			delegateEvent(_ref_pickerCmykMagenta, 'input', () => {
 				const value = Math_clamp(_ref_pickerCmykMagenta.valueAsNumber, 0, 100)
 				const cmyk = {...sg_cmyk(), m: value / 100}
 				const rgb = cmykToRgb(cmyk)
@@ -734,7 +735,7 @@ function _initEvents(): void {
 				const hwb = hsvToHwb(hsv)
 				batchUpdateColors(rgb, hex, hsv, hsl, cmyk, hwb)
 			})
-			_ref_pickerCmykYellow.addEventListener('input', () => {
+			delegateEvent(_ref_pickerCmykYellow, 'input', () => {
 				const value = Math_clamp(_ref_pickerCmykYellow.valueAsNumber, 0, 100)
 				const cmyk = {...sg_cmyk(), y: value / 100}
 				const rgb = cmykToRgb(cmyk)
@@ -744,7 +745,7 @@ function _initEvents(): void {
 				const hwb = hsvToHwb(hsv)
 				batchUpdateColors(rgb, hex, hsv, hsl, cmyk, hwb)
 			})
-			_ref_pickerCmykKey.addEventListener('input', () => {
+			delegateEvent(_ref_pickerCmykKey, 'input', () => {
 				const value = Math_clamp(_ref_pickerCmykKey.valueAsNumber, 0, 100)
 				const cmyk = {...sg_cmyk(), k: value / 100}
 				const rgb = cmykToRgb(cmyk)
@@ -757,7 +758,7 @@ function _initEvents(): void {
 		}
 
 		function sliderHex(): void {
-			_ref_pickerHex.addEventListener('input', () => {
+			delegateEvent(_ref_pickerHex, 'input', () => {
 				const value = Math_clamp(_ref_pickerHex.valueAsNumber, 0, 0xffffff)
 				const rgb = colorToRgb(value)
 				const hex = rgbToHex(rgb)
@@ -770,7 +771,7 @@ function _initEvents(): void {
 		}
 
 		function sliderHsv(): void {
-			_ref_pickerHsvHue.addEventListener('input', () => {
+			delegateEvent(_ref_pickerHsvHue, 'input', () => {
 				const value = Math_clamp(_ref_pickerHsvHue.valueAsNumber, 0, 360)
 				const hsv = {...sg_hsv(), h: value / 360}
 				const rgb = hsvToRgb(hsv)
@@ -781,7 +782,7 @@ function _initEvents(): void {
 				batchUpdateColors(rgb, hex, hsv, hsl, cmyk, hwb)
 			})
 
-			_ref_pickerHsvSaturation.addEventListener('input', () => {
+			delegateEvent(_ref_pickerHsvSaturation, 'input', () => {
 				const value = Math_clamp(_ref_pickerHsvSaturation.valueAsNumber, 0, 100)
 				const hsv = {...sg_hsv(), s: value / 100}
 				const rgb = hsvToRgb(hsv)
@@ -792,7 +793,7 @@ function _initEvents(): void {
 				batchUpdateColors(rgb, hex, hsv, hsl, cmyk, hwb)
 			})
 
-			_ref_pickerHsvValue.addEventListener('input', () => {
+			delegateEvent(_ref_pickerHsvValue, 'input', () => {
 				const value = Math_clamp(_ref_pickerHsvValue.valueAsNumber, 0, 100)
 				const hsv = {...sg_hsv(), v: value / 100}
 				const rgb = hsvToRgb(hsv)
@@ -805,7 +806,7 @@ function _initEvents(): void {
 		}
 
 		function sliderHwb(): void {
-			_ref_pickerHwbHue.addEventListener('input', () => {
+			delegateEvent(_ref_pickerHwbHue, 'input', () => {
 				const value = Math_clamp(_ref_pickerHwbHue.valueAsNumber, 0, 360)
 				const hwb = {...sg_hwb(), h: value / 360}
 				const rgb = hwbToRgb(hwb)
@@ -816,7 +817,7 @@ function _initEvents(): void {
 				batchUpdateColors(rgb, hex, hsv, hsl, cmyk, hwb)
 			})
 
-			_ref_pickerHwbWhiteness.addEventListener('input', () => {
+			delegateEvent(_ref_pickerHwbWhiteness, 'input', () => {
 				const value = Math_clamp(_ref_pickerHwbWhiteness.valueAsNumber, 0, 100)
 				const hwb = {...sg_hwb(), w: value / 100}
 				hwb.b = Math_clamp(hwb.b, 0, 1 - hwb.w)
@@ -828,7 +829,7 @@ function _initEvents(): void {
 				batchUpdateColors(rgb, hex, hsv, hsl, cmyk, hwb)
 			})
 
-			_ref_pickerHwbBlackness.addEventListener('input', () => {
+			delegateEvent(_ref_pickerHwbBlackness, 'input', () => {
 				const value = Math_clamp(_ref_pickerHwbBlackness.valueAsNumber, 0, 100)
 				const hwb = {...sg_hwb(), b: value / 100}
 				hwb.w = Math_clamp(hwb.w, 0, 1 - hwb.b)
@@ -903,7 +904,7 @@ function _initImageColorPicker(): void {
 			})
 		}
 
-		_ref_pickerImageImage.addEventListener('click', () => {
+		delegateEvent(_ref_pickerImageImage, 'click', () => {
 			pickFile('image/*', false).then((files) => {
 				if (!files || files?.length == 0) return;
 
@@ -917,21 +918,21 @@ function _initImageColorPicker(): void {
 			})
 		})
 
-		_ref_pickerImageCanvas.addEventListener('pointerdown', ev => {
+		delegateEvent(_ref_pickerImageCanvas, 'pointerdown', (ev: PointerEvent) => {
 			_ref_pickerImageCanvas.setPointerCapture(ev.pointerId)
 			rect = _ref_pickerImageCanvas.getBoundingClientRect()
 			isDragging = true
 			updatePosition(ev.clientX, ev.clientY)
 		})
 
-		_ref_pickerImageCanvas.addEventListener('pointermove', (ev) => {
+		delegateEvent(_ref_pickerImageCanvas, 'pointermove', (ev: PointerEvent) => {
 			if (!isDragging) {return}
 
 			updatePosition(ev.clientX, ev.clientY)
 		})
 
-		_ref_pickerImageCanvas.addEventListener('pointerup', onPointerUp)
-		_ref_pickerImageCanvas.addEventListener('pointercancel', onPointerUp)
+		delegateEvent(_ref_pickerImageCanvas, 'pointerup', onPointerUp)
+		delegateEvent(_ref_pickerImageCanvas, 'pointercancel', onPointerUp)
 	}
 
 	function updateColor(rgb: RGBColor): void {

@@ -2,9 +2,10 @@ import * as Commands from "../shared/commands.enum.js"
 import * as Settings from "./settings.js"
 import { insertKeyBackspace, insertKeyChar, insertKeyClear, insertKeyEqual, insertKeyPlusMinus, insertKeySwap } from "./key-input.js"
 import { clearMemory, recallMemory, updateMemory } from "./memory.js"
+import { delegateEvent } from "@/utils/event-registry.js"
 
 function _initCommandsEvents(): void {
-	document.body.addEventListener('click', ev => {
+	delegateEvent(document.body, 'click', ev => {
 		const $target = ev.target as HTMLElement
 		if (!$target) return
 

@@ -296,7 +296,7 @@ export class BiruPopoverElement extends HTMLElement {
 				self.style.setProperty('z-index', zIndex + '')
 				this.reposition()
 				OPENED_POPOVER.add(self)
-				self.dispatchEvent(new CustomEvent(EventTypes.Toggle))
+				self.dispatchEvent(new CustomEvent(EventTypes.Toggle, {bubbles: true}))
 				self._lastFocusElement = document.activeElement as HTMLElement | null
 				self.tabIndex = 0
 				self.focus()
@@ -422,7 +422,7 @@ export class BiruPopoverElement extends HTMLElement {
 					self._lastPointer = undefined
 					unregisterZIndex(self)
 					OPENED_POPOVER.delete(self)
-					self.dispatchEvent(new CustomEvent(EventTypes.Toggle))
+					self.dispatchEvent(new CustomEvent(EventTypes.Toggle, {bubbles: true}))
 				})
 			}
 		}

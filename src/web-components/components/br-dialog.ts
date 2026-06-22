@@ -170,7 +170,7 @@ export class BiruDialogElement extends HTMLElement {
 				self.tabIndex = 0
 				self._isOpen = true
 				self.focus()
-				self.dispatchEvent(new CustomEvent(EventTypes.Toggle))
+				self.dispatchEvent(new CustomEvent(EventTypes.Toggle, {bubbles: true}))
 
 				const max = Math.max(self.offsetWidth, self.offsetHeight)
 				const startScale = (max / (max + 32) * 100) + '%'
@@ -219,7 +219,7 @@ export class BiruDialogElement extends HTMLElement {
 					self._isOpen = false
 					self.style.removeProperty('display')
 					self.style.removeProperty('z-index')
-					self.dispatchEvent(new CustomEvent(EventTypes.Toggle))
+					self.dispatchEvent(new CustomEvent(EventTypes.Toggle, {bubbles: true}))
 					if (_lastOpenedDialog === self) {
 						_lastOpenedDialog = undefined
 					}

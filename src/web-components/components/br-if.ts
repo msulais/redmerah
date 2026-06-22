@@ -463,7 +463,7 @@ function _checkElementsState(element?: BiruIfElement | undefined): void {
 			el.biru.hide()
 		}
 
-		el.dispatchEvent(new Event(EventTypes.Toggle))
+		el.dispatchEvent(new CustomEvent(EventTypes.Toggle, {bubbles: true}))
 	}
 }
 

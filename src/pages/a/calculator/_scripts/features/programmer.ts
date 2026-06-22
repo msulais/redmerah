@@ -9,6 +9,7 @@ import { saveStorageItem } from "../core/database.js"
 import { signal } from "@/utils/signal"
 import { ProgrammerNumTypes } from '../shared/calculator.js'
 import { isValidEnumValue } from '@/utils/object'
+import { delegateEvent } from '@/utils/event-registry.js'
 
 export const sg_input = signal(Constant.DEFAULT_PROGRAMMER_INPUT)
 
@@ -150,7 +151,7 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_ref_numTypes.addEventListener('change', () => {
+	delegateEvent(_ref_numTypes, 'change', () => {
 		const value = _ref_numTypes.value as ProgrammerNumTypes
 		if (!isValidEnumValue(value, ProgrammerNumTypes)) {
 			_ref_numTypes.value = ProgrammerNumTypes.Decimal
@@ -160,7 +161,7 @@ function _initEvents(): void {
 		sg_numType.set(value)
 	})
 
-	_ref_input.addEventListener('input', () => {
+	delegateEvent(_ref_input, 'input', () => {
 		sg_input.set(_ref_input.value)
 	})
 }

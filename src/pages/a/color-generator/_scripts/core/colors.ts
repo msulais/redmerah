@@ -5,6 +5,7 @@ import { saveStorageItem } from "./database.js"
 import { signal } from "@/utils/signal"
 import { $ } from './dom-utils.js'
 import { generateColorAccent, hexToRgb, hslToRgb, rgbToHex, rgbToHsl } from '@/utils/color.js'
+import { delegateEvent } from '@/utils/event-registry.js'
 
 export const sg_seed = signal(Constant.DEFAULT_COLOR)
 
@@ -48,7 +49,7 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_ref_copy.addEventListener('click', () => {
+	delegateEvent(_ref_copy, 'click', () => {
 		const lightAccent   = generateColorAccent(hexToRgb(sg_seed()), hexToRgb('#ffffff'))
 		const darkAccent    = generateColorAccent(hexToRgb(sg_seed()), hexToRgb('#000000'))
 		const lightOnAccent = generateColorAccent(hslToRgb({h: rgbToHsl(lightAccent).h, l: .5, s: 1}), lightAccent)
@@ -63,7 +64,7 @@ function _initEvents(): void {
 		navigator.clipboard.writeText(text)
 	})
 
-	_ref_color.addEventListener('input', () => {
+	delegateEvent(_ref_color, 'input', () => {
 		sg_seed.set(_ref_color.value as HEXColor)
 	})
 }

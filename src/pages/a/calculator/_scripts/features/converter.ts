@@ -10,6 +10,7 @@ import { isNumberDefined } from '@/utils/number'
 import { formatOutput } from '../core/string-utils.js'
 import { isValidEnumValue } from '@/utils/object.js'
 import { saveStorageItem } from '../core/database.js'
+import { delegateEvent } from '@/utils/event-registry.js'
 
 export const sg_converter = signal<ConverterTypes>(Constant.DEFAULT_CONVERTER_TYPE)
 export const sg_input = signal(Constant.DEFAULT_CONVERTER_INPUT)
@@ -144,7 +145,7 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_ref_converter.addEventListener('change', () => {
+	delegateEvent(_ref_converter, 'change', () => {
 		const value = _ref_converter.value
 		if (!isValidEnumValue(value, ConverterTypes)) {
 			return
@@ -153,15 +154,15 @@ function _initEvents(): void {
 		sg_converter.set(value as ConverterTypes)
 	})
 
-	_ref_inputUnit.addEventListener('change', () => {
+	delegateEvent(_ref_inputUnit, 'change', () => {
 		_changeUnit('input', _ref_inputUnit.value)
 	})
 
-	_ref_outputUnit.addEventListener('change', () => {
+	delegateEvent(_ref_outputUnit, 'change', () => {
 		_changeUnit('output', _ref_outputUnit.value)
 	})
 
-	_ref_input.addEventListener('input', () => {
+	delegateEvent(_ref_input, 'input', () => {
 		sg_input.set(_ref_input.value)
 	})
 }

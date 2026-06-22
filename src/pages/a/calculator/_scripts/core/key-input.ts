@@ -11,6 +11,7 @@ import { numberToBinary } from "@/utils/number"
 import { clearMemory, recallMemory, updateMemory } from "./memory.js"
 import { DecimalNumberFormat, ProgrammerNumTypes } from '../shared/calculator.js'
 import { batch } from '@/utils/signal'
+import { delegateEvent } from '@/utils/event-registry.js'
 
 export function insertKeyBackspace(): void {
 	const backspace = (input: string) => input.substring(0, input.length-1)
@@ -144,7 +145,7 @@ export function insertKeySwap(): void {
 }
 
 function _initEvents(): void {
-	document.body.addEventListener('keydown', ev => {
+	delegateEvent(document.body, 'keydown', (ev: KeyboardEvent) => {
 		if (Settings.sg_page() === Pages.Date) {
 			return
 		}

@@ -6,6 +6,7 @@ import { colorContrastPercentage, colorContrastRatio, hexToRgb, isColorValid } f
 import type { HEXColor } from '@/types/color'
 import { adjustDecimalNumber } from '@/utils/number'
 import { saveStorageItem } from './database.js'
+import { delegateEvent } from '@/utils/event-registry.js'
 
 export const sg_backgroundColor = signal(Constant.DEFAULT_BACKGROUND_COLOR)
 export const sg_foregroundColor = signal(Constant.DEFAULT_FOREGROUND_COLOR)
@@ -52,7 +53,7 @@ function _initSubscriber(): void {
 }
 
 function _initEvents(): void {
-	_ref_background.addEventListener('input', () => {
+	delegateEvent(_ref_background, 'input', () => {
 		const color = _ref_background.value
 		if (!isColorValid(color)) {
 			return
@@ -61,7 +62,7 @@ function _initEvents(): void {
 		sg_backgroundColor.set(color as HEXColor)
 	})
 
-	_ref_foreground.addEventListener('input', () => {
+	delegateEvent(_ref_foreground, 'input', () => {
 		const color = _ref_foreground.value
 		if (!isColorValid(color)) {
 			return
