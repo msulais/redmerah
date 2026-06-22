@@ -1,11 +1,12 @@
+import * as BrDialog from '@/web-components/components/br-dialog.js'
+import * as Ids from '../shared/ids.enum.js'
 import type { BatteryManager } from "@/interfaces/battery"
-import { ElementIds } from "../shared/ids"
-import { $ } from "./utils"
-import { CDialog } from "@/components/Dialog"
+import { $ } from "./dom-utils"
 
-const _ref_textLevel = $(ElementIds.bd_levelText) as HTMLHeadingElement
-const _ref_statusText = $(ElementIds.bd_statusText) as HTMLDivElement
-const _ref_container = $(ElementIds.bd_container) as HTMLDivElement
+const _ref_textLevel = $(Ids.LevelText) as HTMLHeadingElement
+const _ref_statusText = $(Ids.StatusText) as HTMLDivElement
+const _ref_container = $(Ids.Container) as HTMLDivElement
+const _ref_warningDialog = $(Ids.WarningDialog) as BrDialog.BiruDialogElement
 
 function _checkBrowserCompatibility(): void {
 	const supported = 'getBattery' in navigator
@@ -13,8 +14,7 @@ function _checkBrowserCompatibility(): void {
 		return
 	}
 
-	const dialog = $(ElementIds.dlg_browseNotSupported) as CDialog.CElement
-	dialog.showModal()
+	_ref_warningDialog.biru.open()
 }
 
 function _initEvents(): void {

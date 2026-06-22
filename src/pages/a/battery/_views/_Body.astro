@@ -1,0 +1,53 @@
+---
+import * as Styles from '../_styles/styles.enum.js'
+import * as Ids from '../_scripts/shared/ids.enum.js'
+import AppBar from './_AppBar.astro'
+
+type ZO = 0 | 1
+function disableRadius(topLeft: ZO, topRight: ZO, bottomLeft: ZO, bottomRight: ZO) {
+	const d: Record<string, string> = {}
+	if (topLeft    ) d['border-top-left-radius'    ] = '0'
+	if (topRight   ) d['border-top-right-radius'   ] = '0'
+	if (bottomLeft ) d['border-bottom-left-radius' ] = '0'
+	if (bottomRight) d['border-bottom-right-radius'] = '0'
+
+	return d
+}
+---
+
+<div style={disableRadius(1, 1, 1, 0)}/>
+<div style={disableRadius(1, 1, 0, 0)}/>
+<div style={disableRadius(1, 1, 0, 1)}/>
+<div style={disableRadius(1, 0, 1, 0)}/>
+<div
+	class={Styles.Content}
+	id={Ids.Container}
+	style={{'--percentage': '0%'}}>
+	<AppBar/>
+	<h1 id={Ids.LevelText}>&lt;?&gt;%</h1>
+	<div data-css="status" id={Ids.StatusText}>Charging</div>
+	<br-dialog id={Ids.WarningDialog} style="width:32rem">
+		<span slot="title">Browser Not Supported</span>
+		<button
+			slot="footer"
+			br:command-for={Ids.WarningDialog}
+			br:variant="tonal">
+			Close
+		</button>
+		<a
+			slot="footer"
+			br:as="button"
+			br:variant="filled"
+			href="https://caniuse.com/battery-status"
+			target="_blank"
+			rel="noopener noreferrer">
+			Check browser compatibility
+		</a>
+
+		<p>Battery API not fully supported in your browser. Some features may not function correctly.</p>
+	</br-dialog>
+</div>
+<div style={disableRadius(0, 1, 0, 1)}/>
+<div style={disableRadius(1, 0, 1, 1)}/>
+<div style={disableRadius(0, 0, 1, 1)}/>
+<div style={disableRadius(0, 1, 1, 1)}/>
