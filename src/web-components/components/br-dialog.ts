@@ -306,6 +306,12 @@ function _initDefaultStyles(): void {
 	align-items: flex-start;
 }
 
+@media (hover: none) {
+	:host {
+		border-radius: 1.75rem;
+	}
+}
+
 [part="${Parts.Content}"] {
 	padding: 1.5rem;
 	flex: 1;
