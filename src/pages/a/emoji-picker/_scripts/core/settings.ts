@@ -1,162 +1,120 @@
-import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
-import { ObservableStore } from "@/utils/signal"
-import { ElementIds } from "../shared/ids"
-import { LocalStorageKeys } from "@/enums/storage"
-import { $, $$, $$$ } from "./dom-utils"
-import { isValidEnumValue } from "@/utils/object"
-import { RootAttributes } from "@/enums/attributes"
-import { RadioNames } from "../shared/input-names"
-import { DEFAULT_ANIMATION, DEFAULT_SKIN_TONE, DEFAULT_THEME } from "../shared/constant"
-import { Pages, SkinToneEmoji } from "../shared/enums"
-import { NavigationStore } from "./navigation"
-import { updateEmojiList } from "./body"
-import { saveStorageItem } from "./database"
+import * as Constant from "../shared/constant.enum.js";
+import * as Ids from '../shared/ids.enum.js'
+import * as Pages from '../shared/pages.enum.js'
+import * as InputNames from '../shared/input-names.enum.js'
+import * as BrPopover from "@/web-components/components/br-popover";
+import * as BrTheme from '@/web-components/components/br-theme.js'
+import * as LocalStorageKeys from '@/enums/local-storage-keys.enum.js'
+import * as Search from './search.js'
+import { listenRouteChange } from '@/web-components/router.js'
+import { signal } from "@/utils/signal.js";
+import { $, $$ } from "./dom-utils.js";
+import { isValidEnumValue } from "@/utils/object.js";
+import { delegateEvent } from "@/utils/event-registry.js";
 
-export type SettingsStoreType = Readonly<{
-	theme    : PlatformThemeMode
-	animation: PlatformAnimationMode
-	skinTone : SkinToneEmoji
-}>
+export const sg_theme     = signal(Constant.DEFAULT_THEME)
+export const sg_animation = signal(Constant.DEFAULT_ANIMATION)
+export const sg_page      = signal<typeof Pages[keyof typeof Pages]>(Pages.SmileyEmotion)
 
-export const SettingsStore = new ObservableStore<SettingsStoreType>({
-	theme    : DEFAULT_THEME,
-	animation: DEFAULT_ANIMATION,
-	skinTone : DEFAULT_SKIN_TONE
-})
-const _ref_root = document.documentElement
-const _skinToneOptionsRef = $(ElementIds.bd_skinTone) as HTMLDivElement
-const _ref_theme = $(ElementIds.apSett_themeMenu) as HTMLDivElement
-const _ref_animation = $(ElementIds.apSett_animationMenu) as HTMLDivElement
-const _ref_settingsMenu = $(ElementIds.apSett_menu) as HTMLDivElement
+const _ref_theme            = $$<BrTheme.BiruThemeElement>(BrTheme.TAGNAME)
+const _ref_themePopover     = $(Ids.PopoverAppBarSettingsTheme) as BrPopover.BiruPopoverElement
+const _ref_animationPopover = $(Ids.PopoverAppBarSettingsAnimation) as BrPopover.BiruPopoverElement
 
-function _subscribeAnimationChanges(v: SettingsStoreType, o: SettingsStoreType): void {
-	const animation = v.animation
-	if (animation === o.animation) return
-
-	localStorage.setItem(LocalStorageKeys.PlatformAnimation, animation)
-}
-
-function _subscribeThemeChanges(v: SettingsStoreType, o: SettingsStoreType): void {
-	const theme = v.theme
-	if (theme === o.theme) return
-
-	localStorage.setItem(LocalStorageKeys.PlatformTheme, theme)
-}
-
-function _subscribeAnimationRefView(v: SettingsStoreType, o: SettingsStoreType): void {
-	const animation = v.animation
-	if (animation === o.animation) return
-
-	_ref_root.setAttribute(RootAttributes.Animation, animation)
-	const ref_previous = $$(
-		`input[name="${CSS.escape(RadioNames.Animation)}"]:checked`
-	) as HTMLInputElement
-	const ref_target = $$(
-		`input[name="${CSS.escape(RadioNames.Animation)}"][value="${CSS.escape(animation)}"]`
-	) as HTMLInputElement
-
-	if (ref_previous === ref_target) {return}
-	if (ref_previous) ref_previous.checked = false
-	if (ref_target) ref_target.checked = true
-}
-
-function _subscribeThemeRefView(v: SettingsStoreType, o: SettingsStoreType): void {
-	const theme = v.theme
-	if (theme === o.theme) return
-
-	_ref_root.setAttribute(RootAttributes.Theme, theme)
-	const ref_previous = $$(
-		`input[name="${CSS.escape(RadioNames.Theme)}"]:checked`
-	) as HTMLInputElement
-	const ref_target = $$(
-		`input[name="${CSS.escape(RadioNames.Theme)}"][value="${CSS.escape(theme)}"]`
-	) as HTMLInputElement
-
-	if (ref_previous === ref_target) {return}
-	if (ref_previous) ref_previous.checked = false
-	if (ref_target) ref_target.checked = true
-}
-
-function _subscribeSkinToneChanges(v: SettingsStoreType, o: SettingsStoreType): void {
-	const skinTone = v.skinTone
-	if (skinTone === o.skinTone) {return}
-
-	saveStorageItem('settings/skin-tone', skinTone)
-	const page = NavigationStore.value.page
-	if (page !== Pages.PersonBody) {return}
-
-	updateEmojiList(page)
-}
-
-function _subscribeSkinToneRefView(v: SettingsStoreType, o: SettingsStoreType): void {
-	const skinTone = v.skinTone
-	if (skinTone === o.skinTone) {return}
-
-	const ref_target = $$<HTMLInputElement>(`[name="${RadioNames.SkinTone}"][value="${skinTone}"]`)
-	const selectedRef = $$$<HTMLInputElement>(`[name="${RadioNames.SkinTone}"]:not([value="${skinTone}"])`)
-
-	for (const ref of selectedRef) {
-		ref.checked = false
+function _initTheme(): void {
+	const theme = localStorage.getItem(LocalStorageKeys.PlatformTheme)
+	if (!_ref_theme || !theme || !isValidEnumValue(theme, BrTheme.ThemeMode) || theme === Constant.DEFAULT_THEME) {
+		return
 	}
+
+	_ref_theme.biru.themeMode = theme as BrTheme.ThemeMode
+	const ref_previous = $$(
+		`input[name="${CSS.escape(InputNames.Theme)}"]:checked`
+	) as HTMLInputElement
+	const ref_target = $$(
+		`input[name="${CSS.escape(InputNames.Theme)}"][value="${CSS.escape(theme)}"]`
+	) as HTMLInputElement
+
+	if (ref_previous === ref_target) {
+		return
+	}
+
+	if (ref_previous) {
+		ref_previous.checked = false
+	}
+
 	if (ref_target) {
 		ref_target.checked = true
 	}
 }
 
-function _initSubscriber(): void {
-	SettingsStore.subscribe(_subscribeAnimationChanges)
-	SettingsStore.subscribe(_subscribeThemeChanges)
-	SettingsStore.subscribe(_subscribeAnimationRefView)
-	SettingsStore.subscribe(_subscribeThemeRefView)
-	SettingsStore.subscribe(_subscribeSkinToneChanges)
-	SettingsStore.subscribe(_subscribeSkinToneRefView)
+function _initAnimation(): void {
+	const animation = localStorage.getItem(LocalStorageKeys.PlatformAnimation)
+	if (!_ref_theme || !animation || !isValidEnumValue(animation, BrTheme.Animation) || animation === Constant.DEFAULT_ANIMATION) {
+		return
+	}
+
+	_ref_theme.biru.animation = animation as BrTheme.Animation
+	const ref_previous = $$(
+		`input[name="${CSS.escape(InputNames.Animation)}"]:checked`
+	) as HTMLInputElement
+	const ref_target = $$(
+		`input[name="${CSS.escape(InputNames.Animation)}"][value="${CSS.escape(animation)}"]`
+	) as HTMLInputElement
+
+	if (ref_previous === ref_target) {
+		return
+	}
+
+	if (ref_previous) {
+		ref_previous.checked = false
+	}
+
+	if (ref_target) {
+		ref_target.checked = true
+	}
+}
+
+function _updatePage(): void {
+	const page = new URLSearchParams(window.location.search).get('page') as (typeof Pages[keyof typeof Pages])
+	if (!page || !isValidEnumValue(page, Pages)) {
+		return
+	}
+
+	sg_page.set(page)
+	Search.sg_searchText.set('')
 }
 
 function _initEvents(): void {
-	_ref_theme.addEventListener('change', ev => {
-		const target = ev.target as HTMLInputElement
-		const value = target?.value as PlatformThemeMode
-		if (!value || !isValidEnumValue(value, PlatformThemeMode)) {return}
+	listenRouteChange(() => _updatePage())
 
-		_ref_settingsMenu.hidePopover()
-		SettingsStore.update(v => v.theme = value)
+	delegateEvent(_ref_themePopover, 'change', ev => {
+		const target = ev.target as HTMLInputElement
+		const value = target?.value as BrTheme.ThemeMode
+		if (!_ref_theme || !value || !isValidEnumValue(value, BrTheme.ThemeMode)) {
+			return
+		}
+
+		_ref_theme.biru.themeMode = value
+		localStorage.setItem(LocalStorageKeys.PlatformTheme, value)
+		sg_theme.set(value)
 	})
 
-	_ref_animation.addEventListener('change', ev => {
+	delegateEvent(_ref_animationPopover, 'change', ev => {
 		const target = ev.target as HTMLInputElement
-		const value = target?.value as PlatformAnimationMode
-		if (!value || !isValidEnumValue(value, PlatformAnimationMode)) {return}
+		const value = target?.value as BrTheme.Animation
+		if (!_ref_theme || !value || !isValidEnumValue(value, BrTheme.Animation)) {
+			return
+		}
 
-		_ref_settingsMenu.hidePopover()
-		SettingsStore.update(v => v.animation = value)
+		_ref_theme.biru.animation = value
+		localStorage.setItem(LocalStorageKeys.PlatformAnimation, value)
+		sg_animation.set(value)
 	})
-
-	_skinToneOptionsRef.addEventListener('change', (ev) => {
-		const target = ev.target as HTMLInputElement
-		const skinTone = target.value as SkinToneEmoji
-		if (!skinTone || !isValidEnumValue(skinTone, SkinToneEmoji)) {return}
-
-		SettingsStore.update(v => v.skinTone = skinTone)
-	})
-}
-
-function _initTheme(): void {
-	const theme = localStorage.getItem(LocalStorageKeys.PlatformTheme) as PlatformThemeMode
-	if (!theme || !isValidEnumValue(theme, PlatformThemeMode) || theme === DEFAULT_THEME) return
-
-	SettingsStore.update(v => v.theme = theme)
-}
-
-function _initAnimation(): void {
-	const animation = localStorage.getItem(LocalStorageKeys.PlatformAnimation) as PlatformAnimationMode
-	if (!animation || !isValidEnumValue(animation, PlatformAnimationMode)) return
-
-	SettingsStore.update(v => v.animation = animation)
 }
 
 export default () => {
-	_initSubscriber()
-	_initTheme()
+	_updatePage()
 	_initAnimation()
+	_initTheme()
 	_initEvents()
 }

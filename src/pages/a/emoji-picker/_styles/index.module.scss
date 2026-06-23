@@ -1,0 +1,172 @@
+.body {
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+	align-items: center;
+	padding: 1rem;
+}
+
+.clipboard {
+	display: flex;
+	align-items: center;
+	gap: .5rem;
+	position: sticky;
+	bottom: 1rem;
+	margin: auto;
+	margin-top: 1rem;
+	background-color: rgb(var(--br-theme-color-surface));
+	backdrop-filter: blur(16px);
+	border: 1px solid rgba(var(--br-theme-color-on-surface), .08);
+	width: 100%;
+	padding: 1rem;
+	box-shadow: 0 .25rem .5rem rgba(0, 0, 0, .25);
+	border-radius: .5rem;
+	max-width: min(35rem, calc(100% - 2rem));
+
+	@media (hover: none) {
+		border-radius: 9999px;
+
+		> input {
+			border-radius: 9999px !important;
+			padding-left: 1rem !important;
+			padding-right: 1rem !important;
+		}
+	}
+
+}
+
+.main {
+	background-color: rgb(var(--br-theme-color-surface));
+	width: 100%;
+	height: 100%;
+	border-radius: .5rem 0 0 0;
+	border: 1px solid rgba(var(--br-theme-color-on-surface), .08);
+	border-right: none;
+	border-bottom: none;
+	overflow: auto;
+
+	@media (width < 37.5rem) {
+		border: none;
+		background-color: transparent;
+		border-radius: 0;
+	}
+}
+
+.page {
+	list-style: none;
+	padding: 0;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(3.75rem, 1fr));
+	gap: .25rem;
+	width: 100%;
+	max-width: min(35rem, 100%); // 100% cause super laggy scrolling
+	content-visibility: auto;
+  	contain-intrinsic-size: 50px;
+
+	@media (max-width: 20rem) {
+		grid-template-columns: repeat(auto-fill, minmax(3.5rem, 1fr));
+	}
+
+	& li {
+		width: 100%;
+	}
+
+	& button {
+		font-size: 1.75rem;
+		width: 100%;
+
+		@media (max-width: 20rem) {
+			font-size: 1.5rem;
+		}
+	}
+}
+
+.search_input[br\:as=textfield] {
+	width: 15rem;
+	max-width: 100%;
+
+	@media (width < 35rem) {
+		width: calc(100% - 2rem);
+		margin: 1rem 1rem 0 1rem;
+	}
+}
+
+.search_result {
+	display: none;
+	width: 100%;
+	flex-direction: column;
+	align-items: center;
+	padding: 1rem;
+
+	> details {
+		width: 100%;
+		max-width: min(35rem, 100%); // 100% cause super laggy scrolling
+
+		&[open] br-icon {
+			rotate: 180deg;
+		}
+	}
+
+	& summary {
+		justify-content: space-between;
+		margin-bottom: .5rem;
+	}
+
+	& br-icon {
+		transition-duration: var(--br-theme-duration-transition);
+	}
+
+	& ul {
+		list-style: none;
+		padding: 0;
+		padding-bottom: 1rem;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(3.75rem, 1fr));
+		gap: .25rem;
+		content-visibility: auto;
+		contain-intrinsic-size: 50px;
+
+		@media (max-width: 20rem) {
+			grid-template-columns: repeat(auto-fill, minmax(3.5rem, 1fr));
+		}
+
+		& li {
+			width: 100%;
+		}
+
+		& button {
+			font-size: 1.75rem;
+			width: 100%;
+
+			@media (max-width: 20rem) {
+				font-size: 1.5rem;
+			}
+		}
+	}
+}
+
+.skin_tones {
+	display: flex;
+	align-items: center;
+	gap: .5rem;
+	max-width: min(35rem, 100%);
+	width: 100%;
+	flex-wrap: wrap;
+	padding-bottom: 1rem;
+
+	& label {
+		position: relative;
+		border-width: 2px !important;
+
+		&[br\:variant~=outlined] {
+			border-color: rgb(var(--br-theme-color-accent));
+		}
+	}
+
+	& input {
+		position: absolute;
+		appearance: none;
+		-moz-appearance: none;
+		-webkit-appearance: none;
+	}
+}

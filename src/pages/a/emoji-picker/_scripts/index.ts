@@ -1,13 +1,11 @@
-import appbar from "./core/appbar"
-import settings from "./core/settings"
-import navigation from "./core/navigation"
-import body from "./core/body"
-import search from "./core/search"
 import database from "./core/database"
+import emojiPersonBody from "./core/emoji-person-body"
+import search from "./core/search"
+import settings from "./core/settings"
+import copy from "./core/copy"
 
-appbar()
-settings()
-navigation()
-body()
-search()
 database()
+settings()
+emojiPersonBody()
+search()
+copy()

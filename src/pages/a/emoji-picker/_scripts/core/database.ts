@@ -1,11 +1,10 @@
-import { DatabaseNames } from "@/enums/storage"
-import { IDB } from "@/utils/indexeddb"
-import { $ } from "./dom-utils"
-import { ElementIds } from "../shared/ids"
-import { Pages, SkinToneEmoji } from "../shared/enums"
-import { isValidEnumValue } from "@/utils/object"
-import { NavigationStore, type NavigationStoreType } from "./navigation"
-import { SettingsStore, type SettingsStoreType } from "./settings"
+import * as Constant from '../shared/constant.enum.js'
+import * as SkinTones from '../shared/skin-tones.enum.js'
+import * as EmojiPersonBody from './emoji-person-body.js'
+import * as Copy from './copy.js'
+import type { EnumOf } from '@/types/collections.js'
+import { IDB } from '@/utils/indexeddb'
+import { isValidEnumValue } from '@/utils/object.js'
 
 type _IDBStoreStorage<T = unknown> = {
 	key: string
@@ -13,27 +12,30 @@ type _IDBStoreStorage<T = unknown> = {
 }
 
 type _StorageItems = {
-	page: NavigationStoreType['page']
 	'selected-emoji': string
-	'settings/skin-tone': SettingsStoreType['skinTone']
+	'skin-tone': EnumOf<typeof SkinTones>
 }
 
 type _StorageKeys = keyof _StorageItems
 
-enum _ObjectStoreNames {
-	Storage = 'storage'
-}
+const _ObjectStoreNames = {
+	Storage: 'storage'
+} as const
+type _ObjectStoreNames = typeof _ObjectStoreNames[keyof typeof _ObjectStoreNames]
 
-const _db = new IDB(DatabaseNames.EmojiPicker)
-const _bodyTextFieldRef = $(ElementIds.bd_input) as HTMLInputElement
+const _db = new IDB(Constant.APP.name.replace(/[^A-Za-z]/g, '_'))
+const _storageTimeoutIds = new Map<_StorageKeys, ReturnType<typeof setTimeout>>()
 
-export function saveStorageItem<K extends _StorageKeys>(key: K, value: _StorageItems[K]) {
-	return _db
+export function saveStorageItem<K extends _StorageKeys>(key: K, value: _StorageItems[K], delayDuration = 0) {
+	clearTimeout(_storageTimeoutIds.get(key))
+	_storageTimeoutIds.set(key, setTimeout(() => {
+		_db
 		.writeStore(_ObjectStoreNames.Storage)
 		?.put({key, value} satisfies _IDBStoreStorage<_StorageItems[K]>)
+	}, delayDuration))
 }
 
-function _readStorageAll(store: IDBObjectStore): void {
+function _readAllStorage(store: IDBObjectStore): void {
 	_db.cursor(store, (cursor) => {
 		const key = cursor?.key
 		const value = cursor?.value.value
@@ -43,15 +45,13 @@ function _readStorageAll(store: IDBObjectStore): void {
 		switch (key as _StorageKeys) {
 		case 'selected-emoji':
 			isString
-			&& (_bodyTextFieldRef.value = value)
+			&& Copy.sg_text.set(value)
 			break
-		case "page":
-			isValidEnumValue(value, Pages)
-			&& NavigationStore.update(v => v.page = value)
+		case 'skin-tone':
+			isString
+			&& isValidEnumValue(value, SkinTones)
+			&& EmojiPersonBody.sg_skinTone.set(value as EnumOf<typeof SkinTones>)
 			break
-		case 'settings/skin-tone':
-			isValidEnumValue(value, SkinToneEmoji)
-			&& SettingsStore.update(v => v.skinTone = value)
 		}
 
 		return true
@@ -60,9 +60,11 @@ function _readStorageAll(store: IDBObjectStore): void {
 
 function _readStorage(): void {
 	const store = _db.readStore(_ObjectStoreNames.Storage)
-	if (!store) return
+	if (!store) {
+		return
+	}
 
-	_readStorageAll(store)
+	_readAllStorage(store)
 }
 
 function _initDatabase(): void {

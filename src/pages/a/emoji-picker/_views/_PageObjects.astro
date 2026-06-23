@@ -1,0 +1,22 @@
+---
+import { EMOJIS_OBJECT } from '@/constants/emoji'
+import * as Ids from '../_scripts/shared/ids.enum.js'
+import * as Pages from '../_scripts/shared/pages.enum.js'
+import * as Styles from '../_styles/styles.enum.js'
+---
+
+<br-if
+	br:query={`page=${Pages.Objects}`}
+	br:animation-for={Ids.PageObjects}
+	br:animation-start-duration="1000"
+	br:animation-start-keyframes={JSON.stringify({
+		opacity: [0, 1],
+	})}>
+	<br-focusgroup br:direction="grid">
+		<ul class={Styles.Page} id={Ids.PageObjects}>
+			{EMOJIS_OBJECT.map(v => <li>
+				<button data-emoji={v[0]} br:tooltip={v[1]}>{v[0]}</button>
+			</li>)}
+		</ul>
+	</br-focusgroup>
+</br-if>

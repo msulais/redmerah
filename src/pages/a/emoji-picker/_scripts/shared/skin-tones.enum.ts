@@ -1,0 +1,6 @@
+export const None = 'none'
+export const Light = 'light'
+export const MediumLight = 'medium-light'
+export const Medium = 'medium'
+export const MediumDark = 'medium-dark'
+export const Dark = 'dark'
