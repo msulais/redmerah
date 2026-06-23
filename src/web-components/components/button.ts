@@ -81,7 +81,13 @@ ${ELEMENT}:has( :focus-visible) {
 ${ELEMENT}[${ATTR_VARIANT}~=${Variant.Icon}] {
 	padding: 0;
 	justify-content: center;
-	width: 2.5rem;
+	min-width: 2.5rem;
+}
+
+@media (hover: none) {
+	${ELEMENT}[${ATTR_VARIANT}~=${Variant.Icon}] {
+		min-width: 3rem;
+	}
 }
 
 ${ELEMENT} * {

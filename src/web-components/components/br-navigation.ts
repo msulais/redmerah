@@ -221,6 +221,7 @@ ${ELEMENT}${VARIANT_SIDEBAR}[${ATTR_EXPANDED}] {
 ${ELEMENT}${VARIANT_SIDEBAR}[${ATTR_EXPANDED}] ${NavigationItem.TAGNAME} {
 	flex-direction: row;
 	font-size: .875rem;
+	max-width: 100%;
 	gap: .5rem;
 	min-height: 2rem;
 	padding: .25rem .75rem;
@@ -267,6 +268,7 @@ ${ELEMENT}${VARIANT_DRAWER} ${NavigationItem.TAGNAME} {
 	font-size: .875rem;
 	gap: .5rem;
 	min-height: 2rem;
+	max-width: 100%;
 	padding: .25rem .75rem;
 }
 
@@ -299,6 +301,7 @@ ${ELEMENT}${VARIANT_DRAWER} ${NavigationItem.TAGNAME} > :first-child {
 		flex-direction: row;
 		font-size: .875rem;
 		gap: .5rem;
+		max-width: 100%;
 		min-height: 2rem;
 		padding: .25rem .75rem;
 	}
@@ -345,6 +348,7 @@ ${ELEMENT}${VARIANT_DRAWER} ${NavigationItem.TAGNAME} > :first-child {
 		flex-direction: row;
 		font-size: .875rem;
 		gap: .5rem;
+		max-width: 100%;
 		min-height: 2rem;
 		padding: .25rem .75rem;
 	}

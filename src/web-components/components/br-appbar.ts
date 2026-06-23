@@ -13,7 +13,6 @@ export const Parts = {
 	Content: 'content',
 	Trailing: 'trailing',
 	Headline: 'headline',
-	Flex: 'flex'
 } as const
 export type Parts = typeof Parts[keyof typeof Parts]
 
@@ -34,7 +33,6 @@ export class BiruAppBarElement extends HTMLElement {
 		<h2 part="${Parts.Headline}"><slot name="${Slots.Headline}"></slot></h2>
 		<slot></slot>
 	</div>
-	<div part="${Parts.Flex}"></div>
 	<div part="${Parts.Trailing}"><slot name="${Slots.Trailing}"></slot></div>
 </header>`
 	}
@@ -69,6 +67,7 @@ function _initDefaultStyles(): void {
 	display: flex;
 	align-items: center;
 	overflow: hidden;
+	flex: 1;
 }
 
 [part="${Parts.Headline}"] {
@@ -80,10 +79,6 @@ function _initDefaultStyles(): void {
 	display: flex;
 	padding-right: 1rem;
 	margin: 0;
-}
-
-[part="${Parts.Flex}"] {
-	flex: 1;
 }
 
 [part="${Parts.Leading}"], [part="${Parts.Trailing}"] {

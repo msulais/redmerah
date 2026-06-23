@@ -82,6 +82,7 @@ ${ELEMENT} {
 	cursor: pointer;
 	padding: .5rem;
 	width: 100%;
+	max-width: 5rem;
 	border-radius: .25rem;
 	color: rgb(var(${BrTheme.CSSVars.ColorOnSurface}));
 }
@@ -132,6 +133,7 @@ ${ELEMENT}${STATE_SELECTED} > :first-child {
 ${ELEMENT}[${ATTR_LABEL}]::after {
 	display: block;
 	content: attr(${ATTR_LABEL});
+	text-align: center;
 }
 `)
 }
