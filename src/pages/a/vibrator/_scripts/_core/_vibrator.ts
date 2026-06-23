@@ -3,7 +3,7 @@ import { ElementIds } from "../_shared/_ids"
 import { $ } from "./_dom-utils"
 import { ObservableStore } from "@/utils/signal"
 import { DEFAULT_VIBRATION_PATTERN } from "../_shared/_constant"
-import { showInputMessage, updateListElement } from "@/utils/element"
+import { showInputMessage, updateElementList } from "@/utils/element"
 import { CDialog } from "@/components/Dialog"
 import { isNumberDefined } from "@/utils/number"
 import { saveStorageItem } from "./_database"
@@ -35,7 +35,7 @@ function _subsPatternView(v: VibratorStoreType, o: VibratorStoreType): void {
 	const pattern = v.pattern
 	if (pattern === o.pattern) {return}
 
-	updateListElement<HTMLLIElement, number>(
+	updateElementList<HTMLLIElement, number>(
 		_ref_list, pattern,
 		() => document.createElement('li'),
 		(el, data) => el.textContent = data.toString()
