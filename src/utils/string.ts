@@ -33,7 +33,12 @@ export function stringHash(str: string): string {
 	return (hash >>> 0).toString(36)
 }
 
-// TODO: remove
+/**
+ * @deprecated
+ * @param input
+ * @param length
+ * @returns
+ */
 export function stringToHash(input: string, length = 4): string {
 	length = Math.floor(length)
 	if (length <= 0) return ""
@@ -97,4 +102,30 @@ export function stringToHash(input: string, length = 4): string {
 	}
 
 	return out.slice(0, length)
+}
+
+export function advancedStringSearch(
+	search: string,
+	text: string,
+	isSearchNormalized: boolean = false
+): boolean {
+	let searchNormalized = search
+	if (!isSearchNormalized) {
+		searchNormalized = search.replace(/\s+/g, '')
+	}
+
+	const searchLen = searchNormalized.length
+	if (searchLen === 0) {
+		return true
+	}
+
+	let j = 0
+	const searchLower = searchNormalized.toLowerCase()
+	for (let i = 0; i < text.length && j < searchLen; i++) {
+		if (text[i].toLowerCase() === searchLower[j]) {
+			j++
+		}
+	}
+
+	return j === searchLen
 }
