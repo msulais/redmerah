@@ -287,10 +287,10 @@ export class BiruMoveIfElement extends HTMLElement {
 
 				self.setAttribute(Attributes.AnimationEndEasing, value)
 			},
-			get visible(): boolean {
+			get moved(): boolean {
 				return self.hasAttribute(Attributes.Moved)
 			},
-			set visible(value: boolean) {
+			set moved(value: boolean) {
 				self.toggleAttribute(Attributes.Moved, value)
 			},
 			get path() {
@@ -436,7 +436,7 @@ export class BiruMoveIfElement extends HTMLElement {
 				const path  = this.path
 				const query = this.query
 				const hash  = this.hash
-				if (this.visible) {
+				if (this.moved) {
 					return true
 				}
 
@@ -446,7 +446,7 @@ export class BiruMoveIfElement extends HTMLElement {
 					&& query.length === 0
 					&& hash.length === 0
 				) {
-					return true
+					return false
 				}
 
 				let isMatch = true

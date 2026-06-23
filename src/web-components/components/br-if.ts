@@ -420,7 +420,7 @@ export class BiruIfElement extends HTMLElement {
 					&& query.length === 0
 					&& hash.length === 0
 				) {
-					return true
+					return false
 				}
 
 				let isMatch = true

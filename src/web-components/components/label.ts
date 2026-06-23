@@ -6,7 +6,9 @@ function _initDefaultStyles(): void {
 	document.adoptedStyleSheets.push(styles)
 	styles.replaceSync(`
 ${TAGNAME} {
-	display: block;
+	display: flex;
+	align-items: center;
+	gap: 1ch;
 	font-size: .875rem;
 }
 
