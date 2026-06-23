@@ -100,11 +100,11 @@ export function isTargetValidElement(
 	)
 }
 
-export function updateListElement<T extends Element, U>(
+export function updateElementList<T extends Element, U>(
 	parent: Element,
 	data: U[],
-	create: () => T,
-	callback?: (child: T, data: U, index: number) => unknown
+	create: (data: U, index: number) => T,
+	update?: (child: T, data: U, index: number) => unknown
 ): Element {
 	const refs = [...parent.children] as unknown as T[]
 	const dataLength = data.length
@@ -118,13 +118,13 @@ export function updateListElement<T extends Element, U>(
 			continue
 		}
 
-		callback?.(ref, data[i], i)
+		update?.(ref, data[i], i)
 	}
 
 	for (let i = 0; i < dataLength - refsLength; i++) {
 		const index = refsLength + i
-		const ref = create()
-		callback?.(ref, data[index], index)
+		const ref = create(data[index], index)
+		update?.(ref, data[index], index)
 		parent.append(ref)
 	}
 
