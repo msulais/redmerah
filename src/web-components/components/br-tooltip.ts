@@ -240,8 +240,8 @@ div {
 	font-weight: 500;
 	padding: .25rem .5rem;
 	white-space: pre-line;
-	max-width: calc(100% - 8px);
-	max-height: calc(100dvh - 8px);
+	max-width: calc(100% - 16px);
+	max-height: calc(100dvh - 16px);
 	overflow: hidden;
 	border-radius: .25rem;
 	border: 1px solid rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .08);
