@@ -161,7 +161,7 @@ function _initEvents(): void {
 
 	delegateEvent(_ref_relativeViewport, 'click', () => {
 		batch(() => {
-			sg_pxPer100VW.set(window.innerWidth)
+			sg_pxPer100VW.set(document.body.clientWidth)
 			sg_pxPer100VH.set(window.innerHeight)
 		})
 	})

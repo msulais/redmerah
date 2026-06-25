@@ -67,7 +67,7 @@ export class IDB {
 	}
 
 	/**
-	 * Only called this inside `on_upgrade_needed()`
+	 * Only called this inside `onUpgrade()`
 	 */
 	createStore<T extends object>({name, indexs, keyPath}: CreateObjectStoreParams<T>): IDBObjectStore | null {
 		if (!this._db) return null

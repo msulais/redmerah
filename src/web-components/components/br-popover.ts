@@ -448,7 +448,7 @@ function _calculatePosition(
 		gap = 8,
 		padding = 8
 	} = options ?? {}
-	const screenWidth = window.innerWidth
+	const screenWidth = document.body.clientWidth
 	const screenHeight = window.innerHeight
 	const anchorRect = (pointer
 		? {

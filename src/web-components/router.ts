@@ -1,7 +1,19 @@
 import { GlobalAttributes } from "./global-attributes"
 
 const LISTENER = new Set<Function>()
-const EVENT_TYPE_ROUTE_CHANGED = "route-changed"
+const EVENT_TYPE_ROUTE_CHANGE = "biru-route-change"
+
+/**
+ * Update url without reloading page.
+ *
+ * @param {string} href Any valid href string
+ * @param {Event} event Event to preventDefault() to avoid reload page
+ */
+export function updateLocalRoute(href: string, event?: Event): void {
+	event?.preventDefault()
+	window.history.pushState({}, "", href)
+	window.dispatchEvent(new Event(EVENT_TYPE_ROUTE_CHANGE))
+}
 
 export function listenRouteChange(callback: (ev: Event) => unknown) {
 	if (LISTENER.size === 0) {
@@ -13,15 +25,22 @@ export function listenRouteChange(callback: (ev: Event) => unknown) {
 
 		window.addEventListener('hashchange', fn)
 		window.addEventListener('popstate', fn)
-		window.addEventListener(EVENT_TYPE_ROUTE_CHANGED, fn)
+		window.addEventListener(EVENT_TYPE_ROUTE_CHANGE, fn)
 		document.addEventListener("click", (e) => {
 			const target = e.target as HTMLElement
 			const anchor = target.closest("a")
-
-			if (anchor && !anchor.hasAttribute(GlobalAttributes.PreventDefault) && anchor.origin === window.location.origin) {
-				e.preventDefault()
-				window.history.pushState({}, "", anchor.href)
-				window.dispatchEvent(new Event(EVENT_TYPE_ROUTE_CHANGED))
+			if (
+				anchor
+				&& !anchor.hasAttribute(GlobalAttributes.PreventDefault)
+				&& anchor.origin === window.location.origin
+				&& anchor.pathname === window.location.pathname
+			) {
+				if (anchor.hash === window.location.hash) {
+					updateLocalRoute(anchor.href, e)
+				}
+				else {
+					updateLocalRoute(anchor.href)
+				}
 			}
 		})
 	}

@@ -1,15 +1,11 @@
 ---
-import { RoutesLinks } from '@/enums/links'
-import Html from '@/layouts/Html/index.astro'
-import Icon from '@/components/Icon/index.astro'
-import LinkButton from '@/components/Button/LinkButton.astro'
-import Appbar from '@/layouts/Appbar/index.astro'
-import Main from '@/layouts/Main/index.astro'
+import * as BrTheme from '@/web-components/components/br-theme.server.js'
+import * as Routes from '@/enums/routes.enum.js'
+import * as Icons from '@/enums/icons.enum.js'
+import Html from '@/layouts/Html2/index.astro'
+import AppBar from '@/layouts/AppBar/index.astro'
 import BottomBar from '@/layouts/BottomBar/index.astro'
-import CSS from './_404.module.scss'
-import { CButton } from '@/components/Button'
-import { IconCodes } from '@/enums/icons'
-import Splash from '@/layouts/Splash/index.astro'
+import Splash from '@/layouts/Splash2/index.astro'
 
 export const prerender = true
 ---
@@ -32,13 +28,27 @@ export const prerender = true
 			</defs>
 		</svg>
 	</Splash>
-	<Appbar/>
-	<Main classList={[CSS.main]}>
-		<h1><span>PAGE&nbsp;&nbsp;&nbsp;&nbsp;<br/><span style="color:rgb(var(--g-color-accent))">NOT</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><br/>FOUND</h1>
-		<LinkButton href={RoutesLinks.Home} LinkButtonVariant={CButton.Variant.Filled}>
-			<Icon IconCode={IconCodes.HomeFilled}/>
+	<AppBar/>
+	<div style={{
+		width: '100%',
+		maxWidth: '100%',
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'center',
+		minHeight: '100dvh',
+		backgroundColor: `rgb(var(${BrTheme.CSSVars.ColorBackground}))`,
+		justifyContent: 'center'
+	}}>
+		<h1 style={{
+			padding: '4rem 1rem 1rem 1rem',
+			fontSize: 'max(min(16vmin, 10.25rem), 4rem)'
+		}}><code>PAGE<br/>NOT<br/>FOUND</code></h1>
+		<a br:as="button" href={Routes.Home} br:variant="filled">
+			<br-icon set:html={Icons.HomeFilled}/>
 			Back to home
-		</LinkButton>
-	</Main>
+		</a>
+	</div>
 	<BottomBar/>
+	<script src="@/web-components/components/br-icon.ts"/>
+	<script src="@/web-components/components/button.ts"/>
 </Html>

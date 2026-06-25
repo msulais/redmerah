@@ -1,0 +1,1 @@
+export const ShareButton = 'E89A69DE'

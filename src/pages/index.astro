@@ -1,17 +1,14 @@
 ---
-import type { HEXColor } from '@/types/color'
-import { RoutesLinks } from '@/enums/links'
+import * as Routes from '@/enums/routes.enum.js'
+import * as Icons from '@/enums/icons.enum.js'
+import type { HEXColor, RGBColor } from '@/types/color'
 import { APPS } from '@/constants/apps'
-import { hexToHsl, hexToRgb, generateColorPalette } from '@/utils/color'
-import Splash from '@/layouts/Splash/index.astro'
-import Html from '@/layouts/Html/index.astro'
-import Icon from '@/components/Icon/index.astro'
-import LinkButton from '@/components/Button/LinkButton.astro'
-import { CButton } from '@/components/Button'
-import Appbar from '@/layouts/Appbar/index.astro'
+import { generateColorAccent, hexToHsl, hexToRgb, hslToRgb, rgbToHsl } from '@/utils/color'
+import Splash from '@/layouts/Splash2/index.astro'
+import Html from '@/layouts/Html2/index.astro'
+import AppBar from '@/layouts/AppBar/index.astro'
 import BottomBar from '@/layouts/BottomBar/index.astro'
 import SCSS from './_index.module.scss'
-import { IconCodes } from '@/enums/icons'
 import feature_uiUx from '@/assets/images/feature_ui_ux.svg'
 import feature_offlineWork from '@/assets/images/feature_offline_work.svg'
 import feature_localDB from '@/assets/images/feature_local_db.svg'
@@ -29,24 +26,26 @@ const features = [
 	},
 	{
 		title: 'Continue Working Offline',
-		description: 'No internet connection? No problem! Our apps work seamlessly offline, ensuring you can stay productive wherever you are.',
+		description: 'No internet connection? No problem! Most of our apps work seamlessly offline, ensuring you can stay productive wherever you are.',
 		icon: feature_offlineWork
 	},
 ]
 
 function appColorCustom(color: HEXColor): string {
 	const hsl = hexToHsl(color)
-	const palette = generateColorPalette(color)
-	const css = (d: HEXColor) => {
-		const rgb = hexToRgb(d)
+	const lightAccent   = generateColorAccent(hexToRgb(color), hexToRgb('#ffffff'))
+	const darkAccent    = generateColorAccent(hexToRgb(color), hexToRgb('#000000'))
+	const lightOnAccent = generateColorAccent(hslToRgb({h: rgbToHsl(lightAccent).h, l: .5, s: 1}), lightAccent)
+	const darkOnAccent  = generateColorAccent(hslToRgb({h: rgbToHsl(darkAccent).h, l: .5, s: 1}), darkAccent)
+	const css = (rgb: RGBColor) => {
 		return [Math.round(rgb.r * 0xff), Math.round(rgb.g * 0xff), Math.round(rgb.b * 0xff)].join(', ')
 	}
 	return [
 		`--hue:${hsl.h * 360}`,
-		`--color-accent-light: ${css(palette.color)}`,
-		`--color-on-accent-light: ${css(palette.onColor)}`,
-		`--color-accent-dark: ${css(palette.colorDark)}`,
-		`--color-on-accent-dark: ${css(palette.onColorDark)}`,
+		`--color-accent-light: ${css(lightAccent)}`,
+		`--color-on-accent-light: ${css(lightOnAccent)}`,
+		`--color-accent-dark: ${css(darkAccent)}`,
+		`--color-on-accent-dark: ${css(darkOnAccent)}`,
 	].join(';')
 }
 ---
@@ -69,18 +68,19 @@ function appColorCustom(color: HEXColor): string {
 			</defs>
 		</svg>
 	</Splash>
-	<Appbar route={RoutesLinks.Home}/>
+	<AppBar route={Routes.Home}/>
 	<div class={SCSS.body}>
 		<section class={SCSS.hero}>
 			<h1>Apps, Tasks,<br/>Productivity</h1>
 			<p>Discover a suite of powerful <span>apps</span> designed to simplify your <span>tasks</span> and enhance your <span>productivity</span></p>
-			<LinkButton
-				LinkButtonVariant={CButton.Variant.Filled}
-				href={RoutesLinks.Apps}
-				style={{width: 'fit-content'}}>
-				<Icon IconCode={IconCodes.Search}/>
+			<a
+				br:as="button"
+				br:variant="filled"
+				href={Routes.Apps}
+				style="width:fit-content">
+				<br-icon set:html={Icons.Search}/>
 				Browse apps
-			</LinkButton>
+			</a>
 			<img src='#'/>
 			<img src='#'/>
 			<img src='#'/>
@@ -97,23 +97,25 @@ function appColorCustom(color: HEXColor): string {
 					<div data-css="group">
 						<h3>{v.name}</h3>
 						<p style="flex:1">{v.description}</p>
-						<LinkButton
-							LinkButtonVariant={CButton.Variant.Filled}
+						<a
+							br:as="button"
+							br:variant="filled"
 							href={v.link}>
-							<Icon IconCode={IconCodes.ArrowRight}/>
+							<br-icon set:html={Icons.ArrowRight}/>
 							Open
-						</LinkButton>
+						</a>
 					</div>
 				</li>)}
 			</ul>
 			<div data-css="more">
-				<LinkButton
-					LinkButtonVariant={CButton.Variant.Filled}
-					href={RoutesLinks.Apps}
-					style={{width: 'fit-content'}}>
-					<Icon IconCode={IconCodes.Search}/>
+				<a
+					br:as="button"
+					br:variant="filled"
+					href={Routes.Apps}
+					style="width:fit-content">
+					<br-icon set:html={Icons.Search}/>
 					See more {APPS.length - 6} apps
-				</LinkButton>
+				</a>
 			</div>
 		</section>
 		<section class={SCSS.features}>
@@ -134,14 +136,16 @@ function appColorCustom(color: HEXColor): string {
 			{ 'We are also users. What’s good for you, good for us too.'.split(' ').map(v => <><span>{v}</span> </>) }
 		</q></p>
 	</BottomBar>
+	<script src="@/web-components/components/br-icon.ts"/>
+	<script src="@/web-components/components/button.ts"/>
 </Html>
 
 <script>
-	import { AnimationEasing } from "@/enums/animation"
-	import { isAnimationAllowed } from "@/utils/animation"
+	import * as BrTheme from '@/web-components/components/br-theme.js'
+	import * as AnimationEasing from "@/enums/animation-easing.enum.js"
 	import { APPS } from "@/constants/apps"
+	import { shuffleArray } from "@/utils/array"
 	import SCSS from './_index.module.scss'
-import { shuffleArray } from "@/utils/array"
 
 	function initHeroImagesAnimation(): void {
 		const refs_image = document.querySelectorAll<HTMLImageElement>(`.${SCSS.hero} img`)
@@ -163,7 +167,7 @@ import { shuffleArray } from "@/utils/array"
 
 			const imageWidth = 64
 			const viewport = 1080
-			const maxWidth = window.innerWidth
+			const maxWidth = document.body.clientWidth
 			const minLeft = maxWidth >= viewport? ((maxWidth - viewport) / 2) : 0
 			const left = ((maxWidth >= viewport? viewport : maxWidth) - imageWidth) * Math.random()
 			ref.style.setProperty('left', minLeft + left + 'px')
@@ -194,8 +198,9 @@ import { shuffleArray } from "@/utils/array"
 	function initQuoteAnimation(): void {
 		const ref_quote = document.getElementById('quote') as HTMLParagraphElement
 		const refs_span = document.querySelectorAll<HTMLSpanElement>('#quote span')
+		const ref_theme = document.querySelector(BrTheme.TAGNAME) as BrTheme.BiruThemeElement
 		const observer = new IntersectionObserver((entries) => {
-			if (!isAnimationAllowed()) {
+			if (!(ref_theme.biru.transitionDuration > 0)) {
 				return
 			}
 

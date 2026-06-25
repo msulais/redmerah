@@ -1,22 +1,13 @@
 ---
-import { RoutesLinks } from '@/enums/links'
-import { CSSClasses } from './_styles/_css'
-import Html from '@/layouts/Html/index.astro'
-import Appbar from '@/layouts/Appbar/index.astro'
-import BottomBar from '@/layouts/BottomBar/index.astro'
-import TextField from '@/components/TextField/index.astro'
-import Icon from '@/components/Icon/index.astro'
-import LinkButton from '@/components/Button/LinkButton.astro'
-import Splash from '@/layouts/Splash/index.astro'
+import * as Ids from './_scripts/shared/ids.enum.js'
+import * as Routes from '@/enums/routes.enum.js'
+import * as Styles from './_styles/styles.enum.js'
 import { APPS } from "@/constants/apps"
-import { CButton } from '@/components/Button'
-import { IconCodes } from '@/enums/icons'
-import { ElementIds } from './_scripts/_shared/_ids'
-import { pxToRem } from '@/utils/css'
-
-export const prerender = true
+import Html from '@/layouts/Html2/index.astro'
+import BottomBar from '@/layouts/BottomBar/index.astro'
+import AppBar from '@/layouts/AppBar/index.astro'
+import Splash from '@/layouts/Splash2/index.astro'
 ---
-
 <Html title="Apps • Redmerah">
 	<Splash>
 		<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -35,35 +26,45 @@ export const prerender = true
 			</defs>
 		</svg>
 	</Splash>
-	<Appbar route={RoutesLinks.Apps}/>
-	<main class={CSSClasses.main}>
-		<h1>Apps</h1>
-		<TextField
-			style={`width:min(100%,${pxToRem(360)}rem);margin:${pxToRem(16)}rem 0;padding-left:${pxToRem(8)}rem`}
-			TextFieldInputAttr={{
-				style: 'padding-left:0',
-				placeholder: 'Search app',
-				id: ElementIds.searchInput,
-				autocomplete: 'off'
-			}}>
-			<Icon IconCode={IconCodes.Search} slot="leading"/>
-		</TextField>
-		<ul class={CSSClasses.content} id={ElementIds.appList}>
-			{[...APPS].sort((a,b) => a.name.localeCompare(b.name)).map(app =>
-				<li data-tooltip={app.name}>
-					<LinkButton style={`--color: ${app.color}`} href={app.link} LinkButtonVariant={CButton.Variant.Tonal}>
-						<img
-							loading="eager"
-							src={app.logoUrl}
-							style={{width: pxToRem(48) + 'rem'}}
-							alt={app.name + ' logo'}
-						/>
-						<span>{app.name}</span>
-					</LinkButton>
-				</li>
-			)}
-		</ul>
+	<AppBar route={Routes.Apps}/>
+	<main class={Styles.Main}>
+		<div>
+			<h1>Apps</h1>
+			<input
+				placeholder="🔍 Search app"
+				br:as="textfield"
+				type="text"
+				id={Ids.SearchInput}
+			/>
+			<br-focusgroup br:direction="grid">
+				<ul
+					class={Styles.Content}
+					id={Ids.Content}>
+					{[...APPS].sort((a,b) => a.name.localeCompare(b.name)).map(app =>
+						<li>
+							<a
+								style={`--color: ${app.color}`}
+								href={app.link}
+								br:as="button"
+								br:tooltip={app.name}
+								br:variant="tonal">
+								<img
+									loading="eager"
+									src={app.logoUrl}
+									style={{width: '3rem'}}
+									alt={app.name + ' logo'}
+								/>
+								<span>{app.name}</span>
+							</a>
+						</li>
+					)}
+				</ul>
+			</br-focusgroup>
+		</div>
 	</main>
 	<BottomBar/>
-	<script src="./_scripts/_index.ts"/>
+	<script src="@/web-components/components/br-focusgroup.ts"/>
+	<script src="@/web-components/components/textfield.ts"/>
+	<script src="@/web-components/components/button.ts"/>
+	<script src="./_scripts/index.ts"/>
 </Html>

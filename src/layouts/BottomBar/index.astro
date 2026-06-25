@@ -1,20 +1,20 @@
 ---
-import { RoutesLinks, ExternalLinks } from '@/enums/links'
-import CSS from './_index.module.scss'
-import LinkButton from '@/components/Button/LinkButton.astro'
+import * as ExternalLinks from "@/enums/external-links.enum.js"
+import * as Routes from '@/enums/routes.enum.js'
+import * as Styles from './_styles/styles.enum.js'
 ---
 
 <div style="flex: 1"/>
-<footer class={CSS.footer}>
+<footer class={Styles.BottomBar}>
 	<slot/>
-	<p data-css-copyright>&copy; { new Date().getFullYear() } Redmerah</p>
-	<div data-css-links>
-		<LinkButton href={RoutesLinks.Home}>Home</LinkButton>
-		<LinkButton href={RoutesLinks.About}>About</LinkButton>
-		<LinkButton href={RoutesLinks.Apps}>Apps</LinkButton>
-		<LinkButton href={RoutesLinks.Privacy}>Privacy</LinkButton>
-		<LinkButton href={RoutesLinks.Terms}>Terms</LinkButton>
-		<LinkButton href={'mailto:' + ExternalLinks.ContactEmail}>Contact</LinkButton>
-		<LinkButton LinkButtonNewTab href={ExternalLinks.Donate}>Donate</LinkButton>
+	<p>&copy; {new Date().getFullYear()} Redmerah</p>
+	<div data-css="links">
+		<a br:as="button" href={Routes.Home}>Home</a>
+		<a br:as="button" href={Routes.Apps}>Apps</a>
+		<a br:as="button" href={Routes.About}>About</a>
+		<a br:as="button" href={ExternalLinks.Github}>Github</a>
+		<a br:as="button" href={'mailto:' + ExternalLinks.ContactEmail}>Contact</a>
+		<a br:as="button" href={ExternalLinks.Donate}>Donate</a>
 	</div>
 </footer>
+<script src="@/web-components/components/button.ts"/>

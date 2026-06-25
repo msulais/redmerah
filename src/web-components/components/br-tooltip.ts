@@ -142,7 +142,7 @@ export class BiruTooltipElement extends HTMLElement {
 			const rect_anchor = this._anchor.getBoundingClientRect()
 			const rect_tooltip = this._tooltip.getBoundingClientRect()
 			const viewportHeight = window.innerHeight
-			const viewportWidth = window.innerWidth
+			const viewportWidth = document.body.clientWidth
 			const gap = !byPointer? 16 : _isTouchScreen? 48 : 24, margin = 8
 			let x = 0
 			let y = 0

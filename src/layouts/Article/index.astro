@@ -1,10 +1,7 @@
 ---
-import { CButton } from '@/components/Button'
-import Button from '@/components/Button/index.astro'
-import Icon from '@/components/Icon/index.astro'
-import { IconCodes } from '@/enums/icons'
-import { ElementIds } from './_scripts/_shared/_ids'
-import { CSSClasses } from './_styles/_css'
+import * as Ids from './_scripts/shared/ids.enum.js'
+import * as Icons from '@/enums/icons.enum.js'
+import * as Styles from './_styles/styles.enum.js'
 
 type Props = {
 	title: string
@@ -18,8 +15,8 @@ type Props = {
 
 const props = Astro.props
 ---
-<article class={CSSClasses.article}>
-	<section class={CSSClasses.header}>
+<article class={Styles.Article}>
+	<section class={Styles.Header}>
 		<h1>{props.title}</h1>
 		{props.subtitle && <p>{props.subtitle}</p>}
 		{props.coverPictureUrl && <img src={props.coverPictureUrl} alt={props.title}/>}
@@ -38,16 +35,16 @@ const props = Astro.props
 				}</time>}
 			</p>
 			<div style={{flex: '1'}}/>
-			<Button
-				id={ElementIds.shareBtn}
-				ButtonVariant={CButton.Variant.Tonal}>
-				<Icon IconCode={IconCodes.ShareAndroid}/>
+			<button br:variant="tonal" id={Ids.ShareButton}>
+				<br-icon set:html={Icons.ShareAndroid}/>
 				Share
-			</Button>
+			</button>
 		</div>}
 	</section>
-	<div class={CSSClasses.body}>
+	<div class={Styles.Body}>
 		<slot />
 	</div>
 </article>
-<script src="./_scripts/_index.ts"/>
+<script src="./_scripts/index.ts"/>
+<script src="@/web-components/components/br-icon.ts"/>
+<script src="@/web-components/components/button.ts"/>

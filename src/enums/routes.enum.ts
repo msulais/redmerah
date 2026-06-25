@@ -1,7 +1,5 @@
 export const Home = '/'
 export const Apps = '/apps'
-export const Privacy = '/privacy'
-export const Terms = '/terms'
 export const About = '/about'
 export const Error = '404'
 

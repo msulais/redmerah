@@ -1,0 +1,38 @@
+.appbar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 15;
+	width: 100%;
+	background-color: rgba(var(--br-theme-color-background), .80);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	padding: .5rem;
+	display: flex;
+	justify-content: center;
+
+	@supports not (backdrop-filter: blur(16px)) {
+		background-color: rgb(var(--br-theme-color-background));
+	}
+
+	> div {
+		width: 67.5rem;
+		max-width: 100%;
+		display: flex;
+		justify-content: space-between;
+	}
+
+	& p {
+		display: flex;
+		align-self: center;
+		> a {
+			font-size: 1.25rem;
+		}
+	}
+
+	& nav {
+		display: flex;
+		align-items: center;
+		gap: 2px;
+	}
+}

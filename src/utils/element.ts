@@ -111,7 +111,9 @@ export function updateElementList<T extends Element, U>(
 	const refsLength = refs.length
 	for (let i = 0; i < refsLength; i++) {
 		const ref = refs[i]
-		if (!ref) {continue}
+		if (!ref) {
+			continue
+		}
 
 		if (i > dataLength-1) {
 			ref.remove()

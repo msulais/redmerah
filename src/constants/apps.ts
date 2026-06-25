@@ -1,5 +1,5 @@
 import type { AppItem } from '@/types/apps'
-import { RoutesLinks } from '@/enums/links'
+import * as Routes from '@/enums/routes.enum.js'
 import logoMarkdownConverter from '@/assets/images/apps/markdown-converter.svg'
 import logoRandomizer from '@/assets/images/apps/randomizer.svg'
 import logoColorGenerator from '@/assets/images/apps/color-generator.svg'
@@ -29,240 +29,192 @@ export const APP_CSS_UNIT_CONVERTER: AppItem = {
 	logoUrl: logoCSSUnitConverter.src,
 	name: 'CSS Unit Converter',
 	description: "Instantly convert px, rem, em, %, vw/vh, angle and time formats. Fast, accurate, and copy-ready.",
-	link: RoutesLinks.CSSUnitConverter,
+	link: Routes.CSSUnitConverter,
 	color: '#F81B1B',
-	buildNumber: 1,
-	buildVersion: '0.0.1',
 }
 
 export const APP_CONTRAST_CHECKER: AppItem = {
 	logoUrl: logoContrastChecker.src,
 	name: 'Contrast Checker',
 	description: "Check color contrast for websites, apps, or print materials. Ensure your text is readable on any background.",
-	link: RoutesLinks.ContrastChecker,
+	link: Routes.ContrastChecker,
 	color: '#0063F7',
-	buildNumber: 1,
-	buildVersion: '0.0.1',
 }
 
 export const APP_VIBRATOR: AppItem = {
 	logoUrl: logoVibrator.src,
 	name: 'Vibrator',
 	description: "Instantly test the vibration on any compatible device. Use Vibrator to check your hardware's haptic feedback with a variety of patterns and durations in your browser.",
-	link: RoutesLinks.Vibrator,
+	link: Routes.Vibrator,
 	color: '#1AE5E5',
-	buildNumber: 1,
-	buildVersion: '0.0.1',
 }
 
 export const APP_NETWORK_INFORMATION: AppItem = {
 	logoUrl: logoNetworkInformation.src,
 	name: 'Network Information',
 	description: "Get detailed information about your network connection with Network Information. This app uses the Network Information API to provide real-time data on your connection type, speed, and status.",
-	link: RoutesLinks.NetworkInformation,
+	link: Routes.NetworkInformation,
 	color: '#FFBD00',
-	buildNumber: 1,
-	buildVersion: '0.0.1',
 }
 
 export const APP_COMPASS: AppItem = {
 	logoUrl: logoCompass.src,
 	name: 'Compass',
 	description: 'Get a true compass reading instantly with the Compass web app. It\'s a simple, internet-free tool for finding your way, whether you\'re hiking, navigating, or just curious.',
-	link: RoutesLinks.Compass,
+	link: Routes.Compass,
 	color: '#1FFF3C',
-	buildNumber: 1,
-	buildVersion: '0.0.1',
 }
 
 export const APP_GEOLOCATION: AppItem = {
 	logoUrl: logoGeolocation.src,
 	name: 'Geolocation',
 	description: 'Easily test and utilize the browser\'s Geolocation API with our straightforward web app. Get your current latitude, longitude, accuracy, and altitude without any hassle.',
-	link: RoutesLinks.Geolocation,
+	link: Routes.Geolocation,
 	color: '#FF00FF',
-	buildNumber: 1,
-	buildVersion: '0.0.1',
 }
 
 export const APP_JAVASCRIPT_MINIFIER: AppItem = {
 	logoUrl: logoJavaScriptMinifer.src,
 	name: 'JavaScript Minifier',
 	description: 'Optimize your website\'s performance with our JavaScript Minifier. Quickly minify JavaScript code for faster load times and reduced file sizes.',
-	link: RoutesLinks.JavaScriptMinifier,
+	link: Routes.JavaScriptMinifier,
 	color: '#FFC500',
-	buildNumber: 2,
-	buildVersion: '0.0.2',
 }
 
 export const APP_XML_ESCAPE: AppItem = {
 	logoUrl: logoXmlEscape.src,
 	name: 'XML Escape',
 	description: 'Effortlessly escape and unescape XML entities with our user-friendly web app. Ensure your data is correctly formatted for XML with our reliable, privacy-focused tool. No third-party dependencies, enhancing performance and security.',
-	link: RoutesLinks.XMLEscape,
+	link: Routes.XMLEscape,
 	color: '#FFF600',
-	buildNumber: 1,
-	buildVersion: '0.0.1',
 }
 
 export const APP_CLOCK: AppItem = {
 	logoUrl: logoClock.src,
 	name: 'Clock',
 	description: 'Discover our versatile clock web app! Display current time, set timers, and more. Your all-in-one time management solution.',
-	link: RoutesLinks.Clock,
+	link: Routes.Clock,
 	color: '#0BEA57',
-	buildNumber: 1,
-	buildVersion: '0.0.1',
 }
 
 export const APP_LATEX_VIEWER: AppItem = {
 	logoUrl: logoLatexViewer.src,
 	name: 'LaTeX Viewer',
 	description: 'Visualize your LaTeX code effortlessly. Our app renders complex mathematical expressions and scientific notation, making it perfect for students, researchers, and educators.',
-	link: RoutesLinks.LatexViewer,
+	link: Routes.LatexViewer,
 	color: '#C247FF',
-	buildNumber: 4,
-	buildVersion: '0.0.4',
 }
 
 export const APP_EMOJI_PICKER: AppItem = {
 	logoUrl: logoEmojiPicker.src,
 	name: 'Emoji Picker',
 	description: 'Emoji Picker is your ultimate emoji companion. Browse, search, and copy emojis with ease. Express yourself with the perfect emoji every time.',
-	link: RoutesLinks.EmojiPicker,
+	link: Routes.EmojiPicker,
 	color: '#EEB62F',
-	buildNumber: 2,
-	buildVersion: '0.0.2',
 }
 
 export const APP_COLOR_GRADIENT: AppItem = {
 	logoUrl: logoColorGradient.src,
 	name: 'Color Gradient',
 	description: 'Design beautiful color gradients with our intuitive app. Choose from linear and radial gradients, and stack them for complex effects. Generate clean CSS code to implement your designs.',
-	link: RoutesLinks.ColorGradient,
+	link: Routes.ColorGradient,
 	color: '#7BFF2D',
-	buildNumber: 5,
-	buildVersion: '0.0.9',
 }
 
 export const APP_QR_CODE: AppItem = {
 	logoUrl: logoQRCode.src,
 	name: 'QR Code',
 	description: 'Create and read QR codes effortlessly with our user-friendly app. Share information, websites, contacts, and more using QR codes.',
-	link: RoutesLinks.QRCode,
+	link: Routes.QRCode,
 	color: '#FF2222',
-	buildNumber: 3,
-	buildVersion: '0.1.3',
 }
 
 export const APP_BATTERY: AppItem = {
 	logoUrl: logoBattery.src,
 	name: 'Battery',
 	description: 'Stay informed about your device\'s battery health with our accurate and easy-to-use app. Track battery level, charging status, and estimated time to full.',
-	link: RoutesLinks.Battery,
+	link: Routes.Battery,
 	color: '#FF800B',
-	buildNumber: 3,
-	buildVersion: '0.1.2',
 }
 
 export const APP_SASS_CONVERTER: AppItem = {
 	logoUrl: logoSassConverter.src,
 	name: 'SASS Converter',
 	description: 'Simplify your SASS/SCSS development process with our powerful online converter. Quickly and accurately translate your code into clean, optimized CSS.',
-	link: RoutesLinks.SASSConverter,
+	link: Routes.SASSConverter,
 	color: '#FF0056',
-	buildNumber: 4,
-	buildVersion: '0.1.1',
 }
 
 export const APP_TASKS: AppItem = {
 	logoUrl: logoTasks.src,
 	name: 'Tasks',
 	description: 'Simple and easy-to-use app that helps you stay organized and on track. With Tasks, you can create tasks, add them to lists, and mark them as completed.',
-	link: RoutesLinks.Tasks,
+	link: Routes.Tasks,
 	color: '#9735E4',
-	buildNumber: 5,
-	buildVersion: '0.2.0',
 }
 
 export const APP_CALCULATOR: AppItem = {
 	logoUrl: logoCalculator.src,
 	name: 'Calculator',
 	description: 'Perform a wide range of calculations with our versatile calculator. From basic arithmetic to advanced scientific functions and programmer tools, we\'ve got you covered.',
-	link: RoutesLinks.Calculator,
+	link: Routes.Calculator,
 	color: '#026BE3',
-	buildNumber: 8,
-	buildVersion: '0.1.7',
 }
 
 export const APP_RANDOMIZER: AppItem = {
 	logoUrl: logoRandomizer.src,
 	name: 'Randomizer',
 	description: 'Explore our Randomizer Hub for a variety of tools that add a touch of unpredictability to your life. Generate random strings, words, numbers, colors, and even assemble teams. Embrace the unexpected!',
-	link: RoutesLinks.Randomizer,
+	link: Routes.Randomizer,
 	color: '#00FF48',
-	buildNumber: 7,
-	buildVersion: '0.1.8',
 }
 
 export const APP_COLOR_GENERATOR: AppItem = {
 	logoUrl: logoColorGenerator.src,
 	name: 'Color Generator',
 	description: 'Generate accent pallete color for your app. Including color for light and dark mode.',
-	link: RoutesLinks.ColorGenerator,
+	link: Routes.ColorGenerator,
 	color: '#39BBFF',
-	buildNumber: 5,
-	buildVersion: '0.1.6',
 }
 
 export const APP_MARKDOWN_CONVERTER: AppItem = {
 	logoUrl: logoMarkdownConverter.src,
 	name: 'Markdown Converter',
 	description: 'Convert markdown to HTML effortlessly with our online markdown converter. Create beautifully formatted web content from plain text using our user-friendly tool.',
-	link: RoutesLinks.MarkdownConverter,
+	link: Routes.MarkdownConverter,
 	color: '#01B92A',
-	buildNumber: 8,
-	buildVersion: '0.1.8',
 }
 
 export const APP_COLOR_PICKER: AppItem = {
 	logoUrl: logoColorPicker.src,
 	name: 'Color Picker',
 	description: 'Quickly and easily pick the perfect color with our online color picker tool.',
-	link: RoutesLinks.ColorPicker,
+	link: Routes.ColorPicker,
 	color: '#FF0066',
-	buildNumber: 4,
-	buildVersion: '0.0.5',
 }
 
 export const APP_MEDIA_PLAYER: AppItem = {
 	logoUrl: logoMediaPlayer.src,
 	name: 'Media Player',
 	description: 'Play any media format from images to audio/video files. Load from your device or stream via URL directly in browser.',
-	link: RoutesLinks.MediaPlayer,
+	link: Routes.MediaPlayer,
 	color: '#0195FF',
-	buildNumber: 1,
-	buildVersion: '0.0.1',
 }
 
 export const APP_URL_ENCODER: AppItem = {
 	logoUrl: logoUrlEncoder.src,
 	name: 'URL Encoder',
 	description: 'Encode URLs for web safety or decode them to readable text. Our free tool handles special characters, spaces, and UTF-8 encoding/decoding instantly. Perfect for developers and SEO.',
-	link: RoutesLinks.URLEncoder,
+	link: Routes.URLEncoder,
 	color: '#00AAFF',
-	buildNumber: 1,
-	buildVersion: '0.0.1',
 }
 
 export const APP_DEAD_PIXEL_TEST: AppItem = {
 	logoUrl: logoDeadPixelTest.src,
 	name: 'Dead Pixel Test',
 	description: 'Test your screen for dead pixels, stuck pixels, and other display anomalies with our comprehensive web app. Get a crystal-clear view of your monitor\'s health.',
-	link: RoutesLinks.DeadPixelTest,
+	link: Routes.DeadPixelTest,
 	color: '#FF0000',
-	buildNumber: 1,
-	buildVersion: '0.0.1',
 }
 
 export const APPS: AppItem[] = [

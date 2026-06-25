@@ -1,0 +1,132 @@
+.article {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background-color: rgb(var(--br-theme-color-background));
+}
+
+.body {
+	width: 50rem;
+	max-width: 100%;
+	padding: 1.5rem;
+
+	& :is(p, li) {
+		font-size: 1.25rem;
+		text-align: justify;
+
+		@media (max-width: 31.25rem) {
+			font-size: 1rem;
+		}
+
+		> a {
+			color: rgb(var(--br-theme-color-accent));
+			transition-duration: var(--br-theme-duration-transition);
+			text-decoration: underline;
+
+			&:hover {
+				background-color: rgb(var(--br-theme-color-accent));
+				color: rgb(var(--br-theme-color-on-accent));
+				text-decoration: none;
+			}
+		}
+	}
+
+	& h2 {
+		scroll-margin-top: 4rem;
+		font-size: 2rem;
+		margin-top: 1em;
+		font-weight: 500;
+		color: rgb(var(--br-theme-color-on-surface));
+
+		&:target {
+			color: rgb(var(--br-theme-color-accent));
+		}
+
+		> a {
+			color: inherit;
+			transition-duration: var(--br-theme-duration-transition);
+			text-underline-offset: .25rem;
+			text-decoration: none;
+
+			&:hover {
+				text-decoration: underline;
+			}
+
+			&:active {
+				text-decoration: underline dashed;
+			}
+		}
+	}
+
+	& :is(ul, ol) {
+		margin-left: 2em;
+	}
+
+	> :not(:first-child) {
+		margin-top: 1em;
+	}
+
+	> section > :not(:first-child) {
+		margin-top: 1em;
+	}
+}
+
+.header {
+	width: 69.5rem;
+	max-width: 100%;
+	padding: 0 1.5rem;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: .5rem;
+	margin-top: 4rem;
+
+	> h1 {
+		font-weight: normal;
+		font-size: min(4.5rem, 8dvw);
+		width: 100%;
+	}
+
+	> p {
+		width: 100%;
+		font-weight: bold;
+		font-size: min(2rem, 6dvw);
+		color: rgba(var(--br-theme-color-on-surface), .8);
+		margin-bottom: .5em;
+	}
+
+	> img {
+		width: 100%;
+		border-radius: .5rem;
+		box-shadow: 0 .5rem .5rem rgba(0, 0, 0, .25);
+	}
+
+	> div {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		border: 1 solid rgba(var(--br-theme-color-on-surface), .32);
+		border-radius: .5rem;
+		padding: .5rem 1rem;
+		width: 100%;
+
+		> img {
+			min-width: 1.5rem;
+			max-width: 1.5rem;
+			min-height: 1.5rem;
+			max-height: 1.5rem;
+		}
+
+		> p {
+			&[data-css-empty] {
+				display: none;
+			}
+
+			> time {
+				font-size: .875rem;
+				color: rgba(var(--br-theme-color-on-surface), .8)
+			}
+		}
+	}
+}
