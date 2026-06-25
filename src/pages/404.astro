@@ -1,11 +1,11 @@
 ---
-import * as BrTheme from '../web-components/components/br-theme.server.js'
-import * as Routes from '../enums/routes.enum.js'
-import * as Icons from '../enums/icons.enum.js'
-import Html from '../layouts/Html2/index.astro'
-import AppBar from '../layouts/AppBar/index.astro'
-import BottomBar from '../layouts/BottomBar/index.astro'
-import Splash from '../layouts/Splash2/index.astro'
+import * as BrTheme from '@/web-components/components/br-theme.server.js'
+import * as Routes from '@/enums/routes.enum.js'
+import * as Icons from '@/enums/icons.enum.js'
+import Html from '@/layouts/Html2/index.astro'
+import AppBar from '@/layouts/AppBar/index.astro'
+import BottomBar from '@/layouts/BottomBar/index.astro'
+import Splash from '@/layouts/Splash2/index.astro'
 
 export const prerender = true
 ---
@@ -49,6 +49,6 @@ export const prerender = true
 		</a>
 	</div>
 	<BottomBar/>
-	<script src="../web-components/components/br-icon.ts"/>
-	<script src="../web-components/components/button.ts"/>
+	<script src="@/web-components/components/br-icon.ts"/>
+	<script src="@/web-components/components/button.ts"/>
 </Html>
