@@ -7,10 +7,9 @@ import * as Icons from '@/enums/icons.enum.js'
 import * as Routes from '@/enums/routes.enum.js'
 import * as ExternalLinks from '@/enums/external-links.enum.js'
 import * as Styles from './_styles/styles.enum.js'
-import type { EnumOf } from '@/types/collections'
 
 type Props = {
-	route?: EnumOf<typeof Routes>
+	route?: typeof Routes[keyof typeof Routes]
 }
 
 const { route } = Astro.props
