@@ -1,12 +1,12 @@
 ---
 import * as Ids from './_scripts/shared/ids.enum.js'
-import * as Routes from '@/enums/routes.enum.js'
+import * as Routes from '../../enums/routes.enum.js'
 import * as Styles from './_styles/styles.enum.js'
-import { APPS } from "@/constants/apps"
-import Html from '@/layouts/Html2/index.astro'
-import BottomBar from '@/layouts/BottomBar/index.astro'
-import AppBar from '@/layouts/AppBar/index.astro'
-import Splash from '@/layouts/Splash2/index.astro'
+import { APPS } from "../../constants/apps"
+import Html from '../../layouts/Html2/index.astro'
+import BottomBar from '../../layouts/BottomBar/index.astro'
+import AppBar from '../../layouts/AppBar/index.astro'
+import Splash from '../../layouts/Splash2/index.astro'
 ---
 <Html title="Apps • Redmerah">
 	<Splash>
@@ -63,8 +63,8 @@ import Splash from '@/layouts/Splash2/index.astro'
 		</div>
 	</main>
 	<BottomBar/>
-	<script src="@/web-components/components/br-focusgroup.ts"/>
-	<script src="@/web-components/components/textfield.ts"/>
-	<script src="@/web-components/components/button.ts"/>
+	<script src="../../web-components/components/br-focusgroup.ts"/>
+	<script src="../../web-components/components/textfield.ts"/>
+	<script src="../../web-components/components/button.ts"/>
 	<script src="./_scripts/index.ts"/>
 </Html>
