@@ -1,5 +1,5 @@
 # Credits
 
-* Sound Effect `simple-ringtone-84595.mp3` by <a href="https://pixabay.com/users/freesound_community-46691455/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=84595">freesound_community</a> from <a href="https://pixabay.com/sound-effects//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=84595">Pixabay</a>
-* Image `color-4158152_1920.jpg` by <a href="https://pixabay.com/users/stux-12364/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=4158152">Stefan Schweihofer</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=4158152">Pixabay</a>
-* Icons `FluentSystemIcons-Resizable.[*any]` by Microsoft from [fluentui-system-icons](https://github.com/microsoft/fluentui-system-icons)
+* Sound Effect `/src/assets/audio/simple-ringtone-84595.mp3` by <a href="https://pixabay.com/users/freesound_community-46691455/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=84595">freesound_community</a> from <a href="https://pixabay.com/sound-effects//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=84595">Pixabay</a>
+* Icons `/icons/FluentSystemIcons-Resizable.[*any]` by Microsoft from [fluentui-system-icons](https://github.com/microsoft/fluentui-system-icons)
+* Video `/src/assets/video/271161_small.mp4` by <a href="https://pixabay.com/users/mcpix22-26289376/?utm_source=link-attribution&utm_medium=referral&utm_campaign=video&utm_content=271161">Daniel McWilliams</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=video&utm_content=271161">Pixabay</a>

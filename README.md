@@ -1,52 +1,42 @@
-# Astro Starter Kit: Basics
+# Redmerah
 
-```sh
-bun create astro@latest -- --template basics
-```
+A collection of powerful, framework-free utility applications built with native web standards that run entirely in your browser.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+🌍 **Live Website:** [redmerah.com](https://redmerah.com)
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+![Redmerah hero image](/src/assets/images/about_page.jpg)
 
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
+## 🚀 Overview
 
-## 🚀 Project Structure
+Redmerah is a suite of web applications designed to push the limits of what's possible using standard Web APIs. The core philosophy of this project is **client-side execution and absolute privacy**.
 
-Inside of your Astro project, you'll see the following folders and files:
+Every app in this repository operates without a backend server. With the exception of utilities requiring specific location data (like the Geolocation API), these tools do not require an active internet connection once loaded. Everything happens locally on your machine, inside your browser.
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
-```
+## ✨ Key Features
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+* **100% Client-Side:** No server operations, no backend processing, and no data leaves your device.
+* **Offline Capable:** Designed to work without an internet connection once the static assets are loaded.
+* **Privacy-First:** Because data is processed and stored locally in the browser, user privacy is guaranteed by design.
+* **Ad-Free & Free to Use:** A pure, uninterrupted user experience without paywalls, trackers, or advertisements.
+* **Reliable UI/UX:** A strong emphasis on creating intuitive, responsive, and robust user experiences.
+* **Hand-Crafted:** Carefully engineered from the ground up. All applications are built by a human developer, with AI utilized purely as an assistant, ensuring deliberate architecture and high-quality code.
 
-## 🧞 Commands
+## 🛠️ Tech Stack
 
-All commands are run from the root of the project, from a terminal:
+This project focuses on a lightweight, modern, and vanilla approach to web development. It uses Astro to manage the multi-app architecture while compiling down to zero-overhead static assets:
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `bun install`             | Installs dependencies                            |
-| `bun dev`             | Starts local dev server at `localhost:4321`      |
-| `bun build`           | Build your production site to `./dist/`          |
-| `bun preview`         | Preview your build locally, before deploying     |
-| `bun astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `bun astro -- --help` | Get help using the Astro CLI                     |
+* **Astro:** Acts as the static site generator and orchestrator, seamlessly handling routing and building the multiple apps in this repository.
+* **Static HTML:** Fast, cacheable, and easily deployed.
+* **Vanilla TypeScript:** Type-safe development compiled down to highly optimized JavaScript.
+* **SCSS:** Clean, modular, and maintainable styling.
+* **Web Components:** Encapsulated, reusable custom elements utilizing native web APIs.
 
-## 👀 Want to learn more?
+## 📖 Why I Built This
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Redmerah was originally created to solve my own personal use cases. I wanted utility tools that were completely free, completely devoid of ads, and incredibly easy to use. By keeping all operations local to the browser, there are no subscriptions, no hidden fees, and not a single penny to pay.
+
+What started out of practical necessity has steadily evolved over time, becoming my main hobby project as I continue to build and refine new tools.
+
+## 📄 License
+
+This project is licensed under the **BSD 3-Clause License**. See the `LICENSE` file for details.
