@@ -18,7 +18,7 @@ const _ref_content = $(Ids.Content) as HTMLUListElement
 let _time_search: ReturnType<typeof setTimeout> | undefined
 
 function _search(): void {
-	clearTimeout('')
+	clearTimeout(_time_search)
 	_time_search = setTimeout(() => {
 		const search = sg_search().trim().replace(/\s+/g, '')
 		let arr = SORTED_APPS
