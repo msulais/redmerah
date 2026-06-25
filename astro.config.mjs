@@ -9,7 +9,7 @@ export default defineConfig({
 		css: { modules: { generateScopedName: '[hash:base64:8]' }},
 		resolve: {
 			alias: {
-				'@': '/src',
+				'@': './src',
 			},
 		},
 	},
