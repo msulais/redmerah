@@ -7,11 +7,6 @@ export default defineConfig({
 	scopedStyleStrategy: 'class',
 	vite: {
 		css: { modules: { generateScopedName: '[hash:base64:8]' }},
-		resolve: {
-			alias: {
-				'@': 'src',
-			},
-		},
 	},
 	output: 'static',
 	adapter: vercel(),
