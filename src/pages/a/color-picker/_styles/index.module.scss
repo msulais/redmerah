@@ -103,6 +103,11 @@
 		position: absolute;
 		transition-property: border-color, background-color;
 		transition-duration: var(--br-theme-duration-transition);
+
+		@media (hover: none) {
+			width: 2.25rem;
+			height: 2.25rem;
+		}
 	}
 
 	> canvas {
@@ -147,6 +152,11 @@
 		position: absolute;
 		transition-property: border-color, background-color;
 		transition-duration: var(--br-theme-duration-transition);
+
+		@media (hover: none) {
+			width: 2.25rem;
+			height: 2.25rem;
+		}
 	}
 }
 
@@ -154,17 +164,24 @@
 	--gradient: #fff;
 	--color: #fff;
 	--border-color: #fff;
+	--height: 1.25rem;
 	-webkit-appearance: none;
 	appearance: none;
 	width: 100%;
 	background-color: transparent;
 	border-radius: 9999999px;
+	margin-top: .25rem;
+
+	@media (hover: none) {
+		--height: 2.75rem;
+		margin-top: 2rem;
+	}
 
 	&::-webkit-slider-runnable-track {
 		-webkit-appearance: none;
 		appearance: none;
 		cursor: pointer;
-		height: .75rem;
+		height: calc(var(--height) * 0.6);
 		box-shadow: 0 0 .25rem rgba(0, 0, 0, .3);
 		border-radius: 9999999px;
 		background: var(--gradient);
@@ -172,7 +189,7 @@
 
 	&::-moz-range-track {
 		appearance: none;
-		height: .75rem;
+		height: calc(var(--height) * 0.6);
 		cursor: pointer;
 		box-shadow: 0 0 .25rem rgba(0, 0, 0, .3);
 		border-radius: 99999px;
@@ -183,10 +200,10 @@
 		-webkit-appearance: none;
 		position: relative;
 		cursor: pointer;
-		top: -0.25rem;
-		width: 1.25rem;
+		top: calc(var(--height) * -0.2);
+		width: var(--height);
 		box-shadow: 0 0 .25rem rgba(0, 0, 0, .3);
-		height: 1.25rem;
+		height: var(--height);
 		border-radius: 50%;
 		border: 2px solid var(--border-color);
 		background: var(--color);
@@ -201,10 +218,10 @@
 	&::-moz-range-thumb {
 		position: relative;
 		cursor: pointer;
-		top: -0.25rem;
+		top: calc(var(--height) * -0.2);
 		box-shadow: 0 0 .25rem rgba(0, 0, 0, .3);
-		width: 1.25rem;
-		height: 1.25rem;
+		width: var(--height);
+		height: var(--height);
 		border-radius: 50%;
 		border: 2px solid var(--border-color);
 		background: var(--color);

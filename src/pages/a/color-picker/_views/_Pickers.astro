@@ -62,7 +62,6 @@ import { colorContrastPercentage, hexToRgb, hslToRgb, hsvToHex, hsvToRgb, hwbToR
 			'--color': `hsl(${Math.round(Constant.DEFAULT_COLOR_IN_HSL.h * 360)},100%,50%)`,
 			'--border-color': colorContrastPercentage(hslToRgb({h: Constant.DEFAULT_COLOR_IN_HSL.h, s: 1, l: .5}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(90deg in hsl longer hue,#FF0000 0%,#FF0000 100%)',
-			marginTop: '.75rem'
 		}}
 		type="range"
 		min="0"
@@ -92,7 +91,6 @@ import { colorContrastPercentage, hexToRgb, hslToRgb, hsvToHex, hsvToRgb, hwbToR
 			'--color': `hsl(${Math.round(Constant.DEFAULT_COLOR_IN_HSL.h * 360)},100%,50%)`,
 			'--border-color': colorContrastPercentage(hslToRgb({h: Constant.DEFAULT_COLOR_IN_HSL.h, s: 1, l: .5}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(90deg in hsl longer hue,#FF0000 0%,#FF0000 100%)',
-			marginTop: '.75rem'
 		}}
 		type="range"
 		min="0"
@@ -122,7 +120,6 @@ import { colorContrastPercentage, hexToRgb, hslToRgb, hsvToHex, hsvToRgb, hwbToR
 			'--color': Constant.DEFAULT_COLOR,
 			'--border-color': colorContrastPercentage(Constant.DEFAULT_COLOR_IN_RGB, {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(to right,var(--max-value-color) 0%,#000 100%)',
-			marginTop: '.75rem'
 		}}
 		type="range"
 		min="0"
@@ -142,7 +139,7 @@ import { colorContrastPercentage, hexToRgb, hslToRgb, hsvToHex, hsvToRgb, hwbToR
 			'--color': `rgb(${Math.round(Constant.DEFAULT_COLOR_IN_RGB.r * 0xff)},0,0)`,
 			'--border-color': colorContrastPercentage({...Constant.DEFAULT_COLOR_IN_RGB, g: 0, b: 0}, {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(to right,#000 0%,#FF0000 100%)',
-			marginTop: '.25rem'
+			marginTop: '.5rem'
 		}}
 		type="range"
 		min="0"
@@ -158,7 +155,7 @@ import { colorContrastPercentage, hexToRgb, hslToRgb, hsvToHex, hsvToRgb, hwbToR
 			'--color': `rgb(0,${Math.round(Constant.DEFAULT_COLOR_IN_RGB.g * 0xff)},0)`,
 			'--border-color': colorContrastPercentage({...Constant.DEFAULT_COLOR_IN_RGB, r: 0, b: 0}, {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(to right,#000 0%,#00FF00 100%)',
-			marginTop: '.25rem'
+			marginTop: '.5rem'
 		}}
 		type="range"
 		min="0"
@@ -174,7 +171,7 @@ import { colorContrastPercentage, hexToRgb, hslToRgb, hsvToHex, hsvToRgb, hwbToR
 			'--color': `rgb(0,0,${Math.round(Constant.DEFAULT_COLOR_IN_RGB.b * 0xff)})`,
 			'--border-color': colorContrastPercentage({...Constant.DEFAULT_COLOR_IN_RGB, g: 0, r: 0}, {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(to right,#000 0%,#0000FF 100%)',
-			marginTop: '.25rem'
+			marginTop: '.5rem'
 		}}
 		type="range"
 		min="0"
@@ -194,7 +191,7 @@ import { colorContrastPercentage, hexToRgb, hslToRgb, hsvToHex, hsvToRgb, hwbToR
 			'--color': `hsl(${Math.round(Constant.DEFAULT_COLOR_IN_HSL.h * 360)},100%,50%)`,
 			'--border-color': colorContrastPercentage(hslToRgb({...Constant.DEFAULT_COLOR_IN_HSL, s: 1, l: 0.5}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(90deg in hsl longer hue,#FF0000 0%,#FF0000 100%)',
-			marginTop: '.25rem'
+			marginTop: '.5rem'
 		}}
 		type="range"
 		min="0"
@@ -211,7 +208,7 @@ import { colorContrastPercentage, hexToRgb, hslToRgb, hsvToHex, hsvToRgb, hwbToR
 			'--color': `hsl(${Math.round(Constant.DEFAULT_COLOR_IN_HSL.h * 360)},${Math.round(Constant.DEFAULT_COLOR_IN_HSL.s * 100)}%,50%)`,
 			'--border-color': colorContrastPercentage(hslToRgb({...Constant.DEFAULT_COLOR_IN_HSL, l: 0.5}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(to right,hsl(var(--hue),0%,50%) 0%,hsl(var(--hue),100%,50%) 100%)',
-			marginTop: '.25rem'
+			marginTop: '.5rem'
 		}}
 		type="range"
 		min="0"
@@ -227,7 +224,7 @@ import { colorContrastPercentage, hexToRgb, hslToRgb, hsvToHex, hsvToRgb, hwbToR
 			'--color': `hsl(0,0%,${Math.round(Constant.DEFAULT_COLOR_IN_HSL.l * 100)}%)`,
 			'--border-color': colorContrastPercentage(hslToRgb({...Constant.DEFAULT_COLOR_IN_HSL, h: 0, s: 0}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(to right,#000 0%,#fff 100%)',
-			marginTop: '.25rem'
+			marginTop: '.5rem'
 		}}
 		type="range"
 		min="0"
@@ -247,7 +244,7 @@ import { colorContrastPercentage, hexToRgb, hslToRgb, hsvToHex, hsvToRgb, hwbToR
 			'--color': `hsl(180,100%,${Constant.DEFAULT_COLOR_IN_CMYK.c * 50}%)`,
 			'--border-color': colorContrastPercentage(hslToRgb({h: 180 / 360, s: 1, l: Constant.DEFAULT_COLOR_IN_CMYK.c * 0.5}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(90deg,#000 0%,#00FFFF 100%)',
-			marginTop: '.25rem'
+			marginTop: '.5rem'
 		}}
 		type="range"
 		min="0"
@@ -263,7 +260,7 @@ import { colorContrastPercentage, hexToRgb, hslToRgb, hsvToHex, hsvToRgb, hwbToR
 			'--color': `hsl(300,100%,${Constant.DEFAULT_COLOR_IN_CMYK.m * 50}%)`,
 			'--border-color': colorContrastPercentage(hslToRgb({h: 300 / 360, s: 1, l: Constant.DEFAULT_COLOR_IN_CMYK.m * 0.5}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(90deg,#000 0%,#FF00FF 100%)',
-			marginTop: '.25rem'
+			marginTop: '.5rem'
 		}}
 		type="range"
 		min="0"
@@ -279,7 +276,7 @@ import { colorContrastPercentage, hexToRgb, hslToRgb, hsvToHex, hsvToRgb, hwbToR
 			'--color': `hsl(60,100%,${Constant.DEFAULT_COLOR_IN_CMYK.y * 50}%)`,
 			'--border-color': colorContrastPercentage(hslToRgb({h: 60 / 360, s: 1, l: Constant.DEFAULT_COLOR_IN_CMYK.y * 0.5}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(90deg,#000 0%,#FFFF00 100%)',
-			marginTop: '.25rem'
+			marginTop: '.5rem'
 		}}
 		type="range"
 		min="0"
@@ -295,7 +292,7 @@ import { colorContrastPercentage, hexToRgb, hslToRgb, hsvToHex, hsvToRgb, hwbToR
 			'--color': `hsl(0,0%,${(1-Constant.DEFAULT_COLOR_IN_CMYK.k) * 100}%)`,
 			'--border-color': colorContrastPercentage(hslToRgb({h: 0, s: 0, l: (1-Constant.DEFAULT_COLOR_IN_CMYK.k)}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(to right,#fff 0%,#000 100%)',
-			marginTop: '.25rem'
+			marginTop: '.5rem'
 		}}
 		type="range"
 		min="0"
@@ -315,7 +312,7 @@ import { colorContrastPercentage, hexToRgb, hslToRgb, hsvToHex, hsvToRgb, hwbToR
 			'--color': Constant.DEFAULT_COLOR,
 			'--border-color': colorContrastPercentage(hexToRgb(Constant.DEFAULT_COLOR), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(90deg,#000 0%,#fff 100%)',
-			marginTop: '.25rem'
+			marginTop: '.5rem'
 		}}
 		type="range"
 		min="0"
@@ -335,7 +332,7 @@ import { colorContrastPercentage, hexToRgb, hslToRgb, hsvToHex, hsvToRgb, hwbToR
 			'--color': hsvToHex({...Constant.DEFAULT_COLOR_IN_HSV, s: 1, v: 1}),
 			'--border-color': colorContrastPercentage(hsvToRgb({...Constant.DEFAULT_COLOR_IN_HSV, s: 1, v: 1}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(90deg in hsl longer hue,#FF0000 0%,#FF0000 100%)',
-			marginTop: '.25rem'
+			marginTop: '.5rem'
 		}}
 		type="range"
 		min="0"
@@ -352,7 +349,7 @@ import { colorContrastPercentage, hexToRgb, hslToRgb, hsvToHex, hsvToRgb, hwbToR
 			'--color': hsvToHex({...Constant.DEFAULT_COLOR_IN_HSV, v: 1}),
 			'--border-color': colorContrastPercentage(hsvToRgb({...Constant.DEFAULT_COLOR_IN_HSV, v: 1}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(to right,hsl(var(--hue),0%,50%) 0%,hsl(var(--hue),100%,50%) 100%)',
-			marginTop: '.25rem'
+			marginTop: '.5rem'
 		}}
 		type="range"
 		min="0"
@@ -369,7 +366,7 @@ import { colorContrastPercentage, hexToRgb, hslToRgb, hsvToHex, hsvToRgb, hwbToR
 			'--color': Constant.DEFAULT_COLOR,
 			'--border-color': colorContrastPercentage(hexToRgb(Constant.DEFAULT_COLOR), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(to right,#000 0%,var(--max-value-color) 100%)',
-			marginTop: '.25rem'
+			marginTop: '.5rem'
 		}}
 		type="range"
 		min="0"
@@ -389,7 +386,7 @@ import { colorContrastPercentage, hexToRgb, hslToRgb, hsvToHex, hsvToRgb, hwbToR
 			'--color': `hwb(${Math.round(Constant.DEFAULT_COLOR_IN_HWB.h * 360)} 0% 0%)`,
 			'--border-color': colorContrastPercentage(hwbToRgb({...Constant.DEFAULT_COLOR_IN_HWB, w: 0, b: 0}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(90deg in hsl longer hue,#FF0000 0%,#FF0000 100%)',
-			marginTop: '.25rem'
+			marginTop: '.5rem'
 		}}
 		type="range"
 		min="0"
@@ -406,7 +403,7 @@ import { colorContrastPercentage, hexToRgb, hslToRgb, hsvToHex, hsvToRgb, hwbToR
 			'--color': `hwb(${Math.round(Constant.DEFAULT_COLOR_IN_HWB.h * 360)} ${Math.round(Constant.DEFAULT_COLOR_IN_HWB.w * 100)}% 0%)`,
 			'--border-color': colorContrastPercentage(hwbToRgb({...Constant.DEFAULT_COLOR_IN_HWB, b: 0}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(to right,hwb(var(--hue) 0% 0%) 0%,#fff 100%)',
-			marginTop: '.25rem'
+			marginTop: '.5rem'
 		}}
 		type="range"
 		min="0"
@@ -423,7 +420,7 @@ import { colorContrastPercentage, hexToRgb, hslToRgb, hsvToHex, hsvToRgb, hwbToR
 			'--color': `hwb(${Math.round(Constant.DEFAULT_COLOR_IN_HWB.h * 360)} 0% ${Math.round(Constant.DEFAULT_COLOR_IN_HWB.b * 100)}%)`,
 			'--border-color': colorContrastPercentage(hwbToRgb({...Constant.DEFAULT_COLOR_IN_HWB, w: 0}), {r: 0, g: 0, b: 0}) > 50? '#000' : '#fff',
 			'--gradient': 'linear-gradient(to right,hwb(var(--hue) 0% 0%) 0%,#000 100%)',
-			marginTop: '.25rem'
+			marginTop: '.5rem'
 		}}
 		type="range"
 		min="0"
