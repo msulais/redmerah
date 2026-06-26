@@ -1,0 +1,63 @@
+---
+import * as Ids from '../_scripts/shared/ids.enum.js'
+import * as Icons from '@/enums/icons.enum.js'
+import * as Styles from '../_styles/styles.enum.js'
+---
+
+<button
+	br:variant="filled"
+	id={Ids.StartPauseButton}>
+	<br-icon set:html={Icons.LocationFilled}/>
+	Show my location
+</button>
+<ul class={Styles.List}>
+	<li>
+		<p>
+			<br-icon set:html={Icons.LocationRiple}/>
+			Accuracy
+		</p>
+		<span id={Ids.Accuracy}>N/A</span>
+	</li>
+	<li>
+		<p>
+			<br-icon set:html={Icons.ArrowBidirectionalUpDown}/>
+			Latitude
+		</p>
+		<span style="word-break: break-all;" id={Ids.Latitude}>N/A</span>
+	</li>
+	<li>
+		<p>
+			<br-icon set:html={Icons.ArrowBidirectionalLeftRight}/>
+			Longitude
+		</p>
+		<span style="word-break: break-all;" id={Ids.Longitude}>N/A</span>
+	</li>
+	<li>
+		<p>
+			<br-icon set:html={Icons.MountainLocationTop}/>
+			Altitude
+		</p>
+		<span id={Ids.Altitude}>N/A</span>
+	</li>
+	<li>
+		<p>
+			<br-icon set:html={Icons.LocationCheckmark}/>
+			Altitude accuracy
+		</p>
+		<span id={Ids.AltitudeAccuracy}>N/A</span>
+	</li>
+	<li>
+		<p>
+			<br-icon set:html={Icons.TopSpeed}/>
+			Speed
+		</p>
+		<span id={Ids.Speed}>N/A</span>
+	</li>
+	<li>
+		<p>
+			<br-icon set:html={Icons.CompassNorthwest}/>
+			Heading
+		</p>
+		<span id={Ids.Heading}>N/A</span>
+	</li>
+</ul>

@@ -1,0 +1,13 @@
+export const PopoverAppBarInfo = '74EB4B1A'
+export const PopoverAppBarSettings = 'FFBBE90C'
+export const PopoverAppBarSettingsAnimation = 'F6241AE6'
+export const PopoverAppBarSettingsTheme = '769E54AD'
+
+export const StartPauseButton = '42471EEA'
+export const Accuracy = 'A213230C'
+export const Altitude = '8158354E'
+export const AltitudeAccuracy = '0F391A2D'
+export const Heading = '99B14314'
+export const Latitude = 'AA4D14CC'
+export const Longitude = '2B5EBF4B'
+export const Speed = 'F143530D'
