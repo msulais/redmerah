@@ -32,6 +32,7 @@ ${ELEMENT} {
 	${ELEMENT} {
 		font-size: 1rem;
 		min-height: 3rem;
+		border-radius: .5rem;
 	}
 }
 

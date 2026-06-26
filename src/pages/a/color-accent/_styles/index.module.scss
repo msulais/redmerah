@@ -32,6 +32,10 @@
 		transition-property: background-color;
 		transition-duration: var(--br-theme-duration-transition);
 
+		@media (hover: none) {
+			border-radius: 2rem;
+		}
+
 		@media (max-width: 22.5rem) {
 			grid-template-columns: 1fr;
 			height: 12rem;
@@ -43,6 +47,10 @@
 			font-weight: bold;
 			transition-property: background-color;
 			transition-duration: var(--br-theme-duration-transition);
+
+			@media (hover: none) {
+				border-radius: 1rem;
+			}
 		}
 	}
 }
