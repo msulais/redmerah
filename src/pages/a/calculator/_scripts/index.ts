@@ -8,6 +8,7 @@ import commands from "./core/commands"
 import memory from "./core/memory"
 import date from "./features/date"
 import database from "./core/database"
+import share from "./core/share"
 
 basic()
 settings()
@@ -19,3 +20,4 @@ commands()
 memory()
 date()
 database()
+share()

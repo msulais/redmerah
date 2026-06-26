@@ -1,5 +1,6 @@
 export const Navigation = 'A0642EE2'
 export const PopoverAppBarInfo = '40E3FCF2'
+export const PopoverAppBarInfoShare = 'FC9B52D1'
 export const PopoverAppBarSettings = '5EA9E2A8'
 export const PopoverAppBarSettingsAnimation = '5B3463B4'
 export const PopoverAppBarSettingsTheme = '88F1836A'
