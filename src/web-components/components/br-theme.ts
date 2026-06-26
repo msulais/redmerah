@@ -31,11 +31,15 @@ export type CSSVars = typeof CSSVars[keyof typeof CSSVars]
 
 export const Attributes = {
 	/**
+	 * Default to "auto"
+	 *
 	 * @type {string} Hex color
 	 * */
 	ColorAccent: 'br:color-accent',
 
 	/**
+	 * Default to "auto"
+	 *
 	 * @type {string} `"light" | "dark" | "auto"`
 	 * */
 	ThemeMode: 'br:theme-mode',
@@ -307,6 +311,8 @@ function _initListeners(): void {
 
 function _initDefaultStyles(): void {
 	document.adoptedStyleSheets.push(STYLES)
+	const ATTR_THEME_MODE = CSS.escape(Attributes.ThemeMode)
+	const ATTR_ANIMATION = CSS.escape(Attributes.Animation)
 	STYLES.replaceSync(`
 ${TAGNAME} {
 	${CSSVars.ColorBackgroundLight}: ${_rgbParts(colorToRgb(DEFAULT_COLOR_BACKGROUND_LIGHT))};
@@ -333,17 +339,17 @@ ${TAGNAME} {
 	display: contents;
 }
 
-${TAGNAME}[${CSS.escape(Attributes.Animation)}=${Animation.Off}] {
+${TAGNAME}[${ATTR_ANIMATION}=${Animation.Off}] {
 	${CSSVars.DurationTransition}: 0ms;
 }
 
 @media (prefers-reduced-motion: reduce) {
-	${TAGNAME}[${CSS.escape(Attributes.Animation)}=${Animation.Auto}] {
+	${TAGNAME}:where([${ATTR_ANIMATION}=${Animation.Auto}],:not([${ATTR_ANIMATION}])) {
 		${CSSVars.DurationTransition}: 0ms;
 	}
 }
 
-${TAGNAME}[${CSS.escape(Attributes.ThemeMode)}=${ThemeMode.Dark}] {
+${TAGNAME}[${ATTR_THEME_MODE}=${ThemeMode.Dark}] {
 	color-scheme: dark;
 	${CSSVars.ColorBackground}: var(${CSSVars.ColorBackgroundDark});
 	${CSSVars.ColorAccent    }: var(${CSSVars.ColorAccentDark});
@@ -353,7 +359,7 @@ ${TAGNAME}[${CSS.escape(Attributes.ThemeMode)}=${ThemeMode.Dark}] {
 }
 
 @media (prefers-color-scheme: dark) {
-	${TAGNAME}[${CSS.escape(Attributes.ThemeMode)}=${ThemeMode.Auto}] {
+	${TAGNAME}:where([${ATTR_THEME_MODE}=${ThemeMode.Auto}],:not([${ATTR_THEME_MODE}])) {
 		color-scheme: dark;
 		${CSSVars.ColorBackground}: var(${CSSVars.ColorBackgroundDark});
 		${CSSVars.ColorAccent    }: var(${CSSVars.ColorAccentDark});
