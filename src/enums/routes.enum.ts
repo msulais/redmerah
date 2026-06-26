@@ -6,7 +6,7 @@ export const Error = '404'
 // apps
 export const Randomizer = '/a/randomizer'
 export const MarkdownConverter = '/a/markdown-converter'
-export const ColorGenerator = '/a/color-generator'
+export const ColorAccent = '/a/color-accent'
 export const Calculator = '/a/calculator'
 export const SASSConverter = '/a/sass-converter'
 export const Battery = '/a/battery'

@@ -2,7 +2,7 @@ import type { AppItem } from '@/types/apps'
 import * as Routes from '@/enums/routes.enum.js'
 import logoMarkdownConverter from '@/assets/images/apps/markdown-converter.svg'
 import logoRandomizer from '@/assets/images/apps/randomizer.svg'
-import logoColorGenerator from '@/assets/images/apps/color-generator.svg'
+import logoColorAccent from '@/assets/images/apps/color-accent.svg'
 import logoCalculator from '@/assets/images/apps/calculator.svg'
 import logoTasks from '@/assets/images/apps/tasks.svg'
 import logoSassConverter from '@/assets/images/apps/sass-converter.svg'
@@ -169,11 +169,11 @@ export const APP_RANDOMIZER: AppItem = {
 	color: '#00FF48',
 }
 
-export const APP_COLOR_GENERATOR: AppItem = {
-	logoUrl: logoColorGenerator.src,
-	name: 'Color Generator',
+export const APP_COLOR_ACCENT: AppItem = {
+	logoUrl: logoColorAccent.src,
+	name: 'Color Accent',
 	description: 'Generate accent pallete color for your app. Including color for light and dark mode.',
-	link: Routes.ColorGenerator,
+	link: Routes.ColorAccent,
 	color: '#39BBFF',
 }
 
@@ -239,6 +239,6 @@ export const APPS: AppItem[] = [
 	APP_BATTERY,
 	APP_SASS_CONVERTER,
 	APP_CALCULATOR,
-	APP_COLOR_GENERATOR,
+	APP_COLOR_ACCENT,
 	APP_MARKDOWN_CONVERTER
 ]
