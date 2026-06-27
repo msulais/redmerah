@@ -13,7 +13,7 @@ export const Attributes = {
 	For: 'br:for',
 
 	/**
-	 * Element ids to exclude from auto-detection. Separated by space character.
+	 * Element ids to exclude from auto-detection including all children nodes. Separated by space character.
 	 *
 	 * @type {string[]}
 	 * */
@@ -112,7 +112,15 @@ export class BiruFocusGroupElement extends HTMLElement {
 		const rawExcept = this.getAttribute(Attributes.Except)
 		if (rawExcept) {
 			const exceptIds = rawExcept.trim().split(/ +/).filter(id => id.length > 0)
-			autoElements = autoElements.filter(el => !exceptIds.includes(el.id))
+			const exceptNodes = exceptIds
+				.map(id => document.getElementById(id))
+				.filter((node): node is HTMLElement => node !== null)
+
+			if (exceptNodes.length > 0) {
+				autoElements = autoElements.filter(el => {
+					return !exceptNodes.some(exceptNode => exceptNode.contains(el))
+				})
+			}
 		}
 
 		return autoElements
@@ -124,7 +132,7 @@ export class BiruFocusGroupElement extends HTMLElement {
 		}
 
 		const target = ev.target as HTMLElement
-		const elements = this._getElements()
+		const elements = this._elementCache.length > 0 ? this._elementCache : this._getElements()
 		if (!elements.includes(target)) {
 			return
 		}
@@ -145,7 +153,7 @@ export class BiruFocusGroupElement extends HTMLElement {
 		}
 
 		const relatedTarget = ev.relatedTarget as HTMLElement | null
-		const elements = this._getElements()
+		const elements = this._elementCache.length > 0 ? this._elementCache : this._getElements()
 		if (relatedTarget && elements.includes(relatedTarget)) {
 			return
 		}
