@@ -111,22 +111,34 @@ ${ELEMENT_ITEM} input:where([type=checkbox],[type=radio]) {
 }
 
 ${ELEMENT_ITEM} input[type=checkbox]::before {
+	--url: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjBweCIgdmlld0JveD0iMCAtOTYwIDk2MCA5NjAiIHdpZHRoPSIyMHB4IiBmaWxsPSIjMDAwIj48cGF0aCBkPSJtNDAwLTQxNiAyMzYtMjM2cTExLTExIDI4LTExdDI4IDExcTExIDExIDExIDI4dC0xMSAyOEw0MjgtMzMycS0xMiAxMi0yOCAxMnQtMjgtMTJMMjY4LTQzNnEtMTEtMTEtMTEtMjh0MTEtMjhxMTEtMTEgMjgtMTF0MjggMTFsNzYgNzZaIi8+PC9zdmc+);
+	-webkit-mask-image: var(--url);
+	-webkit-mask-size: cover;
+	background-color: rgb(var(${BrTheme.CSSVars.ColorAccent}));
+	mask-image: var(--url);
+	mask-size: cover;
 	content: "";
-	width: 1.25rem;
-	background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjBweCIgdmlld0JveD0iMCAtOTYwIDk2MCA5NjAiIHdpZHRoPSIyMHB4IiBmaWxsPSIjMDAwIj48cGF0aCBkPSJtNDAwLTQxNiAyMzYtMjM2cTExLTExIDI4LTExdDI4IDExcTExIDExIDExIDI4dC0xMSAyOEw0MjgtMzMycS0xMiAxMi0yOCAxMnQtMjgtMTJMMjY4LTQzNnEtMTEtMTEtMTEtMjh0MTEtMjhxMTEtMTEgMjgtMTF0MjggMTFsNzYgNzZaIi8+PC9zdmc+);
-	background-size: cover;
-	height: 1.25rem;
+	width: 1.5rem;
+	height: 1.5rem;
 	scale: 0;
 	transition-duration: var(${BrTheme.CSSVars.DurationTransition});
+	transition-timing-function: cubic-bezier(.25, 0, 0, 1);
+}
+
+@media (hover: none) {
+	${ELEMENT_ITEM} input[type=checkbox]::before {
+		width: 1.75rem;
+		height: 1.75rem;
+	}
 }
 
 ${BrTheme.TAGNAME}[${CSS.escape(BrTheme.Attributes.ThemeMode)}=${BrTheme.ThemeMode.Dark}] :where(menu,[br\\:as~=menu]) :is(button,[br\\:as~=button]) input[type=checkbox]::before {
-	background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjBweCIgdmlld0JveD0iMCAtOTYwIDk2MCA5NjAiIHdpZHRoPSIyMHB4IiBmaWxsPSIjZmZmIj48cGF0aCBkPSJtNDAwLTQxNiAyMzYtMjM2cTExLTExIDI4LTExdDI4IDExcTExIDExIDExIDI4dC0xMSAyOEw0MjgtMzMycS0xMiAxMi0yOCAxMnQtMjgtMTJMMjY4LTQzNnEtMTEtMTEtMTEtMjh0MTEtMjhxMTEtMTEgMjgtMTF0MjggMTFsNzYgNzZaIi8+PC9zdmc+);
+	--url: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjBweCIgdmlld0JveD0iMCAtOTYwIDk2MCA5NjAiIHdpZHRoPSIyMHB4IiBmaWxsPSIjZmZmIj48cGF0aCBkPSJtNDAwLTQxNiAyMzYtMjM2cTExLTExIDI4LTExdDI4IDExcTExIDExIDExIDI4dC0xMSAyOEw0MjgtMzMycS0xMiAxMi0yOCAxMnQtMjgtMTJMMjY4LTQzNnEtMTEtMTEtMTEtMjh0MTEtMjhxMTEtMTEgMjgtMTF0MjggMTFsNzYgNzZaIi8+PC9zdmc+);
 }
 
 @media (prefers-color-scheme: dark) {
-	${BrTheme.TAGNAME}[${CSS.escape(BrTheme.Attributes.ThemeMode)}=${BrTheme.ThemeMode.Auto}] :where(menu,[br\\:as~=menu]) :is(button,[br\\:as~=button]) input[type=checkbox]::before {
-		background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjBweCIgdmlld0JveD0iMCAtOTYwIDk2MCA5NjAiIHdpZHRoPSIyMHB4IiBmaWxsPSIjZmZmIj48cGF0aCBkPSJtNDAwLTQxNiAyMzYtMjM2cTExLTExIDI4LTExdDI4IDExcTExIDExIDExIDI4dC0xMSAyOEw0MjgtMzMycS0xMiAxMi0yOCAxMnQtMjgtMTJMMjY4LTQzNnEtMTEtMTEtMTEtMjh0MTEtMjhxMTEtMTEgMjgtMTF0MjggMTFsNzYgNzZaIi8+PC9zdmc+);
+	${BrTheme.TAGNAME}:where([${CSS.escape(BrTheme.Attributes.ThemeMode)}=${BrTheme.ThemeMode.Auto}],:not([${CSS.escape(BrTheme.Attributes.ThemeMode)}])) :where(menu,[br\\:as~=menu]) :is(button,[br\\:as~=button]) input[type=checkbox]::before {
+		--url: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjBweCIgdmlld0JveD0iMCAtOTYwIDk2MCA5NjAiIHdpZHRoPSIyMHB4IiBmaWxsPSIjZmZmIj48cGF0aCBkPSJtNDAwLTQxNiAyMzYtMjM2cTExLTExIDI4LTExdDI4IDExcTExIDExIDExIDI4dC0xMSAyOEw0MjgtMzMycS0xMiAxMi0yOCAxMnQtMjgtMTJMMjY4LTQzNnEtMTEtMTEtMTEtMjh0MTEtMjhxMTEtMTEgMjgtMTF0MjggMTFsNzYgNzZaIi8+PC9zdmc+);
 	}
 }
 
@@ -141,7 +153,15 @@ ${ELEMENT_ITEM} input[type=radio]::before {
 	border-radius: 999999px;
 	transform: scale(0);
 	transition-duration: var(${BrTheme.CSSVars.DurationTransition});
-	background-color: rgb(var(${BrTheme.CSSVars.ColorOnSurface}));
+	background-color: rgb(var(${BrTheme.CSSVars.ColorAccent}));
+	transition-timing-function: cubic-bezier(.25, 0, 0, 1);
+}
+
+@media (hover: none) {
+	${ELEMENT_ITEM} input[type=radio]::before {
+		width: .5rem;
+		height: .5rem;
+	}
 }
 
 ${ELEMENT_ITEM} input[type=radio]:checked::before {
