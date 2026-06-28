@@ -118,7 +118,7 @@ function _initSubscriber(): void {
 		_calculate()
 		_ref_input.value = v
 		scrollInputToEnd(_ref_input)
-		saveStorageItem('page-converter-input', v, 250)
+		saveStorageItem('page-converter-input', v)
 	})
 
 	sg_output.subscribe((v) => {

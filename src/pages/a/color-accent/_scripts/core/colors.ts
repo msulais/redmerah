@@ -25,7 +25,7 @@ function _initSubscriber(): void {
 	sg_seed.subscribe(v => {
 		_ref_colorLabel.textContent = v.toUpperCase()
 		_ref_color.value = v
-		saveStorageItem('seed', v, 250)
+		saveStorageItem('seed', v)
 		clearTimeout(_time_accent)
 		_time_accent = setTimeout(() => {
 			const lightAccent   = generateColorAccent(hexToRgb(sg_seed()), hexToRgb('#ffffff'))

@@ -87,7 +87,7 @@ function _updatePage(): void {
 
 function _initSubscriber(): void {
 	sg_languageCode.subscribe((v) => {
-		saveStorageItem('settings-language-code', v, 250)
+		saveStorageItem('settings-language-code', v)
 		const ref_previous = $$(
 			`input[name="${CSS.escape(InputNames.Language)}"]:checked`
 		) as HTMLInputElement

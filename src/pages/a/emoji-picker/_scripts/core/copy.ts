@@ -16,7 +16,7 @@ function _initSubscriber(): void {
 			_ref_copyInput.value = v
 		}
 
-		saveStorageItem('selected-emoji', v, 250)
+		saveStorageItem('selected-emoji', v)
 	})
 }
 

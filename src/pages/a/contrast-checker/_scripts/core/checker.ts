@@ -40,7 +40,7 @@ function _initSubscriber(): void {
 		_ref_foreground.value = v
 		_ref_foregroundLabel.textContent = `Color 2 (${v.toUpperCase()})`
 		_ref_preview.style.setProperty('--color', v)
-		saveStorageItem('foreground-color', v, 250)
+		saveStorageItem('foreground-color', v)
 	})
 
 	sg_backgroundColor.subscribe(v => {
@@ -48,7 +48,7 @@ function _initSubscriber(): void {
 		_ref_background.value = v
 		_ref_backgroundLabel.textContent = `Color 1 (${v.toUpperCase()})`
 		_ref_preview.style.setProperty('--background-color', v)
-		saveStorageItem('background-color', v, 250)
+		saveStorageItem('background-color', v)
 	})
 }
 

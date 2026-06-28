@@ -71,7 +71,7 @@ function _initSubscriber(): void {
 		}
 
 		_calculate()
-		saveStorageItem('page-length-input', _memo_inputNum(), 250)
+		saveStorageItem('page-length-input', _memo_inputNum())
 	})
 
 	sg_output.subscribe(v => {
@@ -80,13 +80,13 @@ function _initSubscriber(): void {
 
 	sg_outputUnit.subscribe(v => {
 		_calculate()
-		saveStorageItem('page-length-output-unit-id', v.id, 250)
+		saveStorageItem('page-length-output-unit-id', v.id)
 		_ref_outputUnit.value = v.id
 	})
 
 	sg_inputUnit.subscribe(v => {
 		_calculate()
-		saveStorageItem('page-length-input-unit-id', v.id, 250)
+		saveStorageItem('page-length-input-unit-id', v.id)
 		_ref_inputUnit.value = v.id
 	})
 }

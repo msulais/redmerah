@@ -28,7 +28,7 @@ function _initSubscriber(): void {
 	sg_input.subscribe(v => {
 		_ref_input.value = v
 		scrollInputToEnd(_ref_input)
-		saveStorageItem('page-basic-input', v, 250)
+		saveStorageItem('page-basic-input', v)
 		_calculate()
 	})
 

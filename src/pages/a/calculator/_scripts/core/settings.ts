@@ -119,7 +119,7 @@ function _notifyDecimalAndGroupingFormatChanges(oldDecimal: DecimalNumberFormat,
 }
 
 function _sub_decimalFormat(v: DecimalNumberFormat): void {
-	saveStorageItem('settings-decimal-format', v, 250)
+	saveStorageItem('settings-decimal-format', v)
 
 	// update button "," | "."
 	for (const ref of $$$<HTMLButtonElement>(`[data-command="${CSS.escape(Commands.KeyDec)}"]`)) {
@@ -142,7 +142,7 @@ function _sub_decimalFormat(v: DecimalNumberFormat): void {
 }
 
 function _sub_groupingFormat(v: GroupingNumberFormat): void {
-	saveStorageItem('settings-grouping-format', v, 250)
+	saveStorageItem('settings-grouping-format', v)
 	const ref_prev = $$<HTMLInputElement>(`input[name="${InputNames.Grouping}"]:checked`)
 	const ref_target = $$<HTMLInputElement>(`input[name="${InputNames.Grouping}"][value="${v}"]`)
 	if (ref_prev === ref_target) {

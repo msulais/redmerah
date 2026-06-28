@@ -78,7 +78,7 @@ function _initAnimation(): void {
 
 function _initSubscriber(): void {
 	sg_pickerMode.subscribe(v => {
-		saveStorageItem('color-picker-mode', v, 250)
+		saveStorageItem('color-picker-mode', v)
 
 		let hasMode = false
 		_ref_pickerMode.value = v

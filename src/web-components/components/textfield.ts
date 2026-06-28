@@ -44,15 +44,11 @@ ${ELEMENT}:where(textarea) {
 ${ELEMENT}:read-write:focus {
 	border-color: rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .08);
 	border-bottom-color: rgb(var(${BrTheme.CSSVars.ColorAccent}));
-	background-color: rgb(var(${BrTheme.CSSVars.ColorBackground}));
+	background-color: rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .04);
 }
 
 ${ELEMENT}:read-write:hover {
 	background-color: rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .04);
-}
-
-${ELEMENT}:read-write:active {
-	background-color: rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .02);
 }
 `)
 }

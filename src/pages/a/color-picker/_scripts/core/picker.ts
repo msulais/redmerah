@@ -378,7 +378,7 @@ function batchUpdateColors(
 
 function _initSubscriber(): void {
 	sg_hex.subscribe(v => {
-		saveStorageItem('color', hexToColor(v), 250)
+		saveStorageItem('color', hexToColor(v))
 		requestAnimationFrame(() => {
 			_ref_preview.style.setProperty('background-color', v)
 			_updateInputRefsView()

@@ -66,7 +66,7 @@ function _calculate(): void {
 function _initSubscriber(): void {
 	sg_numType.subscribe(v => {
 		_ref_numTypes.value = v
-		saveStorageItem('page-programmer-num-type', v, 250)
+		saveStorageItem('page-programmer-num-type', v)
 
 		// update disabled buttons & update input
 		const isOutputNull = sg_output() === null
@@ -144,7 +144,7 @@ function _initSubscriber(): void {
 
 	sg_input.subscribe(v => {
 		_ref_input.value = v
-		saveStorageItem('page-programmer-input', v, 250)
+		saveStorageItem('page-programmer-input', v)
 		scrollInputToEnd(_ref_input)
 		_calculate()
 	})

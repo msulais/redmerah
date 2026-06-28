@@ -24,7 +24,7 @@ type _ObjectStoreNames = typeof _ObjectStoreNames[keyof typeof _ObjectStoreNames
 const _db = new IDB(Constant.APP.name.replace(/[^A-Za-z]/g, '_'))
 const _storageTimeoutIds = new Map<_StorageKeys, ReturnType<typeof setTimeout>>()
 
-export function saveStorageItem<K extends _StorageKeys>(key: K, value: _StorageItems[K], delayDuration = 0) {
+export function saveStorageItem<K extends _StorageKeys>(key: K, value: _StorageItems[K], delayDuration = 250) {
 	clearTimeout(_storageTimeoutIds.get(key))
 	_storageTimeoutIds.set(key, setTimeout(() => {
 		_db

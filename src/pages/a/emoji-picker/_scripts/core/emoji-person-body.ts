@@ -22,7 +22,7 @@ const _ref_skinToneOptions = $(Ids.PagePersonBodySkinTones) as HTMLDivElement
 
 function _initSubscriber(): void {
 	sg_skinTone.subscribe(v => {
-		saveStorageItem('skin-tone', v, 250)
+		saveStorageItem('skin-tone', v)
 		const refs_prev = $$$<HTMLInputElement>(`input[name="${InputNames.SkinTone}"]`)
 		const ref_target = $$<HTMLInputElement>(`input[name="${InputNames.SkinTone}"][value="${v}"]`)
 		for (const ref of refs_prev) {

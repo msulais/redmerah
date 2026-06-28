@@ -71,7 +71,7 @@ function _initSubscriber(): void {
 			ref.textContent = formattedValue
 		}
 
-		saveStorageItem('memory-value', v, 250)
+		saveStorageItem('memory-value', v)
 	})
 }
 

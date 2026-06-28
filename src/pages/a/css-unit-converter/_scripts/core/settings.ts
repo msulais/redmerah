@@ -100,7 +100,7 @@ function _initSubscriber(): void {
 			_ref_relativeRem.valueAsNumber = v
 		}
 
-		saveStorageItem('settings-px-per-rem', v, 250)
+		saveStorageItem('settings-px-per-rem', v)
 		Length.sg_input.notify()
 	})
 
@@ -109,7 +109,7 @@ function _initSubscriber(): void {
 			_ref_relativePercentage.valueAsNumber = v
 		}
 
-		saveStorageItem('settings-px-per-100%', v, 250)
+		saveStorageItem('settings-px-per-100%', v)
 		Length.sg_input.notify()
 	})
 
@@ -118,7 +118,7 @@ function _initSubscriber(): void {
 			_ref_relativeVh.valueAsNumber = v
 		}
 
-		saveStorageItem('settings-px-per-100vh', v, 250)
+		saveStorageItem('settings-px-per-100vh', v)
 		Length.sg_input.notify()
 	})
 
@@ -127,7 +127,7 @@ function _initSubscriber(): void {
 			_ref_relativeVw.valueAsNumber = v
 		}
 
-		saveStorageItem('settings-px-per-100vw', v, 250)
+		saveStorageItem('settings-px-per-100vw', v)
 		Length.sg_input.notify()
 	})
 }

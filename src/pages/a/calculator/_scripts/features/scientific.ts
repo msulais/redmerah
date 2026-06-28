@@ -47,14 +47,14 @@ function _initSubscriber(): void {
 	sg_angle.subscribe((v) => {
 		_calculate()
 		_ref_angle.value = v
-		saveStorageItem('page-scientific-angle', v, 250)
+		saveStorageItem('page-scientific-angle', v)
 	})
 
 	sg_input.subscribe((v) => {
 		_calculate()
 		_ref_input.value = v
 		scrollInputToEnd(_ref_input)
-		saveStorageItem('page-scientific-input', v, 250)
+		saveStorageItem('page-scientific-input', v)
 	})
 
 	sg_output.subscribe((v) => {

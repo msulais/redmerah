@@ -88,7 +88,7 @@ function _initSubscriber(): void {
 	sg_operation.subscribe(v => {
 		_ref_operation.value = v
 		_calculate()
-		saveStorageItem('page-date-operation', v, 250)
+		saveStorageItem('page-date-operation', v)
 		switch (v) {
 		case DateOperation.Add:
 		case DateOperation.Subtract:
@@ -108,7 +108,7 @@ function _initSubscriber(): void {
 		}
 
 		_calculate()
-		saveStorageItem('page-date-input-from', v.toISOString(), 250)
+		saveStorageItem('page-date-input-from', v.toISOString())
 	})
 
 	sg_inputTo.subscribe(v => {
@@ -117,7 +117,7 @@ function _initSubscriber(): void {
 		}
 
 		_calculate()
-		saveStorageItem('page-date-input-to', v.toISOString(), 250)
+		saveStorageItem('page-date-input-to', v.toISOString())
 	})
 
 	sg_inputYears.subscribe(v => {
@@ -126,7 +126,7 @@ function _initSubscriber(): void {
 		}
 
 		_calculate()
-		saveStorageItem('page-date-input-years', v, 250)
+		saveStorageItem('page-date-input-years', v)
 	})
 
 	sg_inputMonths.subscribe(v => {
@@ -135,7 +135,7 @@ function _initSubscriber(): void {
 		}
 
 		_calculate()
-		saveStorageItem('page-date-input-months', v, 250)
+		saveStorageItem('page-date-input-months', v)
 	})
 
 	sg_inputDays.subscribe(v => {
@@ -144,7 +144,7 @@ function _initSubscriber(): void {
 		}
 
 		_calculate()
-		saveStorageItem('page-date-input-days', v, 250)
+		saveStorageItem('page-date-input-days', v)
 	})
 
 	sg_output.subscribe(v => {

@@ -111,7 +111,7 @@ function _initSubscriber(): void {
 	})
 
 	sg_timerInSeconds.subscribe(v => {
-		saveStorageItem('page-timer-seconds', v, 250)
+		saveStorageItem('page-timer-seconds', v)
 	})
 
 	sg_currectSeconds.subscribe(v => {
