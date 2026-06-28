@@ -1,0 +1,23 @@
+export const PopoverAppBarInfo = '74EB4B1A'
+export const PopoverAppBarInfoShare = 'FC9B52D1'
+
+export const PopoverAppBarSettings = 'FFBBE90C'
+export const PopoverAppBarSettingsAnimation = 'F6241AE6'
+export const PopoverAppBarSettingsTheme = '769E54AD'
+export const PopoverAppBarSettingsTextWrap = 'CDDAFBDA'
+export const PopoverAppBarSettingsModule = '2EDA31D2'
+export const PopoverAppBarSettingsKeepFnNames = '06D9C727'
+export const PopoverAppBarSettingsKeepClsNames = 'CA6954D8'
+export const PopoverAppBarSettingsTopLevel = 'CA9EF2AC'
+export const PopoverAppBarSettingsBeautify = 'A03D3A69'
+
+export const PopoverAppBarMore = '6DFDEBAD'
+export const PopoverAppBarMoreOpenFile = 'C843F8A3'
+export const PopoverAppBarMoreReset = '2251B39D'
+export const PopoverAppBarMoreCopy = 'C123C368'
+export const PopoverAppBarMoreDownload = '9B846CAF'
+
+export const InputContainer = 'FD97CC4D'
+export const Input = '26EE4FD5'
+export const Slider = '10EC713D'
+export const Output = 'BE380885'

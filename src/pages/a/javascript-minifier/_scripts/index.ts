@@ -1,9 +1,13 @@
-import appbar from "./core/appbar"
-import settings from "./core/settings"
-import minify from "./core/minify"
+import actions from "./core/actions"
 import database from "./core/database"
+import minify from "./core/minify"
+import settings from "./core/settings"
+import share from "./core/share"
+import slider from "./core/slider"
 
-appbar()
-settings()
-minify()
 database()
+settings()
+share()
+slider()
+actions()
+minify()

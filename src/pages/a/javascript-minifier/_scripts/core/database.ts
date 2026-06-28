@@ -1,7 +1,7 @@
-import { DatabaseNames } from "@/enums/storage"
-import { IDB } from "@/utils/indexeddb"
-import { SettingsStore, type SettingsStoreType } from "./settings"
-import { MinifyStore, type MinifyStoreType } from "./minify"
+import * as Constant from '../shared/constant.enum.js'
+import * as Settings from './settings.js'
+import * as Minify from './minify.js'
+import { IDB } from '@/utils/indexeddb'
 
 type _IDBStoreStorage<T = unknown> = {
 	key: string
@@ -9,65 +9,70 @@ type _IDBStoreStorage<T = unknown> = {
 }
 
 type _StorageItems = {
-	input: MinifyStoreType['input']
-	'settings:beautify': SettingsStoreType['beautify']
-	'settings:keep-class-names': SettingsStoreType['keepClassNames']
-	'settings:keep-function-names': SettingsStoreType['keepFunctionNames']
-	'settings:module': SettingsStoreType['module']
-	'settings:text-wrap': SettingsStoreType['textWrap']
-	'settings:top-level': SettingsStoreType['topLevel']
+	'input': string
+	'settings-beautify': boolean
+	'settings-keep-class-names': boolean
+	'settings-keep-function-names': boolean
+	'settings-module': boolean
+	'settings-text-wrap': boolean
+	'settings-top-level': boolean
 }
 
 type _StorageKeys = keyof _StorageItems
 
-enum _ObjectStoreNames {
-	Storage = 'storage'
-}
+const _ObjectStoreNames = {
+	Storage: 'storage'
+} as const
+type _ObjectStoreNames = typeof _ObjectStoreNames[keyof typeof _ObjectStoreNames]
 
-const _db = new IDB(DatabaseNames.JavascriptMinifier)
+const _db = new IDB(Constant.APP.name.replace(/[^A-Za-z]/g, '_'))
+const _storageTimeoutIds = new Map<_StorageKeys, ReturnType<typeof setTimeout>>()
 
-export function saveStorageItem<K extends _StorageKeys>(key: K, value: _StorageItems[K]) {
-	return _db
+export function saveStorageItem<K extends _StorageKeys>(key: K, value: _StorageItems[K], delayDuration = 250) {
+	clearTimeout(_storageTimeoutIds.get(key))
+	_storageTimeoutIds.set(key, setTimeout(() => {
+		_db
 		.writeStore(_ObjectStoreNames.Storage)
 		?.put({key, value} satisfies _IDBStoreStorage<_StorageItems[K]>)
+	}, delayDuration))
 }
 
-function _readStorageAll(store: IDBObjectStore): void {
+function _readAllStorage(store: IDBObjectStore): void {
 	_db.cursor(store, (cursor) => {
 		const key = cursor?.key
 		const value = cursor?.value.value
 		if (value === null || value === undefined) return true
 
-		const isBoolean = typeof value === 'boolean'
 		const isString = typeof value === 'string'
+		const isBoolean = typeof value === 'boolean'
 		switch (key as _StorageKeys) {
-		case "input":
+		case 'input':
 			isString
-			&& MinifyStore.update(v => v.input = value)
+			&& Minify.sg_input.set(value)
 			break
-		case "settings:beautify":
+		case 'settings-beautify':
 			isBoolean
-			&& SettingsStore.update(v => v.beautify = value)
+			&& Settings.sg_beautify.set(value)
 			break
-		case "settings:keep-class-names":
+		case 'settings-keep-class-names':
 			isBoolean
-			&& SettingsStore.update(v => v.keepClassNames = value)
+			&& Settings.sg_keepClassNames.set(value)
 			break
-		case "settings:keep-function-names":
+		case 'settings-keep-function-names':
 			isBoolean
-			&& SettingsStore.update(v => v.keepFunctionNames = value)
+			&& Settings.sg_keepFunctionNames.set(value)
 			break
-		case "settings:module":
+		case 'settings-module':
 			isBoolean
-			&& SettingsStore.update(v => v.module = value)
+			&& Settings.sg_module.set(value)
 			break
-		case "settings:text-wrap":
+		case 'settings-text-wrap':
 			isBoolean
-			&& SettingsStore.update(v => v.textWrap = value)
+			&& Settings.sg_textWrap.set(value)
 			break
-		case "settings:top-level":
+		case 'settings-top-level':
 			isBoolean
-			&& SettingsStore.update(v => v.topLevel = value)
+			&& Settings.sg_topLevel.set(value)
 			break
 		}
 
@@ -77,9 +82,11 @@ function _readStorageAll(store: IDBObjectStore): void {
 
 function _readStorage(): void {
 	const store = _db.readStore(_ObjectStoreNames.Storage)
-	if (!store) return
+	if (!store) {
+		return
+	}
 
-	_readStorageAll(store)
+	_readAllStorage(store)
 }
 
 function _initDatabase(): void {

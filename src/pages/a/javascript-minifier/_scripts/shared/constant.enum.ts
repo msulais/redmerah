@@ -1,10 +1,9 @@
-import { APP_JAVASCRIPT_MINIFIER } from "@/constants/apps"
-import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
-import type { AppItem } from "@/types/apps"
+import * as BrTheme from '@/web-components/components/br-theme.server.js'
+import * as Apps from "@/constants/apps"
 
-export const APP: AppItem = APP_JAVASCRIPT_MINIFIER
-export const DEFAULT_THEME = PlatformThemeMode.Auto
-export const DEFAULT_ANIMATION = PlatformAnimationMode.Auto
+export const APP = Apps.APP_JAVASCRIPT_MINIFIER
+export const DEFAULT_THEME: BrTheme.ThemeMode = BrTheme.ThemeMode.Auto
+export const DEFAULT_ANIMATION: BrTheme.Animation = BrTheme.Animation.Auto
 export const DEFAULT_TEXT_WRAP = true
 export const DEFAULT_MODULE = true
 export const DEFAULT_KEEP_CLASS_NAMES = false

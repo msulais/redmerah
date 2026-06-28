@@ -1,192 +1,81 @@
-import { ObservableStore } from "@/utils/signal"
-import { ElementIds } from "../shared/ids"
+import * as Constant from '../shared/constant.enum.js'
+import * as Settings from './settings.js'
+import * as BrTheme from '@/web-components/components/br-theme.js'
+import * as Ids from '../shared/ids.enum.js'
 import beautify from 'js-beautify'
-import { $ } from "./dom-utils"
-import { DEFAULT_JAVASCRIPT_INPUT_TEXT } from "../shared/constant"
 import { minify } from "terser"
-import { SettingsStore } from "./settings"
-import { AppCSSColors } from "@/enums/app-data"
-import { CMenu } from "@/components/Menu"
-import { isTargetValidElement } from "@/utils/element"
-import { downloadFile, pickFile, readFileAsText } from "@/utils/file"
-import { CToast } from "@/components/Toast"
-import { Math_clamp } from "@/utils/math"
-import { saveStorageItem } from "./database"
-import { pxToRem } from "@/utils/css"
+import { $ } from './dom-utils.js'
+import { signal, subscribe } from "@/utils/signal"
+import { delegateEvent } from '@/utils/event-registry.js'
+import { saveStorageItem } from './database.js'
 
-export type MinifyStoreType = Readonly<{
-	input: string
-}>
+export const sg_input = signal(Constant.DEFAULT_JAVASCRIPT_INPUT_TEXT)
+export const sg_output = signal(Constant.DEFAULT_JAVASCRIPT_OUTPUT_TEXT)
 
-export const MinifyStore = new ObservableStore<MinifyStoreType>({
-	input: DEFAULT_JAVASCRIPT_INPUT_TEXT
-})
+const _ref_input = $(Ids.Input) as HTMLTextAreaElement
+const _ref_output = $(Ids.Output) as HTMLTextAreaElement
+const _ref_downloadOutput = $(Ids.PopoverAppBarMoreDownload) as HTMLButtonElement
+const _ref_copyOutput = $(Ids.PopoverAppBarMoreCopy) as HTMLButtonElement
 
-const _ref_moreMenu = $(ElementIds.apMore_menu) as HTMLDivElement
-const _ref_input = $(ElementIds.bd_input) as HTMLTextAreaElement
-const _ref_inputContainer = $(ElementIds.bd_inputContainer) as HTMLDivElement
-const _ref_output = $(ElementIds.bd_output) as HTMLTextAreaElement
-const _ref_slider = $(ElementIds.bd_slider) as HTMLDivElement
-const _ref_openFile = $(ElementIds.apMore_open) as CMenu.CItem.CElement
-const _ref_resetInput = $(ElementIds.apMore_reset) as CMenu.CItem.CElement
-const _ref_copyOutput = $(ElementIds.apMore_copy) as CMenu.CItem.CElement
-const _ref_downloadOutput = $(ElementIds.apMore_download) as CMenu.CItem.CElement
-const _ref_toastCopied = $(ElementIds.toa_copied) as CToast.CElement
-const _ref_toastNoFile = $(ElementIds.toa_noFile) as CToast.CElement
-const _ref_toastReadError = $(ElementIds.toa_readError) as CToast.CElement
-let _time_updateOutput: NodeJS.Timeout | number | null = null
+let _time_minify: ReturnType<typeof setTimeout> | undefined
 
-function _subscribeInputChanges(v: MinifyStoreType, o: MinifyStoreType): void {
-	const settings = SettingsStore.value
-	const input = v.input
-	if (input !== o.input) {
-		saveStorageItem('input', input)
-	}
+function _minify(): void {
+	clearTimeout(_time_minify)
+	_time_minify = setTimeout(() => {
+		minify(sg_input(), {
+			keep_classnames: Settings.sg_keepClassNames(),
+			keep_fnames: Settings.sg_keepFunctionNames(),
+			module: Settings.sg_module(),
+			toplevel: Settings.sg_topLevel(),
+		}).then((data) => {
+			let output = data.code ?? ''
+			if (Settings.sg_beautify()) {
+				output = beautify(output)
+			}
 
-	minify(input, {
-		keep_classnames: settings.keepClassNames,
-		keep_fnames: settings.keepFunctionNames,
-		module: settings.module,
-		toplevel: settings.topLevel,
-	}).then((data) => {
-		let output = data.code ?? ''
-		if (settings.beautify) {
-			output = beautify(output)
+			sg_output.set(output)
+			_ref_output.style.removeProperty('color')
+			_ref_copyOutput.disabled = _ref_downloadOutput.disabled = false
+		}).catch((er) => {
+			_ref_copyOutput.disabled = _ref_downloadOutput.disabled = true
+			_ref_output.style.setProperty('color', `rgb(var(${BrTheme.CSSVars.ColorAccent}))`)
+			sg_output.set(er + '')
+		})
+	}, 250)
+}
+
+function _initSubscriber() {
+	sg_input.subscribe(v => {
+		if (!_ref_input.matches(":focus")) {
+			_ref_input.value = v
 		}
-		_ref_output.value = output
-		_ref_output.style.removeProperty('color')
-		_ref_copyOutput.disabled = _ref_downloadOutput.disabled = false
-	}).catch((er) => {
-		_ref_copyOutput.disabled = _ref_downloadOutput.disabled = true
-		_ref_output.style.setProperty('color', `rgb(${AppCSSColors.Error})`)
-		_ref_output.value = er + ''
+
+		_minify()
+		saveStorageItem('input', v)
 	})
-}
 
-function _subscribeInputView(v: MinifyStoreType): void {
-	const input = v.input
-	if (input === _ref_input.value) {return}
+	sg_output.subscribe(v => {
+		_ref_output.value = v
+	})
 
-	_ref_input.value = input
-}
-
-function _initSubscriber(): void {
-	MinifyStore.subscribe(_subscribeInputChanges)
-	MinifyStore.subscribe(_subscribeInputView)
+	subscribe(() => {
+		sg_input.notify()
+	},
+		Settings.sg_beautify,
+		Settings.sg_keepClassNames,
+		Settings.sg_keepFunctionNames,
+		Settings.sg_module,
+		Settings.sg_topLevel
+	)
 }
 
 function _initEvents(): void {
-	function slider(): void {
-		let screenWidth = document.body.clientWidth
-		let isDragging = false
-		let x: number | null = null
-		const onPointerUp = (ev: PointerEvent) => {
-			isDragging = false
-			_ref_slider.releasePointerCapture(ev.pointerId)
-		}
-
-		window.addEventListener('resize', () => {
-			if (x === null) {return}
-
-			screenWidth = document.body.clientWidth
-			requestAnimationFrame(() => {
-				x = Math_clamp(x!, 300, screenWidth - 300)
-				_ref_inputContainer.style.setProperty('min-width', pxToRem(x) + 'rem')
-				_ref_inputContainer.style.setProperty('max-width', pxToRem(x) + 'rem')
-			})
-		})
-
-		_ref_slider.addEventListener('pointerdown', (ev) => {
-			isDragging = true
-			screenWidth = document.body.clientWidth
-			_ref_slider.setPointerCapture(ev.pointerId)
-		})
-
-		_ref_slider.addEventListener('pointermove', ev => {
-			if (!isDragging) {return}
-
-			requestAnimationFrame(() => {
-				const paddingLeft = 10
-				x = Math_clamp(ev.clientX - paddingLeft, 300, screenWidth - 300)
-				_ref_inputContainer.style.setProperty('min-width', pxToRem(x) + 'rem')
-				_ref_inputContainer.style.setProperty('max-width', pxToRem(x) + 'rem')
-			})
-		})
-
-		_ref_slider.addEventListener('pointerup', onPointerUp)
-		_ref_slider.addEventListener('pointercancel', onPointerUp)
-
-		_ref_slider.addEventListener('dblclick', () => {
-			x = null
-			_ref_inputContainer.style.removeProperty('min-width')
-			_ref_inputContainer.style.removeProperty('max-width')
-		})
-	}
-
-	function init(): void {
-		_ref_input.addEventListener('input', () => {
-			if (_time_updateOutput !== null) {
-				clearTimeout(_time_updateOutput)
-			}
-
-			_time_updateOutput = setTimeout(() => {
-				_time_updateOutput = null
-				MinifyStore.update(v => v.input = _ref_input.value)
-			}, 100)
-		})
-
-		_ref_moreMenu.addEventListener('click', () => {
-			const ref_btn = document.activeElement as HTMLButtonElement
-			if (!isTargetValidElement(_ref_moreMenu, ref_btn)) {return}
-
-			const close = () => _ref_moreMenu.hidePopover()
-			switch (ref_btn) {
-			case _ref_openFile:
-				pickFile('text/javascript', true).then(async (files) => {
-					if (files == null || files.length == 0) {
-						_ref_toastNoFile.showPopover()
-						return
-					}
-
-					let text: string = ''
-					try {
-						for (let i = 0; i < files.length; i++) {
-							if (i > 0) text += '\n\n'
-
-							const file = files[i]
-							text += await readFileAsText(file)
-						}
-					} catch {
-						_ref_toastReadError.showPopover()
-						return
-					}
-
-					MinifyStore.update(v => v.input = text)
-				})
-				close()
-				break
-			case _ref_resetInput:
-				MinifyStore.update(v => v.input = DEFAULT_JAVASCRIPT_INPUT_TEXT)
-				close()
-				break
-			case _ref_downloadOutput:
-				downloadFile(new Blob([_ref_output.value]), 'output.min.js')
-				close()
-				break
-			case _ref_copyOutput:
-				navigator.clipboard.writeText(_ref_output.value).then(() => {
-					_ref_toastCopied.showPopover()
-				})
-				close()
-			}
-		})
-	}
-
-	init()
-	slider()
+	delegateEvent(_ref_input, 'input', () => {
+		sg_input.set(_ref_input.value)
+	})
 }
 
 export default () => {
-	_initEvents()
 	_initSubscriber()
+	_initEvents()
 }
