@@ -51,6 +51,11 @@ export const Attributes = {
 	For: 'br:for',
 
 	/**
+	 * CSS Query for multiple elements. Only used when [br:for] not exist
+	 */
+	QueryFor: 'br:query-for',
+
+	/**
 	 * Move back Element when condition are not true.
 	 *
 	 * @type {string} Element id

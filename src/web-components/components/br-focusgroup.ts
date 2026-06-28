@@ -6,18 +6,17 @@ export const Attributes = {
 	Direction: 'br:direction',
 
 	/**
-	 * Element ids. Separated by space character. All children if not present.
+	 * Element ids. Separated by space character. If [br:query-for] not
+	 * present, then all focusable children.
 	 *
 	 * @type {string[]}
 	 * */
 	For: 'br:for',
 
 	/**
-	 * Element ids to exclude from auto-detection including all children nodes. Separated by space character.
-	 *
-	 * @type {string[]}
-	 * */
-	Except: 'br:except',
+	 * CSS Query for multiple elements. Only used when [br:for] not exist
+	 */
+	QueryFor: 'br:query-for',
 
 	/**
 	 * Disables the roving tabindex behavior when present.
@@ -105,23 +104,17 @@ export class BiruFocusGroupElement extends HTMLElement {
 			return elements
 		}
 
+		if (!this.hasAttribute(Attributes.For)) {
+			try {
+				for (const element of this.querySelectorAll(this.getAttribute(Attributes.QueryFor) || '')) {
+					elements.push(element as HTMLElement)
+				}
+			} catch {}
+		}
+
 		const FOCUSABLE_SELECTOR = `a[href],button,input,textarea,select,details,[tabindex]`
 		const allFocusable = Array.from(this.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR))
 		let autoElements = allFocusable.filter(el => el.closest(TAGNAME) === this)
-
-		const rawExcept = this.getAttribute(Attributes.Except)
-		if (rawExcept) {
-			const exceptIds = rawExcept.trim().split(/ +/).filter(id => id.length > 0)
-			const exceptNodes = exceptIds
-				.map(id => document.getElementById(id))
-				.filter((node): node is HTMLElement => node !== null)
-
-			if (exceptNodes.length > 0) {
-				autoElements = autoElements.filter(el => {
-					return !exceptNodes.some(exceptNode => exceptNode.contains(el))
-				})
-			}
-		}
 
 		return autoElements
 	}

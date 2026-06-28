@@ -6,18 +6,17 @@ export const Attributes = {
 	Direction: 'br:direction',
 
 	/**
-	 * Element ids. Separated by space character. All children if not present.
+	 * Element ids. Separated by space character. If [br:query-for] not
+	 * present, then all focusable children.
 	 *
 	 * @type {string[]}
 	 * */
 	For: 'br:for',
 
 	/**
-	 * Element ids to exclude from auto-detection. Separated by space character.
-	 *
-	 * @type {string[]}
-	 * */
-	Except: 'br:except',
+	 * CSS Query for multiple elements. Only used when [br:for] not exist
+	 */
+	QueryFor: 'br:query-for',
 
 	/**
 	 * Disables the roving tabindex behavior when present.
