@@ -31,7 +31,9 @@ function _readStorageAll(store: IDBObjectStore): void {
 	_db.cursor(store, (cursor) => {
 		const key = cursor?.key
 		const value = cursor?.value.value
-		if (value === null || value === undefined) return true
+		if (value === null || value === undefined) {
+			return true
+		}
 
 		const isBoolean = typeof value === 'boolean'
 		const isString = typeof value === 'string'
