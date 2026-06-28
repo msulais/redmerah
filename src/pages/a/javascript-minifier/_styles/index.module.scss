@@ -19,7 +19,8 @@
 
 		@media (max-width: 40rem) {
 			display: block;
-			width: 100% !important;
+			min-width: 100% !important;
+			max-width: 100% !important;
 		}
 	}
 
