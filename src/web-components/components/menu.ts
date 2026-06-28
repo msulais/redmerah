@@ -46,9 +46,11 @@ function _initListeners(): void {
 
 	listenDocumentEvent('change', (ev) => {
 		const target = ev.target as HTMLInputElement
+		const menu = target.closest(`${TAGNAME}`)
 		if (
 			target.hasAttribute(GlobalAttributes.PreventDefault)
-			|| !target.closest(`${BrPopover.TAGNAME}>${TAGNAME}`)
+			|| !menu
+			|| !menu.closest(BrPopover.TAGNAME)
 		) {
 			return
 		}

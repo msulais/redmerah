@@ -1,7 +1,7 @@
 import * as BrTheme from './br-theme.js'
 import * as BrDialog from './br-dialog.js'
 import * as Button from './button.js'
-import { registerZIndex, unregisterZIndex } from "../flyout.js"
+import { registerZIndex, unregisterZIndex } from "../z-index.js"
 import { GlobalAttributes, Commands } from "../global-attributes"
 import { shadowElementsListener } from '../utils.js'
 import { listenDocumentEvent } from '../event-registry.js'

@@ -6,7 +6,7 @@ let _isListening = false
 
 function _getHighestZIndex(): number {
 	if (_elements.size === 0) {
-		return 100
+		return 999999
 	}
 
 	return _elements.values().reduce((a, b) => a.z_index > b.z_index? a : b).z_index

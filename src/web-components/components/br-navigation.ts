@@ -1,4 +1,4 @@
-import { registerZIndex, unregisterZIndex } from "../flyout.js"
+import { registerZIndex, unregisterZIndex } from "../z-index.js"
 import * as NavigationItem from './navigationitem.js'
 import * as BrTheme from './br-theme.js'
 import { Commands, GlobalAttributes } from "../global-attributes.js"

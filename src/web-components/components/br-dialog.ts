@@ -1,6 +1,6 @@
 import * as BrTheme from './br-theme.js'
 import * as BrPopover from './br-popover.js'
-import { registerZIndex, unregisterZIndex } from "../flyout.js"
+import { registerZIndex, unregisterZIndex } from "../z-index.js"
 import { Commands, GlobalAttributes } from "../global-attributes"
 import { slotEmptyListeners } from '../utils.js'
 import { listenDocumentEvent } from '../event-registry.js'
