@@ -37,6 +37,13 @@ export const Attributes = {
 	Media: 'br:media',
 
 	/**
+	 * Always make this visible. Override any conditions.
+	 *
+	 * @type {boolean}
+	 */
+	Visible: 'br:visible',
+
+	/**
 	 * Element ids
 	 *
 	 * @type {string[]}

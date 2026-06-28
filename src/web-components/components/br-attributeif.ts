@@ -41,11 +41,11 @@ export const Attributes = {
 	Media: 'br:media',
 
 	/**
-	 * Always move selected element here. Override any conditions.
+	 * Always set attribute to element. Override any conditions.
 	 *
 	 * @type {boolean}
 	 */
-	Checked: 'br:moved',
+	Checked: 'br:checked',
 
 	/**
 	 * Element ids
