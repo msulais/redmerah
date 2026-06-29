@@ -85,6 +85,7 @@ export class BiruFocusGroupElement extends HTMLElement {
 
 	private _getElements(): HTMLElement[] {
 		const rawFor = this.getAttribute(Attributes.For)
+		const fn_filter = (elements: HTMLElement[]) => elements.filter(v => v.closest(TAGNAME) === this)
 		const elements: HTMLElement[] = []
 		if (rawFor) {
 			const ids = rawFor.trim().split(/ +/)
@@ -101,7 +102,7 @@ export class BiruFocusGroupElement extends HTMLElement {
 		}
 
 		if (elements.length > 0) {
-			return elements
+			return fn_filter(elements)
 		}
 
 		if (!this.hasAttribute(Attributes.For)) {
@@ -113,14 +114,12 @@ export class BiruFocusGroupElement extends HTMLElement {
 		}
 
 		if (elements.length > 0) {
-			return elements
+			return fn_filter(elements)
 		}
 
 		const FOCUSABLE_SELECTOR = `a[href],button,input,textarea,select,details,[tabindex]`
 		const allFocusable = Array.from(this.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR))
-		let autoElements = allFocusable.filter(el => el.closest(TAGNAME) === this)
-
-		return autoElements
+		return fn_filter(allFocusable)
 	}
 
 	private _focusin(ev: FocusEvent): void {
