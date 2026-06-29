@@ -86,7 +86,7 @@ export function updateSelectedList(): void {
 		const items = list.find(v => v.id === (listId ?? store.listId))?.items
 		if (items && store.count > items.length) {
 			count = Math_clamp(
-				items.length, 1, list[0].items.length
+				items.length, 1, list[0]!.items.length
 			)
 		}
 
@@ -156,7 +156,7 @@ function _editList(listIndex: number, name: string, items: string[]): void {
 		items
 	}
 
-	saveListItem(lists[_listIndexToEdit])
+	saveListItem(lists[_listIndexToEdit]!)
 	ListsStore.update(v => v.list = lists)
 }
 
@@ -176,13 +176,13 @@ function _subsListView(v: ListsStoreType, o: ListsStoreType): void {
 	const sortedList = [...list].sort((a, b) => a.name.localeCompare(b.name))
 	const refs = $$$<HTMLLIElement>('li', _ref_lists)
 	for (let i = 0; i < refs.length; i++) {
-		const ref = refs[i]
+		const ref = refs[i]!
 		if (i >= sortedList.length) {
 			ref.remove()
 			continue
 		}
 
-		const list = sortedList[i]
+		const list = sortedList[i]!
 		const itemLength = list.items.length
 		ref.setAttribute('data-list-id', list.id.toString())
 		CList.update<HTMLLIElement>(ref, {
@@ -200,7 +200,7 @@ function _subsListView(v: ListsStoreType, o: ListsStoreType): void {
 
 	for (let i = 0; i < sortedList.length - refs.length; i++) {
 		const index = refs.length + i
-		const list = sortedList[index]
+		const list = sortedList[index]!
 		const itemLength = list.items.length
 		_ref_lists.append(CList.create({List: {
 			tagname: 'li',
@@ -238,7 +238,7 @@ function _subsListView(v: ListsStoreType, o: ListsStoreType): void {
 				list(ref) {
 					ref.style.setProperty('padding-right', pxToRem(4) + 'rem')
 					ref.setAttribute('data-list-id', list.id.toString())
-					ref.classList.add(CSSClasses.listItem)
+					ref.classList.add(CSSClasses.listItem!)
 				},
 				trailing(ref) {
 					ref.style.setProperty('display', 'flex')
@@ -257,20 +257,20 @@ function _subsListView(v: ListsStoreType, o: ListsStoreType): void {
 	]) {
 		const refs = $$$<CComboBox.COption.CElement>('option', ref)
 		for (let i = 0; i < refs.length; i++) {
-			const ref = refs[i]
+			const ref = refs[i]!
 			if (i >= sortedList.length) {
 				ref.remove()
 				continue
 			}
 
-			const list = sortedList[i]
+			const list = sortedList[i]!
 			ref.value = list.id.toString()
 			ref.textContent = [list.name, `(${list.items.length})`].join(' ')
 		}
 
 		for (let i = 0; i < sortedList.length - refs.length; i++) {
 			const index = refs.length + i
-			const list = sortedList[index]
+			const list = sortedList[index]!
 			const opt = CComboBox.COption.create({Option: {
 				children: [list.name + ` (${list.items.length})`]
 			}})
@@ -334,7 +334,7 @@ function _initEvents(): void {
 			const index = lists.findIndex(v => v.id === id)
 			if (index < 0) {return}
 
-			const list = lists[index]
+			const list = lists[index]!
 			const itemLength = list.items.length
 			_listIndexToRemove = index
 			CList.update(_ref_deleteItem, {List: {

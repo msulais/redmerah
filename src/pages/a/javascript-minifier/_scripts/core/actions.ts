@@ -22,7 +22,7 @@ function _initEvents(): void {
 				for (let i = 0; i < files.length; i++) {
 					if (i > 0) text += '\n\n'
 
-					const file = files[i]
+					const file = files[i]!
 					text += await readFileAsText(file)
 				}
 			} catch {

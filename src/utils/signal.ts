@@ -38,7 +38,7 @@ export class ObservableStore<T extends object> {
 
 	subscribeAll(listeners: Listener<T>[], keys: symbol[] = []) {
 		for (let i = 0; i < listeners.length; i++) {
-			this.subscribe(listeners[i], keys[i] ?? Symbol())
+			this.subscribe(listeners[i]!, keys[i] ?? Symbol())
 		}
 	}
 

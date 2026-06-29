@@ -20,7 +20,7 @@ export const TeamsStore = new ObservableStore<TeamsStoreType>({
 	count: DEFAULT_TEAMS_COUNT,
 	membersId: DEFAULT_TEAMS_MEMBERS_ID,
 	namesId: DEFAULT_TEAMS_NAMES_ID,
-	output: DEFAULT_TEAMS_OUTPUT
+	output: DEFAULT_TEAMS_OUTPUT as string[][]
 })
 const _ref_names = $(ElementIds.pgTm_names) as CComboBox.CElement
 const _ref_members = $(ElementIds.pgTm_members) as CComboBox.CElement
@@ -58,15 +58,15 @@ export function updateOutput(): void {
 
 		const i = Math.floor(Math.random() * size)
 		size--;
-		[memberItems[i], memberItems[size]] = [memberItems[size], memberItems[i]];
-		output[j].push(memberItems[size])
+		[memberItems[i], memberItems[size]] = [memberItems[size]!, memberItems[i]!];
+		output[j]!.push(memberItems[size]!)
 		++j
 	}
 
 	for (let i = 0; i < output.length; i++) {
 		output[i] = [
-			output[i][0],
-			...output[i].slice(1).sort((a, b) => a.localeCompare(b))
+			output[i]![0]!,
+			...output[i]!.slice(1).sort((a, b) => a.localeCompare(b))
 		]
 	}
 
@@ -94,7 +94,7 @@ function _subsOutputView(v: TeamsStoreType, o: TeamsStoreType): void {
 		const teamName = items[0] ?? ''
 		const members = items.slice(1)
 		for (let i = 0; i < refs.length; i++) {
-			const ref = refs[i]
+			const ref = refs[i]!
 			if (i >= members.length) {
 				ref.remove()
 				continue
@@ -114,19 +114,19 @@ function _subsOutputView(v: TeamsStoreType, o: TeamsStoreType): void {
 	}
 
 	for (let i = 0; i < refs.length; i++) {
-		const ref = refs[i]
+		const ref = refs[i]!
 		if (i >= output.length) {
 			ref.remove()
 			continue
 		}
 
-		update_ref_li(ref, output[i])
+		update_ref_li(ref, output[i]!)
 	}
 
 	for (let i = 0; i < output.length - refs.length; i++) {
 		const index = refs.length + i
 		const ref = document.createElement('li')
-		update_ref_li(ref, output[index])
+		update_ref_li(ref, output[index]!)
 		_ref_output.append(ref)
 	}
 }

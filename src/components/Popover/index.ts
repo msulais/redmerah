@@ -507,7 +507,7 @@ export namespace CPopover {
 			const refs_children = ref_popover.children
 			const rest: Element[] = []
 			for (let i = 0; i < refs_children.length; i++) {
-				const ref = refs_children[i]
+				const ref = refs_children[i]!
 				if (!ref_draghandle && ref.matches('div.' + Classes.DragHandle)) {
 					ref_draghandle = ref as HTMLDivElement
 				}

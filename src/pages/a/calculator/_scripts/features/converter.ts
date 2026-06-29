@@ -83,22 +83,22 @@ function _changeConverterType(type: ConverterTypes): void {
 	for (const i in units) {
 		const ref_inputSpan = document.createElement('span')
 		ref_inputSpan.style.setProperty('color', `rgb(var(${BrTheme.CSSVars.ColorAccent}))`)
-		ref_inputSpan.textContent = units[i].symbol
+		ref_inputSpan.textContent = units[i]!.symbol
 
 		const ref_inputOption = document.createElement('option')
-		ref_inputOption.innerHTML = `${units[i].name} [\xa0${ref_inputSpan.outerHTML}\xa0]`
-		ref_inputOption.value = units[i].id
+		ref_inputOption.innerHTML = `${units[i]!.name} [\xa0${ref_inputSpan.outerHTML}\xa0]`
+		ref_inputOption.value = units[i]!.id
 		ref_inputOption.selected = Number(i) === 0
 		ref_inputOption.style.setProperty('gap', '0')
 		refs_inputOption.push(ref_inputOption)
 
 		const ref_outputSpan = document.createElement('span')
 		ref_outputSpan.style.setProperty('color', `rgb(var(${BrTheme.CSSVars.ColorAccent}))`)
-		ref_outputSpan.textContent = units[i].symbol
+		ref_outputSpan.textContent = units[i]!.symbol
 
 		const ref_outputOption = document.createElement('option')
-		ref_outputOption.innerHTML = `${units[i].name} [\xa0${ref_outputSpan.outerHTML}\xa0]`
-		ref_outputOption.value = units[i].id
+		ref_outputOption.innerHTML = `${units[i]!.name} [\xa0${ref_outputSpan.outerHTML}\xa0]`
+		ref_outputOption.value = units[i]!.id
 		ref_outputOption.selected = Number(i) === 1
 		ref_outputOption.style.setProperty('gap', '0')
 		refs_outputOption.push(ref_outputOption)
@@ -108,8 +108,10 @@ function _changeConverterType(type: ConverterTypes): void {
 	_ref_outputUnit.replaceChildren(...refs_outputOption)
 
 	batch(() => {
-		sg_inputUnit.set(units[0])
-		sg_outputUnit.set(units[1])
+		if (units.length > 1) {
+			sg_inputUnit.set(units[0]!)
+			sg_outputUnit.set(units[1]!)
+		}
 	})
 }
 

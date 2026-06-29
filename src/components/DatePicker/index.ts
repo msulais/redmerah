@@ -183,7 +183,7 @@ export namespace CDatePicker {
 				}
 
 				for (let i = 0; i < refs_date.length; i++) {
-					const ref = refs_date[i]
+					const ref = refs_date[i]!
 					if (i < daysPerMonth) {
 						$rm_style(ref, 'display')
 					} else {
@@ -213,7 +213,7 @@ export namespace CDatePicker {
 
 				const refs_month = $query_all<GCButton.CElement>('.' + Classes.MonthButton, ref_datepicker)
 				for (let i = 0; i < refs_month.length; i++) {
-					const ref = refs_month[i]
+					const ref = refs_month[i]!
 					const date = new Date(year, i, 1)
 					$set_attr(ref, ButtonAttributes.Date, date.toISOString())
 					ref.disabled = isDateOutRange_YM(date, startDate, endDate)
@@ -233,7 +233,7 @@ export namespace CDatePicker {
 
 				const refs_year = $query_all<GCButton.CElement>('.' + Classes.YearButton, ref_datepicker)
 				for (let i = 0; i < refs_year.length; i++) {
-					const ref = refs_year[i]
+					const ref = refs_year[i]!
 					const date = new Date(year + i, 0, 1)
 					ref.textContent = year + i + ''
 					ref.setAttribute(ButtonAttributes.Date, date.toISOString())

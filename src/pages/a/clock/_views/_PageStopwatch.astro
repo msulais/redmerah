@@ -133,7 +133,7 @@ function msText(ms: number): string {
 						<tr tabindex="0">
 							<td>{Constant.DEFAULT_STOPWATCH_LAPS.length - i}</td>
 							<td>{i < Constant.DEFAULT_STOPWATCH_LAPS.length-1
-								? msText(v - Constant.DEFAULT_STOPWATCH_LAPS[i + 1])
+								? msText(v - Constant.DEFAULT_STOPWATCH_LAPS[i + 1]!)
 								: msText(v)
 							}</td>
 							<td>{msText(v)}</td>

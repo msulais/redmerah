@@ -186,7 +186,7 @@ export namespace CModal {
 		function handleOutsideClick(): void {
 			if (OPENED_MODAL.length === 0 || pointerInRange) return
 
-			close(OPENED_MODAL[OPENED_MODAL.length-1], {soft: true})
+			close(OPENED_MODAL[OPENED_MODAL.length-1]!, {soft: true})
 		}
 
 		function initEvents(): void {
@@ -666,7 +666,7 @@ export namespace CModal {
 			const children = ref_modal.children
 			const rest: Element[] = []
 			for (let i = 0; i < children.length; i++) {
-				const ref = children[i]
+				const ref = children[i]!
 				if (!ref_dragHandle && ref.matches('div.' + Classes.DragHandle)) {
 					ref_dragHandle = ref as HTMLDivElement
 				}

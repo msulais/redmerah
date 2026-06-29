@@ -12,7 +12,7 @@ export function queryUrl(url: string, key: string): string | null {
 	const queries = urlQueries(url)
 
 	for (const $key in queries) {
-		if ($key == key) return queries[$key]
+		if ($key == key) return queries[$key]!
 	}
 
 	return null

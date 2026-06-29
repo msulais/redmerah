@@ -277,7 +277,7 @@ function _initListeners(): void {
 		}
 
 		if (ev.shiftKey && index === 0) {
-			focusableElements[focusableElements.length-1].focus()
+			focusableElements[focusableElements.length-1]!.focus()
 			ev.preventDefault()
 		}
 		else if (index === focusableElements.length - 1) {

@@ -405,9 +405,9 @@ export namespace CColorPicker {
 				)
 				while (rgbArr.length < 3) rgbArr.push(0)
 				hsl = rgbToHsl({
-					r: rgbArr[0],
-					g: rgbArr[1],
-					b: rgbArr[2],
+					r: rgbArr[0]!,
+					g: rgbArr[1]!,
+					b: rgbArr[2]!,
 				})
 				break
 			}
@@ -423,9 +423,9 @@ export namespace CColorPicker {
 				)
 				while (hslArr.length < 3) hslArr.push(0)
 
-				hsl.h = hslArr[0]
-				hsl.s = hslArr[1]
-				hsl.l = hslArr[2]
+				hsl.h = hslArr[0]!
+				hsl.s = hslArr[1]!
+				hsl.l = hslArr[2]!
 				break
 			case ColorSpace.HEX:
 				value = '#' + value.replace(/[^\da-fA-F]/g, '').padEnd(6, '0').substring(0, 6).trim()

@@ -25,10 +25,10 @@ export function formatNumber(num: number, length = 3, separator: {
 	const sign = num < 0 ? '-' : ''
 	const absNumber = Math.abs(num)
 	const parts = numberToRealDigits(absNumber).split('.')
-	const integerPart = parts[0].replace(new RegExp(`\\B(?=(\\d{${length}})+(?!\\d))`, "g"), thousand)
+	const integerPart = parts[0]!.replace(new RegExp(`\\B(?=(\\d{${length}})+(?!\\d))`, "g"), thousand)
 
 	let decimalPart = ''
-	if (parts.length > 1) decimalPart = parts[1]
+	if (parts.length > 1) decimalPart = parts[1]!
 
 	return `${sign}${integerPart}${decimalPart.length > 0 ? decimal : ''}${decimalPart}`
 }
@@ -46,7 +46,7 @@ export function numberToRealDigits(input: number): string {
 		return str
 	}
 
-	let [coefficient, exponentStr] = str.split(/[eE]/)
+	let [coefficient, exponentStr] = str.split(/[eE]/) as [string, string]
 	let exponent = Number.parseInt(exponentStr)
 	const decimalIndex = coefficient.indexOf('.')
 	if (decimalIndex !== -1) {

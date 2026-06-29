@@ -54,7 +54,7 @@ export function updateOutput(): void {
 	let output: string[] = []
 	if (chars.length > 0){
 		for (let i = 0; i < store.length; i++) {
-			const char = chars[Math.round(Math.random() * (chars.length - 1))]
+			const char = chars[Math.round(Math.random() * (chars.length - 1))]!
 			output.push(char)
 		}
 	}

@@ -60,7 +60,7 @@ export class QueryValidation {
 
 	// Helper to get the current token and move to the next one
 	private consume(): string {
-		return this.tokens[this.pos++]
+		return this.tokens[this.pos++]!
 	}
 
 	// Evaluates OR (|) - Lowest priority
@@ -123,7 +123,7 @@ export class QueryValidation {
 				return true
 			}
 
-			const [key, expectedValue] = cleanOperand.split('=')
+			const [key, expectedValue] = cleanOperand.split('=') as [string, string]
 			if (this.urlSearchParams.get(key) !== expectedValue) {
 				return false
 			}

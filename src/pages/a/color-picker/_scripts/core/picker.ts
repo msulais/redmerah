@@ -410,7 +410,7 @@ function _initEvents(): void {
 				v.push(0)
 			}
 
-			const rgb: RGBColor = {r: v[0] / 0xff, g: v[1] / 0xff, b: v[2] / 0xff}
+			const rgb: RGBColor = {r: v[0]! / 0xff, g: v[1]! / 0xff, b: v[2]! / 0xff}
 			const hsl = rgbToHsl(rgb)
 			const hex = rgbToHex(rgb)
 			const hsv = hslToHsv(hsl)
@@ -429,7 +429,7 @@ function _initEvents(): void {
 				v.push(0)
 			}
 
-			const hsl = {h: v[0] / 360, s: v[1] / 100, l: v[2] / 100}
+			const hsl = {h: v[0]! / 360, s: v[1]! / 100, l: v[2]! / 100}
 			const rgb = hslToRgb(hsl)
 			const hex = rgbToHex(rgb)
 			const hsv = hslToHsv(hsl)
@@ -448,7 +448,7 @@ function _initEvents(): void {
 				v.push(0)
 			}
 
-			const hsv: HSVColor = {h: v[0] / 360, s: v[1] / 100, v: v[2] / 100}
+			const hsv: HSVColor = {h: v[0]! / 360, s: v[1]! / 100, v: v[2]! / 100}
 			const rgb = hsvToRgb(hsv)
 			const hex = rgbToHex(rgb)
 			const cmyk = rgbToCmyk(rgb)
@@ -467,7 +467,7 @@ function _initEvents(): void {
 				v.push(0)
 			}
 
-			const hwb: HWBColor = {h: v[0] / 360, w: v[1] / 100, b: v[2] / 100}
+			const hwb: HWBColor = {h: v[0]! / 360, w: v[1]! / 100, b: v[2]! / 100}
 			const rgb = hwbToRgb(hwb)
 			const hex = rgbToHex(rgb)
 			const cmyk = rgbToCmyk(rgb)
@@ -486,7 +486,7 @@ function _initEvents(): void {
 				v.push(0)
 			}
 
-			const cmyk: CMYKColor = {c: v[0] / 100, m: v[1] / 100, y: v[2] / 100, k: v[3] / 100}
+			const cmyk: CMYKColor = {c: v[0]! / 100, m: v[1]! / 100, y: v[2]! / 100, k: v[3]! / 100}
 			const rgb = cmykToRgb(cmyk)
 			const hex = rgbToHex(rgb)
 			const hsv = rgbToHsv(rgb)
@@ -955,9 +955,9 @@ function _initImageColorPicker(): void {
 			1, 1
 		).data
 		return {
-			r: data[0] / 0xff,
-			g: data[1] / 0xff,
-			b: data[2] / 0xff
+			r: data[0]! / 0xff,
+			g: data[1]! / 0xff,
+			b: data[2]! / 0xff
 		}
 	}
 

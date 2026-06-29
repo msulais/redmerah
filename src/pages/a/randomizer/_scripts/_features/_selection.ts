@@ -19,7 +19,7 @@ export type SelectionStoreType = Readonly<{
 export const SelectionStore = new ObservableStore<SelectionStoreType>({
 	count: DEFAULT_SELECTION_COUNT,
 	listId: DEFAULT_SELECTION_LIST_ID,
-	output: DEFAULT_SELECTION_OUTPUT,
+	output: DEFAULT_SELECTION_OUTPUT as string[],
 	listItems: DEFAULT_SELECTION_LIST.items
 })
 
@@ -39,8 +39,8 @@ export function updateOutput(): void {
 		while (output.length < count) {
 			const i = Math.floor(Math.random() * size)
 			size--;
-			[pool[i], pool[size]] = [pool[size], pool[i]];
-			output.push(pool[size])
+			[pool[i], pool[size]] = [pool[size]!, pool[i]!];
+			output.push(pool[size]!)
 		}
 	}
 	else {
@@ -73,19 +73,19 @@ function _subsOutputView(v: SelectionStoreType, o: SelectionStoreType): void {
 	}
 
 	for (let i = 0; i < refs.length; i++) {
-		const ref = refs[i]
+		const ref = refs[i]!
 		if (i >= items.length) {
 			ref.remove()
 			continue
 		}
 
-		upreate_ref_li(ref, items[i])
+		upreate_ref_li(ref, items[i]!)
 	}
 
 	for (let i = 0; i < items.length - refs.length; i++) {
 		const index = refs.length + i
 		const ref = document.createElement('li')
-		upreate_ref_li(ref, items[index])
+		upreate_ref_li(ref, items[index]!)
 		_ref_output.append(ref)
 	}
 }

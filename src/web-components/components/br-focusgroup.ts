@@ -217,7 +217,7 @@ export class BiruFocusGroupElement extends HTMLElement {
 
 			while (attempts < len) {
 				nextIndex = (nextIndex + step + len) % len
-				const el = this._elementCache[nextIndex]
+				const el = this._elementCache[nextIndex]!
 				if (this._isValidElement(el)) {
 					nextElement = el
 					break

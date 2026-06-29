@@ -20,7 +20,7 @@ export function joinClassList(...classes: (string | undefined | null)[]): string
 export function joinClassListModule(...arr: string[]): Record<string, boolean> {
 	const classlist: Record<string, boolean> = {}
 	for (const i in arr) {
-		classlist[arr[i]] = true
+		classlist[arr[i]!] = true
 	}
 	return classlist
 }

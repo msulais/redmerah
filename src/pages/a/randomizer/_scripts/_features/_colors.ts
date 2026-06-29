@@ -159,19 +159,19 @@ function _subsOutputView(v: ColorsStoreType, o: ColorsStoreType): void {
 	}
 
 	for (let i = 0; i < refs.length; i++) {
-		const ref = refs[i]
+		const ref = refs[i]!
 		if (i >= output.length) {
 			ref.remove()
 			continue
 		}
 
-		update_ref_li(ref, output[i])
+		update_ref_li(ref, output[i]!)
 	}
 
 	for (let i = 0; i < output.length - refs.length; i++) {
 		const index = refs.length + i
 		const ref = document.createElement('li')
-		update_ref_li(ref, output[index])
+		update_ref_li(ref, output[index]!)
 		_ref_output.append(ref)
 	}
 }

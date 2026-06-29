@@ -19,7 +19,7 @@ let _paletteIdx = 0
 
 
 export const sg_running = signal(false)
-export const sg_color = signal(_palette[_paletteIdx])
+export const sg_color = signal(_palette[_paletteIdx]!)
 
 const _ref_view = $(Ids.View) as HTMLDivElement
 const _ref_startBtn = $(Ids.Start) as HTMLButtonElement
@@ -30,7 +30,7 @@ function _nextColor(): void {
 		_paletteIdx = 0
 	}
 
-	sg_color.set(_palette[_paletteIdx])
+	sg_color.set(_palette[_paletteIdx]!)
 }
 
 function _initSubscriber(): void {
@@ -55,7 +55,7 @@ function _initSubscriber(): void {
 function _initEvents(): void {
 	delegateEvent(_ref_startBtn, 'click', () => {
 		batch(() => {
-			sg_color.set(_palette[0])
+			sg_color.set(_palette[0]!)
 			sg_running.set(true)
 		})
 	})

@@ -499,7 +499,7 @@ function _updateGradientListView(): void {
 	const gradients = GradientStore.value.gradients
 	const refs_gradients = $$$<HTMLLIElement>(`#${CSS.escape(ElementIds.bd_gradients)}>li`)
 	for (let i = 0; i < refs_gradients.length; i++) {
-		const ref = refs_gradients[i]
+		const ref = refs_gradients[i]!
 		if (i > gradients.length-1) {
 			ref.remove()
 			continue
@@ -822,7 +822,7 @@ function _initEvents(): void {
 
 				const id = getButtonId()
 				CColorPicker.update(_ref_ctrlStop_colorPicker, {
-					ColorPicker: {value: stops[_selectedStopIndex].color},
+					ColorPicker: {value: stops[_selectedStopIndex]!.color},
 					Popover: {anchorBy: id}
 				})
 
@@ -1130,19 +1130,19 @@ function _addColorStop(index: number = 0): void {
 
 	for (let i = -1; i < stops.length; i++) {
 		let $diff = 0
-		if (i === -1) $diff = Math.round(stops[i + 1].size / 2)
-		else if (i === stops.length - 1) $diff = Math.round((100 - stops[i].size) / 2)
-		else $diff = Math.round((stops[i + 1].size - stops[i].size) / 2)
+		if (i === -1) $diff = Math.round(stops[i + 1]!.size / 2)
+		else if (i === stops.length - 1) $diff = Math.round((100 - stops[i]!.size) / 2)
+		else $diff = Math.round((stops[i + 1]!.size - stops[i]!.size) / 2)
 
 		// find the biggest one
 		if ($diff > diff) {
 			diff = $diff
-			size = (i === -1? 0 : stops[i].size) + diff
-			if (i === -1) color = stops[0].color
-			else if (i === stops.length - 1) color = stops[i].color
+			size = (i === -1? 0 : stops[i]!.size) + diff
+			if (i === -1) color = stops[0]!.color
+			else if (i === stops.length - 1) color = stops[i]!.color
 			else {
-				const color1 = Number.parseInt(stops[i+1].color.substring(1, 7), 16)
-				const color2 = Number.parseInt(stops[i].color.substring(1, 7), 16)
+				const color1 = Number.parseInt(stops[i+1]!.color.substring(1, 7), 16)
+				const color2 = Number.parseInt(stops[i]!.color.substring(1, 7), 16)
 				color = '#' + (
 					Math.min(color1, color2)
 					+ Math.abs(Math.round((color1 - color2) / 2))

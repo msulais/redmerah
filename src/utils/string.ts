@@ -86,7 +86,7 @@ export function stringToHash(input: string, length = 4): string {
 		const bytes = toUtf8Bytes(s)
 		let h = FNV_OFFSET_BASIS
 		for (let i = 0; i < bytes.length; i++) {
-			h ^= BigInt(bytes[i])
+			h ^= BigInt(bytes[i]!)
 			h = (h * FNV_PRIME) & MASK_64
 		}
 
@@ -122,7 +122,7 @@ export function advancedStringSearch(
 	let j = 0
 	const searchLower = searchNormalized.toLowerCase()
 	for (let i = 0; i < text.length && j < searchLen; i++) {
-		if (text[i].toLowerCase() === searchLower[j]) {
+		if (text[i]!.toLowerCase() === searchLower[j]) {
 			j++
 		}
 	}

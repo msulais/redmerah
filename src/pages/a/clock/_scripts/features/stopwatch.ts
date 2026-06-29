@@ -63,14 +63,14 @@ function _copyLaps(time: boolean, total: boolean, ms: boolean = false): void {
 
 	const length = laps.length
 	for (let i = 0; i < length; i++) {
-		const lap = laps[i]
+		const lap = laps[i]!
 		if (text.length > 0) {
 			text += '\n'
 		}
 
 		let diff = lap
 		if (i < length - 1) {
-			diff = diff - laps[i + 1]
+			diff = diff - laps[i + 1]!
 		}
 		if (time && total) {
 			text += [
@@ -148,10 +148,10 @@ function _initSubscriber(): void {
 		const ref_time  = document.createElement('td')
 		const ref_total = document.createElement('td')
 		const ref_first = _ref_lapsContent.firstElementChild
-		const lap = v[0]
+		const lap = v[0]!
 		let diff = lap
 		if (v.length > 1) {
-			diff = diff - v[1]
+			diff = diff - v[1]!
 		}
 
 		ref_lap.textContent = v.length + ''

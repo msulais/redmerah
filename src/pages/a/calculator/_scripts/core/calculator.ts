@@ -55,14 +55,14 @@ export function repairInput(input: string): string {
 	)
 
 	// 'e×2×ceil(' => 'e×2×c\eil('
-	const nonEulerEscapeRegex = [
+	const nonEulerEscapeRegex: [RegExp, RegExp] = [
 		/(ceil|sec)\(/g,
 		/\\e/g, // use in the last part
 	]
 	input = input.replace(nonEulerEscapeRegex[0], (r) => r.replace('e', '\\e'))
 
 	// '123(456)' => '123×(456)'
-	const implicitMultiplyRegex = [
+	const implicitMultiplyRegex: [RegExp, RegExp] = [
 		new RegExp(String.raw`(${Constant.NUMBER_REGEX}|[\)%!π]|(?<!\\)e)([\(π√\\]|(?<!\\)e|${Constant.FUNCTION_REGEX}(?=\())`, 'g'),
 		/([\)%π!]|(?<!\\)e)(\d+(?:\.\d+)?|[\(π√]|(?<!\\)e)/g,
 	]

@@ -185,7 +185,7 @@ function appColorCustom(color: HEXColor): string {
 		}
 
 		for (let i = 0; i < refs_image.length; i++) {
-			const ref = refs_image[i]
+			const ref = refs_image[i]!
 			if (i > 0) {
 				setTimeout(() => initImageAnimation(ref), 500 * Math.random())
 				continue
@@ -210,7 +210,7 @@ function appColorCustom(color: HEXColor): string {
 				}
 
 				for (let i = 0; i < refs_span.length; i++) {
-					refs_span[i].animate([{
+					refs_span[i]!.animate([{
 						transform: 'translateY(-0.4em)',
 						offset: 0.5
 					}], {

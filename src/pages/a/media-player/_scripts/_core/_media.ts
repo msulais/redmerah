@@ -112,7 +112,7 @@ function _initEvents(): void {
 				return
 			}
 
-			_updateMediaFromBlob(files[0])
+			_updateMediaFromBlob(files[0]!)
 		})
 	})
 

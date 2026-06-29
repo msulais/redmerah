@@ -110,7 +110,7 @@ export function updateElementList<T extends Element, U>(
 	const dataLength = data.length
 	const refsLength = refs.length
 	for (let i = 0; i < refsLength; i++) {
-		const ref = refs[i]
+		const ref = refs[i]!
 		if (!ref) {
 			continue
 		}
@@ -120,13 +120,13 @@ export function updateElementList<T extends Element, U>(
 			continue
 		}
 
-		update?.(ref, data[i], i)
+		update?.(ref, data[i]!, i)
 	}
 
 	for (let i = 0; i < dataLength - refsLength; i++) {
 		const index = refsLength + i
-		const ref = create(data[index], index)
-		update?.(ref, data[index], index)
+		const ref = create(data[index]!, index)
+		update?.(ref, data[index]!, index)
 		parent.append(ref)
 	}
 

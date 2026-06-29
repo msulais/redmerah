@@ -36,7 +36,7 @@ export function getCookie(key: string): string | null {
 	const cookieName = key + "="
 	const cookies = document.cookie.split(';')
 	for (const i in cookies) {
-		const cookie = cookies[i].trim()
+		const cookie = cookies[i]!.trim()
 
 		if (cookie.indexOf(cookieName) === 0) {
 			return decodeURI(cookie.substring(cookieName.length))

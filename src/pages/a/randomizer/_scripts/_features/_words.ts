@@ -54,7 +54,7 @@ export function updateOutput(): void {
 	const output: string[] = []
 	if (store.repeat) {
 		while (output.length < count) {
-			output.push(items[Math.floor(Math.random() * (items.length-1))])
+			output.push(items[Math.floor(Math.random() * (items.length-1))]!)
 		}
 	}
 	else {
@@ -64,8 +64,8 @@ export function updateOutput(): void {
 			while (output.length < count) {
 				const i = Math.floor(Math.random() * size)
 				size--;
-				[pool[i], pool[size]] = [pool[size], pool[i]];
-				output.push(pool[size])
+				[pool[i], pool[size]] = [pool[size]!, pool[i]!];
+				output.push(pool[size]!)
 			}
 		}
 		else {

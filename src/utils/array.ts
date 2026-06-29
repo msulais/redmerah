@@ -5,7 +5,7 @@ export function binarySearch(array: number[], target: number): number | null {
 	while (left <= right) {
 		const middle = Math.floor((left + right) / 2)
 		if (array[middle] === target) return middle
-		else if (array[middle] < target) left = middle + 1
+		else if (array[middle]! < target) left = middle + 1
 		else right = middle - 1
 	}
 
@@ -19,7 +19,7 @@ export function isArrayEqual<T, U>(arr: T[], target: U[]): boolean {
 export function shuffleArray<T>(arr: T[]): T[] {
 	for (let i = arr.length - 1; i > 0; i--) {
 		const j = Math.floor(Math.random() * (i + 1));
-		[arr[i], arr[j]] = [arr[j], arr[i]]
+		[arr[i], arr[j]] = [arr[j]!, arr[i]!]
 	}
 
 	return arr
@@ -51,6 +51,6 @@ export function moveArrayElement<T>(
 	}
 
 	const [element] = arr.splice(oldIndex, 1)
-	arr.splice(newIndex, 0, element)
+	arr.splice(newIndex, 0, element!)
 	return arr
 }
