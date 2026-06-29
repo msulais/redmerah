@@ -112,6 +112,10 @@ export class BiruFocusGroupElement extends HTMLElement {
 			} catch {}
 		}
 
+		if (elements.length > 0) {
+			return elements
+		}
+
 		const FOCUSABLE_SELECTOR = `a[href],button,input,textarea,select,details,[tabindex]`
 		const allFocusable = Array.from(this.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR))
 		let autoElements = allFocusable.filter(el => el.closest(TAGNAME) === this)
