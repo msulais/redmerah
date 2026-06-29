@@ -22,11 +22,16 @@ ${ELEMENT} {
 	border-bottom: 2px solid rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .32);
 }
 
+${ELEMENT}:where(textarea) {
+	padding: .375rem .5rem;
+}
+
 @media (hover: none) {
 	${ELEMENT} {
 		font-size: 1rem;
 		min-height: 3rem;
 		border-radius: .5rem;
+		padding: 1rem;
 	}
 }
 
@@ -34,11 +39,6 @@ ${ELEMENT}[type=color] {
 	padding: 0;
 	border: none;
 	background-color: transparent !important;
-}
-
-${ELEMENT}:where(textarea) {
-	padding: .375rem .5rem;
-	field-sizing: content;
 }
 
 ${ELEMENT}:read-write:focus {
