@@ -137,3 +137,30 @@ export function showInputMessage(ref: HTMLInputElement | HTMLTextAreaElement, ms
 	ref.setCustomValidity(msg)
 	ref.reportValidity()
 }
+
+/**
+ * Creates an HTML element with attributes, an optional ref callback, and optional children.
+ *
+ * @param tagname - The HTML tag name (e.g., 'div', 'input').
+ * @param attributes - A map of attributes. If a value is null, the attribute is omitted.
+ * @param ref - An optional callback function that receives the created DOM element.
+ * @param children - An optional array of DOM Nodes or strings.
+ * @returns The constructed HTMLElement.
+ */
+export function createElement<T extends Element = HTMLElement>(
+  	tagname: string,
+	attributes: Record<string, string | null> = {},
+	ref: ((el: T) => unknown) | null = null,
+	children: (Node | string)[] | undefined = undefined
+): T {
+	const element = document.createElement(tagname) as unknown as T
+	for (const [key, value] of Object.entries(attributes)) {
+		if (value !== null) {
+			element.setAttribute(key, value)
+		}
+	}
+
+	element.append(...(children ?? []))
+	ref?.(element)
+	return element
+}
