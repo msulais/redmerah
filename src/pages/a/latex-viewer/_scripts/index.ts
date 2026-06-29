@@ -1,9 +1,9 @@
-import appbar from "./core/appbar"
-import settings from "./core/settings"
-import latex from "./core/latex"
 import database from "./core/database"
+import latex from "./core/latex"
+import settings from "./core/settings"
+import share from "./core/share"
 
-appbar()
-settings()
-latex()
 database()
+settings()
+share()
+latex()

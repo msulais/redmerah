@@ -1,217 +1,140 @@
-import { PlatformAnimationMode, PlatformThemeMode } from "@/enums/platforms"
-import { ObservableStore } from "@/utils/signal"
-import { ElementIds } from "../shared/ids"
-import { LocalStorageKeys } from "@/enums/storage"
-import { isValidEnumValue } from "@/utils/object"
-import { RootAttributes } from "@/enums/attributes"
-import { RadioNames } from "../shared/input-names"
-import { DEFAULT_ANIMATION, DEFAULT_PREFIX, DEFAULT_SUFFIX, DEFAULT_TEXT_WRAP, DEFAULT_THEME } from "../shared/constant"
-import { $, $$ } from "./dom-utils"
-import { CDialog } from "@/components/Dialog"
-import { CMenu } from "@/components/Menu"
-import { saveStorageItem } from "./database"
+import * as Constant from "../shared/constant.enum.js";
+import * as Ids from '../shared/ids.enum.js'
+import * as InputNames from '../shared/input-names.enum.js'
+import * as BrPopover from "@/web-components/components/br-popover";
+import * as BrTheme from '@/web-components/components/br-theme.js'
+import * as LocalStorageKeys from '@/enums/local-storage-keys.enum.js'
+import { signal } from "@/utils/signal.js";
+import { $, $$ } from "./dom-utils.js";
+import { isValidEnumValue } from "@/utils/object.js";
+import { delegateEvent } from "@/utils/event-registry.js";
+import { saveStorageItem } from "./database.js";
 
-export type SettingsStoreType = Readonly<{
-	theme: PlatformThemeMode
-	animation: PlatformAnimationMode
-	prefix: string
-	suffix: string
-	textWrap: boolean
-}>
+export const sg_theme     = signal(Constant.DEFAULT_THEME)
+export const sg_animation = signal(Constant.DEFAULT_ANIMATION)
+export const sg_prefix    = signal(Constant.DEFAULT_PREFIX)
+export const sg_suffix    = signal(Constant.DEFAULT_SUFFIX)
+export const sg_textWrap  = signal(Constant.DEFAULT_TEXT_WRAP)
 
-export const SettingsStore = new ObservableStore<SettingsStoreType>({
-	theme: DEFAULT_THEME,
-	animation: DEFAULT_ANIMATION,
-	prefix: DEFAULT_PREFIX,
-	suffix: DEFAULT_SUFFIX,
-	textWrap: DEFAULT_TEXT_WRAP
-})
-const _ref_root = document.documentElement
-const _ref_textWrap = $(ElementIds.apSett_textWrap) as HTMLInputElement
-const _ref_preSufDialog = $(ElementIds.apSett_preSufDialog) as CDialog.CElement
-const _ref_prefixSuffix = $(ElementIds.apSett_prefixSuffix) as CMenu.CItem.CElement
-const _ref_prefix = $(ElementIds.apSett_prefix) as HTMLInputElement
-const _ref_suffix = $(ElementIds.apSett_suffix) as HTMLInputElement
-const _ref_theme = $(ElementIds.apSett_themeMenu) as HTMLDivElement
-const _ref_animation = $(ElementIds.apSett_animationMenu) as HTMLDivElement
-const _ref_settingsMenu = $(ElementIds.apSett_menu) as HTMLDivElement
-const _ref_latexList = $(ElementIds.bd_list) as HTMLUListElement
-let _time_prefix: NodeJS.Timeout | number | null = null
-let _time_suffix: NodeJS.Timeout | number | null = null
-
-function _subsAnimationChanges(v: SettingsStoreType, o: SettingsStoreType): void {
-	const animation = v.animation
-	if (animation === o.animation) return
-
-	localStorage.setItem(LocalStorageKeys.PlatformAnimation, animation)
-}
-
-function _subsThemeChanges(v: SettingsStoreType, o: SettingsStoreType): void {
-	const theme = v.theme
-	if (theme === o.theme) return
-
-	localStorage.setItem(LocalStorageKeys.PlatformTheme, theme)
-}
-
-function _subsAnimationView(v: SettingsStoreType, o: SettingsStoreType): void {
-	const animation = v.animation
-	if (animation === o.animation) return
-
-	_ref_root.setAttribute(RootAttributes.Animation, animation)
-	const ref_previous = $$(
-		`input[name="${CSS.escape(RadioNames.Animation)}"]:checked`
-	) as HTMLInputElement
-	const ref_target = $$(
-		`input[name="${CSS.escape(RadioNames.Animation)}"][value="${CSS.escape(animation)}"]`
-	) as HTMLInputElement
-
-	if (ref_previous === ref_target) {return}
-	if (ref_previous) ref_previous.checked = false
-	if (ref_target) ref_target.checked = true
-}
-
-function _subsThemeView(v: SettingsStoreType, o: SettingsStoreType): void {
-	const theme = v.theme
-	if (theme === o.theme) return
-
-	_ref_root.setAttribute(RootAttributes.Theme, theme)
-	const ref_previous = $$(
-		`input[name="${CSS.escape(RadioNames.Theme)}"]:checked`
-	) as HTMLInputElement
-	const ref_target = $$(
-		`input[name="${CSS.escape(RadioNames.Theme)}"][value="${CSS.escape(theme)}"]`
-	) as HTMLInputElement
-
-	if (ref_previous === ref_target) {return}
-	if (ref_previous) ref_previous.checked = false
-	if (ref_target) ref_target.checked = true
-}
-
-function _subsTextWrapView(v: SettingsStoreType, o: SettingsStoreType): void {
-	const textWrap = v.textWrap
-	if (textWrap === o.textWrap) {return}
-
-	_ref_textWrap.checked = textWrap
-	_ref_latexList.toggleAttribute('data-text-wrap', textWrap)
-}
-
-function _subsTextWrapChanges(v: SettingsStoreType, o: SettingsStoreType): void {
-	const textWrap = v.textWrap
-	if (textWrap === o.textWrap) {return}
-
-	saveStorageItem('settings:text-wrap', textWrap)
-}
-
-function _subsPrefixView(v: SettingsStoreType): void {
-	const prefix = v.prefix
-	if (prefix === _ref_prefix.value) {return}
-
-	_ref_prefix.value = prefix
-}
-
-function _subsPrefixChanges(v: SettingsStoreType, o: SettingsStoreType): void {
-	const prefix = v.prefix
-	if (prefix === o.prefix) {return}
-
-	saveStorageItem('settings:prefix', prefix)
-}
-
-function _subsSuffixView(v: SettingsStoreType): void {
-	const suffix = v.suffix
-	if (suffix === _ref_suffix.value) {return}
-
-	_ref_suffix.value = suffix
-}
-
-function _subsSuffixChanges(v: SettingsStoreType, o: SettingsStoreType): void {
-	const suffix = v.suffix
-	if (suffix === o.suffix) {return}
-
-	saveStorageItem('settings:suffix', suffix)
-}
-
-function _initSubscriber(): void {
-	SettingsStore.subscribe(_subsAnimationChanges)
-	SettingsStore.subscribe(_subsThemeChanges)
-	SettingsStore.subscribe(_subsAnimationView)
-	SettingsStore.subscribe(_subsThemeView)
-	SettingsStore.subscribe(_subsTextWrapChanges)
-	SettingsStore.subscribe(_subsTextWrapView)
-	SettingsStore.subscribe(_subsSuffixChanges)
-	SettingsStore.subscribe(_subsSuffixView)
-	SettingsStore.subscribe(_subsPrefixChanges)
-	SettingsStore.subscribe(_subsPrefixView)
-}
-
-function _initEvents(): void {
-	_ref_theme.addEventListener('change', ev => {
-		const target = ev.target as HTMLInputElement
-		const value = target?.value as PlatformThemeMode
-		if (!value || !isValidEnumValue(value, PlatformThemeMode)) {return}
-
-		_ref_settingsMenu.hidePopover()
-		SettingsStore.update(v => v.theme = value)
-	})
-
-	_ref_animation.addEventListener('change', ev => {
-		const target = ev.target as HTMLInputElement
-		const value = target?.value as PlatformAnimationMode
-		if (!value || !isValidEnumValue(value, PlatformAnimationMode)) {return}
-
-		_ref_settingsMenu.hidePopover()
-		SettingsStore.update(v => v.animation = value)
-	})
-
-	_ref_prefixSuffix.addEventListener('click', () => {
-		_ref_settingsMenu.hidePopover()
-		_ref_preSufDialog.showModal()
-	})
-
-	_ref_prefix.addEventListener('input', () => {
-		if (_time_prefix !== null) {
-			clearTimeout(_time_prefix)
-		}
-
-		_time_prefix = setTimeout(() => {
-			_time_prefix = null
-			SettingsStore.update(v => v.prefix = _ref_prefix.value)
-		}, 100)
-	})
-
-	_ref_suffix.addEventListener('input', () => {
-		if (_time_suffix !== null) {
-			clearTimeout(_time_suffix)
-		}
-
-		_time_suffix = setTimeout(() => {
-			_time_suffix = null
-			SettingsStore.update(v => v.suffix = _ref_suffix.value)
-		}, 100)
-	})
-
-	_ref_textWrap.addEventListener('change', () => {
-		_ref_settingsMenu.hidePopover()
-		SettingsStore.update(v => v.textWrap = _ref_textWrap.checked)
-	})
-}
+const _ref_theme            = $$<BrTheme.BiruThemeElement>(BrTheme.TAGNAME)
+const _ref_themePopover     = $(Ids.PopoverAppBarSettingsTheme) as BrPopover.BiruPopoverElement
+const _ref_animationPopover = $(Ids.PopoverAppBarSettingsAnimation) as BrPopover.BiruPopoverElement
+const _ref_textWrap         = $(Ids.PopoverAppBarSettingsTextWrap) as HTMLInputElement
+const _ref_prefix           = $(Ids.PrefixInput) as HTMLInputElement
+const _ref_suffix           = $(Ids.SuffixInput) as HTMLInputElement
+const _ref_latexList        = $(Ids.List) as HTMLUListElement
 
 function _initTheme(): void {
-	const theme = localStorage.getItem(LocalStorageKeys.PlatformTheme) as PlatformThemeMode
-	if (!theme || !isValidEnumValue(theme, PlatformThemeMode) || theme === DEFAULT_THEME) return
+	const theme = localStorage.getItem(LocalStorageKeys.PlatformTheme)
+	if (!_ref_theme || !theme || !isValidEnumValue(theme, BrTheme.ThemeMode) || theme === Constant.DEFAULT_THEME) {
+		return
+	}
 
-	SettingsStore.update(v => v.theme = theme)
+	_ref_theme.biru.themeMode = theme as BrTheme.ThemeMode
+	const ref_previous = $$(
+		`input[name="${CSS.escape(InputNames.Theme)}"]:checked`
+	) as HTMLInputElement
+	const ref_target = $$(
+		`input[name="${CSS.escape(InputNames.Theme)}"][value="${CSS.escape(theme)}"]`
+	) as HTMLInputElement
+
+	if (ref_previous === ref_target) {
+		return
+	}
+
+	if (ref_previous) {
+		ref_previous.checked = false
+	}
+
+	if (ref_target) {
+		ref_target.checked = true
+	}
 }
 
 function _initAnimation(): void {
-	const animation = localStorage.getItem(LocalStorageKeys.PlatformAnimation) as PlatformAnimationMode
-	if (!animation || !isValidEnumValue(animation, PlatformAnimationMode)) return
+	const animation = localStorage.getItem(LocalStorageKeys.PlatformAnimation)
+	if (!_ref_theme || !animation || !isValidEnumValue(animation, BrTheme.Animation) || animation === Constant.DEFAULT_ANIMATION) {
+		return
+	}
 
-	SettingsStore.update(v => v.animation = animation)
+	_ref_theme.biru.animation = animation as BrTheme.Animation
+	const ref_previous = $$(
+		`input[name="${CSS.escape(InputNames.Animation)}"]:checked`
+	) as HTMLInputElement
+	const ref_target = $$(
+		`input[name="${CSS.escape(InputNames.Animation)}"][value="${CSS.escape(animation)}"]`
+	) as HTMLInputElement
+
+	if (ref_previous === ref_target) {
+		return
+	}
+
+	if (ref_previous) {
+		ref_previous.checked = false
+	}
+
+	if (ref_target) {
+		ref_target.checked = true
+	}
+}
+
+function _initSubscriber(): void {
+	sg_prefix.subscribe(v => {
+		if (!_ref_prefix.matches(':focus')) {
+			_ref_prefix.value = v
+		}
+
+		saveStorageItem('settings-prefix', v)
+	})
+
+	sg_suffix.subscribe(v => {
+		if (!_ref_suffix.matches(':focus')) {
+			_ref_suffix.value = v
+		}
+
+		saveStorageItem('settings-suffix', v)
+	})
+
+	sg_textWrap.subscribe(v => {
+		_ref_textWrap.checked = v
+		saveStorageItem('settings-text-wrap', v)
+		_ref_latexList.toggleAttribute('data-text-wrap', v)
+	})
+}
+
+function _initEvents(): void {
+	delegateEvent(_ref_themePopover, 'change', ev => {
+		const target = ev.target as HTMLInputElement
+		const value = target?.value as BrTheme.ThemeMode
+		if (!_ref_theme || !value || !isValidEnumValue(value, BrTheme.ThemeMode)) {
+			return
+		}
+
+		_ref_theme.biru.themeMode = value
+		localStorage.setItem(LocalStorageKeys.PlatformTheme, value)
+		sg_theme.set(value)
+	})
+
+	delegateEvent(_ref_animationPopover, 'change', ev => {
+		const target = ev.target as HTMLInputElement
+		const value = target?.value as BrTheme.Animation
+		if (!_ref_theme || !value || !isValidEnumValue(value, BrTheme.Animation)) {
+			return
+		}
+
+		_ref_theme.biru.animation = value
+		localStorage.setItem(LocalStorageKeys.PlatformAnimation, value)
+		sg_animation.set(value)
+	})
+
+	delegateEvent(_ref_textWrap, 'change', () => sg_textWrap.set(_ref_textWrap.checked))
+	delegateEvent(_ref_prefix, 'input', () => sg_prefix.set(_ref_prefix.value))
+	delegateEvent(_ref_suffix, 'input', () => sg_suffix.set(_ref_suffix.value))
 }
 
 export default () => {
-	_initSubscriber()
-	_initTheme()
 	_initAnimation()
+	_initTheme()
+	_initSubscriber()
 	_initEvents()
 }

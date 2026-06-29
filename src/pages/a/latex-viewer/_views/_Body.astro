@@ -1,0 +1,103 @@
+---
+import * as Icons from '@/enums/icons.enum.js'
+import * as Ids from '../_scripts/shared/ids.enum.js'
+import * as Styles from '../_styles/styles.enum.js'
+import * as Constant from '../_scripts/shared/constant.enum.js'
+import * as Commands from '../_scripts/shared/commands.enum.js'
+
+const ID_DEFAULT_INPUT = '9F185EA3'
+---
+
+<div>
+	<button
+		id={Ids.AddButton}
+		br:variant="filled">
+		<br-icon set:html={Icons.Add}/>
+		New equation
+	</button>
+	<button
+		id={Ids.CopyAll}
+		br:variant="tonal">
+		<br-icon set:html={Icons.Copy}/>
+		Copy all
+	</button>
+</div>
+
+<br-focusgroup
+	br:query-for={"li[tabindex=\"0\"]"}
+	br:direction="vertical">
+	<ul
+		class={Styles.List}
+		id={Ids.List}
+		data-text-wrap={Constant.DEFAULT_TEXT_WRAP? '' : undefined}>
+		<li tabindex="0">
+			<textarea
+				id={ID_DEFAULT_INPUT}
+				br:as="textfield">{
+				Constant.DEFAULT_LATEX_TEXT
+			}</textarea>
+			<output for={ID_DEFAULT_INPUT}>
+				<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+					<semantics>
+						<mrow><msubsup><mo>∫</mo><mrow><mo>−</mo><mi mathvariant="normal">∞</mi></mrow><mi mathvariant="normal">∞</mi></msubsup><mfrac><mn>1</mn><msqrt><mrow><mn>2</mn><mi>π</mi><msup><mi>σ</mi><mn>2</mn></msup></mrow></msqrt></mfrac><mi>exp</mi><mo>⁡</mo><mrow><mo fence="true">(</mo><mo>−</mo><mfrac><mrow><mo stretchy="false">(</mo><mi>x</mi><mo>−</mo><mi>μ</mi><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow><mrow><mn>2</mn><msup><mi>σ</mi><mn>2</mn></msup></mrow></mfrac><mo fence="true">)</mo></mrow><mo>⋅</mo><munderover><mo>∑</mo><mrow><mi>n</mi><mo>=</mo><mn>0</mn></mrow><mi mathvariant="normal">∞</mi></munderover><mfrac><mrow><mo stretchy="false">(</mo><mo>−</mo><mn>1</mn><msup><mo stretchy="false">)</mo><mi>n</mi></msup></mrow><mrow><mi>n</mi><mo stretchy="false">!</mo></mrow></mfrac><msup><mrow><mo fence="true">(</mo><mfrac><mrow><mi>x</mi><mo>−</mo><mi>μ</mi></mrow><mi>σ</mi></mfrac><mo fence="true">)</mo></mrow><mrow><mn>2</mn><mi>n</mi></mrow></msup><mi>d</mi><mi>x</mi></mrow>
+					</semantics>
+				</math>
+			</output>
+			<br-focusgroup br:direction="horizontal">
+				<button
+					data-command={Commands.EquationNew}
+					br:variant="tonal colored">
+					<br-icon set:html={Icons.Add}/>
+					New equation
+				</button>
+				<button
+					data-command={Commands.EquationCopy}
+					aria-label="Copy"
+					br:tooltip="Copy"
+					br:variant="icon">
+					<br-icon set:html={Icons.Copy}/>
+				</button>
+				<button
+					data-command={Commands.EquationMathML}
+					aria-label="MathML"
+					br:tooltip="MathML"
+					br:variant="icon">
+					<br-icon set:html={Icons.Code}/>
+				</button>
+				<button
+					data-command={Commands.EquationDelete}
+					aria-label="Delete"
+					br:tooltip="Delete"
+					br:variant="icon"
+					disabled>
+					<br-icon set:html={Icons.Delete}/>
+				</button>
+			</br-focusgroup>
+		</li>
+	</ul>
+</br-focusgroup>
+
+<br-dialog id={Ids.DialogMathML} style="width:32rem">
+	<span slot="title">MathML</span>
+	<button
+		slot="footer"
+		br:variant="tonal"
+		br:command-for={Ids.DialogMathML}>
+		Close
+	</button>
+	<button
+		slot="footer"
+		id={Ids.DialogMathMLCopy}
+		br:variant="filled"
+		br:command-for={Ids.DialogMathML}>
+		Copy
+	</button>
+
+	<textarea
+		rows="10"
+		br:as="textfield"
+		aria-label="MathML"
+		id={Ids.DialogMathMLInput}
+		style="resize:none;font-family:var(--br-theme-font-family-monospace);"
+	></textarea>
+</br-dialog>

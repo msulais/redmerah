@@ -1,0 +1,77 @@
+.list {
+	list-style: none;
+	display: grid;
+	grid-template-columns: 1fr;
+	width: 52.2rem;
+	max-width: 100%;
+	padding: 0;
+
+	&:not([data-text-wrap]) textarea {
+		white-space: pre;
+	}
+
+	> li {
+		overflow: auto;
+		padding: 1rem;
+		border: 1px solid rgba(var(--br-theme-color-on-surface), .08);
+		border-radius: .5rem;
+		background-color: rgb(var(--br-theme-color-surface));
+		transition-duration: var(--br-theme-duration-transition);
+		margin-top: 0.5rem;
+
+		&:focus-visible {
+			outline: auto;
+		}
+
+		> textarea {
+			width: 100%;
+			font-family: var(--br-theme-font-family-monospace);
+			resize: none;
+			field-sizing: content;
+
+			@supports not (field-sizing: content) {
+				resize: vertical;
+				height: 5lh;
+			}
+		}
+
+		> output {
+			display: flex;
+			margin-top: 1rem;
+			width: 100%;
+			overflow-x: auto;
+			overflow-y: hidden;
+		}
+
+		> br-focusgroup {
+			margin-top: 1rem;
+			display: flex;
+			gap: .25rem;
+			flex-wrap: wrap;
+		}
+
+		& math {
+			font-family: Cambria Math,TeX Gyre Pagella Math,XITS Math,math;
+		}
+	}
+}
+
+.main {
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	padding: 1rem;
+	max-width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	> div {
+		width: 52.2rem;
+		max-width: 100%;
+		display: flex;
+		flex-wrap: wrap;
+		gap: .5rem;
+		align-items: center;
+	}
+}

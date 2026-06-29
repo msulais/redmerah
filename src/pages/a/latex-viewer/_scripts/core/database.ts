@@ -1,7 +1,7 @@
-import { DatabaseNames } from "@/enums/storage"
-import { IDB } from "@/utils/indexeddb"
-import { SettingsStore, type SettingsStoreType } from "./settings"
-import { LatexStore, type LatexStoreType } from "./latex"
+import * as Constant from '../shared/constant.enum.js'
+import * as Settings from './settings.js'
+import * as Latex from './latex.js'
+import { IDB } from '@/utils/indexeddb'
 
 type _IDBStoreStorage<T = unknown> = {
 	key: string
@@ -9,27 +9,32 @@ type _IDBStoreStorage<T = unknown> = {
 }
 
 type _StorageItems = {
-	latex: LatexStoreType['latex']
-	'settings:prefix': SettingsStoreType['prefix']
-	'settings:suffix': SettingsStoreType['suffix']
-	'settings:text-wrap': SettingsStoreType['textWrap']
+	'inputs': string[]
+	'settings-prefix': string
+	'settings-suffix': string
+	'settings-text-wrap': boolean
 }
 
 type _StorageKeys = keyof _StorageItems
 
-enum _ObjectStoreNames {
-	Storage = 'storage'
-}
+const _ObjectStoreNames = {
+	Storage: 'storage'
+} as const
+type _ObjectStoreNames = typeof _ObjectStoreNames[keyof typeof _ObjectStoreNames]
 
-const _db = new IDB(DatabaseNames.LatexViewer)
+const _db = new IDB(Constant.APP.name.replace(/[^A-Za-z]/g, '_'))
+const _storageTimeoutIds = new Map<_StorageKeys, ReturnType<typeof setTimeout>>()
 
-export function saveStorageItem<K extends _StorageKeys>(key: K, value: _StorageItems[K]) {
-	return _db
+export function saveStorageItem<K extends _StorageKeys>(key: K, value: _StorageItems[K], delayDuration = 250) {
+	clearTimeout(_storageTimeoutIds.get(key))
+	_storageTimeoutIds.set(key, setTimeout(() => {
+		_db
 		.writeStore(_ObjectStoreNames.Storage)
 		?.put({key, value} satisfies _IDBStoreStorage<_StorageItems[K]>)
+	}, delayDuration))
 }
 
-function _readStorageAll(store: IDBObjectStore): void {
+function _readAllStorage(store: IDBObjectStore): void {
 	_db.cursor(store, (cursor) => {
 		const key = cursor?.key
 		const value = cursor?.value.value
@@ -41,21 +46,21 @@ function _readStorageAll(store: IDBObjectStore): void {
 		const isString = typeof value === 'string'
 		const isArray = Array.isArray(value)
 		switch (key as _StorageKeys) {
-		case "latex":
+		case 'inputs':
 			isArray
-			&& LatexStore.update(v => v.latex = value.map(v => String(v)))
+			&& Latex.sg_inputs.set(value.map(v => String(v)))
 			break
-		case "settings:prefix":
+		case 'settings-prefix':
 			isString
-			&& SettingsStore.update(v => v.prefix = value)
+			&& Settings.sg_prefix.set(value)
 			break
-		case "settings:suffix":
+		case 'settings-suffix':
 			isString
-			&& SettingsStore.update(v => v.suffix = value)
+			&& Settings.sg_suffix.set(value)
 			break
-		case "settings:text-wrap":
+		case 'settings-text-wrap':
 			isBoolean
-			&& SettingsStore.update(v => v.textWrap = value)
+			&& Settings.sg_textWrap.set(value)
 			break
 		}
 
@@ -65,9 +70,11 @@ function _readStorageAll(store: IDBObjectStore): void {
 
 function _readStorage(): void {
 	const store = _db.readStore(_ObjectStoreNames.Storage)
-	if (!store) return
+	if (!store) {
+		return
+	}
 
-	_readStorageAll(store)
+	_readAllStorage(store)
 }
 
 function _initDatabase(): void {

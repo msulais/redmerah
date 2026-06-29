@@ -1,190 +1,152 @@
-import { ObservableStore } from "@/utils/signal"
-import { DEFAULT_LATEX_TEXT } from "../shared/constant"
-import { ElementIds } from "../shared/ids"
-import { $, $$ } from "./dom-utils"
-import { CButton } from "@/components/Button"
-import { Commands } from "../shared/commands"
-import { CIcon } from "@/components/Icon"
-import { IconCodes } from "@/enums/icons"
-import katex from "katex"
-import { AppCSSColors } from "@/enums/app-data"
-import { createElementId } from "@/utils/ids"
-import { isTargetValidElement } from "@/utils/element"
-import { Math_clamp } from "@/utils/math"
-import { CDialog } from "@/components/Dialog"
-import { CTextAreaField } from "@/components/TextAreaField"
-import { html_beautify } from "js-beautify"
-import { CToast } from "@/components/Toast"
-import { CMenu } from "@/components/Menu"
-import { SettingsStore } from "./settings"
-import { saveStorageItem } from "./database"
+import * as Ids from '../shared/ids.enum.js'
+import * as WebComponent from '@/web-components/global-attributes.js'
+import * as BrIcon from '@/web-components/components/br-icon.js'
+import * as Button from '@/web-components/components/button.js'
+import * as BrFocusGroup from '@/web-components/components/br-focusgroup.js'
+import * as Commands from '../shared/commands.enum.js'
+import * as Constant from '../shared/constant.enum.js'
+import * as Settings from './settings.js'
+import * as Icons from '@/enums/icons.enum.js'
+import * as BrDialog from '@/web-components/components/br-dialog.js'
+import * as BrTheme from '@/web-components/components/br-theme.js'
+import type { EnumOf } from '@/types/collections'
+import { signal } from "@/utils/signal"
+import { $ } from './dom-utils.js'
+import { delegateEvent } from '@/utils/event-registry'
+import { Math_clamp } from '@/utils/math'
+import { html_beautify } from 'js-beautify'
+import { saveStorageItem } from './database.js'
+import { createElement, updateElementList } from '@/utils/element'
+import katex from 'katex'
 
-export type LatexStoreType = Readonly<{
-	latex: string[]
-}>
+export const sg_inputs = signal<string[]>([Constant.DEFAULT_LATEX_TEXT])
 
-export const LatexStore = new ObservableStore<LatexStoreType>({
-	latex: [DEFAULT_LATEX_TEXT]
-})
-const _ref_moreMenu = $(ElementIds.apMore_menu) as CMenu.CElement
-const _ref_copyAll = $(ElementIds.apMore_copy) as CMenu.CItem.CElement
-const _ref_reset = $(ElementIds.apMore_reset) as CMenu.CItem.CElement
-const _ref_addLatex = $(ElementIds.bd_add) as CButton.CElement
-const _ref_latexList = $(ElementIds.bd_list) as HTMLUListElement
-const _ref_mathmlDialog = $(ElementIds.bd_dialogMathML) as CDialog.CElement
-const _ref_mathMLInput = $(ElementIds.bd_inputMathML) as CTextAreaField.CElement
-const _ref_mathMLCopy = $(ElementIds.bd_mathMLCopy) as CButton.CElement
-const _ref_toastCopied = $(ElementIds.toa_copied) as CToast.CElement
+const _ref_copyAll      = $(Ids.CopyAll) as HTMLButtonElement
+const _ref_addLatex     = $(Ids.AddButton) as HTMLButtonElement
+const _ref_latexList    = $(Ids.List) as HTMLUListElement
+const _ref_mathmlDialog = $(Ids.DialogMathML) as BrDialog.BiruDialogElement
+const _ref_mathMLInput  = $(Ids.DialogMathMLInput) as HTMLTextAreaElement
+const _ref_mathMLCopy   = $(Ids.DialogMathMLCopy) as HTMLButtonElement
+
 let _selectedLatexIndex = 0
 
 function _addLatex(index: number): void {
-	LatexStore.update(v => {
-		v.latex.splice(index, 0, '')
-	})
-}
-
-function _updateLatexList(index: number): void {
-	const latex = LatexStore.value.latex[index]
-	if (latex === null || latex === undefined) {return}
-
-	let ref_li = $$<HTMLLIElement>(`li:nth-child(${index + 1})`, _ref_latexList)
-	let ref_textarea = $$<HTMLTextAreaElement>(`textarea`, ref_li)
-	let ref_output = $$<HTMLOutputElement>(`output`, ref_li)
-	let ref_delete = $$<CButton.CElement>(`[data-command="${CSS.escape(Commands.EquationDelete)}"]`, ref_li)
-	if (!ref_output) {
-		const refs_children = [..._ref_latexList.children]
-		ref_delete = CButton.CIcon.create({IconButton: {
-			Icon: {code: IconCodes.Delete},
-			refs: {button(ref) {
-				ref.setAttribute('aria-label', 'Delete')
-				ref.setAttribute('data-tooltip', 'Delete')
-				ref.setAttribute('data-command', Commands.EquationDelete)
-			}}
-		}})
-
-		const textareaId = createElementId()
-		const ref_div = document.createElement('div')
-		ref_textarea = document.createElement('textarea')
-		ref_output = document.createElement('output')
-		ref_li = document.createElement('li')
-		ref_li.tabIndex = 0
-		ref_textarea.id = textareaId
-		ref_output.setAttribute('for', textareaId)
-		ref_div.replaceChildren(
-			CButton.create({Button: {
-				children: [
-					CIcon.create({Icon: {code: IconCodes.Add}}),
-					'New equation'
-				],
-				variant: CButton.Variant.Outlined,
-				refs: {button(ref) {
-					ref.setAttribute('data-command', Commands.EquationNew)
-				}}
-			}}),
-			CButton.CIcon.create({IconButton: {
-				Icon: {code: IconCodes.Copy},
-				refs: {button(ref) {
-					ref.setAttribute('aria-label', 'Copy')
-					ref.setAttribute('data-tooltip', 'Copy')
-					ref.setAttribute('data-command', Commands.EquationCopy)
-				}}
-			}}),
-			CButton.CIcon.create({IconButton: {
-				Icon: {code: IconCodes.Code},
-				refs: {button(ref) {
-					ref.setAttribute('aria-label', 'MathML')
-					ref.setAttribute('data-tooltip', 'MathML')
-					ref.setAttribute('data-command', Commands.EquationMathML)
-				}}
-			}}),
-			ref_delete
-		)
-		ref_li.replaceChildren(ref_textarea, ref_output, ref_div)
-		refs_children.splice(index, 0, ref_li)
-		_ref_latexList.replaceChildren(...refs_children)
-	}
-
-	if (ref_delete) {
-		ref_delete.disabled = LatexStore.value.latex.length <= 1
-	}
-
-	if (ref_textarea!.value !== latex) {
-		ref_textarea!.value = latex
-	}
-
-	if (!ref_textarea!.oninput) {
-		let timeId: NodeJS.Timeout | number | null = null
-		ref_textarea!.oninput = () => {
-			if (timeId !== null) {
-				clearTimeout(timeId)
-			}
-
-			timeId = setTimeout(() => {
-				timeId = null
-				LatexStore.update(v => {
-					const index = [..._ref_latexList.children].findIndex(v => v === ref_li)
-					if (index >= 0) {
-						v.latex[index] = ref_textarea!.value
-					}
-				})
-			}, 100)
-		}
-	}
-
-	ref_output.innerHTML = katex.renderToString(latex, {
-		displayMode: true,
-		output: 'mathml',
-		errorColor: `rgb(${AppCSSColors.Error})`,
-		throwOnError: false
-	})
-}
-
-function _subsLatexView(v: LatexStoreType, o: LatexStoreType): void {
-	const latex = v.latex
-	const oldLatex = o.latex
-
-	for (let i = 0; i < latex.length; i++) {
-		_updateLatexList(i)
-	}
-
-	if (latex.length < oldLatex.length) {
-		const children = [..._ref_latexList.children] // must spread to keep array length
-		for (let i = 0; i < oldLatex.length - latex.length; i++) {
-			children[latex.length + i]?.remove()
-		}
-	}
-}
-
-function _subsLatexChanges(v: LatexStoreType, o: LatexStoreType): void {
-	const latex = v.latex
-	if (latex.join() === o.latex.join()) {return}
-
-	saveStorageItem('latex', [...latex])
+	sg_inputs().splice(index, 0, '')
+	sg_inputs.notify()
 }
 
 function _initSubscriber(): void {
-	LatexStore.subscribe(_subsLatexChanges)
-	LatexStore.subscribe(_subsLatexView)
+	sg_inputs.subscribe(v => {
+		saveStorageItem('inputs', ([] as ReturnType<typeof sg_inputs>).concat(sg_inputs()))
+		updateElementList(_ref_latexList, v,
+			() => {
+				const id_textarea = crypto.randomUUID().substring(0, 8).toUpperCase()
+				const li = createElement('li', {tabindex: '0'}, null, [
+					createElement('textarea', {id: id_textarea, 'br:as': WebComponent.As.TextField}),
+					createElement('output', {for: id_textarea}),
+					createElement(BrFocusGroup.TAGNAME, {'br:direction': BrFocusGroup.Direction.Horizontal}, null, [
+						createElement('button', {
+								'data-command': Commands.EquationNew,
+								'br:variant': [Button.Variant.Tonal, Button.Variant.Colored].join(' ')
+							},
+							null, [
+								createElement(BrIcon.TAGNAME, {}, ref => ref.innerHTML = Icons.Add),
+								'New equation'
+							]
+						),
+						createElement('button', {
+								'data-command': Commands.EquationCopy,
+								'br:variant': Button.Variant.Icon,
+								'aria-label': 'Copy',
+								'br:tooltip': 'Copy'
+							},
+							null, [
+								createElement(BrIcon.TAGNAME, {}, ref => ref.innerHTML = Icons.Copy)
+							]
+						),
+						createElement('button', {
+								'data-command': Commands.EquationMathML,
+								'br:variant': Button.Variant.Icon,
+								'aria-label': 'MathML',
+								'br:tooltip': 'MathML'
+							},
+							null, [
+								createElement(BrIcon.TAGNAME, {}, ref => ref.innerHTML = Icons.Code)
+							]
+						),
+						createElement('button', {
+								'data-command': Commands.EquationDelete,
+								'br:variant': Button.Variant.Icon,
+								'aria-label': 'Delete',
+								'br:tooltip': 'Delete'
+							},
+							null, [
+								createElement(BrIcon.TAGNAME, {}, ref => ref.innerHTML = Icons.Delete)
+							]
+						),
+					])
+				])
+				return li
+			},
+			(ref, data, index) => {
+				const ref_textarea = ref.querySelector('textarea')
+				const ref_output = ref.querySelector('output')
+				const ref_delete = ref.querySelector<HTMLButtonElement>(`button[data-command="${CSS.escape(Commands.EquationDelete)}"]`)
+				const fn_updateOutput = () => {
+					const latex = sg_inputs()[index]
+					if (!ref_output || typeof latex !== 'string') {
+						return
+					}
+
+					ref_output.innerHTML = katex.renderToString(latex, {
+						displayMode: true,
+						output: 'mathml',
+						errorColor: `rgb(var(${BrTheme.CSSVars.ColorAccent}))`,
+						throwOnError: false
+					})
+				}
+
+				let time_update: ReturnType<typeof setTimeout> | undefined
+
+				if (ref_textarea) {
+					ref_textarea.value = data
+					ref_textarea.oninput = () => {
+						sg_inputs()[index] = ref_textarea.value
+						// Don't call `.notify()` to avoid recreate elements
+						saveStorageItem('inputs', sg_inputs())
+						clearTimeout(time_update)
+						time_update = setTimeout(() => fn_updateOutput(), 100)
+					}
+				}
+
+				if (ref_delete) {
+					ref_delete.disabled = sg_inputs().length <= 1
+				}
+
+				fn_updateOutput()
+			}
+		)
+	})
 }
 
 function _initEvents(): void {
-	_ref_addLatex.addEventListener('click', () => {
+	delegateEvent(_ref_addLatex, 'click', () => {
 		_addLatex(0)
 	})
 
-	_ref_latexList.addEventListener('click', () => {
-		const ref_btn = document.activeElement as CButton.CElement
-		if (!isTargetValidElement(_ref_latexList, ref_btn)) {return}
-
-		const command = ref_btn.dataset.command as Commands
+	delegateEvent(_ref_latexList, 'click', (ev) => {
+		const button = (ev.target as HTMLElement).closest<HTMLButtonElement>('[data-command]')
+		if (!button) {
+			return
+		}
+		const command = button.dataset.command as EnumOf<typeof Commands>
 		const getLatexIndex = () => {
-			const li = ref_btn.closest('li')
+			const li = button.closest('li')
 			const children = [..._ref_latexList.children]
 			const index = children.findIndex(v => v === li)
-			return Math_clamp(index, 0, LatexStore.value.latex.length - 1)
+			return Math_clamp(index, 0, sg_inputs().length - 1)
 		}
 
-		const settings = SettingsStore.value
 		switch (command) {
 		case Commands.EquationNew:
 			_selectedLatexIndex = getLatexIndex()
@@ -193,59 +155,40 @@ function _initEvents(): void {
 		case Commands.EquationCopy:
 			_selectedLatexIndex = getLatexIndex()
 			navigator.clipboard.writeText([
-				settings.prefix,
-				LatexStore.value.latex[_selectedLatexIndex],
-				settings.suffix
-			].join('')).then(() => {
-				_ref_toastCopied.showPopover()
-			})
+				Settings.sg_prefix(),
+				sg_inputs()[_selectedLatexIndex],
+				Settings.sg_suffix()
+			].join(''))
 			break
 		case Commands.EquationMathML:
 			_selectedLatexIndex = getLatexIndex()
-			_ref_mathmlDialog.showModal()
+			_ref_mathmlDialog.biru.open()
 			_ref_mathMLInput.value = html_beautify(
-				ref_btn.closest('li')!.querySelector('output')!.firstElementChild!.innerHTML,
+				button.closest('li')!.querySelector('output')!.firstElementChild!.innerHTML,
 				{indent_size: 2}
 			)
 			break
 		case Commands.EquationDelete:
 			_selectedLatexIndex = getLatexIndex()
-			LatexStore.update(v => v.latex.splice(_selectedLatexIndex, 1))
+			sg_inputs().splice(_selectedLatexIndex, 1)
+			sg_inputs.notify()
 			break
 		}
 	})
 
-	_ref_mathMLCopy.addEventListener('click', () => {
-		navigator.clipboard.writeText(_ref_mathMLInput.value).then(() => {
-			_ref_toastCopied.showPopover()
-		})
+	delegateEvent(_ref_mathMLCopy, 'click', () => {
+		navigator.clipboard.writeText(_ref_mathMLInput.value)
 	})
 
-	_ref_copyAll.addEventListener('click', () => {
-		_ref_moreMenu.hidePopover()
-		const settings = SettingsStore.value
+	delegateEvent(_ref_copyAll, 'click', () => {
 		navigator.clipboard.writeText(
-			LatexStore.value.latex.map(v => settings.prefix + v + settings.suffix)
-			.join('\n\n')
-		).then(() => {
-			_ref_toastCopied.showPopover()
-		})
+			sg_inputs().map(v => Settings.sg_prefix() + v + Settings.sg_suffix()).join('\n\n')
+		)
 	})
-
-	_ref_reset.addEventListener('click', () => {
-		_ref_moreMenu.hidePopover()
-		LatexStore.update(v => v.latex = [DEFAULT_LATEX_TEXT])
-	})
-}
-
-function _initDefaultLatex(): void {
-	for (let i = 0; i < LatexStore.value.latex.length; i++) {
-		_updateLatexList(i)
-	}
 }
 
 export default () => {
 	_initEvents()
 	_initSubscriber()
-	_initDefaultLatex() // must after _initSubscriber()
+	sg_inputs.notify() // must after _initSubscriber()
 }
