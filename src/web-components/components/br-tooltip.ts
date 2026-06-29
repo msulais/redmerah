@@ -1,3 +1,12 @@
+/*
+Example:
+```html
+<br-tooltip>
+	<any br:tooltip="This is tooltip"></any>
+</br-tooltip>
+```
+ */
+
 import { GlobalAttributes } from '../global-attributes.js'
 import * as BrTheme from './br-theme.js'
 

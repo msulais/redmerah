@@ -1,3 +1,10 @@
+/*
+Example:
+```html
+<any br:as="label">Name</any>
+<label>Name</label>
+```
+ */
 export const TAGNAME = ':where(label:not([br\\:as~="!label"]),[br\\:as~=label])'
 let _isDefined = false
 

@@ -1,3 +1,12 @@
+/*
+Example:
+```html
+<br-if>
+	<any/>
+</br-if>
+```
+ */
+
 import * as BrTheme from './br-theme.js'
 import { listenRouteChange } from "../router"
 import { QueryValidation } from "../utils"

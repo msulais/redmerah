@@ -1,3 +1,12 @@
+/*
+Example:
+```html
+<br-dialog>
+	<any></any>
+</br-dialog>
+```
+ */
+
 import * as BrTheme from './br-theme.js'
 import * as BrPopover from './br-popover.js'
 import { registerZIndex, unregisterZIndex } from "../z-index.js"

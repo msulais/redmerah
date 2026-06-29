@@ -1,3 +1,11 @@
+/*
+Example:
+```html
+<any br:as="button">A</any>
+<button>B</button>
+```
+ */
+
 import * as BrTheme from './br-theme.js'
 
 export const Attributes = {

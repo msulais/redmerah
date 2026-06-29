@@ -1,3 +1,10 @@
+/*
+Example:
+```html
+<br-attributeif></br-attributeif>
+```
+ */
+
 import * as BrTheme from './br-theme.js'
 import { listenRouteChange } from "../router.js"
 import { QueryValidation } from "../utils.js"

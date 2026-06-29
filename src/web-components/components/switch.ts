@@ -1,3 +1,10 @@
+/*
+Example:
+```html
+<input type="checkbox" br:as="switch">
+```
+ */
+
 import * as BrTheme from './br-theme.js'
 
 export const TAGNAME = 'input[type=checkbox][br\\:as~=switch]'

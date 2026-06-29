@@ -1,3 +1,16 @@
+/*
+Example:
+```html
+<br-navigation>
+	<any
+		br:as="navigationitem"
+		br:label="label">
+		<any>home</any>
+	</any>
+</br-navigation>
+```
+ */
+
 import { listenRouteChange } from '../router.js'
 import { QueryValidation } from '../utils.js'
 import * as BrTheme from './br-theme.js'

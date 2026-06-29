@@ -1,3 +1,12 @@
+/*
+Example:
+```html
+<br-focusgroup>
+	<any></any>
+</br-focusgroup>
+```
+ */
+
 export const Attributes = {
 	/**
 	 * Direction of focus key. Default `"both"`

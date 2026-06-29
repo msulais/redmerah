@@ -1,3 +1,10 @@
+/*
+Example:
+```html
+<br-moveif></br-moveif>
+```
+ */
+
 import * as BrTheme from './br-theme.js'
 import { listenRouteChange } from "../router"
 import { QueryValidation } from "../utils"

@@ -1,3 +1,10 @@
+/*
+Example:
+```html
+<input type="range" br:as="slider">
+```
+ */
+
 import * as BrTheme from './br-theme'
 
 export const TAGNAME = 'input[type=range][br\\:as~=slider]'

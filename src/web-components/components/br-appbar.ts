@@ -1,3 +1,10 @@
+/*
+Example:
+```html
+<br-appbar></br-appbar>
+```
+ */
+
 import { slotEmptyListeners } from "../utils"
 
 export const Slots = {

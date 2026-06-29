@@ -1,3 +1,10 @@
+/*
+Example:
+```html
+<br-icon>icon_name</br-icon>
+```
+ */
+
 import * as BrTheme from './br-theme.js'
 
 export const TAGNAME = 'br-icon'

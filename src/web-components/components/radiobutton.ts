@@ -1,3 +1,13 @@
+/*
+Example:
+```html
+<label br:as="radiobutton">
+	<input type="radio">
+	Label
+</label>
+```
+ */
+
 import * as BrTheme from './br-theme.js'
 
 export const TAGNAME = 'label[br\\:as~=radiobutton]'

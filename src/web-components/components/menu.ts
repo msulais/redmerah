@@ -1,3 +1,18 @@
+/*
+Example:
+```html
+<br-popover>
+	<any br:as="menu"></any>
+	<menu>
+		<li><button>Option 1</button><li>
+		<li><hr/><li>
+		<li><label br:as="button"><input type="radio"> Option 2</label></li>
+		<li><label br:as="button"><input type="checkbox"> Option 3</label></li>
+	</menu>
+</br-popover>
+```
+ */
+
 import { listenDocumentEvent } from '../event-registry.js'
 import { GlobalAttributes } from '../global-attributes.js'
 import * as BrPopover from './br-popover.js'

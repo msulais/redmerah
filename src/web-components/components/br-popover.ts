@@ -1,3 +1,12 @@
+/*
+Example:
+```html
+<br-popover>
+	<any/>
+</br-popover>
+```
+*/
+
 import * as BrTheme from './br-theme.js'
 import * as BrDialog from './br-dialog.js'
 import * as Button from './button.js'

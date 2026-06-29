@@ -1,3 +1,23 @@
+/*
+Example:
+```html
+<input type="text" br:as="textfield">
+<input type="password" br:as="textfield">
+<input type="email" br:as="textfield">
+<input type="date" br:as="textfield">
+<input type="datetime-local" br:as="textfield">
+<input type="file" br:as="textfield">
+<input type="month" br:as="textfield">
+<input type="number" br:as="textfield">
+<input type="search" br:as="textfield">
+<input type="tel" br:as="textfield">
+<input type="time" br:as="textfield">
+<input type="url" br:as="textfield">
+<input type="week" br:as="textfield">
+<textarea br:as="textfield"></textarea>
+```
+ */
+
 import * as BrTheme from './br-theme.js'
 
 export const TAGNAME = ':where(input,textarea)[br\\:as~=textfield]'
@@ -31,7 +51,7 @@ ${ELEMENT}:where(textarea) {
 		font-size: 1rem;
 		min-height: 3rem;
 		border-radius: .5rem;
-		padding: 1rem;
+		padding: .75rem 1rem;
 	}
 }
 

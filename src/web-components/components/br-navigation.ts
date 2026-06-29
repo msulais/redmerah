@@ -1,3 +1,16 @@
+/*
+Example:
+```html
+<br-navigation>
+	<any
+		br:as="navigationitem"
+		br:label="label">
+		<any>home</any>
+	</any>
+</br-navigation>
+```
+ */
+
 import { registerZIndex, unregisterZIndex } from "../z-index.js"
 import * as NavigationItem from './navigationitem.js'
 import * as BrTheme from './br-theme.js'

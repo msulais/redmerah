@@ -1,3 +1,15 @@
+/*
+Example:
+```html
+<any br:as="select"></any>
+<select>
+	<option>1</option>
+	<option>2</option>
+	<option>3</option>
+</select>
+```
+ */
+
 import * as BrTheme from './br-theme.js'
 
 export const TAGNAME = 'select:not([br\\:as~="!select"])'

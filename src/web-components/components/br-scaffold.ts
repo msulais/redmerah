@@ -1,3 +1,12 @@
+/*
+Example:
+```html
+<br-scaffold>
+	<any/>
+</br-scaffold>
+```
+*/
+
 import * as BrTheme from './br-theme.js'
 import { slotEmptyListeners } from "../utils.js"
 

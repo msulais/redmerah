@@ -1,3 +1,12 @@
+/*
+Example:
+```html
+<br-theme>
+	<any/>
+</br-theme>
+```
+*/
+
 import { colorContrastRatio, colorToHex, colorToRgb, hexToRgb, hslToRgb, isColorValid, rgbToHsl, type HEXColor, type HSLColor, type RGBColor } from "../colors"
 
 export const CSSVars = {
