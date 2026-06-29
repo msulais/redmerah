@@ -26,6 +26,7 @@
 		"esModuleInterop": true,
 		"noEmit": true,
 		"isolatedModules": true,
+		"noUncheckedIndexedAccess": true,
 
 		// Rules
 		"allowUnreachableCode": false,
