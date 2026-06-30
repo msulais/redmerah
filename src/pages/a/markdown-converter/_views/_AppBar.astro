@@ -1,0 +1,244 @@
+---
+import * as Icons from '@/enums/icons.enum.js'
+import * as Ids from '../_scripts/shared/ids.enum.js'
+import * as ExternalLinks from '@/enums/external-links.enum.js'
+import * as Routes from '@/enums/routes.enum.js'
+import * as Constant from '../_scripts/shared/constant.enum.js'
+import * as InputNames from '../_scripts/shared/input-names.enum.js'
+import * as BrTheme from '@/web-components/components/br-theme.server.js'
+import logoRedmerah from '@/assets/images/logos/redmerah-logo.svg'
+
+const THEMES: [text: string, value: string, icon: string][] = [
+	['System', BrTheme.ThemeMode.Auto , Icons.LaptopSettings],
+	['Light' , BrTheme.ThemeMode.Light, Icons.WeatherSunny  ],
+	['Dark'  , BrTheme.ThemeMode.Dark , Icons.WeatherMoon   ],
+]
+const ANIMATION: [text: string, value: string, icon: string][] = [
+	['System', BrTheme.Animation.Auto, Icons.VideoClipOptimize],
+	['On'    , BrTheme.Animation.On  , Icons.VideoClip        ],
+	['Off'   , BrTheme.Animation.Off , Icons.VideoClipOff     ],
+]
+---
+<br-appbar slot="appbar">
+	<img
+		slot="headline"
+		src={Constant.APP.logoUrl}
+		alt={Constant.APP.name + ' logo'}
+		style="width: 1.5rem;margin-right: .5rem;"
+	/>
+	<span slot="headline">{Constant.APP.name}</span>
+	<br-focusgroup slot="trailing" br:direction="horizontal">
+		<button
+			aria-label="Info"
+			br:tooltip="Info"
+			br:variant="icon"
+			style="margin: 0 0 0 .5rem"
+			br:command-for={Ids.PopoverAppBarInfo}>
+			<br-icon set:html={Icons.Info}/>
+		</button>
+		<button
+			aria-label="Settings"
+			br:tooltip="Settings"
+			br:variant="icon"
+			br:command-for={Ids.PopoverAppBarSettings}
+			style="margin: 0 0 0 .25rem">
+			<br-icon set:html={Icons.Settings}/>
+		</button>
+		<button
+			aria-label="More action"
+			br:tooltip="More action"
+			br:variant="icon"
+			br:command-for={Ids.PopoverAppBarMore}
+			style="margin: 0 0 0 .25rem">
+			<br-icon set:html={Icons.MoreVertical}/>
+		</button>
+	</br-focusgroup>
+</br-appbar>
+
+<br-popover id={Ids.PopoverAppBarInfo} style="width:12rem">
+	<br-focusgroup br:direction="vertical">
+		<menu>
+			<li style="margin-left:1rem;padding-top:.5rem;opacity:.75"><small>{Constant.APP.name}</small></li>
+			<li><button id={Ids.PopoverAppBarInfoShare}>
+				<br-icon set:html={Icons.ShareAndroid}/>
+				Share
+			</button></li>
+			<li><a br:as="button" href={'mailto:' + ExternalLinks.ContactEmail + '?subject=' + encodeURI(Constant.APP.name)}>
+				<br-icon set:html={Icons.Chat}/>
+				Send feedback
+			</a></li>
+			<li><hr/></li>
+			<li><a br:as="button" href={Routes.Home}>
+				<img src={logoRedmerah.src} style="width:1.25rem"/>
+				Redmerah
+			</a></li>
+			<li><a br:as="button" href={Routes.Apps}>
+				<br-icon set:html={Icons.Apps}/>
+				More apps
+			</a></li>
+			<li><a br:as="button" href={Routes.About}>
+				<br-icon set:html={Icons.Info}/>
+				About us
+			</a></li>
+			<li><a br:as="button" rel="noopener noreferrer" target="_blank" href={'https://github.com/msulais/redmerah/tree/main/src/pages' + Constant.APP.link}>
+				<br-icon set:html={Icons.Code}/>
+				Repository
+			</a></li>
+			<li><a br:as="button" rel="noopener noreferrer" target="_blank" href={ExternalLinks.Donate}>
+				<br-icon set:html={Icons.Gift}/>
+				Donate
+			</a></li>
+			<li style="margin-left:1rem;padding-bottom:.5rem;opacity:.75"><small>&copy; {new Date().getFullYear()} Redmerah</small></li>
+		</menu>
+	</br-focusgroup>
+</br-popover>
+
+<br-popover id={Ids.PopoverAppBarSettings}>
+	<br-focusgroup br:direction="vertical">
+		<menu>
+			<li>
+				<button br:prevent-default br:command-for={Ids.PopoverAppBarSettingsAnimation}>
+					<br-icon set:html={Icons.PlayCircleHint}/>
+					Animation
+					<div style="flex:1"/>
+					<br-icon set:html={Icons.ChevronRight}/>
+				</button>
+				<br-popover br:submenu id={Ids.PopoverAppBarSettingsAnimation}>
+					<menu>
+						{ANIMATION.map(v => <li><label br:as="button">
+							<input
+								checked={v[1] === Constant.DEFAULT_ANIMATION}
+								value={v[1]}
+								type="radio"
+								name={InputNames.Animation}
+							/>
+							<br-icon set:html={v[2]}/>
+							{v[0]}
+						</label></li>)}
+					</menu>
+				</br-popover>
+			</li>
+			<li>
+				<button br:prevent-default br:command-for={Ids.PopoverAppBarSettingsTheme}>
+					<br-icon set:html={Icons.WeatherSunny}/>
+					Theme
+					<div style="flex:1"/>
+					<br-icon set:html={Icons.ChevronRight}/>
+				</button>
+				<br-popover br:submenu id={Ids.PopoverAppBarSettingsTheme}>
+					<menu>
+						{THEMES.map(v => <li><label br:as="button">
+							<input
+								checked={v[1] === Constant.DEFAULT_THEME}
+								value={v[1]}
+								type="radio"
+								name={InputNames.Theme}
+							/>
+							<br-icon set:html={v[2]}/>
+							{v[0]}
+						</label></li>)}
+					</menu>
+				</br-popover>
+			</li>
+			<li><hr/></li>
+			<li>
+				<label br:as="button">
+					<input
+						type="checkbox"
+						id={Ids.PopoverAppBarSettingsTextWrap}
+						checked={Constant.DEFAULT_TEXT_WRAP}
+					/>
+					Text wrap
+				</label>
+			</li>
+		</menu>
+	</br-focusgroup>
+</br-popover>
+
+<br-popover id={Ids.PopoverAppBarMore}>
+	<br-focusgroup br:direction="vertical">
+		<menu>
+			<li>
+				<button br:prevent-default br:command-for={Ids.PopoverAppBarMoreCopy}>
+					<br-icon set:html={Icons.Copy}/>
+					Copy
+					<div style="flex:1"/>
+					<br-icon set:html={Icons.ChevronRight}/>
+				</button>
+				<br-popover br:submenu id={Ids.PopoverAppBarMoreCopy}>
+					<menu>
+						<li>
+							<button id={Ids.PopoverAppBarMoreCopyMarkdown}>
+								Markdown
+							</button>
+						</li>
+						<li>
+							<button id={Ids.PopoverAppBarMoreCopyHTML}>
+								HTML
+							</button>
+						</li>
+						<li>
+							<button id={Ids.PopoverAppBarMoreCopyCSS}>
+								CSS
+							</button>
+						</li>
+					</menu>
+				</br-popover>
+			</li>
+			<li>
+				<button br:prevent-default br:command-for={Ids.PopoverAppBarMoreDownload}>
+					<br-icon set:html={Icons.ArrowDownload}/>
+					Download
+					<div style="flex:1"/>
+					<br-icon set:html={Icons.ChevronRight}/>
+				</button>
+				<br-popover br:submenu id={Ids.PopoverAppBarMoreDownload}>
+					<menu>
+						<li>
+							<button id={Ids.PopoverAppBarMoreDownloadMarkdown}>
+								Markdown
+							</button>
+						</li>
+						<li>
+							<button id={Ids.PopoverAppBarMoreDownloadHTML}>
+								HTML
+							</button>
+						</li>
+						<li>
+							<button id={Ids.PopoverAppBarMoreDownloadCSS}>
+								CSS
+							</button>
+						</li>
+					</menu>
+				</br-popover>
+			</li>
+			<li>
+				<button id={Ids.PopoverAppBarMorePrint}>
+					<br-icon set:html={Icons.Print}/>
+					Print
+				</button>
+			</li>
+			<li>
+				<button id={Ids.PopoverAppBarMoreOpenFile}>
+					<br-icon set:html={Icons.DocumentArrowRight}/>
+					Open file
+				</button>
+			</li>
+			<li><hr/></li>
+			<li>
+				<button id={Ids.PopoverAppBarMoreResetMarkdown}>
+					<br-icon set:html={Icons.ArrowReset}/>
+					Reset markdown
+					<div style="flex:1"/>
+					<br-icon style="opacity:0" set:html={Icons.ChevronRight}/>
+				</button>
+			</li>
+			<li>
+				<button id={Ids.PopoverAppBarMoreResetCSS}>
+					<br-icon set:html={Icons.ArrowReset}/>
+					Reset CSS
+				</button>
+			</li>
+		</menu>
+	</br-focusgroup>
+</br-popover>
