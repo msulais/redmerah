@@ -19,7 +19,7 @@
 	}
 
 	@media (prefers-color-scheme: dark) {
-		:root[data-splash-theme=auto] .splash {
+		:root:is([data-splash-theme=auto],:not([data-splash-theme])) .splash {
 			background-color: #1F1F1F;
 		}
 	}
@@ -43,7 +43,7 @@
 		}
 
 		@media (prefers-reduced-motion: reduce) {
-			:root[data-splash-animation=auto] & {
+			:root:is([data-splash-animation=auto],:not([data-splash-animation])) & {
 				display: none;
 			}
 		}
