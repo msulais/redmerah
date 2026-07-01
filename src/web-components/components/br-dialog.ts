@@ -45,7 +45,7 @@ export const TAGNAME = 'br-dialog'
 const ELEMENT_BY_IDS = new Map<string, BiruDialogElement>()
 const STYLES = new CSSStyleSheet()
 const DIALOG_MARGIN = 16
-let _lastOpenedDialog: BiruDialogElement | undefined
+const OPENED_DIALOGS: BiruDialogElement[] = []
 
 export class BiruDialogElement extends HTMLElement {
 	static observedAttributes = [
@@ -163,10 +163,6 @@ export class BiruDialogElement extends HTMLElement {
 					break backdrop
 				}
 
-				if (!self._isOpen) {
-					_lastOpenedDialog = self
-				}
-
 				self.style.setProperty('display', 'flex')
 				self.style.setProperty('z-index', registerZIndex(self, (ref) => {
 					if (this.manual) {
@@ -180,6 +176,16 @@ export class BiruDialogElement extends HTMLElement {
 				self._isOpen = true
 				self.focus()
 				self.dispatchEvent(new CustomEvent(EventTypes.Toggle, {bubbles: true}))
+
+				opened_dialog: {
+					const index = OPENED_DIALOGS.findIndex(v => v === self)
+					if (index >= 0) {
+						OPENED_DIALOGS.splice(index, 1)
+					}
+
+					OPENED_DIALOGS.push(self)
+					break opened_dialog
+				}
 
 				const max = Math.max(self.offsetWidth, self.offsetHeight)
 				const startScale = (max / (max + 32) * 100) + '%'
@@ -229,8 +235,9 @@ export class BiruDialogElement extends HTMLElement {
 					self.style.removeProperty('display')
 					self.style.removeProperty('z-index')
 					self.dispatchEvent(new CustomEvent(EventTypes.Toggle, {bubbles: true}))
-					if (_lastOpenedDialog === self) {
-						_lastOpenedDialog = undefined
+					const index = OPENED_DIALOGS.findIndex(v => v === self)
+					if (index >= 0) {
+						OPENED_DIALOGS.splice(index, 1)
 					}
 				})
 			}
@@ -260,39 +267,46 @@ function _initListeners(): void {
 	})
 
 	listenDocumentEvent<KeyboardEvent>('keydown', (ev) => {
-		if (!_lastOpenedDialog || ev.key !== 'Tab') {
+		if (OPENED_DIALOGS.length <= 0 || ev.key !== 'Tab') {
 			return
 		}
 
+		const lastOpenedDialog = OPENED_DIALOGS[OPENED_DIALOGS.length-1]!
 		const current = document.activeElement
-		const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-		const focusableElements = Array.from(_lastOpenedDialog.querySelectorAll(focusableSelector)) as unknown as HTMLElement[]
-		focusableElements.unshift(_lastOpenedDialog)
-		focusableElements.filter(el =>
-			!(el as HTMLButtonElement)?.disabled && el.offsetParent !== null
+		const focusableSelector = 'button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])';
+		let focusableElements = Array.from(lastOpenedDialog.querySelectorAll(focusableSelector)) as unknown as HTMLElement[]
+		focusableElements = focusableElements.filter(el =>
+			!(el as HTMLButtonElement)?.disabled || el.offsetParent !== null
 		)
-
+		focusableElements.unshift(lastOpenedDialog)
 		if (focusableElements.length === 0) {
-			_lastOpenedDialog.focus()
+			lastOpenedDialog.focus()
 			ev.preventDefault()
 			return
 		}
 
 		const index = focusableElements.findIndex(v => v === current)
 		if (index < 0) {
-			_lastOpenedDialog.focus()
+			lastOpenedDialog.focus()
 			ev.preventDefault()
 			return
 		}
 
-		if (ev.shiftKey && index === 0) {
-			focusableElements[focusableElements.length-1]!.focus()
-			ev.preventDefault()
+		let element: HTMLElement = lastOpenedDialog
+		if (ev.shiftKey) {
+			if (index <= 0) {
+				element = focusableElements[focusableElements.length-1]!
+			}
+			else {
+				element = focusableElements[index - 1]!
+			}
 		}
-		else if (index === focusableElements.length - 1) {
-			_lastOpenedDialog.focus()
-			ev.preventDefault()
+		else if (index < focusableElements.length-1) {
+			element = focusableElements[index + 1]!
 		}
+
+		element.focus()
+		ev.preventDefault()
 	})
 }
 
