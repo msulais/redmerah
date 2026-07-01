@@ -1,0 +1,12 @@
+---
+import * as Ids from '../_scripts/shared/ids.enum.js'
+import videoFile from '@/assets/video/271161_small.mp4'
+---
+<br-moveif
+	br:for={Ids.PickerButton}
+	br:fallback={Ids.PickerButtonLocation}
+	br:media="(width <= 28rem)"
+/>
+<img   id={Ids.Image} hidden/>
+<audio id={Ids.Audio} hidden controls />
+<video id={Ids.Video} controls src={videoFile}/>

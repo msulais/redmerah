@@ -4,9 +4,9 @@ export function $(id: string) {
 
 export function $$<T extends HTMLElement>(
 	selector: string,
-	from: Document | Element | null = document
+	from: Document | Element = document
 ) {
-	return from?.querySelector<T>(selector)
+	return from.querySelector<T>(selector)
 }
 
 export function $$$<T extends HTMLElement>(
