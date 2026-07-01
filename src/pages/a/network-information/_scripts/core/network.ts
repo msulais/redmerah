@@ -1,7 +1,7 @@
 import * as Ids from '../shared/ids.enum.js'
 import type { NetworkInformation } from "@/interfaces/network-information"
 import { batch, signal } from "@/utils/signal"
-import { $ } from "./dom-utils"
+import { $ } from "./dom-utils.js"
 import { isNumberDefined } from '@/utils/number'
 
 export const sg_downlink      = signal<NetworkInformation['downlink'] | null>(null)
