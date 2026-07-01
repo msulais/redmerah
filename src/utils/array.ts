@@ -12,6 +12,15 @@ export function binarySearch(array: number[], target: number): number | null {
 	return null
 }
 
+export function removeArrayItem<T>(arr: T[], condition: (value: T) => boolean) {
+	const index = arr.findIndex(condition)
+	if (index < 0) {
+		return
+	}
+
+	arr.splice(index, 1)
+}
+
 export function isArrayEqual<T, U>(arr: T[], target: U[]): boolean {
 	return arr.toString() === target.toString()
 }
