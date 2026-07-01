@@ -1,0 +1,12 @@
+export const PopoverAppBarInfo = '74EB4B1A'
+export const PopoverAppBarInfoShare = 'FC9B52D1'
+export const PopoverAppBarSettings = 'FFBBE90C'
+export const PopoverAppBarSettingsAnimation = 'F6241AE6'
+export const PopoverAppBarSettingsTheme = '769E54AD'
+
+export const Downlink = 'A0336D1C'
+export const DownlinkMax = '0E7DA321'
+export const EffectiveType = 'ACF8AA26'
+export const Type = '83E9B59A'
+export const RoundTripTime = '8EF7B810'
+export const DataSaver = 'D2E998C6'
