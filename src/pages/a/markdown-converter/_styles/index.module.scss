@@ -38,6 +38,7 @@
 
 		@media (max-width: 40rem) {
 			min-height: calc(100dvh - 13rem) !important;
+			max-height: calc(100dvh - 13rem) !important;
 		}
 
 		&:not([data-text-wrap]) {
@@ -59,6 +60,7 @@
 
 		@media (max-width: 40rem) {
 			min-height: calc(100dvh - 13rem) !important;
+			max-height: calc(100dvh - 13rem) !important;
 		}
 	}
 }
