@@ -37,7 +37,7 @@ export const Attributes = {
 	Padding: 'br:padding',
 
 	/**
-	 * To override `padding`, `position`, and `gap`
+	 * To override `padding`, `position`, and `gap`. Also enable auto open/close when hovered.
 	 *
 	 * @type {boolean}
 	 * */
@@ -117,8 +117,15 @@ const DEFAULT_POPOVER_GAP = 8
 const DEFAULT_POPOVER_POSITION = Position.CenterBottom
 const OPENED_POPOVER = new Set<BiruPopoverElement>()
 const STYLES = new CSSStyleSheet()
+const POPOVER_TO_CLOSE = new Map<BiruPopoverElement, ReturnType<typeof setTimeout>>()
 let _pointerX = 0
 let _pointerY = 0
+
+// Smart way to stop event propagation without `Event.stopPropagation()`.
+// Don't use `Event.stopPropagation()` here because it will disturb event flow in app.
+let _elementEventKeyboard: BiruPopoverElement | undefined
+let _elementEventPointerOut: BiruPopoverElement | undefined
+let _elementEventPointerOver: BiruPopoverElement | undefined
 
 export class BiruPopoverElement extends HTMLElement {
 	static observedAttributes = [
@@ -137,6 +144,10 @@ export class BiruPopoverElement extends HTMLElement {
 	private _timeReposition: ReturnType<typeof setTimeout> | undefined
 	private _slot: HTMLSlotElement
 
+	// For auto open/close submenu
+	private _timeOpenSubmenu: ReturnType<typeof setTimeout> | undefined
+	private _openSubmenuAnchor: HTMLElement | undefined
+
 	constructor() {
 		super()
 		const shadow = this.attachShadow({mode: 'open'})
@@ -146,6 +157,11 @@ export class BiruPopoverElement extends HTMLElement {
 		this.tabIndex = 0
 		this.role = 'dialog'
 		this._lastFocusElement = null
+
+		// Main purpose: handle auto open submenu
+		this.addEventListener('pointerover', this)
+		this.addEventListener('pointerout', this)
+		this.addEventListener('keydown', this)
 	}
 
 	connectedCallback(): void {
@@ -172,6 +188,8 @@ export class BiruPopoverElement extends HTMLElement {
 		this._lastFocusElement = null
 		this._lastAnchorElement = undefined
 		this._shadowElementsListenerDesctructor?.()
+		this._openSubmenuAnchor = undefined
+		clearTimeout(this._timeOpenSubmenu)
 		ELEMENT_BY_IDS.delete(this.id)
 		ELEMENTS.delete(this)
 	}
@@ -193,6 +211,226 @@ export class BiruPopoverElement extends HTMLElement {
 			}
 			break
 		}
+	}
+
+	handleEvent(ev: Event): void {
+		switch (ev.type) {
+		case 'pointerover': return this._pointerover(ev as PointerEvent)
+		case 'pointerout' : return this._pointerout (ev as PointerEvent)
+		case 'keydown'    : return this._keydown    (ev as KeyboardEvent)
+		}
+	}
+
+	// I don't want to explain how this code works.
+	// Even I don't know why this ugly code works.
+	private _pointerover(ev: PointerEvent): void {
+		if (_elementEventPointerOver === this) {
+			_elementEventPointerOver = _elementEventPointerOver.parentElement?.closest(TAGNAME) ?? undefined
+			return
+		}
+
+		_elementEventPointerOver = this.parentElement?.closest(TAGNAME) ?? undefined
+		if (POPOVER_TO_CLOSE.has(this)) {
+			clearTimeout(this._timeOpenSubmenu)
+			clearTimeout(POPOVER_TO_CLOSE.get(this))
+			this._openSubmenuAnchor = undefined
+			POPOVER_TO_CLOSE.delete(this)
+			return
+		}
+
+		const target = (ev.target as HTMLElement).closest<HTMLElement>(
+			`[${CSS.escape(GlobalAttributes.CommandFor)}]`
+		)
+		if (!target || this._openSubmenuAnchor === target) {
+			return
+		}
+
+		const id = target.getAttribute(GlobalAttributes.CommandFor)!
+		if (!ELEMENT_BY_IDS.has(id)) {
+			return
+		}
+
+		if (target.hasAttribute(GlobalAttributes.Command)) {
+			switch (target.getAttribute(GlobalAttributes.Command)) {
+			case Commands.OpenPopover:
+			case Commands.TogglePopover:
+				break
+			default:
+				return
+			}
+		}
+
+		const popover = ELEMENT_BY_IDS.get(id)!
+
+		// only when popover has [br:submenu] and not has [br:manual]
+		if (!popover.hasAttribute(Attributes.SubMenu) || popover.hasAttribute(Attributes.Manual)) {
+			return
+		}
+
+		clearTimeout(this._timeOpenSubmenu)
+		if (popover && POPOVER_TO_CLOSE.has(popover)) {
+			clearTimeout(POPOVER_TO_CLOSE.get(popover))
+			this._openSubmenuAnchor = undefined
+			POPOVER_TO_CLOSE.delete(popover)
+			return
+		}
+
+		this._openSubmenuAnchor = target
+		this._timeOpenSubmenu = setTimeout(() => {
+			if (popover) {
+				popover.biru.open(this._openSubmenuAnchor)
+				for (const p of OPENED_POPOVER) {
+					if (popover && (
+						p === popover
+						|| p.contains(popover)
+					)) {
+						continue
+					}
+
+					if (p.hasAttribute(Attributes.Manual)) {
+						continue
+					}
+
+					p.biru.close(true)
+				}
+			}
+
+			this._openSubmenuAnchor = undefined
+		}, 250)
+	}
+
+	private _pointerout(ev: PointerEvent): void {
+		if (_elementEventPointerOut === this) {
+			_elementEventPointerOut = _elementEventPointerOut.parentElement?.closest(TAGNAME) ?? undefined
+			return
+		}
+
+		_elementEventPointerOut = this.parentElement?.closest(TAGNAME) ?? undefined
+		const target = (ev.target as HTMLElement).closest<HTMLElement>(
+			`[${CSS.escape(GlobalAttributes.CommandFor)}]`
+		)
+
+		OPEN_SUBMENU: {
+			if (!target || this._openSubmenuAnchor !== target) {
+				break OPEN_SUBMENU
+			}
+
+			clearTimeout(this._timeOpenSubmenu)
+			this._openSubmenuAnchor = undefined
+		}
+
+		CLOSE_SUBMENU_BY_SUBMENU: {
+			if (this.hasAttribute(Attributes.Manual) || !this.hasAttribute(Attributes.SubMenu)) {
+				break CLOSE_SUBMENU_BY_SUBMENU
+			}
+
+			clearTimeout(POPOVER_TO_CLOSE.get(this))
+			POPOVER_TO_CLOSE.set(this, setTimeout(() => {
+				this.biru.close()
+				POPOVER_TO_CLOSE.delete(this)
+			}, 250))
+		}
+
+		CLOSE_SUBMENU_BY_ANCHOR: {
+			if (!target) {
+				break CLOSE_SUBMENU_BY_ANCHOR
+			}
+
+			const id = target.getAttribute(GlobalAttributes.CommandFor)!
+			const popover = ELEMENT_BY_IDS.get(id)
+			const related = ev.relatedTarget as HTMLElement
+
+			if (!popover) {
+				break CLOSE_SUBMENU_BY_ANCHOR
+			}
+
+			clearTimeout(POPOVER_TO_CLOSE.get(popover))
+			if (
+				popover === related
+				|| popover.contains(related)
+				|| popover.hasAttribute(Attributes.Manual)
+				|| !popover.hasAttribute(Attributes.SubMenu)
+			) {
+				break CLOSE_SUBMENU_BY_ANCHOR
+			}
+
+			POPOVER_TO_CLOSE.set(popover, setTimeout(() => {
+				popover.biru.close()
+				POPOVER_TO_CLOSE.delete(popover)
+			}, 500))
+		}
+	}
+
+	private _keydown(ev: KeyboardEvent): void {
+		if (_elementEventKeyboard === this) {
+			_elementEventKeyboard = _elementEventKeyboard.parentElement?.closest(TAGNAME) ?? undefined
+			return
+		}
+
+		_elementEventKeyboard = this.parentElement?.closest(TAGNAME) ?? undefined
+
+		const key = ev.key
+		S1: switch (key) {
+
+		// open submenu
+		case 'ArrowRight': {
+			const target = (ev.target as HTMLElement).closest<HTMLElement>(
+				`[${CSS.escape(GlobalAttributes.CommandFor)}]`
+			)
+			if (!target) {
+				break
+			}
+
+			const id = target.getAttribute(GlobalAttributes.CommandFor)!
+			if (!ELEMENT_BY_IDS.has(id)) {
+				break
+			}
+
+			if (target.hasAttribute(GlobalAttributes.Command)) {
+				S2: switch (target.getAttribute(GlobalAttributes.Command)) {
+				case Commands.OpenPopover:
+				case Commands.TogglePopover:
+					break S2
+				default:
+					break S1
+				}
+			}
+
+			const popover = ELEMENT_BY_IDS.get(id)
+
+			// only when popover has [br:submenu] and not has [br:manual]
+			if (popover && (popover.hasAttribute(Attributes.SubMenu) && !popover.hasAttribute(Attributes.Manual))) {
+				popover.biru.open(target)
+				for (const p of OPENED_POPOVER) {
+					if (popover && (
+						p === popover
+						|| p.contains(popover)
+					)) {
+						continue
+					}
+
+					if (p.hasAttribute(Attributes.Manual)) {
+						continue
+					}
+
+					p.biru.close(true)
+				}
+			}
+			break
+		}
+
+		// close submenu
+		case 'ArrowLeft': {
+			const target = (ev.target as HTMLElement).closest<BiruPopoverElement>(
+				`${TAGNAME}[${CSS.escape(Attributes.SubMenu)}]`
+			)
+			if (!target) {
+				break
+			}
+
+			target.biru.close()
+			break
+		}}
 	}
 
 	get biru() {
@@ -282,6 +520,7 @@ export class BiruPopoverElement extends HTMLElement {
 					return
 				}
 
+				const isPreviouslyOpened = self._isOpen
 				const zIndex = registerZIndex(self, (ref) => {
 					if (ref.biru.manual) {
 						return
@@ -299,8 +538,6 @@ export class BiruPopoverElement extends HTMLElement {
 				}
 
 				self._lastPointer = pointer
-				const originalOpacity = self.style.opacity
-				self.style.setProperty('opacity', '0') // To avoid ui jump movement
 				self.style.setProperty('display', 'block')
 				self.style.setProperty('z-index', zIndex + '')
 				this.reposition()
@@ -310,6 +547,12 @@ export class BiruPopoverElement extends HTMLElement {
 				self.tabIndex = 0
 				self.focus()
 				self._lastAnchorElement?.toggleAttribute(Button.Attributes.Focused, true)
+				if (isPreviouslyOpened) {
+					return
+				}
+
+				const originalOpacity = self.style.opacity
+				self.style.setProperty('opacity', '0') // To avoid ui jump movement
 				if (originalOpacity) {
 					self.style.setProperty('opacity', originalOpacity)
 				}
@@ -402,10 +645,30 @@ export class BiruPopoverElement extends HTMLElement {
 				self._timeReposition = setTimeout(() => fn_updatePosition(), delayDurationMS)
 			},
 			close(recursive = true, animation = true) {
+				if (!this.isOpen) {
+					return
+				}
+
 				if (recursive) {
 					self.querySelectorAll(TAGNAME).forEach(v => (v as BiruPopoverElement).biru.close(false, false))
 					self.querySelectorAll(BrDialog.TAGNAME).forEach(v => (v as BrDialog.BiruDialogElement).biru.close(false, false))
 				}
+
+				self._isOpen = false
+				const currentFocus = document.activeElement
+
+				// when focus not inside popover, keep focus
+				if (!currentFocus || self.contains(currentFocus)) {
+					self._lastFocusElement?.focus()
+				}
+
+				self._lastFocusElement = null
+				self._lastAnchorElement?.toggleAttribute(Button.Attributes.Focused, false)
+				self._lastAnchorElement = undefined
+				self._lastPointer = undefined
+				unregisterZIndex(self)
+				OPENED_POPOVER.delete(self)
+				self.dispatchEvent(new CustomEvent(EventTypes.Toggle, {bubbles: true}))
 
 				const max = Math.max(self.offsetWidth, self.offsetHeight)
 				const startScale = (max / (max + 16) * 100) + '%'
@@ -416,22 +679,6 @@ export class BiruPopoverElement extends HTMLElement {
 				}, {easing: 'cubic-bezier(.25,0,0,1)', duration: !animation? 0 : self._theme?.biru.transitionDuration ?? 0}).finished.then(() => {
 					self.style.removeProperty('z-index')
 					self.style.removeProperty('display')
-					self._isOpen = false
-
-					const currentFocus = document.activeElement
-
-					// when focus not inside popover, keep focus
-					if (!currentFocus || self.contains(currentFocus)) {
-						self._lastFocusElement?.focus()
-					}
-
-					self._lastFocusElement = null
-					self._lastAnchorElement?.toggleAttribute(Button.Attributes.Focused, false)
-					self._lastAnchorElement = undefined
-					self._lastPointer = undefined
-					unregisterZIndex(self)
-					OPENED_POPOVER.delete(self)
-					self.dispatchEvent(new CustomEvent(EventTypes.Toggle, {bubbles: true}))
 				})
 			}
 		}
@@ -622,10 +869,22 @@ function _calculatePosition(
 	}
 
 	// final fallback
-	if (top < edgeOffsetTop) top = edgeOffsetTop
-	if (bottom() > edgePositionBottom) top = edgePositionBottom - popover.height
-	if (left < edgePositionLeft) left = edgePositionLeft
-	if (right() > edgePositionRight) left = edgePositionRight - popover.width
+	if (top < edgeOffsetTop) {
+		top = edgeOffsetTop
+	}
+
+	if (bottom() > edgePositionBottom) {
+		top = edgePositionBottom - popover.height
+	}
+
+	if (left < edgePositionLeft) {
+		left = edgePositionLeft
+	}
+
+	if (right() > edgePositionRight) {
+		left = edgePositionRight - popover.width
+	}
+
 	return [left, top]
 }
 

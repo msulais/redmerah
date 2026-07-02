@@ -100,6 +100,7 @@ ${ELEMENT}[${ATTR_VARIANT}~=${Variant.Icon}] {
 ${ELEMENT} * {
 	user-select: inherit;
 	cursor: inherit;
+	pointer-events: none;
 }
 
 ${ELEMENT}${STATE_DISABLED} {
