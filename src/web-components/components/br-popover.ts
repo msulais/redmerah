@@ -224,6 +224,10 @@ export class BiruPopoverElement extends HTMLElement {
 	// I don't want to explain how this code works.
 	// Even I don't know why this ugly code works.
 	private _pointerover(ev: PointerEvent): void {
+		if (!_isMediaHoverable()) {
+			return
+		}
+
 		if (_elementEventPointerOver === this) {
 			_elementEventPointerOver = _elementEventPointerOver.parentElement?.closest(TAGNAME) ?? undefined
 			return
@@ -302,6 +306,10 @@ export class BiruPopoverElement extends HTMLElement {
 	}
 
 	private _pointerout(ev: PointerEvent): void {
+		if (!_isMediaHoverable()) {
+			return
+		}
+
 		if (_elementEventPointerOut === this) {
 			_elementEventPointerOut = _elementEventPointerOut.parentElement?.closest(TAGNAME) ?? undefined
 			return
@@ -687,6 +695,10 @@ export class BiruPopoverElement extends HTMLElement {
 	}
 }
 
+function _isMediaHoverable(): boolean {
+	return window.matchMedia("(hover: hover)").matches
+}
+
 function _calculatePosition(
 	popover: DOMRect,
 	anchor?: DOMRect,
@@ -926,8 +938,16 @@ function _initListeners(): void {
 		switch (action) {
 		case Commands.ClosePopover: return popover.biru.close()
 		case Commands.OpenPopover: return popover.biru.open(target)
-		case Commands.TogglePopover: return popover.biru.toggle(target)
-		}
+		case Commands.TogglePopover: {
+			if (popover.hasAttribute(Attributes.SubMenu) && !popover.hasAttribute(Attributes.Manual)) {
+				return popover.biru.open(target)
+			}
+			else {
+				popover.biru.toggle(target)
+			}
+
+			break
+		}}
 	})
 
 	listenDocumentEvent('pointerdown', (ev) => {

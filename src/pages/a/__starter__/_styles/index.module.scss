@@ -6,6 +6,7 @@
 	border: 1px solid rgba(var(--br-theme-color-on-surface), .08);
 	border-right: none;
 	border-bottom: none;
+	padding: .5rem;
 	overflow: auto;
 
 	@media (width < 37.5rem) {
@@ -13,4 +14,10 @@
 		background-color: transparent;
 		border-radius: 0;
 	}
+}
+
+.page {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
 }
