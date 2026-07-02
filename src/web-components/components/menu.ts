@@ -91,9 +91,9 @@ ${ELEMENT} {
 }
 
 ${ELEMENT} hr {
-	position: relative;
+	display: block;
 	height: 1px;
-	width: calc(100% + .5rem);
+	width: 100%;
 	left: -0.25rem;
 	border: none;
 	background-color: rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .12)
