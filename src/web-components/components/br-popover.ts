@@ -230,7 +230,7 @@ export class BiruPopoverElement extends HTMLElement {
 		}
 
 		_elementEventPointerOver = this.parentElement?.closest(TAGNAME) ?? undefined
-		if (POPOVER_TO_CLOSE.has(this)) {
+		if (POPOVER_TO_CLOSE.has(this) && this._isOpen) {
 			clearTimeout(this._timeOpenSubmenu)
 			clearTimeout(POPOVER_TO_CLOSE.get(this))
 			this._openSubmenuAnchor = undefined
@@ -268,7 +268,7 @@ export class BiruPopoverElement extends HTMLElement {
 		}
 
 		clearTimeout(this._timeOpenSubmenu)
-		if (popover && POPOVER_TO_CLOSE.has(popover)) {
+		if (popover && POPOVER_TO_CLOSE.has(popover) && popover._isOpen) {
 			clearTimeout(POPOVER_TO_CLOSE.get(popover))
 			this._openSubmenuAnchor = undefined
 			POPOVER_TO_CLOSE.delete(popover)
@@ -278,6 +278,8 @@ export class BiruPopoverElement extends HTMLElement {
 		this._openSubmenuAnchor = target
 		this._timeOpenSubmenu = setTimeout(() => {
 			if (popover) {
+				clearTimeout(POPOVER_TO_CLOSE.get(popover))
+				POPOVER_TO_CLOSE.delete(popover)
 				popover.biru.open(this._openSubmenuAnchor)
 				for (const p of OPENED_POPOVER) {
 					if (popover && (
