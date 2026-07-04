@@ -42,6 +42,11 @@ ${ELEMENT} {
 	border-bottom: 2px solid rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .32);
 }
 
+${ELEMENT}:disabled {
+	filter: grayscale(1) opacity(0.5);
+	cursor: not-allowed;
+}
+
 ${ELEMENT}:where(textarea) {
 	padding: .375rem .5rem;
 }

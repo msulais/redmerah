@@ -29,7 +29,7 @@ ${ELEMENT} {
 
 @media (hover: none) {
 	${ELEMENT} {
-		--width: 2.75rem;
+		--width: 3rem;
 	}
 }
 
