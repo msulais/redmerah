@@ -37,14 +37,14 @@ export class BiruTooltipElement extends HTMLElement {
 		// have to duplicate the tooltip content to element that visible by [aria-describedby].
 		this._hiddenTooltip = document.createElement('div')
 		this._hiddenTooltip.role = 'tooltip'
-		this._hiddenTooltip.id = crypto.randomUUID()
+		this._hiddenTooltip.id = crypto.randomUUID().substring(0, 8).toUpperCase()
 		this._hiddenTooltip.style.setProperty('position', 'fixed')
 		this._hiddenTooltip.style.setProperty('top', '0')
 		this._hiddenTooltip.style.setProperty('max-width', '0px')
 		this._hiddenTooltip.style.setProperty('max-height', '0px')
 		this._hiddenTooltip.style.setProperty('overflow', 'hidden')
 		this._hiddenTooltip.style.setProperty('opacity', '0')
-		this._hiddenTooltip.style.setProperty('pointer-event', 'none')
+		this._hiddenTooltip.style.setProperty('pointer-events', 'none')
 		document.body.append(this._hiddenTooltip)
 		// </hidden-tooltip>
 
@@ -249,14 +249,22 @@ div {
 	font-weight: 500;
 	padding: .25rem .5rem;
 	white-space: pre-line;
-	max-width: calc(100% - 16px);
-	max-height: calc(100dvh - 16px);
+	max-width: calc(100% - 1rem);
+	max-height: calc(100dvh - 1rem);
 	overflow: hidden;
 	border-radius: .25rem;
 	border: 1px solid rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .08);
 	z-index: 99999999;
 	transition-duration: var(${BrTheme.CSSVars.DurationTransition});
 	transition-property: opacity;
+}
+
+@media (hover: none) {
+	div {
+		font-size: 1rem;
+		padding: .25rem .75rem;
+		border-radius: 1rem;
+	}
 }`)
 }
 
