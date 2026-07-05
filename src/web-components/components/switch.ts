@@ -29,7 +29,9 @@ ${ELEMENT} {
 
 @media (hover: none) {
 	${ELEMENT} {
-		--width: 3rem;
+		--width: 4.5rem;
+		margin-top: 0.375rem;
+		margin-bottom: 0.375rem;
 	}
 }
 
