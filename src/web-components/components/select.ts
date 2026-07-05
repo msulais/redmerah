@@ -84,6 +84,10 @@ ${ELEMENT}::picker-icon {
 	transition-duration: var(${BrTheme.CSSVars.DurationTransition});
 }
 
+${ELEMENT}:open {
+	background-color: rgb(var(${BrTheme.CSSVars.ColorSurface})) !important;
+}
+
 ${ELEMENT}:open::picker-icon {
 	rotate: 180deg;
 	translate: 0 -5%;
