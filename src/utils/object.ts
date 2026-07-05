@@ -1,10 +1,12 @@
-export function isValidEnumKey<T, U extends Record<any, any>>(key: T, enums: U): boolean {
+export function isValidEnumKey<
+	T, U extends Record<any, any>
+>(key: T, enums: U): key is (T & keyof U) {
 	return enums[key] !== undefined
 }
 
 export function isValidEnumValue<
 	T, U extends Record<string | number, any>
->(value: T, enums: U | (string | number)[]): boolean {
+>(value: T, enums: U | (string | number)[]): value is (T & U[keyof U]) {
 	return Object
 		.values(enums)
 		.some(v => v === value)
