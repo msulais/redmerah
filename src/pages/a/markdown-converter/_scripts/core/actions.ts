@@ -5,16 +5,16 @@ import { delegateEvent } from '@/utils/event-registry.js'
 import { $ } from './dom-utils.js'
 import { downloadFile, pickFile, readFileAsText } from '@/utils/file'
 
-const _ref_openFile         = $(Ids.PopoverAppBarMoreOpenFile) as HTMLButtonElement
-const _ref_print            = $(Ids.PopoverAppBarMorePrint) as HTMLButtonElement
-const _ref_resetMarkdown    = $(Ids.PopoverAppBarMoreResetMarkdown) as HTMLButtonElement
-const _ref_resetCSS         = $(Ids.PopoverAppBarMoreResetCSS) as HTMLButtonElement
-const _ref_copyMarkdown     = $(Ids.PopoverAppBarMoreCopyMarkdown) as HTMLButtonElement
-const _ref_copyHTML         = $(Ids.PopoverAppBarMoreCopyHTML) as HTMLButtonElement
-const _ref_copyCSS          = $(Ids.PopoverAppBarMoreCopyCSS) as HTMLButtonElement
-const _ref_downloadMarkdown = $(Ids.PopoverAppBarMoreDownloadMarkdown) as HTMLButtonElement
-const _ref_downloadHTML     = $(Ids.PopoverAppBarMoreDownloadHTML) as HTMLButtonElement
-const _ref_downloadCSS      = $(Ids.PopoverAppBarMoreDownloadCSS) as HTMLButtonElement
+const _ref_openFile         = $(Ids.AppBarMoreOpenFile) as HTMLButtonElement
+const _ref_print            = $(Ids.AppBarMorePrint) as HTMLButtonElement
+const _ref_resetMarkdown    = $(Ids.AppBarMoreResetMarkdown) as HTMLButtonElement
+const _ref_resetCSS         = $(Ids.AppBarMoreResetCSS) as HTMLButtonElement
+const _ref_copyMarkdown     = $(Ids.AppBarMoreCopyMarkdown) as HTMLButtonElement
+const _ref_copyHTML         = $(Ids.AppBarMoreCopyHTML) as HTMLButtonElement
+const _ref_copyCSS          = $(Ids.AppBarMoreCopyCSS) as HTMLButtonElement
+const _ref_downloadMarkdown = $(Ids.AppBarMoreDownloadMarkdown) as HTMLButtonElement
+const _ref_downloadHTML     = $(Ids.AppBarMoreDownloadHTML) as HTMLButtonElement
+const _ref_downloadCSS      = $(Ids.AppBarMoreDownloadCSS) as HTMLButtonElement
 const _ref_outputPreview    = $(Ids.OutputPreview) as HTMLIFrameElement
 
 function _initEvents(): void {

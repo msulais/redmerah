@@ -15,9 +15,9 @@ export const sg_animation = signal(Constant.DEFAULT_ANIMATION)
 export const sg_textWrap  = signal(Constant.DEFAULT_TEXT_WRAP)
 
 const _ref_theme            = $$<BrTheme.BiruThemeElement>(BrTheme.TAGNAME)
-const _ref_themePopover     = $(Ids.PopoverAppBarSettingsTheme) as BrPopover.BiruPopoverElement
-const _ref_animationPopover = $(Ids.PopoverAppBarSettingsAnimation) as BrPopover.BiruPopoverElement
-const _ref_sett_textWrap    = $(Ids.PopoverAppBarSettingsTextWrap) as HTMLInputElement
+const _ref_themePopover     = $(Ids.AppBarSettingsTheme) as BrPopover.BiruPopoverElement
+const _ref_animationPopover = $(Ids.AppBarSettingsAnimation) as BrPopover.BiruPopoverElement
+const _ref_sett_textWrap    = $(Ids.AppBarSettingsTextWrap) as HTMLInputElement
 const _ref_inputMarkdown    = $(Ids.InputMarkdown) as HTMLTextAreaElement
 const _ref_inputCSS         = $(Ids.InputCSS) as HTMLTextAreaElement
 const _ref_outputHTML       = $(Ids.OutputHTML) as HTMLTextAreaElement

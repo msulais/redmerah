@@ -3,7 +3,7 @@ import * as Constant from '../shared/constant.enum.js'
 import { $ } from "./dom-utils.js"
 import { delegateEvent } from '@/utils/event-registry.js'
 
-const _ref_shareButton = $(Ids.PopoverAppBarInfoShare) as HTMLButtonElement
+const _ref_shareButton = $(Ids.AppBarInfoShare) as HTMLButtonElement
 
 function _initEvents(): void {
 	delegateEvent(_ref_shareButton, 'click', () => {

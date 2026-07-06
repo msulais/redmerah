@@ -18,8 +18,8 @@ export const sg_animation  = signal(Constant.DEFAULT_ANIMATION)
 export const sg_pickerMode = signal<EnumOf<typeof ColorPickerMode>>(Constant.DEFAULT_PICKER_MODE)
 
 const _ref_theme            = $$<BrTheme.BiruThemeElement>(BrTheme.TAGNAME)
-const _ref_themePopover     = $(Ids.PopoverAppBarSettingsTheme) as BrPopover.BiruPopoverElement
-const _ref_animationPopover = $(Ids.PopoverAppBarSettingsAnimation) as BrPopover.BiruPopoverElement
+const _ref_themePopover     = $(Ids.AppBarSettingsTheme) as BrPopover.BiruPopoverElement
+const _ref_animationPopover = $(Ids.AppBarSettingsAnimation) as BrPopover.BiruPopoverElement
 const _ref_pickerMode       = $(Ids.PickerMode) as HTMLSelectElement
 
 function _initTheme(): void {

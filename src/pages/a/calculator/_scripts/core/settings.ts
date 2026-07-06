@@ -28,10 +28,10 @@ export const sg_groupingFormat = signal(Constant.DEFAULT_GROUPING_NUMBER_FORMAT)
 const DECIMAL_TOKEN  = crypto.randomUUID()
 const GROUPING_TOKEN = crypto.randomUUID()
 const _ref_theme            = $$<BrTheme.BiruThemeElement>(BrTheme.TAGNAME)
-const _ref_themePopover     = $(Ids.PopoverAppBarSettingsTheme) as BrPopover.BiruPopoverElement
-const _ref_animationPopover = $(Ids.PopoverAppBarSettingsAnimation) as BrPopover.BiruPopoverElement
-const _ref_decimalPopover   = $(Ids.PopoverAppBarSettingsDecimal) as BrPopover.BiruPopoverElement
-const _ref_groupingPopover  = $(Ids.PopoverAppBarSettingsGrouping) as BrPopover.BiruPopoverElement
+const _ref_themePopover     = $(Ids.AppBarSettingsTheme) as BrPopover.BiruPopoverElement
+const _ref_animationPopover = $(Ids.AppBarSettingsAnimation) as BrPopover.BiruPopoverElement
+const _ref_decimalPopover   = $(Ids.AppBarSettingsDecimal) as BrPopover.BiruPopoverElement
+const _ref_groupingPopover  = $(Ids.AppBarSettingsGrouping) as BrPopover.BiruPopoverElement
 
 function _initTheme(): void {
 	const theme = localStorage.getItem(LocalStorageKeys.PlatformTheme)

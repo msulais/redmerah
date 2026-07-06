@@ -4,9 +4,9 @@ import * as Encoder from './encoder.js'
 import { delegateEvent } from '@/utils/event-registry.js'
 import { $ } from './dom-utils.js'
 
-const _ref_resetInput  = $(Ids.PopoverAppBarMoreReset) as HTMLButtonElement
-const _ref_copyDecoded = $(Ids.PopoverAppBarMoreCopyDecoded) as HTMLButtonElement
-const _ref_copyEncoded = $(Ids.PopoverAppBarMoreCopyEncoded) as HTMLButtonElement
+const _ref_resetInput  = $(Ids.AppBarMoreReset) as HTMLButtonElement
+const _ref_copyDecoded = $(Ids.AppBarMoreCopyDecoded) as HTMLButtonElement
+const _ref_copyEncoded = $(Ids.AppBarMoreCopyEncoded) as HTMLButtonElement
 
 function _initEvents(): void {
 	delegateEvent(_ref_resetInput, 'click', () => {

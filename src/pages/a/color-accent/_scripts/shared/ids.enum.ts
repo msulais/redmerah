@@ -1,8 +1,8 @@
-export const PopoverAppBarInfo = 'CD6EF18D'
-export const PopoverAppBarInfoShare = 'FC9B52D1'
-export const PopoverAppBarSettings = '48A3132E'
-export const PopoverAppBarSettingsAnimation = '954B589B'
-export const PopoverAppBarSettingsTheme = '1EB4E61F'
+export const AppBarInfo = 'CD6EF18D'
+export const AppBarInfoShare = 'FC9B52D1'
+export const AppBarSettings = '48A3132E'
+export const AppBarSettingsAnimation = '954B589B'
+export const AppBarSettingsTheme = '1EB4E61F'
 
 export const CopyButton = 'C05FBD3B'
 export const ColorInput = 'A41F4D7F'

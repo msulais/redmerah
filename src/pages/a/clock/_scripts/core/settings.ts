@@ -18,9 +18,9 @@ export const sg_page         = signal<typeof Pages[keyof typeof Pages]>(Pages.Cl
 export const sg_languageCode = signal(Constant.DEFAULT_LANGUAGE_CODE)
 
 const _ref_theme            = $$<BrTheme.BiruThemeElement>(BrTheme.TAGNAME)
-const _ref_themePopover     = $(Ids.PopoverAppBarSettingsTheme) as BrPopover.BiruPopoverElement
-const _ref_animationPopover = $(Ids.PopoverAppBarSettingsAnimation) as BrPopover.BiruPopoverElement
-const _ref_language         = $(Ids.PopoverAppBarSettingsDatetimeLanguage) as BrPopover.BiruPopoverElement
+const _ref_themePopover     = $(Ids.AppBarSettingsTheme) as BrPopover.BiruPopoverElement
+const _ref_animationPopover = $(Ids.AppBarSettingsAnimation) as BrPopover.BiruPopoverElement
+const _ref_language         = $(Ids.AppBarSettingsDatetimeLanguage) as BrPopover.BiruPopoverElement
 
 function _initTheme(): void {
 	const theme = localStorage.getItem(LocalStorageKeys.PlatformTheme)

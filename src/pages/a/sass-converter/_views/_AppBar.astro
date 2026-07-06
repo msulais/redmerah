@@ -33,14 +33,14 @@ const ANIMATION: [text: string, value: string, icon: string][] = [
 			br:tooltip="Info"
 			br:variant="icon"
 			style="margin: 0 0 0 .5rem"
-			br:command-for={Ids.PopoverAppBarInfo}>
+			br:command-for={Ids.AppBarInfo}>
 			<br-icon set:html={Icons.Info}/>
 		</button>
 		<button
 			aria-label="Settings"
 			br:tooltip="Settings"
 			br:variant="icon"
-			br:command-for={Ids.PopoverAppBarSettings}
+			br:command-for={Ids.AppBarSettings}
 			style="margin: 0 0 0 .25rem">
 			<br-icon set:html={Icons.Settings}/>
 		</button>
@@ -48,18 +48,18 @@ const ANIMATION: [text: string, value: string, icon: string][] = [
 			aria-label="More action"
 			br:tooltip="More action"
 			br:variant="icon"
-			br:command-for={Ids.PopoverAppBarMore}
+			br:command-for={Ids.AppBarMore}
 			style="margin: 0 0 0 .25rem">
 			<br-icon set:html={Icons.MoreVertical}/>
 		</button>
 	</br-focusgroup>
 </br-appbar>
 
-<br-popover id={Ids.PopoverAppBarInfo} style="width:12rem">
+<br-popover id={Ids.AppBarInfo} style="width:12rem">
 	<br-focusgroup br:direction="vertical">
 		<menu>
 			<li style="margin-left:1rem;padding-top:.5rem;opacity:.75"><small>{Constant.APP.name}</small></li>
-			<li><button id={Ids.PopoverAppBarInfoShare}>
+			<li><button id={Ids.AppBarInfoShare}>
 				<br-icon set:html={Icons.ShareAndroid}/>
 				Share
 			</button></li>
@@ -93,17 +93,17 @@ const ANIMATION: [text: string, value: string, icon: string][] = [
 	</br-focusgroup>
 </br-popover>
 
-<br-popover id={Ids.PopoverAppBarSettings}>
+<br-popover id={Ids.AppBarSettings}>
 	<br-focusgroup br:direction="vertical">
 		<menu>
 			<li>
-				<button br:prevent-default br:command-for={Ids.PopoverAppBarSettingsAnimation}>
+				<button br:prevent-default br:command-for={Ids.AppBarSettingsAnimation}>
 					<br-icon set:html={Icons.PlayCircleHint}/>
 					Animation
 					<div style="flex:1"/>
 					<br-icon set:html={Icons.ChevronRight}/>
 				</button>
-				<br-popover br:submenu id={Ids.PopoverAppBarSettingsAnimation}>
+				<br-popover br:submenu id={Ids.AppBarSettingsAnimation}>
 					<menu>
 						{ANIMATION.map(v => <li><label br:as="button">
 							<input
@@ -119,13 +119,13 @@ const ANIMATION: [text: string, value: string, icon: string][] = [
 				</br-popover>
 			</li>
 			<li>
-				<button br:prevent-default br:command-for={Ids.PopoverAppBarSettingsTheme}>
+				<button br:prevent-default br:command-for={Ids.AppBarSettingsTheme}>
 					<br-icon set:html={Icons.WeatherSunny}/>
 					Theme
 					<div style="flex:1"/>
 					<br-icon set:html={Icons.ChevronRight}/>
 				</button>
-				<br-popover br:submenu id={Ids.PopoverAppBarSettingsTheme}>
+				<br-popover br:submenu id={Ids.AppBarSettingsTheme}>
 					<menu>
 						{THEMES.map(v => <li><label br:as="button">
 							<input
@@ -145,7 +145,7 @@ const ANIMATION: [text: string, value: string, icon: string][] = [
 				<label br:as="button">
 					<input
 						type="checkbox"
-						id={Ids.PopoverAppBarSettingsTextWrap}
+						id={Ids.AppBarSettingsTextWrap}
 						checked={Constant.DEFAULT_TEXT_WRAP}
 					/>
 					Text wrap
@@ -155,7 +155,7 @@ const ANIMATION: [text: string, value: string, icon: string][] = [
 				<label br:as="button">
 					<input
 						type="checkbox"
-						id={Ids.PopoverAppBarSettingsMinifyCSS}
+						id={Ids.AppBarSettingsMinifyCSS}
 						checked={Constant.DEFAULT_MINIFY_CSS}
 					/>
 					Minify CSS
@@ -165,30 +165,30 @@ const ANIMATION: [text: string, value: string, icon: string][] = [
 	</br-focusgroup>
 </br-popover>
 
-<br-popover id={Ids.PopoverAppBarMore}>
+<br-popover id={Ids.AppBarMore}>
 	<br-focusgroup br:direction="vertical">
 		<menu>
 			<li>
-				<button br:prevent-default br:command-for={Ids.PopoverAppBarMoreCopy}>
+				<button br:prevent-default br:command-for={Ids.AppBarMoreCopy}>
 					<br-icon set:html={Icons.Copy}/>
 					Copy
 					<div style="flex:1"/>
 					<br-icon set:html={Icons.ChevronRight}/>
 				</button>
-				<br-popover br:submenu id={Ids.PopoverAppBarMoreCopy}>
+				<br-popover br:submenu id={Ids.AppBarMoreCopy}>
 					<menu>
 						<li>
-							<button id={Ids.PopoverAppBarMoreCopySASS}>
+							<button id={Ids.AppBarMoreCopySASS}>
 								SASS
 							</button>
 						</li>
 						<li>
-							<button id={Ids.PopoverAppBarMoreCopySCSS}>
+							<button id={Ids.AppBarMoreCopySCSS}>
 								SCSS
 							</button>
 						</li>
 						<li>
-							<button id={Ids.PopoverAppBarMoreCopyCSS}>
+							<button id={Ids.AppBarMoreCopyCSS}>
 								CSS
 							</button>
 						</li>
@@ -196,26 +196,26 @@ const ANIMATION: [text: string, value: string, icon: string][] = [
 				</br-popover>
 			</li>
 			<li>
-				<button br:prevent-default br:command-for={Ids.PopoverAppBarMoreDownload}>
+				<button br:prevent-default br:command-for={Ids.AppBarMoreDownload}>
 					<br-icon set:html={Icons.ArrowDownload}/>
 					Download
 					<div style="flex:1"/>
 					<br-icon set:html={Icons.ChevronRight}/>
 				</button>
-				<br-popover br:submenu id={Ids.PopoverAppBarMoreDownload}>
+				<br-popover br:submenu id={Ids.AppBarMoreDownload}>
 					<menu>
 						<li>
-							<button id={Ids.PopoverAppBarMoreDownloadSASS}>
+							<button id={Ids.AppBarMoreDownloadSASS}>
 								SASS
 							</button>
 						</li>
 						<li>
-							<button id={Ids.PopoverAppBarMoreDownloadSCSS}>
+							<button id={Ids.AppBarMoreDownloadSCSS}>
 								SCSS
 							</button>
 						</li>
 						<li>
-							<button id={Ids.PopoverAppBarMoreDownloadCSS}>
+							<button id={Ids.AppBarMoreDownloadCSS}>
 								CSS
 							</button>
 						</li>
@@ -223,14 +223,14 @@ const ANIMATION: [text: string, value: string, icon: string][] = [
 				</br-popover>
 			</li>
 			<li>
-				<button id={Ids.PopoverAppBarMoreOpenFile}>
+				<button id={Ids.AppBarMoreOpenFile}>
 					<br-icon set:html={Icons.DocumentArrowRight}/>
 					Open file
 				</button>
 			</li>
 			<li><hr/></li>
 			<li>
-				<button id={Ids.PopoverAppBarMoreResetSASS}>
+				<button id={Ids.AppBarMoreResetSASS}>
 					<br-icon set:html={Icons.ArrowReset}/>
 					Reset SASS
 					<div style="flex:1"/>
@@ -238,7 +238,7 @@ const ANIMATION: [text: string, value: string, icon: string][] = [
 				</button>
 			</li>
 			<li>
-				<button id={Ids.PopoverAppBarMoreResetSCSS}>
+				<button id={Ids.AppBarMoreResetSCSS}>
 					<br-icon set:html={Icons.ArrowReset}/>
 					Reset SCSS
 				</button>

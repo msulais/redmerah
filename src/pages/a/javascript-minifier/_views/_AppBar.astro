@@ -33,14 +33,14 @@ const ANIMATION: [text: string, value: string, icon: string][] = [
 			br:tooltip="Info"
 			br:variant="icon"
 			style="margin: 0 0 0 .5rem"
-			br:command-for={Ids.PopoverAppBarInfo}>
+			br:command-for={Ids.AppBarInfo}>
 			<br-icon set:html={Icons.Info}/>
 		</button>
 		<button
 			aria-label="Settings"
 			br:tooltip="Settings"
 			br:variant="icon"
-			br:command-for={Ids.PopoverAppBarSettings}
+			br:command-for={Ids.AppBarSettings}
 			style="margin: 0 0 0 .25rem">
 			<br-icon set:html={Icons.Settings}/>
 		</button>
@@ -48,18 +48,18 @@ const ANIMATION: [text: string, value: string, icon: string][] = [
 			aria-label="More action"
 			br:tooltip="More action"
 			br:variant="icon"
-			br:command-for={Ids.PopoverAppBarMore}
+			br:command-for={Ids.AppBarMore}
 			style="margin: 0 0 0 .25rem">
 			<br-icon set:html={Icons.MoreVertical}/>
 		</button>
 	</br-focusgroup>
 </br-appbar>
 
-<br-popover id={Ids.PopoverAppBarInfo} style="width:12rem">
+<br-popover id={Ids.AppBarInfo} style="width:12rem">
 	<br-focusgroup br:direction="vertical">
 		<menu>
 			<li style="margin-left:1rem;padding-top:.5rem;opacity:.75"><small>{Constant.APP.name}</small></li>
-			<li><button id={Ids.PopoverAppBarInfoShare}>
+			<li><button id={Ids.AppBarInfoShare}>
 				<br-icon set:html={Icons.ShareAndroid}/>
 				Share
 			</button></li>
@@ -93,17 +93,17 @@ const ANIMATION: [text: string, value: string, icon: string][] = [
 	</br-focusgroup>
 </br-popover>
 
-<br-popover id={Ids.PopoverAppBarSettings}>
+<br-popover id={Ids.AppBarSettings}>
 	<br-focusgroup br:direction="vertical">
 		<menu>
 			<li>
-				<button br:prevent-default br:command-for={Ids.PopoverAppBarSettingsAnimation}>
+				<button br:prevent-default br:command-for={Ids.AppBarSettingsAnimation}>
 					<br-icon set:html={Icons.PlayCircleHint}/>
 					Animation
 					<div style="flex:1"/>
 					<br-icon set:html={Icons.ChevronRight}/>
 				</button>
-				<br-popover br:submenu id={Ids.PopoverAppBarSettingsAnimation}>
+				<br-popover br:submenu id={Ids.AppBarSettingsAnimation}>
 					<menu>
 						{ANIMATION.map(v => <li><label br:as="button">
 							<input
@@ -119,13 +119,13 @@ const ANIMATION: [text: string, value: string, icon: string][] = [
 				</br-popover>
 			</li>
 			<li>
-				<button br:prevent-default br:command-for={Ids.PopoverAppBarSettingsTheme}>
+				<button br:prevent-default br:command-for={Ids.AppBarSettingsTheme}>
 					<br-icon set:html={Icons.WeatherSunny}/>
 					Theme
 					<div style="flex:1"/>
 					<br-icon set:html={Icons.ChevronRight}/>
 				</button>
-				<br-popover br:submenu id={Ids.PopoverAppBarSettingsTheme}>
+				<br-popover br:submenu id={Ids.AppBarSettingsTheme}>
 					<menu>
 						{THEMES.map(v => <li><label br:as="button">
 							<input
@@ -145,7 +145,7 @@ const ANIMATION: [text: string, value: string, icon: string][] = [
 				<label br:as="button">
 					<input
 						type="checkbox"
-						id={Ids.PopoverAppBarSettingsTextWrap}
+						id={Ids.AppBarSettingsTextWrap}
 						checked={Constant.DEFAULT_TEXT_WRAP}
 					/>
 					Text wrap
@@ -157,7 +157,7 @@ const ANIMATION: [text: string, value: string, icon: string][] = [
 				<label br:as="button">
 					<input
 						type="checkbox"
-						id={Ids.PopoverAppBarSettingsModule}
+						id={Ids.AppBarSettingsModule}
 						checked={Constant.DEFAULT_MODULE}
 					/>
 					Module
@@ -167,7 +167,7 @@ const ANIMATION: [text: string, value: string, icon: string][] = [
 				<label br:as="button">
 					<input
 						type="checkbox"
-						id={Ids.PopoverAppBarSettingsKeepClsNames}
+						id={Ids.AppBarSettingsKeepClsNames}
 						checked={Constant.DEFAULT_KEEP_CLASS_NAMES}
 					/>
 					Keep class names
@@ -177,7 +177,7 @@ const ANIMATION: [text: string, value: string, icon: string][] = [
 				<label br:as="button">
 					<input
 						type="checkbox"
-						id={Ids.PopoverAppBarSettingsKeepFnNames}
+						id={Ids.AppBarSettingsKeepFnNames}
 						checked={Constant.DEFAULT_KEEP_FUNC_NAMES}
 					/>
 					Keep function names
@@ -189,7 +189,7 @@ const ANIMATION: [text: string, value: string, icon: string][] = [
 				<label br:as="button">
 					<input
 						type="checkbox"
-						id={Ids.PopoverAppBarSettingsTopLevel}
+						id={Ids.AppBarSettingsTopLevel}
 						checked={Constant.DEFAULT_TOP_LEVEL}
 					/>
 					Top level
@@ -199,7 +199,7 @@ const ANIMATION: [text: string, value: string, icon: string][] = [
 				<label br:as="button">
 					<input
 						type="checkbox"
-						id={Ids.PopoverAppBarSettingsBeautify}
+						id={Ids.AppBarSettingsBeautify}
 						checked={Constant.DEFAULT_BEAUTIFY}
 					/>
 					Beautify
@@ -209,29 +209,29 @@ const ANIMATION: [text: string, value: string, icon: string][] = [
 	</br-focusgroup>
 </br-popover>
 
-<br-popover id={Ids.PopoverAppBarMore}>
+<br-popover id={Ids.AppBarMore}>
 	<br-focusgroup br:direction="vertical">
 		<menu>
 			<li>
-				<button id={Ids.PopoverAppBarMoreOpenFile}>
+				<button id={Ids.AppBarMoreOpenFile}>
 					<br-icon set:html={Icons.DocumentArrowRight}/>
 					Open file
 				</button>
 			</li>
 			<li>
-				<button id={Ids.PopoverAppBarMoreReset}>
+				<button id={Ids.AppBarMoreReset}>
 					<br-icon set:html={Icons.ArrowReset}/>
 					Reset input
 				</button>
 			</li>
 			<li>
-				<button id={Ids.PopoverAppBarMoreDownload}>
+				<button id={Ids.AppBarMoreDownload}>
 					<br-icon set:html={Icons.ArrowDownload}/>
 					Download output
 				</button>
 			</li>
 			<li>
-				<button id={Ids.PopoverAppBarMoreCopy}>
+				<button id={Ids.AppBarMoreCopy}>
 					<br-icon set:html={Icons.Copy}/>
 					Copy output
 				</button>

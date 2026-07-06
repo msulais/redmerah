@@ -14,8 +14,8 @@ export const sg_output = signal(Constant.DEFAULT_JAVASCRIPT_OUTPUT_TEXT)
 
 const _ref_input = $(Ids.Input) as HTMLTextAreaElement
 const _ref_output = $(Ids.Output) as HTMLTextAreaElement
-const _ref_downloadOutput = $(Ids.PopoverAppBarMoreDownload) as HTMLButtonElement
-const _ref_copyOutput = $(Ids.PopoverAppBarMoreCopy) as HTMLButtonElement
+const _ref_downloadOutput = $(Ids.AppBarMoreDownload) as HTMLButtonElement
+const _ref_copyOutput = $(Ids.AppBarMoreCopy) as HTMLButtonElement
 
 let _time_minify: ReturnType<typeof setTimeout> | undefined
 

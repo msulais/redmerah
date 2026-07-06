@@ -5,10 +5,10 @@ import { $ } from "./dom-utils.js"
 import { delegateEvent } from '@/utils/event-registry'
 import { downloadFile, pickFile, readFileAsText } from '@/utils/file'
 
-const _ref_openFile       = $(Ids.PopoverAppBarMoreOpenFile) as HTMLButtonElement
-const _ref_resetInput     = $(Ids.PopoverAppBarMoreReset) as HTMLButtonElement
-const _ref_copyOutput     = $(Ids.PopoverAppBarMoreCopy) as HTMLButtonElement
-const _ref_downloadOutput = $(Ids.PopoverAppBarMoreDownload) as HTMLButtonElement
+const _ref_openFile       = $(Ids.AppBarMoreOpenFile) as HTMLButtonElement
+const _ref_resetInput     = $(Ids.AppBarMoreReset) as HTMLButtonElement
+const _ref_copyOutput     = $(Ids.AppBarMoreCopy) as HTMLButtonElement
+const _ref_downloadOutput = $(Ids.AppBarMoreDownload) as HTMLButtonElement
 
 function _initEvents(): void {
 	delegateEvent(_ref_openFile, 'click', () => {

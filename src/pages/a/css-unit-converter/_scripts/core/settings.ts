@@ -23,8 +23,8 @@ export const sg_pxPer100VH      = signal(Constant.DEFAULT_PX_PER_100_VIEWPORT_HE
 export const sg_pxPer100VW      = signal(Constant.DEFAULT_PX_PER_100_VIEWPORT_WIDTH)
 
 const _ref_theme              = $$<BrTheme.BiruThemeElement>(BrTheme.TAGNAME)
-const _ref_themePopover       = $(Ids.PopoverAppBarSettingsTheme) as BrPopover.BiruPopoverElement
-const _ref_animationPopover   = $(Ids.PopoverAppBarSettingsAnimation) as BrPopover.BiruPopoverElement
+const _ref_themePopover       = $(Ids.AppBarSettingsTheme) as BrPopover.BiruPopoverElement
+const _ref_animationPopover   = $(Ids.AppBarSettingsAnimation) as BrPopover.BiruPopoverElement
 const _ref_relativeViewport   = $(Ids.RelativeViewport) as HTMLButtonElement
 const _ref_relativeRem        = $(Ids.RelativeREM) as HTMLInputElement
 const _ref_relativePercentage = $(Ids.RelativePercentage) as HTMLInputElement

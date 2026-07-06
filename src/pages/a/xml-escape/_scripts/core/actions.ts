@@ -5,9 +5,9 @@ import { delegateEvent } from '@/utils/event-registry.js'
 import { $ } from './dom-utils.js'
 import { sanitizeXML } from './utils.js'
 
-const _ref_resetInput    = $(Ids.PopoverAppBarMoreReset) as HTMLButtonElement
-const _ref_copyUnescaped = $(Ids.PopoverAppBarMoreCopyUnescaped) as HTMLButtonElement
-const _ref_copyEscaped   = $(Ids.PopoverAppBarMoreCopyEscaped) as HTMLButtonElement
+const _ref_resetInput    = $(Ids.AppBarMoreReset) as HTMLButtonElement
+const _ref_copyUnescaped = $(Ids.AppBarMoreCopyUnescaped) as HTMLButtonElement
+const _ref_copyEscaped   = $(Ids.AppBarMoreCopyEscaped) as HTMLButtonElement
 
 function _initEvents(): void {
 	delegateEvent(_ref_resetInput, 'click', () => {

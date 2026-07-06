@@ -15,11 +15,11 @@ export const sg_animation         = signal(Constant.DEFAULT_ANIMATION)
 export const sg_textWrap          = signal(Constant.DEFAULT_TEXT_WRAP)
 
 const _ref_theme             = $$<BrTheme.BiruThemeElement>(BrTheme.TAGNAME)
-const _ref_themePopover      = $(Ids.PopoverAppBarSettingsTheme) as BrPopover.BiruPopoverElement
-const _ref_animationPopover  = $(Ids.PopoverAppBarSettingsAnimation) as BrPopover.BiruPopoverElement
+const _ref_themePopover      = $(Ids.AppBarSettingsTheme) as BrPopover.BiruPopoverElement
+const _ref_animationPopover  = $(Ids.AppBarSettingsAnimation) as BrPopover.BiruPopoverElement
 const _ref_decode            = $(Ids.Decode) as HTMLTextAreaElement
 const _ref_encode            = $(Ids.Encode) as HTMLTextAreaElement
-const _ref_textWrap          = $(Ids.PopoverAppBarSettingsTextWrap) as HTMLInputElement
+const _ref_textWrap          = $(Ids.AppBarSettingsTextWrap) as HTMLInputElement
 
 function _initTheme(): void {
 	const theme = localStorage.getItem(LocalStorageKeys.PlatformTheme)

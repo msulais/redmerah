@@ -1,8 +1,8 @@
-export const PopoverAppBarInfo = '74EB4B1A'
-export const PopoverAppBarInfoShare = 'FC9B52D1'
-export const PopoverAppBarSettings = 'FFBBE90C'
-export const PopoverAppBarSettingsAnimation = 'F6241AE6'
-export const PopoverAppBarSettingsTheme = '769E54AD'
+export const AppBarInfo = '74EB4B1A'
+export const AppBarInfoShare = 'FC9B52D1'
+export const AppBarSettings = 'FFBBE90C'
+export const AppBarSettingsAnimation = 'F6241AE6'
+export const AppBarSettingsTheme = '769E54AD'
 
 export const StartPauseButton = '42471EEA'
 export const Accuracy = 'A213230C'

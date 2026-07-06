@@ -16,10 +16,10 @@ export const sg_textWrap  = signal(Constant.DEFAULT_TEXT_WRAP)
 export const sg_minify    = signal(Constant.DEFAULT_MINIFY_CSS)
 
 const _ref_theme            = $$<BrTheme.BiruThemeElement>(BrTheme.TAGNAME)
-const _ref_themePopover     = $(Ids.PopoverAppBarSettingsTheme) as BrPopover.BiruPopoverElement
-const _ref_animationPopover = $(Ids.PopoverAppBarSettingsAnimation) as BrPopover.BiruPopoverElement
-const _ref_textWrap         = $(Ids.PopoverAppBarSettingsTextWrap) as HTMLInputElement
-const _ref_minify           = $(Ids.PopoverAppBarSettingsMinifyCSS) as HTMLInputElement
+const _ref_themePopover     = $(Ids.AppBarSettingsTheme) as BrPopover.BiruPopoverElement
+const _ref_animationPopover = $(Ids.AppBarSettingsAnimation) as BrPopover.BiruPopoverElement
+const _ref_textWrap         = $(Ids.AppBarSettingsTextWrap) as HTMLInputElement
+const _ref_minify           = $(Ids.AppBarSettingsMinifyCSS) as HTMLInputElement
 const _ref_inputSASS        = $(Ids.InputSASS) as HTMLTextAreaElement
 const _ref_inputSCSS        = $(Ids.InputSCSS) as HTMLTextAreaElement
 const _ref_outputCSS        = $(Ids.OutputCSS) as HTMLTextAreaElement

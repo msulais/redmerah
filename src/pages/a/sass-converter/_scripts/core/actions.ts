@@ -8,15 +8,15 @@ import { $ } from './dom-utils.js'
 import { downloadFile, pickFile, readFileAsText } from '@/utils/file'
 
 const _ref_outputCSS    = $(Ids.OutputCSS) as HTMLTextAreaElement
-const _ref_openFile     = $(Ids.PopoverAppBarMoreOpenFile) as HTMLButtonElement
-const _ref_resetSASS    = $(Ids.PopoverAppBarMoreResetSASS) as HTMLButtonElement
-const _ref_resetSCSS    = $(Ids.PopoverAppBarMoreResetSCSS) as HTMLButtonElement
-const _ref_copySASS     = $(Ids.PopoverAppBarMoreCopySASS) as HTMLButtonElement
-const _ref_copySCSS     = $(Ids.PopoverAppBarMoreCopySCSS) as HTMLButtonElement
-const _ref_copyCSS      = $(Ids.PopoverAppBarMoreCopyCSS) as HTMLButtonElement
-const _ref_downloadSASS = $(Ids.PopoverAppBarMoreDownloadSASS) as HTMLButtonElement
-const _ref_downloadSCSS = $(Ids.PopoverAppBarMoreDownloadSCSS) as HTMLButtonElement
-const _ref_downloadCSS  = $(Ids.PopoverAppBarMoreDownloadCSS) as HTMLButtonElement
+const _ref_openFile     = $(Ids.AppBarMoreOpenFile) as HTMLButtonElement
+const _ref_resetSASS    = $(Ids.AppBarMoreResetSASS) as HTMLButtonElement
+const _ref_resetSCSS    = $(Ids.AppBarMoreResetSCSS) as HTMLButtonElement
+const _ref_copySASS     = $(Ids.AppBarMoreCopySASS) as HTMLButtonElement
+const _ref_copySCSS     = $(Ids.AppBarMoreCopySCSS) as HTMLButtonElement
+const _ref_copyCSS      = $(Ids.AppBarMoreCopyCSS) as HTMLButtonElement
+const _ref_downloadSASS = $(Ids.AppBarMoreDownloadSASS) as HTMLButtonElement
+const _ref_downloadSCSS = $(Ids.AppBarMoreDownloadSCSS) as HTMLButtonElement
+const _ref_downloadCSS  = $(Ids.AppBarMoreDownloadCSS) as HTMLButtonElement
 
 function _initEvents(): void {
 	delegateEvent(_ref_openFile, 'click', () => {

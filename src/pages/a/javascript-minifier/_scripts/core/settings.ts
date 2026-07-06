@@ -20,16 +20,16 @@ export const sg_topLevel          = signal(Constant.DEFAULT_TOP_LEVEL)
 export const sg_beautify          = signal(Constant.DEFAULT_BEAUTIFY)
 
 const _ref_theme             = $$<BrTheme.BiruThemeElement>(BrTheme.TAGNAME)
-const _ref_themePopover      = $(Ids.PopoverAppBarSettingsTheme) as BrPopover.BiruPopoverElement
-const _ref_animationPopover  = $(Ids.PopoverAppBarSettingsAnimation) as BrPopover.BiruPopoverElement
+const _ref_themePopover      = $(Ids.AppBarSettingsTheme) as BrPopover.BiruPopoverElement
+const _ref_animationPopover  = $(Ids.AppBarSettingsAnimation) as BrPopover.BiruPopoverElement
 const _ref_input             = $(Ids.Input) as HTMLTextAreaElement
 const _ref_output            = $(Ids.Output) as HTMLTextAreaElement
-const _ref_sett_textWrap     = $(Ids.PopoverAppBarSettingsTextWrap) as HTMLInputElement
-const _ref_sett_module       = $(Ids.PopoverAppBarSettingsModule) as HTMLInputElement
-const _ref_sett_keepClsNames = $(Ids.PopoverAppBarSettingsKeepClsNames) as HTMLInputElement
-const _ref_sett_keepFnNames  = $(Ids.PopoverAppBarSettingsKeepFnNames) as HTMLInputElement
-const _ref_sett_topLevel     = $(Ids.PopoverAppBarSettingsTopLevel) as HTMLInputElement
-const _ref_sett_beautify     = $(Ids.PopoverAppBarSettingsBeautify) as HTMLInputElement
+const _ref_sett_textWrap     = $(Ids.AppBarSettingsTextWrap) as HTMLInputElement
+const _ref_sett_module       = $(Ids.AppBarSettingsModule) as HTMLInputElement
+const _ref_sett_keepClsNames = $(Ids.AppBarSettingsKeepClsNames) as HTMLInputElement
+const _ref_sett_keepFnNames  = $(Ids.AppBarSettingsKeepFnNames) as HTMLInputElement
+const _ref_sett_topLevel     = $(Ids.AppBarSettingsTopLevel) as HTMLInputElement
+const _ref_sett_beautify     = $(Ids.AppBarSettingsBeautify) as HTMLInputElement
 
 function _initTheme(): void {
 	const theme = localStorage.getItem(LocalStorageKeys.PlatformTheme)
