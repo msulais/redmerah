@@ -57,8 +57,10 @@ ${INPUT} {
 	outline: none;
 	-webkit-appearance: none;
 	appearance: none;
-	width: 1.25rem;
-	height: 1.25rem;
+	min-width: 1.25rem;
+	min-height: 1.25rem;
+	max-width: 1.25rem;
+	max-height: 1.25rem;
 	border: 1px solid;
 	border-radius: 99999px;
 	position: relative;

@@ -1,0 +1,210 @@
+---
+import * as RandomizerNumber from '../_scripts/shared/randomizer-number.js'
+import * as Icons from '@/enums/icons.enum.js'
+import * as Ids from '../_scripts/shared/ids.enum.js'
+import * as Pages from '../_scripts/shared/pages.enum.js'
+import * as Styles from '../_styles/styles.enum.js'
+import * as Constant from '../_scripts/shared/constant.enum.js'
+
+const SORT_DIRECTIONS: [value: RandomizerNumber.SortDirection, text: string][] = [
+	[RandomizerNumber.SortDirection.Ascending, 'Ascending'],
+	[RandomizerNumber.SortDirection.Descending, 'Descending'],
+	[RandomizerNumber.SortDirection.None, 'None'],
+]
+
+const NUMBER_TYPES: [value: RandomizerNumber.NumberTypes, text: string][] = [
+	[RandomizerNumber.NumberTypes.Hexadecimal, 'Hexadecimal'],
+	[RandomizerNumber.NumberTypes.Decimal, 'Decimal'],
+	[RandomizerNumber.NumberTypes.Octal, 'Octal'],
+	[RandomizerNumber.NumberTypes.Binary, 'Binary'],
+]
+---
+
+<br-if
+	br:query={`page=${Pages.Number}`}
+	br:animation-for={Ids.PageNumber}
+	br:animation-start-duration="500"
+	br:animation-start-keyframes={JSON.stringify({
+		opacity: [0, 1],
+		scale: [.9, 1]
+	})}>
+	<div class={Styles.Page} id={Ids.PageNumber}>
+		<textarea
+			class={Styles.OutputText}
+			rows="5"
+			br:as="textfield"
+			id={Ids.PageNumberOutput}>{
+			Constant.DEFAULT_NUMBER_OUTPUT
+		}</textarea>
+		<div class={Styles.Options}>
+			<div>
+				<button
+					br:variant="filled"
+					id={Ids.PageNumberGenerate}>
+					<br-icon set:html={Icons.ArrowSync}/>
+					<span>Generate</span>
+				</button>
+				<button
+					br:variant="tonal"
+					id={Ids.PageNumberCopy}>
+					<br-icon set:html={Icons.Copy}/>
+					Copy
+				</button>
+			</div>
+			<details open>
+				<summary>Options</summary>
+				<ul>
+					<li>
+						<ul class={Styles.OptionGrid2}>
+							<li>
+								<label
+									for={Ids.PageNumberMin}
+									style="margin-bottom:.125rem">
+									Min
+								</label>
+								<input
+									id={Ids.PageNumberMin}
+									type="number"
+									br:as="textfield"
+									value={Constant.DEFAULT_NUMBER_MIN}
+									max={Constant.DEFAULT_NUMBER_MAX}
+								/>
+							</li>
+							<li>
+								<label
+									for={Ids.PageNumberMax}
+									style="margin-bottom:.125rem">
+									Max
+								</label>
+								<input
+									id={Ids.PageNumberMax}
+									type="number"
+									br:as="textfield"
+									value={Constant.DEFAULT_NUMBER_MAX}
+									min={Constant.DEFAULT_NUMBER_MIN}
+								/>
+							</li>
+						</ul>
+					</li>
+					<li style="margin-top:.5rem">
+						<ul class={Styles.OptionGrid2}>
+							<li>
+								<label
+									for={Ids.PageNumberCount}
+									style="margin-bottom:.125rem">
+									Count
+								</label>
+								<input
+									id={Ids.PageNumberCount}
+									type="number"
+									br:as="textfield"
+									min="1"
+									value={Constant.DEFAULT_NUMBER_COUNT}
+								/>
+							</li>
+							<li>
+								<label
+									for={Ids.PageNumberDigits}
+									style="margin-bottom:.125rem">
+									Min digits
+								</label>
+								<input
+									id={Ids.PageNumberDigits}
+									type="number"
+									br:as="textfield"
+									value={Constant.DEFAULT_NUMBER_DIGITS}
+									min="0"
+								/>
+							</li>
+						</ul>
+					</li>
+					<li style="margin-top:.5rem">
+						<ul class={Styles.OptionGrid2}>
+							<li>
+								<label
+									for={Ids.PageNumberPrefix}
+									style="margin-bottom:.125rem">
+									Prefix
+								</label>
+								<input
+									id={Ids.PageNumberPrefix}
+									type="text"
+									br:as="textfield"
+									value={Constant.DEFAULT_NUMBER_PREFIX}
+								/>
+							</li>
+							<li>
+								<label
+									for={Ids.PageNumberSuffix}
+									style="margin-bottom:.125rem">
+									Suffix
+								</label>
+								<input
+									id={Ids.PageNumberSuffix}
+									type="text"
+									br:as="textfield"
+									value={Constant.DEFAULT_NUMBER_SUFFIX}
+								/>
+							</li>
+						</ul>
+					</li>
+					<li style="margin-top:.5rem">
+						<label
+							for={Ids.PageNumberSort}
+							style="margin-bottom:.125rem">
+							Sort
+						</label>
+						<select id={Ids.PageNumberSort}>
+							{SORT_DIRECTIONS.map(v =>
+								<option
+									value={v[0]}
+									selected={Constant.DEFAULT_NUMBER_SORT === v[0]}>
+									{v[1]}
+								</option>
+							)}
+						</select>
+					</li>
+					<li style="margin-top:.5rem">
+						<label
+							for={Ids.PageNumberType}
+							style="margin-bottom:.125rem">
+							Number type
+						</label>
+						<select id={Ids.PageNumberType}>
+							{NUMBER_TYPES.map(v =>
+								<option
+									value={v[0]}
+									selected={Constant.DEFAULT_NUMBER_TYPE === v[0]}>
+									{v[1]}
+								</option>
+							)}
+						</select>
+					</li>
+					<li style="margin-top:.5rem">
+						<label
+							for={Ids.PageNumberSeparator}
+							style="margin-bottom:.125rem">
+							Separator
+						</label>
+						<input
+							id={Ids.PageNumberSeparator}
+							type="text"
+							br:as="textfield"
+							value={Constant.DEFAULT_NUMBER_SEPARATOR}
+						/>
+					</li>
+					<li style="margin-top:.5rem">
+						<label br:as="checkbox">
+							<input
+								type="checkbox"
+								id={Ids.PageNumberRepeat}
+								checked={Constant.DEFAULT_NUMBER_REPEAT}
+							/>
+							Repeat
+						</label>
+					</li>
+				</ul>
+			</details>
+		</div>
+	</div>
+</br-if>

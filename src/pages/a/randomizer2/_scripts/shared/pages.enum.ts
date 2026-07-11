@@ -1,0 +1,6 @@
+export const String = 'string'
+export const Words = 'words'
+export const Number = 'number'
+export const Colors = 'colors'
+export const Selection = 'selection'
+export const Teams = 'teams'
