@@ -31,6 +31,7 @@ ${ELEMENT} {
 	border-radius: .25rem;
 	display: flex;
 	gap: .5rem;
+	width: 100%;
 	font-size: .875rem;
 	line-height: normal;
 	justify-content: center;
@@ -96,15 +97,14 @@ ${ELEMENT}:open::picker-icon {
 ${ELEMENT}::picker(select) {
 	appearance: base-select;
 	background-color: rgb(var(${BrTheme.CSSVars.ColorSurface}));
-	border: 1px solid rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .08);
+	border: 1px solid rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .32);
 	box-shadow: 0 .25rem .5rem rgba(0, 0, 0, .25);
 	border-radius: .5rem;
 	padding: .25rem 0;
 	opacity: 0;
-	translate: 0 .75rem;
 	margin: .5rem 0;
 	position-try: most-block-size flip-block;
-	transition-property: display, overlay, opacity, translate;
+	transition-property: display, overlay, opacity;
 	transition-duration: var(${BrTheme.CSSVars.DurationTransition});
 }
 
@@ -116,13 +116,11 @@ ${ELEMENT}::picker(select) {
 
 ${ELEMENT}::picker(select):popover-open {
 	opacity: 1;
-	translate: 0 0;
 }
 
 @starting-style {
 	${ELEMENT}::picker(select):popover-open {
 		opacity: 0;
-		translate: 0 -0.75rem;
 	}
 }
 
