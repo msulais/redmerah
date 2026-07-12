@@ -1,8 +1,10 @@
 import * as RandomizerNumber from '../shared/randomizer-number.js'
+import * as AnimationEasing from '@/enums/animation-easing.enum.js'
 import * as Constant from '../shared/constant.enum.js'
 import * as BrIcon from '@/web-components/components/br-icon.js'
 import * as BrTheme from '@/web-components/components/br-theme.js'
 import * as Ids from '../shared/ids.enum.js'
+import * as Settings from '../core/settings.js'
 import { $, $$ } from '../core/dom-utils.js'
 import { signal } from '@/utils/signal'
 import { delegateEvent } from '@/utils/event-registry.js'
@@ -23,6 +25,7 @@ export const sg_sort      = signal(Constant.DEFAULT_NUMBER_SORT)
 export const sg_suffix    = signal(Constant.DEFAULT_NUMBER_SUFFIX)
 export const sg_type      = signal(Constant.DEFAULT_NUMBER_TYPE)
 export const sg_output    = signal(Constant.DEFAULT_NUMBER_OUTPUT)
+export const sg_isGenerating = signal(false)
 
 const _ref_count        = $(Ids.PageNumberCount) as HTMLInputElement
 const _ref_max          = $(Ids.PageNumberMax) as HTMLInputElement
@@ -35,15 +38,16 @@ const _ref_sort         = $(Ids.PageNumberSort) as HTMLSelectElement
 const _ref_suffix       = $(Ids.PageNumberSuffix) as HTMLInputElement
 const _ref_type         = $(Ids.PageNumberType) as HTMLSelectElement
 const _ref_output       = $(Ids.PageNumberOutput) as HTMLTextAreaElement
-const _ref_copy         = $(Ids.PageStringCopy) as HTMLButtonElement
-const _ref_generate     = $(Ids.PageStringGenerate) as HTMLButtonElement
+const _ref_copy         = $(Ids.PageNumberCopy) as HTMLButtonElement
+const _ref_generate     = $(Ids.PageNumberGenerate) as HTMLButtonElement
 const _ref_generateIcon = $$(BrIcon.TAGNAME, _ref_generate) as BrIcon.BiruIconElement
 const _ref_generateText = $$('span', _ref_generate) as HTMLSpanElement
 const _ref_theme        = $$(BrTheme.TAGNAME) as BrTheme.BiruThemeElement
 
+let _time_generate: ReturnType<typeof setInterval> | undefined
+
 function _updateOutput(): void {
 	const values: number[] = []
-	const nonRepeatValues: Set<number> = new Set()
 	const min = Math.min(sg_min(), sg_max())
 	const max = Math.max(sg_min(), sg_max())
 	const range = max - min + 1
@@ -51,32 +55,31 @@ function _updateOutput(): void {
 	const count = sg_count()
 
 	if (sg_repeat()) {
-		while (values.length < count) {
+		for (let i = 0; i < count; i++) {
 			values.push(min + Math.floor(Math.random() * range))
 		}
 	}
-	else {
-		if (count < range) {
-			const swappedValues = new Map<number, number>()
-			for (let i = 0; i < count; i++) {
-				const items = range - i
-				const randIndex = i + Math.floor(Math.random() * items)
-				const valueAtRandomIndex = swappedValues.get(randIndex) ?? (min + randIndex)
-				const valueAtBoundary = swappedValues.get(i) ?? (min + i)
-				nonRepeatValues.add(valueAtRandomIndex)
-				swappedValues.set(randIndex, valueAtBoundary)
-			}
-
-			values.push(...nonRepeatValues.values())
+	else if (count < range) {
+		const nonRepeatValues: Set<number> = new Set()
+		const swappedValues = new Map<number, number>()
+		for (let i = 0; i < count; i++) {
+			const items = range - i
+			const randIndex = i + Math.floor(Math.random() * items)
+			const valueAtRandomIndex = swappedValues.get(randIndex) ?? (min + randIndex)
+			const valueAtBoundary = swappedValues.get(i) ?? (min + i)
+			nonRepeatValues.add(valueAtRandomIndex)
+			swappedValues.set(randIndex, valueAtBoundary)
 		}
-		else {
-			for (let i = min; i <= max; i++) {
-				values.push(i)
-			}
 
-			if (sort === RandomizerNumber.SortDirection.None) {
-				shuffleArray(values)
-			}
+		values.push(...nonRepeatValues.values())
+	}
+	else {
+		for (let i = min; i <= max; i++) {
+			values.push(i)
+		}
+
+		if (sort === RandomizerNumber.SortDirection.None) {
+			shuffleArray(values)
 		}
 	}
 
@@ -91,45 +94,142 @@ function _updateOutput(): void {
 	].join('')).join(sg_separator()))
 }
 
+function _generate(): void {
+	_updateOutput()
+	const duration = 3000
+	const step = Settings.sg_instantResult()? 0 : 250
+	let i = 0
+	_time_generate = setInterval(() => {
+		if (Settings.sg_instantResult() || !sg_isGenerating()) {
+			sg_isGenerating.set(false)
+			return
+		}
+
+		_updateOutput()
+		if (i >= duration / step) {
+			sg_isGenerating.set(false)
+			return
+		}
+
+		++i
+	}, step)
+}
+
 function _initSubscriber(): void {
+	sg_isGenerating.subscribe(v => {
+		const fn_isAnimationAllowed = () => _ref_theme.biru.transitionDuration > 0
+		const width = _ref_generate.getBoundingClientRect().width
+
+		clearInterval(_time_generate)
+		_ref_generateIcon.getAnimations().forEach(v => v.cancel())
+		_ref_generateText.textContent = v? 'Generating' : 'Generate'
+
+		// animation for button, icon, and text
+		if (fn_isAnimationAllowed()) {
+			const opt = {duration: 250, easing: AnimationEasing.Spring}
+			_ref_generateText.animate({
+				opacity: [0, 1],
+				scale: [0, 1],
+			}, opt)
+			_ref_generateIcon.animate({
+				opacity: [0, 1],
+				scale: [0, 1],
+			}, opt)
+			_ref_generate.animate({
+				width: [width + 'px', _ref_generate.getBoundingClientRect().width + 'px']
+			}, opt)
+		}
+
+		// !!important!! to avoid recursion
+		if (!v) {
+			return
+		}
+
+		// animation for icon rotation
+		if (fn_isAnimationAllowed()) {
+			_ref_generateIcon.animate({
+				rotate: '180deg'
+			}, {
+				duration: 500,
+				iterations: Infinity,
+				easing: AnimationEasing.Spring
+			})
+		}
+
+		_generate()
+	})
+
 	sg_count.subscribe(v => {
-		// TODO
+		if (!_ref_count.matches(':focus')) {
+			_ref_count.valueAsNumber = v
+		}
+
+		saveStorageItem('page-number-count', v)
 	})
 
 	sg_max.subscribe(v => {
-		// TODO
+		if (!_ref_max.matches(':focus')) {
+			_ref_max.valueAsNumber = v
+		}
+
+		_ref_min.max = v.toString()
+		saveStorageItem('page-number-max', v)
 	})
 
 	sg_min.subscribe(v => {
-		// TODO
+		if (!_ref_min.matches(':focus')) {
+			_ref_min.valueAsNumber = v
+		}
+
+		_ref_max.min = v.toString()
+		saveStorageItem('page-number-min', v)
 	})
 
 	sg_minDigits.subscribe(v => {
-		// TODO
+		if (!_ref_minDigits.matches(':focus')) {
+			_ref_minDigits.valueAsNumber = v
+		}
+
+		saveStorageItem('page-number-min-digits', v)
 	})
 
 	sg_prefix.subscribe(v => {
-		// TODO
+		if (!_ref_prefix.matches(':focus')) {
+			_ref_prefix.value = v
+		}
+
+		saveStorageItem('page-number-prefix', v)
 	})
 
 	sg_repeat.subscribe(v => {
-		// TODO
+		_ref_repeat.checked = v
+		saveStorageItem('page-number-repeat', v)
 	})
 
 	sg_separator.subscribe(v => {
-		// TODO
+		if (!_ref_separator.matches(':focus')) {
+			_ref_separator.value = v
+		}
+
+		saveStorageItem('page-number-separator', v)
 	})
 
 	sg_sort.subscribe(v => {
-		// TODO
+		_ref_sort.value = v
+		saveStorageItem('page-number-sort', v)
 	})
 
 	sg_suffix.subscribe(v => {
-		// TODO
+		if (!_ref_suffix.matches(':focus')) {
+			_ref_suffix.value = v
+		}
+
+		saveStorageItem('page-number-suffix', v)
 	})
 
 	sg_type.subscribe(v => {
-		// TODO
+		_ref_type.value = v.toString()
+		saveStorageItem('page-number-type', v)
 	})
 
 	sg_output.subscribe(v => {
@@ -146,6 +246,10 @@ function _initEvents(): void {
 		}
 
 		sg_type.set(value)
+	})
+
+	delegateEvent(_ref_copy, 'click', () => {
+		navigator.clipboard.writeText(sg_output())
 	})
 
 	delegateEvent(_ref_sort, 'change', () => {
@@ -169,6 +273,10 @@ function _initEvents(): void {
 	delegateEvent(_ref_max, 'input', () => {
 		const max = Math_clamp(safeNumber(_ref_max.valueAsNumber), sg_min(), Number.MAX_VALUE)
 		sg_max.set(max)
+	})
+
+	delegateEvent(_ref_generate, 'click', () => {
+		sg_isGenerating.set(v => !v)
 	})
 
 	delegateEvent(_ref_max, 'blur', () => {
