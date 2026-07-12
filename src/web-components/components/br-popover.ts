@@ -1014,7 +1014,7 @@ function _initDefaultStyles(): void {
 	display: none;
 	position: fixed;
 	background-color: rgb(var(${BrTheme.CSSVars.ColorSurface}));
-	border: 1px solid rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .08);
+	border: 1px solid rgba(var(${BrTheme.CSSVars.ColorOnSurface}), .32);
 	max-height: calc(100dvh - ${POPOVER_MARGIN*2}px);
 	max-width: calc(100% - ${POPOVER_MARGIN*2}px);
 	overflow: auto;
