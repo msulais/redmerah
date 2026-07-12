@@ -37,7 +37,10 @@ export function colorContrastPercentage(rgb1: RGBColor, rgb2: RGBColor): number 
 	 * `Y` = Luminance
 	 */
 	function yToLStar(Y: number): number {
-		if (Y <= (216 / 24389)) return Y * (24389 / 27)
+		if (Y <= (216 / 24389)) {
+			return Y * (24389 / 27)
+		}
+
 		return Math.pow(Y, (1 / 3)) * 116 - 16
 	}
 

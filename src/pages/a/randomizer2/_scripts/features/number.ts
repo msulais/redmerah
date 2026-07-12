@@ -172,7 +172,6 @@ function _initSubscriber(): void {
 			_ref_max.valueAsNumber = v
 		}
 
-		_ref_min.max = v.toString()
 		saveStorageItem('page-number-max', v)
 	})
 
@@ -181,7 +180,6 @@ function _initSubscriber(): void {
 			_ref_min.valueAsNumber = v
 		}
 
-		_ref_max.min = v.toString()
 		saveStorageItem('page-number-min', v)
 	})
 

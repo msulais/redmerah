@@ -1,7 +1,8 @@
 import * as RandomizerNumber from '../shared/randomizer-number.js'
+import * as RandomizerColors from '../shared/randomizer-colors.js'
 import * as Constant from '../shared/constant.enum.js'
 import { IDB } from '@/utils/indexeddb'
-import type { EnumOf } from '@/types/collections.js'
+import type { HEXColor } from '@/types/color.js'
 
 type _IDBStoreStorage<T = unknown> = {
 	key: string
@@ -22,14 +23,32 @@ type _StorageItems = {
 	'page-number-min': number
 	'page-number-max': number
 	'page-number-count': number
-	'page-number-sort': EnumOf<typeof RandomizerNumber.SortDirection>
-	'page-number-type': EnumOf<typeof RandomizerNumber.NumberTypes>
+	'page-number-sort': RandomizerNumber.SortDirection
+	'page-number-type': RandomizerNumber.NumberTypes
 	'page-number-min-digits': number
 	'page-number-separator': string
 	'page-number-prefix': string
 	'page-number-suffix': string
 	'page-number-repeat': boolean
 	'page-number-output': string
+
+	'page-colors-count': number
+	'page-colors-color-space': RandomizerColors.ColorSpaces
+	'page-colors-hex-min': number
+	'page-colors-hex-max': number
+	'page-colors-rgb-r-min': number
+	'page-colors-rgb-r-max': number
+	'page-colors-rgb-g-min': number
+	'page-colors-rgb-g-max': number
+	'page-colors-rgb-b-min': number
+	'page-colors-rgb-b-max': number
+	'page-colors-hsl-h-min': number
+	'page-colors-hsl-h-max': number
+	'page-colors-hsl-s-min': number
+	'page-colors-hsl-s-max': number
+	'page-colors-hsl-l-min': number
+	'page-colors-hsl-l-max': number
+	'page-colors-output': HEXColor[]
 }
 
 type _StorageKeys = keyof _StorageItems
