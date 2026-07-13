@@ -1,4 +1,4 @@
-# Credits
+# Asset Credits
 
 * Sound Effect `/src/assets/audio/simple-ringtone-84595.mp3` by <a href="https://pixabay.com/users/freesound_community-46691455/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=84595">freesound_community</a> from <a href="https://pixabay.com/sound-effects//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=84595">Pixabay</a>
 * Icons `/icons/FluentSystemIcons-Resizable.[*any]` by Microsoft from [fluentui-system-icons](https://github.com/microsoft/fluentui-system-icons)

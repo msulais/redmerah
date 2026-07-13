@@ -6,6 +6,8 @@ export const AppBarSettingsAnimation = '5B3463B4'
 export const AppBarSettingsTheme = '88F1836A'
 export const AppBarSettingsInstant = 'D829431B'
 
+export const ListDialog = 'D9A97E1B'
+
 export const PageString = '9C9A60DC'
 export const PageStringLength = 'A3A817E7'
 export const PageStringCustom = '16E60DAE'

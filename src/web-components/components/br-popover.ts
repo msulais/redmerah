@@ -924,30 +924,36 @@ function _initListeners(): void {
 
 	listenDocumentEvent('click', (ev) => {
 		const target = (ev.target as HTMLElement).closest<HTMLElement>(`[${CSS.escape(GlobalAttributes.CommandFor)}]`)
-		if (!target) {
+		if (!target || !target.hasAttribute(GlobalAttributes.CommandFor)) {
 			return
 		}
 
-		const popoverId = target.getAttribute(GlobalAttributes.CommandFor)
-		if (!popoverId || !ELEMENT_BY_IDS.has(popoverId)) {
-			return
+		const ids = target.getAttribute(GlobalAttributes.CommandFor)!.split(/ +/g)
+		const commands = (target.getAttribute(GlobalAttributes.Command) ?? '').split(/ +/g)
+		for (let i = 0; i < ids.length; i++) {
+			const id = ids[i]!
+			const command = commands[i] || Commands.TogglePopover
+			const ref = ELEMENT_BY_IDS.get(id)
+			if (!ref) {
+				continue
+			}
+
+			switch (command) {
+			case Commands.Default:
+			case Commands.TogglePopover: {
+				if (ref.hasAttribute(Attributes.SubMenu) && !ref.hasAttribute(Attributes.Manual)) {
+					return ref.biru.open(target)
+				}
+				else {
+					ref.biru.toggle(target)
+				}
+
+				break
+			}
+			case Commands.ClosePopover: return ref.biru.close()
+			case Commands.OpenPopover: return ref.biru.open(target)
+			}
 		}
-
-		const popover = ELEMENT_BY_IDS.get(popoverId)!
-		const action = target.getAttribute(GlobalAttributes.Command) || Commands.TogglePopover
-		switch (action) {
-		case Commands.ClosePopover: return popover.biru.close()
-		case Commands.OpenPopover: return popover.biru.open(target)
-		case Commands.TogglePopover: {
-			if (popover.hasAttribute(Attributes.SubMenu) && !popover.hasAttribute(Attributes.Manual)) {
-				return popover.biru.open(target)
-			}
-			else {
-				popover.biru.toggle(target)
-			}
-
-			break
-		}}
 	})
 
 	listenDocumentEvent('pointerdown', (ev) => {

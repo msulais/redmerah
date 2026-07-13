@@ -248,21 +248,26 @@ export class BiruDialogElement extends HTMLElement {
 function _initListeners(): void {
 	listenDocumentEvent('click', (ev) => {
 		const target = (ev.target as HTMLElement).closest<HTMLElement>(`[${CSS.escape(GlobalAttributes.CommandFor)}]`)
-		if (!target) {
+		if (!target || !target.hasAttribute(GlobalAttributes.CommandFor)) {
 			return
 		}
 
-		const popoverId = target.getAttribute(GlobalAttributes.CommandFor)
-		if (!popoverId || !ELEMENT_BY_IDS.has(popoverId)) {
-			return
-		}
+		const ids = target.getAttribute(GlobalAttributes.CommandFor)!.split(/ +/g)
+		const commands = (target.getAttribute(GlobalAttributes.Command) ?? '').split(/ +/g)
+		for (let i = 0; i < ids.length; i++) {
+			const id = ids[i]!
+			const command = commands[i] || Commands.ToggleDialog
+			const ref = ELEMENT_BY_IDS.get(id)
+			if (!ref) {
+				continue
+			}
 
-		const popover = ELEMENT_BY_IDS.get(popoverId)!
-		const action = target.getAttribute(GlobalAttributes.Command) || Commands.ToggleDialog
-		switch (action) {
-		case Commands.CloseDialog: return popover.biru.close()
-		case Commands.OpenDialog: return popover.biru.open()
-		case Commands.ToggleDialog: return popover.biru.toggle()
+			switch (command) {
+			case Commands.ToggleDialog:
+			case Commands.Default     : ref.biru.toggle(); break
+			case Commands.CloseDialog : ref.biru.close (); break
+			case Commands.OpenDialog  : ref.biru.open  (); break
+			}
 		}
 	})
 

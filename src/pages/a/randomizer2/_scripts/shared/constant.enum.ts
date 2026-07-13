@@ -9,6 +9,37 @@ export const DEFAULT_THEME: BrTheme.ThemeMode = BrTheme.ThemeMode.Auto
 export const DEFAULT_ANIMATION: BrTheme.Animation = BrTheme.Animation.Auto
 export const DEFAULT_INSTANT_RESULT = false
 
+export const LIST_ANIMAL = [
+	"Anoa", "Bear", "Chimpanzee", "Dolphin", "Eagle", "Elephant", "Giraffe", "Gorilla", "Kangaroo",
+	"Koala", "Komodo", "Lion", "Orangutan", "Owl", "Panda", "Parrot", "Snake", "Tiger", "Whale",
+	"Wolf", "Zebra"
+]
+export const LIST_COLOR = [
+	"Black", "Blue", "Gray", "Green", "Orange", "Pink", "Purple", "Red", "White", "Yellow"
+]
+export const LIST_TEAMS_NAME = ['Alpha', 'Beta', 'Delta']
+export const LIST_PERSON_NAME = [
+	"Alice", "Ava", "Bob", "Charlotte", "Charlie", "David", "Emily", "Frank", "Grace", "Henry",
+	"Isabella", "Jack", "James", "Kevin", "Lily", "Luna", "Mia", "Michael", "Noah", "Olivia",
+	"Owen", "Peter", "Sophia", "Sophia", "William"
+]
+export const LIST_LOREM_IPSUM = [
+	"Ad", "Adipiscing", "Aliqua", "Aliquip", "Amet", "Anim", "Aute", "Cillum", "Commodo",
+	"Consectetur", "Consequat", "Culpa", "Cupidatat", "Deserunt", "Do", "Dolor", "Dolore", "Duis",
+	"Ea", "Eiusmod", "Elit", "Enim", "Esse", "Et", "Eu", "Ex", "Excepteur", "Exercitation", "Est",
+	"Fugiat", "Id", "Incididunt", "In", "Ipsum", "Irure", "Laboris", "Laborum", "Labore", "Lorem",
+	"Magna", "Minim", "Mollit", "Nisi", "Non", "Nostrud", "Nulla", "Occaecat", "Officia",
+	"Pariatur", "Proident", "Qui", "Quis", "Reprehenderit", "Sed", "Sit", "Sint", "Sunt", "Tempor",
+	"Ullamco", "Ut", "Velit", "Veniam", "Voluptate"
+]
+export const DEFAULT_LISTS = [
+	{ id: 1, name: 'Animals'     , items: [...LIST_ANIMAL     ] },
+	{ id: 2, name: 'Colors'      , items: [...LIST_COLOR      ] },
+	{ id: 3, name: 'Lorem Ipsum' , items: [...LIST_LOREM_IPSUM] },
+	{ id: 4, name: 'Person Names', items: [...LIST_PERSON_NAME] },
+	{ id: 5, name: 'Teams Names' , items: [...LIST_TEAMS_NAME ] },
+]
+
 export const DEFAULT_STRING_OUTPUT = 'LVSskEwIlSKo5K3691Q7CeluR4CmI8Bj1eWe54AJAc84ITAeEQoXxqj5UWKQBtIn'
 export const DEFAULT_STRING_LENGTH = 64
 export const DEFAULT_STRING_CUSTOM = ''

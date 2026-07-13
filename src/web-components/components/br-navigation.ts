@@ -147,28 +147,29 @@ function _initListeners(): void {
 		}
 	})
 
-	// listen to [commandfor]
+	// listen to [br:command-for]
 	listenDocumentEvent('click', (ev) => {
 		const target = (ev.target as HTMLElement).closest<HTMLElement>(`[${CSS.escape(GlobalAttributes.CommandFor)}]`)
-		if (!target) {
+		if (!target || !target.hasAttribute(GlobalAttributes.CommandFor)) {
 			return
 		}
 
-		const id = target.getAttribute(GlobalAttributes.CommandFor)
-		if (!id) {
-			return
-		}
+		const ids = target.getAttribute(GlobalAttributes.CommandFor)!.split(/ +/g)
+		const commands = (target.getAttribute(GlobalAttributes.Command) ?? '').split(/ +/g)
+		for (let i = 0; i < ids.length; i++) {
+			const id = ids[i]!
+			const command = commands[i] || Commands.ToggleNavigation
+			const ref = document.getElementById(id) as BiruNavigationElement | null
+			if (!ref || !(ref instanceof BiruNavigationElement)) {
+				continue
+			}
 
-		const navigation = document.getElementById(id) as BiruNavigationElement | null
-		if (!navigation || !(navigation instanceof BiruNavigationElement)) {
-			return
-		}
-
-		const action = target.getAttribute(GlobalAttributes.Command) || Commands.ToggleNavigation
-		switch (action) {
-		case Commands.CloseNavigation : return navigation.biru.expanded = false
-		case Commands.OpenNavigation  : return navigation.biru.expanded = true
-		case Commands.ToggleNavigation: return navigation.biru.expanded = !navigation.biru.expanded
+			switch (command) {
+			case Commands.Default:
+			case Commands.ToggleNavigation: ref.biru.expanded = !ref.biru.expanded; break
+			case Commands.CloseNavigation : ref.biru.expanded = false; break
+			case Commands.OpenNavigation  : ref.biru.expanded = true; break
+			}
 		}
 	})
 }
