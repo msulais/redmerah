@@ -1,7 +1,7 @@
 import * as Ids from '../shared/ids.enum.js'
-import * as WebComponent from '@/web-components/global-attributes.js'
-import * as Button from '@/web-components/components/button.js'
-import * as BrIcon from '@/web-components/components/br-icon.js'
+import * as WebComponent from '@/components/web-components/global-attributes.js'
+import * as Button from '@/components/web-components/components/button.js'
+import * as BrIcon from '@/components/web-components/components/br-icon.js'
 import * as Icons from '@/enums/icons.enum.js'
 import { signal } from "@/utils/signal"
 import { $ } from './dom-utils.js'

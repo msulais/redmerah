@@ -1,4 +1,4 @@
-import { CButton } from "@/components/Button"
+import { CButton } from "@/components/astro-components/Button"
 import { ElementIds } from "../_shared/_ids"
 import { $ } from "./_dom-utils"
 import { CSS_SMALL_SIZE } from "../_shared/_constant"

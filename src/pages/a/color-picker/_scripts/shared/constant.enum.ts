@@ -1,4 +1,4 @@
-import * as BrTheme from '@/web-components/components/br-theme.server.js'
+import * as BrTheme from '@/components/web-components/components/br-theme.server.js'
 import * as ColorPickerMode from './modes.enum.js'
 import { APP_COLOR_PICKER } from "@/constants/apps"
 import { hexToRgb, rgbToCmyk, rgbToHsl, rgbToHsv, rgbToHwb } from '@/utils/color'

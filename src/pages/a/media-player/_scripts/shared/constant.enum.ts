@@ -1,4 +1,4 @@
-import * as BrTheme from '@/web-components/components/br-theme.server.js'
+import * as BrTheme from '@/components/web-components/components/br-theme.server.js'
 import * as Apps from "@/constants/apps"
 
 export const APP = Apps.APP_MEDIA_PLAYER

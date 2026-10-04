@@ -1,4 +1,4 @@
-import * as BrDialog from '@/web-components/components/br-dialog.js'
+import * as BrDialog from '@/components/web-components/components/br-dialog.js'
 import * as Ids from '../shared/ids.enum.js'
 import * as Constant from '../shared/constant.enum.js'
 import { signal } from '@/utils/signal'

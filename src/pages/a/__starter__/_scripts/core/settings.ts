@@ -2,10 +2,10 @@ import * as Constant from "../shared/constant.enum.js";
 import * as Ids from '../shared/ids.enum.js'
 import * as Pages from '../shared/pages.enum.js'
 import * as InputNames from '../shared/input-names.enum.js'
-import * as BrPopover from "@/web-components/components/br-popover";
-import * as BrTheme from '@/web-components/components/br-theme.js'
+import * as BrPopover from "@/components/web-components/components/br-popover";
+import * as BrTheme from '@/components/web-components/components/br-theme.js'
 import * as LocalStorageKeys from '@/enums/local-storage-keys.enum.js'
-import { listenRouteChange } from '@/web-components/router.js'
+import { listenRouteChange } from '@/components/web-components/router.js'
 import { signal } from "@/utils/signal.js";
 import { $, $$ } from "./dom-utils";
 import { isValidEnumValue } from "@/utils/object.js";

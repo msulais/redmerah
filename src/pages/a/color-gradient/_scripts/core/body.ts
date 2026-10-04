@@ -1,7 +1,7 @@
-import { CButton } from "@/components/Button"
+import { CButton } from "@/components/astro-components/Button"
 import { CSSClasses } from "../../_styles/classes"
 import { $, $$, $$$ } from "./dom-utils"
-import { CPopover } from "@/components/Popover"
+import { CPopover } from "@/components/astro-components/Popover"
 import { ElementIds } from "../shared/ids"
 
 const _ref_gradControlPopover = $(ElementIds.bdGrad_controlPopover) as CPopover.CElement

@@ -1,10 +1,10 @@
 import * as Ids from "../shared/ids.enum.js"
-import * as Button from '@/web-components/components/button.js'
-import * as BrIcon from '@/web-components/components/br-icon.js'
-import * as BrPopover from '@/web-components/components/br-popover.js'
+import * as Button from '@/components/web-components/components/button.js'
+import * as BrIcon from '@/components/web-components/components/br-icon.js'
+import * as BrPopover from '@/components/web-components/components/br-popover.js'
 import * as Constant from "../shared/constant.enum.js"
 import * as Styles from '../../_styles/styles.enum.js'
-import * as BrTheme from '@/web-components/components/br-theme.js'
+import * as BrTheme from '@/components/web-components/components/br-theme.js'
 import * as AnimationEasing from '@/enums/animation-easing.enum.js'
 import { $, $$, $$$, scrollInputToEnd } from "../core/dom-utils.js"
 import { calculate } from "../core/calculator.js"

@@ -1,5 +1,5 @@
 import * as TabValues from './tab-values.enum.js'
-import * as BrTheme from '@/web-components/components/br-theme.server.js'
+import * as BrTheme from '@/components/web-components/components/br-theme.server.js'
 import * as Apps from "@/constants/apps"
 import type { EnumOf } from '@/types/collections'
 

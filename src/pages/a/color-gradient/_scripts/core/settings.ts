@@ -7,7 +7,7 @@ import { RootAttributes } from "@/enums/attributes"
 import { RadioNames } from "../shared/input-names"
 import { DEFAULT_ANIMATION, DEFAULT_COLOR_SPACE, DEFAULT_THEME } from "../shared/constant"
 import { $, $$ } from "./dom-utils"
-import { CMenu } from "@/components/Menu"
+import { CMenu } from "@/components/astro-components/Menu"
 import { ColorSpace } from "../shared/enums"
 import { saveStorageItem } from "./database"
 

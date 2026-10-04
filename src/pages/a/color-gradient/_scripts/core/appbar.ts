@@ -1,4 +1,4 @@
-import { CButton } from "@/components/Button"
+import { CButton } from "@/components/astro-components/Button"
 import { ElementIds } from "../shared/ids"
 import { $ } from "./dom-utils"
 import { APP } from "../shared/constant"

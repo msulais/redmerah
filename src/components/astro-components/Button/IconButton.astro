@@ -1,0 +1,31 @@
+---
+import { joinClassList } from '@/utils/attributes'
+
+import {CButton, type IconButtonProps} from '.'
+import Icon from '@/components/astro-components/Icon/index.astro'
+import Button from './index.astro'
+import './index.scss'
+
+type Props = IconButtonProps
+
+const {
+	'class': className,
+	IconButtonCode,
+	IconButtonFilled,
+	IconButtonIconAttr = {},
+	...other
+} = Astro.props
+const {
+	IconCode,
+	...iconOther
+} = IconButtonIconAttr
+const cls = CButton.Classes
+---
+<Button
+	class={joinClassList(cls.Icon, className)}
+	{...other}>
+	<Icon
+		IconCode={IconCode ?? IconButtonCode}
+		{...iconOther}
+	/>
+</Button>

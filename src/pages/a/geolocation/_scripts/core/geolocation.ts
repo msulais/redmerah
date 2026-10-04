@@ -1,5 +1,5 @@
-import * as BrIcon from '@/web-components/components/br-icon.js'
-import * as Button from '@/web-components/components/button.js'
+import * as BrIcon from '@/components/web-components/components/br-icon.js'
+import * as Button from '@/components/web-components/components/button.js'
 import * as Ids from '../shared/ids.enum.js'
 import { batch, signal } from "@/utils/signal"
 import { $, $$ } from './dom-utils.js'

@@ -1,4 +1,4 @@
-import * as BrTheme from '@/web-components/components/br-theme.server.js'
+import * as BrTheme from '@/components/web-components/components/br-theme.server.js'
 import * as Icons from '@/enums/icons.enum.js'
 import { APP_CALCULATOR } from "@/constants/apps"
 import { ConverterTypes, DateOperation, DecimalNumberFormat, GroupingNumberFormat, ProgrammerNumTypes, ScientificAngleTypes } from "./calculator"

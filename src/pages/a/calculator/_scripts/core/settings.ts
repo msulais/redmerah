@@ -3,8 +3,8 @@ import * as Ids from '../shared/ids.enum.js'
 import * as Commands from '../shared/commands.enum.js'
 import * as Pages from '../shared/pages.enum.js'
 import * as InputNames from '../shared/input-names.enum.js'
-import * as BrPopover from "@/web-components/components/br-popover";
-import * as BrTheme from '@/web-components/components/br-theme.js'
+import * as BrPopover from "@/components/web-components/components/br-popover";
+import * as BrTheme from '@/components/web-components/components/br-theme.js'
 import * as LocalStorageKeys from '@/enums/local-storage-keys.enum.js'
 import * as Basic from '../features/basic.js'
 import * as Scientific from '../features/scientific.js'
@@ -12,7 +12,7 @@ import * as Converter from '../features/converter.js'
 import * as Programmer from '../features/programmer.js'
 import * as Memory from './memory.js'
 import { DecimalNumberFormat, GroupingNumberFormat, ProgrammerNumTypes } from '../shared/calculator.js'
-import { listenRouteChange } from '@/web-components/router.js'
+import { listenRouteChange } from '@/components/web-components/router.js'
 import { signal } from "@/utils/signal.js";
 import { $, $$, $$$ } from "./dom-utils.js";
 import { isValidEnumValue } from "@/utils/object.js";

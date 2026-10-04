@@ -1,6 +1,6 @@
 import * as Constant from '../shared/constant.enum.js'
 import * as Settings from './settings.js'
-import * as BrTheme from '@/web-components/components/br-theme.js'
+import * as BrTheme from '@/components/web-components/components/br-theme.js'
 import * as Ids from '../shared/ids.enum.js'
 import beautify from 'js-beautify'
 import { minify } from "terser"

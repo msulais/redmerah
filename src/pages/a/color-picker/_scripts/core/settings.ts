@@ -3,8 +3,8 @@ import * as Ids from '../shared/ids.enum.js'
 import * as AnimationEasing from '@/enums/animation-easing.enum.js'
 import * as ColorPickerMode from '../shared/modes.enum.js'
 import * as InputNames from '../shared/input-names.enum.js'
-import * as BrPopover from "@/web-components/components/br-popover";
-import * as BrTheme from '@/web-components/components/br-theme.js'
+import * as BrPopover from "@/components/web-components/components/br-popover";
+import * as BrTheme from '@/components/web-components/components/br-theme.js'
 import * as LocalStorageKeys from '@/enums/local-storage-keys.enum.js'
 import { signal } from "@/utils/signal.js";
 import { $, $$, $$$ } from "./dom-utils.js";

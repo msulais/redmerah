@@ -6,7 +6,7 @@ import { DEFAULT_COLORS_COUNT, DEFAULT_COLORS_HEX_MAX, DEFAULT_COLORS_HEX_MIN, D
 import type { HEXColor } from "@/types/color"
 import { Math_clamp } from "@/utils/math"
 import { safeNumber } from "@/utils/number"
-import { CComboBox } from "@/components/ComboBox"
+import { CComboBox } from "@/components/astro-components/ComboBox"
 import { isValidEnumValue } from "@/utils/object"
 import { colorContrastPercentage, hexToRgb, hslToHex, rgbToHex, rgbToHsl } from "@/utils/color"
 import { saveStorageItem } from "../_core/_database"

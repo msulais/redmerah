@@ -1,4 +1,4 @@
-import * as BrTheme from '@/web-components/components/br-theme.server.js'
+import * as BrTheme from '@/components/web-components/components/br-theme.server.js'
 import { APP_CLOCK } from "@/constants/apps"
 
 export const APP = APP_CLOCK

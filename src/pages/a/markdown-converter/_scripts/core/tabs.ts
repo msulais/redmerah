@@ -1,5 +1,5 @@
 import * as AnimationEasing from "@/enums/animation-easing.enum.js"
-import * as BrTheme from '@/web-components/components/br-theme.js'
+import * as BrTheme from '@/components/web-components/components/br-theme.js'
 import * as Ids from '../shared/ids.enum.js'
 import * as TabValues from '../shared/tab-values.enum.js'
 import * as Constant from '../shared/constant.enum.js'

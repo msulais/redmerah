@@ -1,6 +1,6 @@
 import * as Ids from '../shared/ids.enum.js'
-import * as Button from '@/web-components/components/button.js'
-import * as WebComponent from '@/web-components/global-attributes.js'
+import * as Button from '@/components/web-components/components/button.js'
+import * as WebComponent from '@/components/web-components/global-attributes.js'
 import { delegateEvent } from '@/utils/event-registry.js'
 import { $ } from './dom-utils.js'
 import { signal, subscribe } from '@/utils/signal.js'
