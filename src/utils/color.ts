@@ -1,6 +1,5 @@
 import type { RGBColor, HSLColor, HSVColor, HEXColor, HWBColor, CMYKColor } from "@/types/color"
 import { safeNumber } from "./number"
-import { themeFromSourceColor } from "@material/material-color-utilities"
 
 export function isColorValidWithAlpha(hex: string): boolean {
 	return /^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$/i.test(hex)
@@ -407,37 +406,6 @@ export function hexArgbToRgb(argb: HEXColor): RGBColor {
 	const b = (argbInt & 0xFF) / 0xff
 
 	return {r, g, b}
-  }
-
-type GenerateColorResult = {
-	color: HEXColor
-	onColor: HEXColor
-	colorDark: HEXColor
-	onColorDark: HEXColor
-}
-
-/**
- * Generate 4 different color from color source:
- * - Color
- * - On Color
- * - Color Dark
- * - On Color Dark
- * @deprecated Use `generateColorAccentPalette()` instead
-*/
-export function generateColorPalette(hex: HEXColor): GenerateColorResult {
-	if (!isColorValid(hex)) {
-		throw new Error("Invalid hex color format!")
-	}
-
-	const theme = themeFromSourceColor(Number.parseInt(hex.substring(1), 16)).schemes
-	const [color, onColor, colorDark, onColorDark] = [
-		rgbToHex(hexArgbToRgb('#' + theme.light.primary  .toString(16) as HEXColor)),
-		rgbToHex(hexArgbToRgb('#' + theme.light.onPrimary.toString(16) as HEXColor)),
-		rgbToHex(hexArgbToRgb('#' + theme.dark.primary   .toString(16) as HEXColor)),
-		rgbToHex(hexArgbToRgb('#' + theme.dark.onPrimary .toString(16) as HEXColor)),
-	]
-
-	return {color, onColor, colorDark, onColorDark}
 }
 
 export function generateColorAccent(seed: RGBColor, background: RGBColor): RGBColor {

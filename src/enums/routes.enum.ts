@@ -4,14 +4,12 @@ export const About = '/about'
 export const Error = '404'
 
 // apps
-export const Randomizer = '/a/randomizer'
 export const MarkdownConverter = '/a/markdown-converter'
 export const ColorAccent = '/a/color-accent'
 export const Calculator = '/a/calculator'
 export const SASSConverter = '/a/sass-converter'
 export const Battery = '/a/battery'
 export const QRCode = '/a/qr-code'
-export const ColorGradient = '/a/color-gradient'
 export const EmojiPicker = '/a/emoji-picker'
 export const LatexViewer = '/a/latex-viewer'
 export const ColorPicker = '/a/color-picker'
@@ -29,6 +27,8 @@ export const CSSUnitConverter = '/a/css-unit-converter'
 export const ContrastChecker = '/a/contrast-checker'
 
 // TODO: create these apps
+export const Randomizer = '/a/randomizer'
+export const ColorGradient = '/a/color-gradient'
 export const Pixelate = '/a/pixelate'
 export const MimeTypeChecker = '/a/mime-type-checker'
 export const ShadowGenerator = '/a/shadow-generator'

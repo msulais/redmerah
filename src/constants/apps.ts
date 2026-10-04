@@ -1,14 +1,12 @@
 import type { AppItem } from '@/types/apps'
 import * as Routes from '@/enums/routes.enum.js'
 import logoMarkdownConverter from '@/assets/images/apps/markdown-converter.svg'
-import logoRandomizer from '@/assets/images/apps/randomizer.svg'
 import logoColorAccent from '@/assets/images/apps/color-accent.svg'
 import logoCalculator from '@/assets/images/apps/calculator.svg'
 import logoTasks from '@/assets/images/apps/tasks.svg'
 import logoSassConverter from '@/assets/images/apps/sass-converter.svg'
 import logoBattery from '@/assets/images/apps/battery.svg'
 import logoQRCode from '@/assets/images/apps/qr-code.svg'
-import logoColorGradient from '@/assets/images/apps/color-gradient.svg'
 import logoEmojiPicker from '@/assets/images/apps/emoji-picker.svg'
 import logoLatexViewer from '@/assets/images/apps/latex-viewer.svg'
 import logoColorPicker from '@/assets/images/apps/color-picker.svg'
@@ -113,14 +111,6 @@ export const APP_EMOJI_PICKER: AppItem = {
 	color: '#EEB62F',
 }
 
-export const APP_COLOR_GRADIENT: AppItem = {
-	logoUrl: logoColorGradient.src,
-	name: 'Color Gradient',
-	description: 'Design beautiful color gradients with our intuitive app. Choose from linear and radial gradients, and stack them for complex effects. Generate clean CSS code to implement your designs.',
-	link: Routes.ColorGradient,
-	color: '#7BFF2D',
-}
-
 export const APP_QR_CODE: AppItem = {
 	logoUrl: logoQRCode.src,
 	name: 'QR Code',
@@ -159,14 +149,6 @@ export const APP_CALCULATOR: AppItem = {
 	description: 'Perform a wide range of calculations with our versatile calculator. From basic arithmetic to advanced scientific functions and programmer tools, we\'ve got you covered.',
 	link: Routes.Calculator,
 	color: '#026BE3',
-}
-
-export const APP_RANDOMIZER: AppItem = {
-	logoUrl: logoRandomizer.src,
-	name: 'Randomizer',
-	description: 'Explore our Randomizer Hub for a variety of tools that add a touch of unpredictability to your life. Generate random strings, words, numbers, colors, and even assemble teams. Embrace the unexpected!',
-	link: Routes.Randomizer,
-	color: '#00FF48',
 }
 
 export const APP_COLOR_ACCENT: AppItem = {
@@ -225,7 +207,6 @@ export const APPS: AppItem[] = [
 	APP_COMPASS,
 	APP_GEOLOCATION,
 	APP_DEAD_PIXEL_TEST,
-	APP_RANDOMIZER,
 	APP_URL_ENCODER,
 	APP_QR_CODE,
 	APP_EMOJI_PICKER,
@@ -235,7 +216,6 @@ export const APPS: AppItem[] = [
 	APP_CLOCK,
 	APP_XML_ESCAPE,
 	APP_LATEX_VIEWER,
-	APP_COLOR_GRADIENT,
 	APP_BATTERY,
 	APP_SASS_CONVERTER,
 	APP_CALCULATOR,
